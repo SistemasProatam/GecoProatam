@@ -1,0 +1,202 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap");
+
+:root {
+  --primary-color: #0f172a;
+  --secondary-color: #3f7555;
+  --primary-light: #113557;
+  --third-color: rgba(239, 239, 239, 0.909);
+  --accent-color: #4a9d6a;
+  --light-accent: rgba(63, 117, 85, 0.1);
+  --accent-color-light: #525252;
+  --dark-overlay: rgba(17, 52, 86, 0.9);
+  --text-light: rgba(255, 255, 255, 0.9);
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --border-radius: 20px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Estructura principal del body */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-image: url(../img/background.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+}
+
+.main-container {
+  flex: 1 0 auto; 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1 0 auto;         
+  display: flex;
+  align-items: center;     
+  justify-content: center; 
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+/* Si tienes un header, agrega esto */
+header {
+  flex-shrink: 0;
+}
+
+.welcome-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    text-align: center;
+    max-width: 700px;
+    width: 100%;
+    font-family: "Montserrat", sans-serif;
+}
+
+.welcome-content h1{
+    color: var(--primary-light);
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.welcome-title {
+    font-size: 2rem;
+    color: var(--dark-overlay);
+    font-weight: 700 bold;
+    margin: 0;
+    letter-spacing: 0.3px;
+    position: relative;
+    padding-bottom: 0.2rem;
+}
+
+    .welcome-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(74, 85, 104, 0.8), transparent );
+    }
+
+.welcome-img {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+}
+
+header,
+nav.navbar {
+  flex-shrink: 0;
+}
+
+/* FOOTER */
+footer {
+  flex-shrink: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .welcome-content {
+    gap: 1.2rem;
+  }
+
+  .welcome-img {
+    max-width: min(300px, 80vw);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    min-height: 100dvh;
+  }
+
+  .content-wrapper {
+    padding: 1.25rem 1rem;
+    align-items: center;
+  }
+
+  .welcome-content {
+    gap: 1rem;
+    max-width: 100%;
+    padding: 0 0.25rem;
+  }
+
+  .welcome-content h1 {
+    font-size: clamp(1.1rem, 6.5vw, 1.45rem);
+  }
+
+  .welcome-title {
+    font-size: clamp(0.9rem, 5vw, 1.1rem);
+  }
+
+  .welcome-img {
+    max-width: min(200px, 65vw);
+    border-radius: 8px;
+  }
+
+  .welcome-title::after {
+    width: 55px;
+  }
+}
+
+@media (max-width: 360px) {
+  .content-wrapper {
+    padding: 1rem 0.75rem;
+  }
+
+  .welcome-content h1 {
+    font-size: clamp(1rem, 7vw, 1.25rem);
+  }
+
+  .welcome-title {
+    font-size: clamp(0.85rem, 5.5vw, 1rem);
+  }
+
+  .welcome-img {
+    max-width: min(170px, 60vw);
+  }
+
+  .welcome-title::after {
+    width: 45px;
+  }
+}
+
+/* ACCESIBILIDAD */
+@media (prefers-reduced-motion: reduce) {
+  .welcome-img,
+  .welcome-img:hover {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+}

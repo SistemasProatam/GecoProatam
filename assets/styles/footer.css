@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap");
+
+/* Footer minimalista - Sin espacios extra */
+.proatam-footer {
+  background: #0f172a;
+  color: white;
+  border-top: 2px solid #3f7555;
+  padding: 12px 0;
+  width: 100%;
+  flex-shrink: 0; 
+  font-family: "Montserrat", sans-serif;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.copyright,
+.update {
+  white-space: nowrap;
+}
+
+.separator {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-link {
+  color: #e9ecef;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}

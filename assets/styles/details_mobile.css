@@ -1,0 +1,52 @@
+/* ═══ Mobile-first responsive ═══ */
+@media (max-width: 767.98px) {
+  /* Layout general */
+  .container, .container-fluid { padding-left: 10px; padding-right: 10px; }
+  
+  /* Campos de detalle */
+  .col-md-4, .col-md-6, .col-md-3 { 
+    flex: 0 0 100%; max-width: 100%; margin-bottom: 0.5rem; 
+  }
+
+  /* Botones */
+  .btn { width: 100%; margin-bottom: 0.5rem; font-size: 0.9rem; padding: 0.6rem; }
+  .d-flex.gap-2 { flex-direction: column; }
+
+  /* Imágenes */
+  img { max-width: 100%; height: auto; }
+  .foto-principal img, .card-img-top { width: 100%; object-fit: cover; }
+
+  /* QR */
+  .card .text-center img[alt*="QR"] { width: 150px; height: 150px; }
+
+  /* Tablas (documentos) */
+  table { font-size: 0.8rem; }
+  table th, table td { padding: 0.4rem; }
+  /* O hacer tabla scrollable */
+  .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Galería de imágenes */
+  .row .col-md-3, .row .col-md-4 { flex: 0 0 50%; max-width: 50%; }
+
+  /* Breadcrumb */
+  .breadcrumb { font-size: 0.8rem; flex-wrap: wrap; }
+
+  /* Cards */
+  .card { margin-bottom: 1rem; }
+  .card-body { padding: 0.75rem; }
+
+  /* Títulos */
+  h3, h4, h5 { font-size: 1.1rem; }
+
+  /* Modales de imagen */
+  .modal-dialog { margin: 0.5rem; max-width: calc(100vw - 1rem); }
+  .modal-body img { width: 100%; }
+}
+
+@media (max-width: 575.98px) {
+  /* Galería 1 columna en pantallas muy pequeñas */
+  .row .col-md-3, .row .col-md-4, .col-6 { flex: 0 0 100%; max-width: 100%; }
+  
+  h3 { font-size: 1rem; }
+  .badge { font-size: 0.7rem; }
+}

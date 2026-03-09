@@ -1,0 +1,382 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Outfit:wght@400;600&display=swap");
+
+/* Variables principales */
+:root {
+  --primary-color: #113456;
+  --secondary-color: #3f7555;
+  --dark-overlay: rgba(17, 52, 86, 0.9);
+  --third-color: rgba(239, 239, 239, 0.909);
+  --accent-color: #4a9d6a;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --text-light: rgba(255, 255, 255, 0.9);
+  --text-muted: rgba(0, 0, 0, 0.6);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background: var(--third-color);
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Contenedor de login */
+.login-container {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+}
+
+/* Panel de login */
+.login-panel {
+  flex: 0 0 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* Logo -  */
+.navbar-brand img {
+  width: 350px;
+  display: block;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+/* Formulario */
+.form-container {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px var(--dark-overlay);
+  padding: 1.5rem;
+  max-width: 700px;
+  width: 100%;
+  height: 90vh;
+  text-align: center;
+}
+
+/* Formulario: títulos y párrafos */
+.form-container h2 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 3rem;
+  margin-top: 3rem;
+}
+
+.forgot_pass {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--dark-overlay);
+  text-decoration: none;
+}
+
+.forgot_pass:hover {
+    color: var(--primary-color);
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.form-group {
+  margin: 2rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  display: block;
+  text-align: left;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: var(--border-radius);
+  font-size: 0.90rem;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(63, 117, 85, 0.25);
+  outline: none;
+}
+
+/* button-57  boton con animacion*/
+.button-57 {
+  font-family: inherit;
+  font-size: 1rem;
+  background: var(--secondary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: var(--transition);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.button-57 span {
+  display: block;
+  margin-left: 0.25em;
+  transition: transform 0.3s ease-in-out;
+}
+
+.button-57 i {
+  display: block;
+  margin-right: 0.25em;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.button-57:hover {
+  background: var(--accent-color);
+}
+
+.button-57:hover span {
+  transform: translateX(0.5em);
+}
+
+.button-57:hover i {
+  transform: rotate(0deg) scale(1.1);
+}
+
+.button-57:active {
+  transform: scale(0.95);
+}
+
+/* Carrusel panel */
+.image-panel {
+    flex: 0 0 60%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-left: 0;
+}
+
+/* Carrusel personalizado */
+.custom-carousel {
+    width: 100%;
+    height: 90vh;
+    margin: 1rem;
+    margin-left: 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-track {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+    .carousel-slide.active {
+        opacity: 1;
+    }
+
+    .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--border-radius);
+    }
+
+/* ===== RESPONSIVE PARA TABLETAS ===== */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .login-container {
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    width: 100%;
+}
+
+.login-panel {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.form-container {
+    height: auto;
+    max-height: 95vh;
+    min-height: 600px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.image-panel {
+    flex: 0 0 50%;
+    display: none !important;
+}
+
+.image-panel img {
+    width: 90%;
+    height: 90vh;
+    margin: 2rem auto;
+}
+
+.navbar-brand img {
+    width: 320px;
+    margin: 0 auto 2rem auto;
+}
+
+.form-container h2 {
+    font-size: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin: 1.5rem 0;
+}
+
+.form-control {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+}
+
+.button-57 {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+}
+
+/* ===== RESPONSIVE PARA MÓVILES ===== */
+@media (max-width: 767px) {
+    .navbar-brand img {
+        width: 280px;
+        margin-top: 2rem;
+    }
+
+    .login-container {
+        flex-direction: column;
+        min-height: 100vh;
+        justify-content: center;
+    }
+    
+    .login-panel {
+        flex: 1;
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    .form-container {
+        margin-top: 2rem;
+        height: auto;
+        min-height: 80vh;
+        margin: 0 auto;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .image-panel {
+        display: none !important; /* Ocultar completamente en móviles */
+    }
+    
+    .navbar-brand img {
+        width: 250px;
+        margin-bottom: 1rem;
+    }
+    
+    .form-container h2 {
+        font-size: 1.4rem;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        margin: 0.75rem 0;
+    }
+    
+    .button-57 {
+        width: 100%;
+        justify-content: center;
+        padding: 0.85rem 1.5rem;
+    }
+}
+
+/* ===== TABLETAS EN MODO VERTICAL ===== */
+@media (max-width: 1024px) and (min-width: 768px) and (max-height: 1024px) and (orientation: portrait) {
+    .image-panel {
+        display: none !important; /* Ocultar imagen en tabletas verticales */
+    }
+    
+    .login-panel {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .form-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+
+/* ===== TABLETAS EN MODO HORIZONTAL ===== */
+@media (max-width: 1024px) and (min-width: 768px) and (orientation: landscape) {
+    .image-panel {
+        display: flex !important; /* Mostrar imagen en tabletas horizontales */
+    }
+    
+    .login-panel {
+        flex: 0 0 45%;
+    }
+    
+    .image-panel {
+        flex: 0 0 55%;
+    }
+    
+    .image-panel img {
+        height: 80vh;
+    }
+}
+
+/* ===== AJUSTES PARA PANTALLAS MUY PEQUEÑAS ===== */
+@media (max-width: 360px) {
+    .form-container {
+        padding: 1rem;
+    }
+    
+    .navbar-brand img {
+        width: 200px;
+    }
+    
+    .form-container h2 {
+        font-size: 1.25rem;
+    }
+    
+    .form-control {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.85rem;
+    }
+}

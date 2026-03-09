@@ -1,0 +1,315 @@
+/* Variables CSS para colores principales */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap");
+
+:root {
+  --primary-color: #0f172a;
+  --secondary-color: #3f7555;
+  --third-color: rgba(239, 239, 239, 0.909);
+  --accent-color: #4a9d6a;
+  --light-accent: rgba(63, 117, 85, 0.1);
+  --accent-color-light: #525252;
+  --dark-overlay: rgba(17, 52, 86, 0.9);
+  --text-light: rgba(255, 255, 255, 0.9);
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --border-radius: 8px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* navbar */
+.navbar {
+  background: white;
+  padding: 1rem 0;
+  box-shadow: none;
+  width: 100%;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Logo */
+.navbar-brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-brand img {
+  max-height: 50px;
+  width: auto;
+  display: block;
+  width: auto;
+}
+
+/* Botón menu */
+.menu_text {
+  font-size: 1rem;
+  font-style: normal;
+}
+
+/* Ocultar texto "Menú" en móvil */
+@media (max-width: 768px) {
+  .menu_text {
+    display: none !important;
+  }
+}
+
+.uiverse-btn {
+  background: transparent !important;
+  border: none;
+  border-radius: var(--border-radius);
+  color: var(--secondary-color);
+  font-size: 1.8rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.uiverse-btn .menu-icon {
+  background: transparent !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 5px 8px;
+  transition: var(--transition);
+}
+
+.uiverse-btn:hover {
+  transition: var(--transition);
+  font-size: 2rem;
+}
+
+/*  OFFCANVAS  */
+.offcanvas {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #e5e5e5;
+  border-radius: var(--border-radius);
+  padding: 0;
+}
+
+.offcanvas-header {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem 1.25rem;
+}
+
+.offcanvas-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--primary-color);
+  font-family: "Montserrat", sans-serif;
+}
+
+.offcanvas-body {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+/* Separador */
+.offcanvas-body .separator {
+  border-top: 1.5px solid #d3d3d3;
+  margin: 0.5rem 0;
+}
+
+/*  MENU PRINCIPAL  */
+.menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.menu-item {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+/* ELEMENTO PRINCIPAL */
+.menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-family: "Outfit", sans-serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  transition: var(--transition);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.menu-header:hover {
+  background-color: var(--secondary-color);
+  color: #fff;
+  transform: translateX(3px);
+}
+
+.menu-header:hover i {
+  color: #fff;
+}
+
+/* Icono principal */
+.menu-header i.main-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Label del menu */
+.menu-label {
+  flex-grow: 1;
+  margin: 0;
+}
+
+/* Label del departamento */
+.dept-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-align: center;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+/* Flecha expandible */
+.expand-arrow {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+  margin-left: auto;
+}
+
+.menu-item.expanded .expand-arrow {
+  transform: rotate(180deg);
+}
+
+/* SUBMENU */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #f8f9fa;
+}
+
+.menu-item.expanded .submenu {
+  max-height: 300px;
+}
+
+.submenu-item {
+  display: block;
+  padding: 10px 20px 10px 45px;
+  color: #555;
+  text-decoration: none;
+  font-family: "Outfit", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  transition: var(--transition);
+  border-bottom: 1px solid #e9ecef;
+}
+
+.submenu-item:last-child {
+  border-bottom: none;
+}
+
+.submenu-item:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+  text-decoration: none;
+  padding-left: 50px;
+}
+
+/* ELEMENTOS SIMPLES (sin submenu) */
+.simple-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  color: var(--primary-color);
+  font-family: "Outfit", sans-serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.simple-menu-item i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.simple-menu-item:hover {
+  background-color: var(--secondary-color);
+  color: #fff;
+  transform: translateX(3px);
+}
+
+.simple-menu-item:hover i {
+  color: #fff;
+}
+
+/* Configuración */
+.simple-menu-item.settings:hover {
+  background-color: var(--primary-color);
+}
+
+/* Cerrar sesión */
+.simple-menu-item.logout {
+  color: #a53333;
+}
+
+.simple-menu-item.logout i {
+  color: #a53333;
+}
+
+.simple-menu-item.logout:hover {
+  background-color: #a53333;
+  color: #fff;
+}
+
+.simple-menu-item.logout:hover i {
+  color: #fff;
+}
+
+/* buscador */
+form[role="search"] input {
+  border-radius: var(--border-radius);
+  border: 2px solid var(--primary-color);
+}
+
+form[role="search"] button {
+  border-radius: var(--border-radius);
+  border: 2px solid var(--secondary-color);
+}
+
+form[role="search"] button:hover {
+  border-radius: var(--border-radius);
+  border: 2px solid var(--secondary-color);
+  background-color: var(--secondary-color);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.5rem;
+  }
+
+  .navbar-brand {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  .navbar-brand img {
+    max-height: 30px;
+  }
+}
