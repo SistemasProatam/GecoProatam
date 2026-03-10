@@ -1,0 +1,10 @@
+stages:
+  - deploy
+
+deploy_production:
+  stage: deploy
+  tags:
+    - shell
+  script:
+    - cd /var/www/proatam/public_html
+    - git pull origin main
