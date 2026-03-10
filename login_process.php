@@ -88,7 +88,7 @@ $row = $result->fetch_assoc();
         if ($row['password_temporal']) {
             $redirect = "change_password.php";
         } else if ($row['departamento_nombre'] === 'Gerente de Operaciones') {
-            $redirect = "/PROATAM/orders/list_requis.php";
+            $redirect = "/orders/list_requis.php";
         }
 
         /**
