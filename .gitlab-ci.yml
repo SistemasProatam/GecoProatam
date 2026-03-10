@@ -1,0 +1,6 @@
+deploy_production:
+stage: deploy
+only:
+- main
+script:
+- ssh root@72.62.130.214 "cd /var/www/proatam/public_html && git pull origin main"
