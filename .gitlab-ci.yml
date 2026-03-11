@@ -3,8 +3,10 @@ stages:
 
 deploy_production:
   stage: deploy
-  tags:
-    - shell
+  only:
+    - main
   script:
+    - echo "Deploy en servidor..."
     - cd /var/www/proatam/public_html
-    - git pull origin main
+    - git fetch origin
+    - git reset --hard origin/main
