@@ -3,6 +3,8 @@ stages:
 
 deploy_production:
   stage: deploy
+  tags:
+    - proatam-servidor-produccion
   only:
     - main
   script:
