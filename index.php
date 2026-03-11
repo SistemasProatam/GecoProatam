@@ -37,7 +37,7 @@ preventCaching();
           $primerApellido = explode(' ', trim($_SESSION['apellidos']))[0] ?? '';
           ?>
           <h1><strong>Bienvenido <?php echo htmlspecialchars($primerNombre . ' ' . $primerApellido); ?></strong></h1>
-          <p class="welcome-title"><strong> Sistema de Gestión Integral</strong></p>
+          <p class="welcome-title"><strong> Sistema de Gestión</strong></p>
           <img class="welcome-img" src="assets/img/proatam.png" alt="Alternate Text" />
         </div>
     </div>
