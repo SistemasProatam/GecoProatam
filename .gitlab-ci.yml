@@ -3,8 +3,8 @@ stages:
 
 deploy_production:
   stage: deploy
-  only:
-    - main
+  tags:
+    - proatam-servidor-produccion
   script:
     - echo "Deploy en servidor..."
     - cd /var/www/proatam/public_html
