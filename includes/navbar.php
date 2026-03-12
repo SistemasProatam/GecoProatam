@@ -232,6 +232,7 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
           </a>
           <?php endif; ?>
       </ul>
+      <div class="separator"></div>
 
       <!-- ADMINISTRACIÓN DE USUARIOS - Solo para autorizados -->
       <?php
@@ -243,8 +244,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
       ]);
       ?>
       <?php if ($ver_admin_usuarios): ?>
-        <div class="separator"></div>
-
         <ul class="menu-list">
           <a href="/users/list_users.php" class="text-decoration-none">
             <li class="simple-menu-item settings">
