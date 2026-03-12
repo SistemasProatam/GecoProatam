@@ -355,7 +355,9 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                             ?>
                                         </td>
                                         <td><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
-                                        <td><?= htmlspecialchars($row['descripcion']) ?></td>
+                                        <td class="descripcion" title="<?= htmlspecialchars($row['descripcion']) ?>">
+                                                    <?= htmlspecialchars($row['descripcion']) ?>
+                                        </td>
                                         <td>
                                             <div class="btn-group" style="gap:5px;">
                                                 <button class="btn-inf" onclick="window.location.href='see_requis.php?id=<?= $row['id'] ?>'" title="Ver detalles"

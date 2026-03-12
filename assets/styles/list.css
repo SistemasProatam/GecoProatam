@@ -427,6 +427,13 @@ body {
   background-color: #f8f9fa;
 }
 
+.descripcion{
+    max-width: 50px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
 .add-item-btn {
   background: var(--accent-color);
   border: none;

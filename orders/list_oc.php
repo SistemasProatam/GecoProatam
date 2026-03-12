@@ -345,7 +345,9 @@ while($ent = $entidadesRes->fetch_assoc()){
                                             ?>
                                         </td>  
                                         <td><?= date('d/m/Y H:i', strtotime($oc['fecha_solicitud'])) ?></td>
-                                        <td><?= htmlspecialchars($oc['descripcion']) ?></td>
+                                        <td class="descripcion" title="<?= htmlspecialchars($oc['descripcion']) ?>">
+                                                    <?= htmlspecialchars($oc['descripcion']) ?>
+                                        </td>
                                         <td>
                                             <div class="btn-group" style="gap:5px;">
                                                 <button class="btn-inf" onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'" title="Ver detalles"
