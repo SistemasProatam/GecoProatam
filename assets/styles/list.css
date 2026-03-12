@@ -416,6 +416,7 @@ body {
   border: none;
   padding: 1rem;
   vertical-align: middle;
+  font-size: 0.80rem;
 }
 
 .table tbody tr {

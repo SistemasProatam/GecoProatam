@@ -96,7 +96,7 @@ if ($entidad_filtro !== '') {
 $where_sql = $where ? "WHERE " . implode(" AND ", $where) : "";
 
 // Consulta principal
-$sql = "SELECT r.id, r.folio, r.estado, r.fecha_solicitud, e.nombre AS entidad
+$sql = "SELECT r.id, r.folio, r.estado, r.fecha_solicitud, r.descripcion, e.nombre AS entidad
         FROM requisiciones r
         JOIN entidades e ON r.entidad_id = e.id
         $where_sql
@@ -328,6 +328,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                 <th>Entidad</th>
                                 <th>Estado</th>
                                 <th>Fecha de Solicitud</th>
+                                <th>Descripción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -354,6 +355,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                             ?>
                                         </td>
                                         <td><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
+                                        <td><?= htmlspecialchars($row['descripcion']) ?></td>
                                         <td>
                                             <div class="btn-group" style="gap:5px;">
                                                 <button class="btn-inf" onclick="window.location.href='see_requis.php?id=<?= $row['id'] ?>'" title="Ver detalles"

@@ -50,7 +50,7 @@ if ($entidad_filtro !== '') {
 $where_sql = $where ? "WHERE " . implode(" AND ", $where) : "";
 
 // Consulta principal - CORREGIDA para incluir proveedor y requisición
-$sql = "SELECT o.id, o.folio, o.estado, o.fecha_solicitud, o.total,
+$sql = "SELECT o.id, o.folio, o.estado, o.fecha_solicitud, o.descripcion, o.total,
                e.nombre AS entidad,
                p.nombre AS proveedor,
                r.folio AS folio_requisicion
@@ -302,6 +302,7 @@ while($ent = $entidadesRes->fetch_assoc()){
                                 <th>Requisición</th>
                                 <th>Estado</th>
                                 <th>Fecha de Solicitud</th>
+                                <th>Descripción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -344,6 +345,7 @@ while($ent = $entidadesRes->fetch_assoc()){
                                             ?>
                                         </td>  
                                         <td><?= date('d/m/Y H:i', strtotime($oc['fecha_solicitud'])) ?></td>
+                                        <td><?= htmlspecialchars($oc['descripcion']) ?></td>
                                         <td>
                                             <div class="btn-group" style="gap:5px;">
                                                 <button class="btn-inf" onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'" title="Ver detalles"
