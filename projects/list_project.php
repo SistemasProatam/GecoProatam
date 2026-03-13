@@ -166,7 +166,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
           <div class="btn-group" style="gap:5px;">
             <a href="list_obras.php?proyecto_id=<?= $row['id'] ?>" class="btn-add-oc" 
                 data-bs-toggle="tooltip" data-bs-placement="top" title="Gestionar Obras">
-                <i class="bi bi-tools"></i>
+                <i class="bi bi-cone-striped"></i>
             </a>
             <a href="details_project.php?id=<?= $row['id'] ?>" class="btn-inf" 
                 data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles del Proyecto">
