@@ -35,7 +35,7 @@ body {
 .content-wrapper {
   max-width: 1400px;
   margin: -5rem auto 3rem;
-  padding: 0 1.5rem;
+  padding: 2rem 1.5rem;
   position: relative;
   z-index: 2;
 }
