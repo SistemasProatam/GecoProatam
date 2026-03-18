@@ -328,7 +328,7 @@ function getTipoConcepto($codigo) {
                     <button class="btn btn-success btn-sm" onclick="mostrarFormConcepto()">
                         <i class="bi bi-plus-circle"></i> Nuevo Concepto
                     </button>
-                    <button class="btn btn-info btn-sm" onclick="importarExcelConceptos()">
+                    <button class="btn btn-inf btn-sm" onclick="importarExcelConceptos()">
                         <i class="bi bi-upload"></i> Importar Excel
                     </button>
                 </div>
@@ -511,7 +511,7 @@ function getTipoConcepto($codigo) {
                                                                         <button class="btn-inf btn-sm" 
                                                                                 onclick="verDetalleConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['codigo_concepto'])) ?>')"
                                                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles">
-                                                                            <i class="bi bi-eye"></i>
+                                                                            <i class="bi bi-info-circle"></i>
                                                                         </button>
                                                                         <button class="btn-del btn-sm" 
                                                                                 onclick="eliminarConceptoView(<?= $concepto['id'] ?>, <?= $catalogo_id ?>, '<?= htmlspecialchars(addslashes($catalogo['nombre_catalogo'])) ?>', <?= $obra_id ?: 'null' ?>, '<?= $obra_info ? htmlspecialchars(addslashes($obra_info['nombre_obra'])) : '' ?>')"
@@ -722,7 +722,7 @@ function getTipoConcepto($codigo) {
                         <button class="btn btn-success" onclick="mostrarFormConcepto()">
                             <i class="bi bi-plus-circle"></i> Crear Primer Concepto
                         </button>
-                        <button class="btn btn-info" onclick="importarExcelConceptos()">
+                        <button class="btn btn-inf" onclick="importarExcelConceptos()">
                             <i class="bi bi-upload"></i> Importar desde Excel
                         </button>
                     </div>
