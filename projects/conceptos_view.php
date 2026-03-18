@@ -193,6 +193,7 @@ function getTipoConcepto($codigo) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="/assets/styles/details.css">
     <style>
         .item-orden-pagada {
@@ -222,17 +223,12 @@ function getTipoConcepto($codigo) {
             font-size: 0.875rem;
         }
         .btn-inf {
-            background-color: #17a2b8;
+            background-color: #6c757d;
             color: white;
             border: none;
         }
-        .btn-ed {
-            background-color: #ffc107;
-            color: #212529;
-            border: none;
-        }
         .btn-del {
-            background-color: #dc3545;
+            background-color: #c82333;
             color: white;
             border: none;
         }
