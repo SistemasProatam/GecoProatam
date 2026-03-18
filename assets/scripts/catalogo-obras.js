@@ -1,7 +1,3 @@
-/**
- * Sistema de gestión de catálogos y conceptos para obras
- */
-
 // ====================================
 // CLASE PRINCIPAL - CATALOGOS MANAGER
 // ====================================
@@ -52,7 +48,7 @@ class CatalogosManager {
         return await this.makeRequest(formData);
     }
     
-    async crearConcepto(catalogoId, codigo, nombre, descripcion = '', unidadMedida = '', categoria = '', subcategoria = '', numeroOriginal = '') {
+    async crearConcepto(catalogoId, codigo, nombre, descripcion = '', unidadMedida = '', categoria = '', subcategoria = '', numeroOriginal = '', cantidad = '', precioUnitario = '', importe = '', fechaInicio = '', fechaFin = '') {
         const formData = new FormData();
         formData.append('action', 'crear_concepto');
         formData.append('catalogo_id', catalogoId);
@@ -63,6 +59,11 @@ class CatalogosManager {
         formData.append('categoria', categoria);
         formData.append('subcategoria', subcategoria);
         formData.append('numero_original', numeroOriginal);
+        formData.append('cantidad', cantidad);
+        formData.append('precio_unitario', precioUnitario);
+        formData.append('importe', importe);
+        formData.append('fecha_inicio', fechaInicio);
+        formData.append('fecha_fin', fechaFin);
         formData.append('permitir_duplicados', 'true');
         return await this.makeRequest(formData);
     }
@@ -242,6 +243,27 @@ function mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId = null, ob
                     <label class="form-label">Número Original</label>
                     <input type="text" name="numero_original" class="form-control" placeholder="Ej: 1, 2, 3">
                 </div>
+                <hr>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Precio Unitario</label>
+                        <input type="number" step="0.01" min="0" name="precio_unitario" class="form-control" placeholder="0.00">
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Importe</label>
+                        <input type="number" step="0.01" min="0" name="importe" class="form-control" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="text" name="fecha_inicio" class="form-control" placeholder="DD/MM/AAAA">
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" name="fecha_fin" class="form-control">
+                    </div>
+                </div>
             </form>
         `,
         width: 700,
@@ -258,7 +280,11 @@ function mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId = null, ob
                 form.unidad_medida.value.trim(),
                 form.categoria.value.trim(),
                 form.subcategoria.value.trim(),
-                form.numero_original.value.trim()
+                form.numero_original.value.trim(),
+                form.precio_unitario.value.trim(),
+                form.importe.value.trim(),
+                form.fecha_inicio.value.trim(),
+                form.fecha_fin.value.trim()
             );
         }
     }).then((result) => {
@@ -291,7 +317,8 @@ function mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId = null
         html: `
             <div class="alert alert-info text-start">
                 <small><i class="bi bi-info-circle"></i> 
-                Columnas esperadas: NUMERO, CLAVE, DESCRIPCIÓN, UNIDAD</small>
+                Columnas requeridas: <strong>CLAVE, DESCRIPCIÓN</strong><br>
+                Columnas opcionales: NUMERO, UNIDAD, PRECIO UNITARIO, IMPORTE, FECHA INICIO, FECHA FIN</small>
             </div>
             <div class="mb-3">
                 <label class="form-label">Archivo Excel</label>
@@ -319,7 +346,11 @@ function mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId = null
                 Swal.showValidationMessage('Selecciona un archivo');
                 return false;
             }
-            return catalogosManager.importarConceptosDesdeExcel(catalogoId, fileInput.files[0]);
+        return catalogosManager.importarConceptosDesdeExcel(catalogoId, fileInput.files[0])
+    .then(result => {
+        console.log('RESPUESTA SERVIDOR:', JSON.stringify(result));
+        return result;
+    });            
         }
     }).then((result) => {
         if (result.isConfirmed && result.value && result.value.success) {
@@ -354,21 +385,36 @@ function mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId = null
     });
 }
 
-function esCategoria(clave) {
+function esCategoriaNivel1(clave) {
     if (!clave) return false;
-
     const valor = clave.toString().trim().toUpperCase();
-
-    // I, II, III, IV, V, VI, etc.
+    // Nivel 1: I, II, III, IV, V, etc. (solo números romanos)
     return /^[IVXLCDM]+$/.test(valor);
+}
+
+// Alias para compatibilidad con código existente
+function esCategoria(clave) {
+    return esCategoriaNivel1(clave);
+}
+
+function esCategoriaNivel2(clave) {
+    if (!clave) return false;
+    const valor = clave.toString().trim();
+    // Nivel 2: 1.2, 1.3, 2.1, etc. (número.número - solo dos partes)
+    return /^\d+\.\d+$/.test(valor);
+}
+
+function esCategoriaNivel3(clave) {
+    if (!clave) return false;
+    const valor = clave.toString().trim();
+    // Nivel 3: 1.2.1, 1.2.3, etc. (número.número.número)
+    return /^\d+\.\d+\.\d+$/.test(valor);
 }
 
 function esSubcategoria(clave) {
     if (!clave) return false;
-
     const valor = clave.toString().trim().toUpperCase();
-
-    // I.1, I.2, II.1, III.4, etc.
+    // Subcategoría estilo romano: I.1, I.2, II.1, III.4, etc.
     return /^[IVXLCDM]+\.\d+$/.test(valor);
 }
 
@@ -485,7 +531,7 @@ async function mostrarVistaPrevia(file) {
 function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
     catalogosManager.obtenerDetalleConcepto(conceptoId)
         .then(resp => {
-            // Normalizar respuesta: el backend puede devolver { success:true, concepto: { ... } }
+            // Normalizar respuesta
             let concepto = resp;
             if (resp && typeof resp === 'object' && ('success' in resp)) {
                 if (resp.success === false) {
@@ -500,7 +546,27 @@ function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre,
             const montoTotal = parseFloat(concepto.monto_total) || 0;
             const totalItems = parseInt(concepto.total_items) || 0;
             
-            // Escapar correctamente los valores que pueden ser null/undefined
+            // Formatear fechas correctamente (YYYY-MM-DD a DD/MM/YYYY)
+            const formatearFecha = (fecha) => {
+                if (!fecha || fecha === '0000-00-00') return 'N/A';
+                const partes = fecha.split('-');
+                if (partes.length === 3) {
+                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                }
+                return fecha;
+            };
+            
+            // Formatear números
+            const formatearNumero = (valor, decimales = 2, moneda = false) => {
+                if (!valor || isNaN(valor)) return 'N/A';
+                const num = parseFloat(valor);
+                if (moneda) {
+                    return '$' + num.toLocaleString('es-MX', {minimumFractionDigits: decimales, maximumFractionDigits: decimales});
+                }
+                return num.toLocaleString('es-MX', {minimumFractionDigits: decimales, maximumFractionDigits: 3});
+            };
+            
+            // Escapar correctamente los valores
             const nombreConcepto = String(concepto.nombre_concepto || '').replace(/'/g, "\\'");
             const catalogoNombreEscaped = String(catalogoNombre || '').replace(/'/g, "\\'");
             
@@ -541,7 +607,43 @@ function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre,
                     </div>
                     ` : ''}
 
-                    <!-- Estadísticas -->
+                    <!-- ===== NUEVA SECCIÓN: CAMPOS ADICIONALES ===== -->
+                    <div class="mb-3">
+                        <h6 class="text-primary border-bottom pb-2">Detalles del Concepto</h6>
+                        
+                        <!-- Cantidad (NUEVO) -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-sort-numeric-up me-1"></i>Cantidad:</span>
+                            <strong class="text-dark">${formatearNumero(concepto.cantidad, 3)}</strong>
+                        </div>
+                        
+                        <!-- Precio Unitario -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-tag me-1"></i>Precio Unitario:</span>
+                            <strong class="text-success">${formatearNumero(concepto.precio_unitario, 2, true)}</strong>
+                        </div>
+                        
+                        <!-- Importe -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-currency-dollar me-1"></i>Importe:</span>
+                            <strong class="text-success">${formatearNumero(concepto.importe, 2, true)}</strong>
+                        </div>
+                        
+                        <!-- Fecha Inicio -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-calendar me-1"></i>Fecha Inicio:</span>
+                            <strong>${formatearFecha(concepto.fecha_inicio)}</strong>
+                        </div>
+                        
+                        <!-- Fecha Fin -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-calendar me-1"></i>Fecha Fin:</span>
+                            <strong>${formatearFecha(concepto.fecha_fin)}</strong>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Estadísticas de items -->
                     <div class="row text-center mb-3">
                         <div class="col-6">
                             <div class="border rounded p-2">
@@ -551,37 +653,37 @@ function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre,
                         </div>
                         <div class="col-6">
                             <div class="border rounded p-2">
-                                <div class="text-success fw-bold">$${montoTotal.toLocaleString('es-MX', {minimumFractionDigits: 0})}</div>
-                                <small class="text-muted">Total</small>
+                                <div class="text-success fw-bold">$${montoTotal.toLocaleString('es-MX', {minimumFractionDigits: 2})}</div>
+                                <small class="text-muted">Total en items</small>
                             </div>
                         </div>
                     </div>
 
                     <!-- Botones -->
-                    <div class="gap-2">
-                        <button class="btn btn-primary btn-sm" 
+                    <div class="gap-2 d-flex justify-content-center">
+                        <button class="btn btn-sm" style="background-color:#17a2b8;color:white;border:none;"
                             onclick="verItemsConcepto(${conceptoId}, '${nombreConcepto}', ${catalogoId}, '${catalogoNombreEscaped}')">
-                            Ver Items
+                            <i class="bi bi-list-ul me-1"></i>Ver Items
                         </button>
                         <button class="btn btn-outline-secondary btn-sm" onclick="Swal.close()">
-                            Cerrar
+                            <i class="bi bi-x-circle me-1"></i>Cerrar
                         </button>
                     </div>
                 </div>
             `;
             
             Swal.fire({
-                title: 'Detalle',
+                title: 'Detalle del Concepto',
                 html: detalleHtml,
                 width: '90%',
-                maxWidth: '400px',
+                maxWidth: '450px',
                 showCloseButton: true,
                 showConfirmButton: false
             });
         })
         .catch(error => {
             console.error('Error:', error);
-            Swal.fire('Error', 'No se pudo cargar', 'error');
+            Swal.fire('Error', 'No se pudo cargar el detalle del concepto', 'error');
         });
 }
 
@@ -726,121 +828,6 @@ function eliminarConcepto(conceptoId, catalogoId, catalogoNombre, obraId = null,
         });
 }
 
-// Función para ver items de un concepto con mejoras
-async function verItemsConcepto(conceptoId, conceptoNombre, catalogoId = null, catalogoNombre = null) {
-    try {
-        // Mostrar loading simple
-        Swal.fire({
-            title: 'Cargando...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-        
-        const items = await catalogosManager.obtenerItemsConcepto(conceptoId);
-        
-        Swal.close();
-        
-        let itemsHtml = `
-            <div class="items-simple">
-                <!-- Header simple -->
-                <div class="mb-3">
-                    <h6 class="text-primary mb-1">${conceptoNombre}</h6>
-                    <small class="text-muted">Items vinculados desde órdenes de compra</small>
-                </div>
-        `;
-
-        if (items && items.length > 0) {
-            let totalGeneral = 0;
-            let totalCantidad = 0;
-            
-            // Lista simple de items
-            itemsHtml += `<div class="list-group">`;
-            
-            items.forEach(item => {
-                const cantidad = parseFloat(item.cantidad) || 0;
-                const precioUnitario = parseFloat(item.precio_unitario) || 0;
-                const subtotal = cantidad * precioUnitario;
-                
-                totalGeneral += subtotal;
-                totalCantidad += cantidad;
-                
-                itemsHtml += `
-                    <div class="list-group-item border-0">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="flex-grow-1">
-                                <strong class="d-block">${item.descripcion}</strong>
-                                ${item.observaciones ? `<small class="text-muted">${item.observaciones}</small>` : ''}
-                            </div>
-                            <div class="text-end">
-                                <div class="fw-bold text-success">$${subtotal.toLocaleString('es-MX', {minimumFractionDigits: 2})}</div>
-                                <small class="text-muted">${cantidad} ${item.unidad_nombre || ''}</small>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between small text-muted">
-                            <span>Precio: $${precioUnitario.toLocaleString('es-MX', {minimumFractionDigits: 2})}</span>
-                            <span>Orden: ${item.orden_folio || 'N/A'}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            itemsHtml += `</div>`;
-            
-            // Totales simples
-            itemsHtml += `
-                <div class="mt-3 p-3 bg-light rounded">
-                    <div class="row text-center">
-                        <div class="col-6 border-end">
-                            <div class="fw-bold text-primary">${items.length}</div>
-                            <small class="text-muted">Items</small>
-                        </div>
-                        <div class="col-6">
-                            <div class="fw-bold text-success">$${totalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2})}</div>
-                            <small class="text-muted">Total</small>
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else {
-            itemsHtml += `
-                <div class="text-center text-muted py-4">
-                    <p class="mb-2">No hay items vinculados</p>
-                    <small>Los items aparecerán cuando se aprueben órdenes de compra</small>
-                </div>
-            `;
-        }
-
-        // Botón simple
-        itemsHtml += `
-            <div class="mt-3">
-                <button class="btn btn-outline-secondary w-50" onclick="Swal.close()">
-                    Cerrar
-                </button>
-            </div>
-        `;
-
-        Swal.fire({
-            title: 'Items',
-            html: itemsHtml,
-            width: '95%',
-            maxWidth: '500px',
-            showCloseButton: true,
-            showConfirmButton: false
-        });
-        
-    } catch (error) {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudieron cargar los items',
-            width: '90%',
-            maxWidth: '400px'
-        });
-    }
-}
 
 // Función para editar concepto (placeholder)
 function editarConcepto(conceptoId) {
@@ -931,6 +918,11 @@ function procesarDatosCatalogoFlexible(jsonData) {
         const clave = obtenerValorColumna(fila, mapeoColumnas.clave);
         const descripcion = obtenerValorColumna(fila, mapeoColumnas.descripcion);
         const unidad = obtenerValorColumna(fila, mapeoColumnas.unidad);
+        const cantidad = obtenerValorColumna(fila, mapeoColumnas.cantidad);
+        const precioUnitario = obtenerValorColumna(fila, mapeoColumnas.precio_unitario);
+        const importe = obtenerValorColumna(fila, mapeoColumnas.importe);
+        const fechaInicio = obtenerValorColumna(fila, mapeoColumnas.fecha_inicio);
+        const fechaFin = obtenerValorColumna(fila, mapeoColumnas.fecha_fin);
         
         // Saltar filas completamente vacías
         if (!numero && !clave && !descripcion) continue;
@@ -942,41 +934,46 @@ function procesarDatosCatalogoFlexible(jsonData) {
             descripcionUpper.includes('SUBTOTAL') ||
             descripcionUpper === 'TOTAL') continue;
         
-        const claveNormalizada = clave
-        .toString()
-        .trim()
-        .toUpperCase()
-        .replace(/[^IVXLCDM.]/g, '');
+        // Normalizar clave para detectar categorías y subcategorías
+        const claveStr = clave.toString().trim();
+        // Versión solo romanos (para nivel 1)
+        const claveRomana = claveStr.toUpperCase().replace(/[^IVXLCDM.]/g, '');
 
-        // 1. CATEGORÍA (I, II, III...)
-if (esCategoria(claveNormalizada) && descripcion) {
+        // 1. CATEGORÍA NIVEL 1 (I, II, III...)
+        if (esCategoriaNivel1(claveRomana) && descripcion) {
+            categoriaActual = descripcion.trim();
+            subcategoriaActual = null;
+            categoriasDetectadas.push({ clave: claveRomana, descripcion: categoriaActual });
+            console.log(`📁 CATEGORÍA N1: ${claveRomana} - ${categoriaActual}`);
+            continue;
+        }
 
-    categoriaActual = descripcion.trim();
-    subcategoriaActual = null;
+        // 2. SUBCATEGORÍA ESTILO ROMANO (I.1, I.2...)
+        if (esSubcategoria(claveRomana) && descripcion) {
+            subcategoriaActual = descripcion.trim();
+            subcategoriasDetectadas.push({ clave: claveRomana, descripcion: subcategoriaActual, categoria: categoriaActual });
+            console.log(`📂 SUBCATEGORÍA ROMANO: ${claveRomana} - ${subcategoriaActual}`);
+            continue;
+        }
 
-    categoriasDetectadas.push({
-        clave: claveNormalizada,
-        descripcion: categoriaActual
-    });
+        // 3. CATEGORÍA NIVEL 2 (1.2, 1.3...)
+        if (esCategoriaNivel2(claveStr) && descripcion) {
+            subcategoriaActual = descripcion.trim();
+            subcategoriasDetectadas.push({ clave: claveStr, descripcion: subcategoriaActual, categoria: categoriaActual });
+            console.log(`📂 CATEGORÍA N2: ${claveStr} - ${subcategoriaActual}`);
+            continue;
+        }
 
-    console.log(`📁 CATEGORÍA DETECTADA: ${claveNormalizada} - ${categoriaActual}`);
-    continue;
-}
+        // 4. CATEGORÍA NIVEL 3 (1.2.1, 1.2.3...)
+        if (esCategoriaNivel3(claveStr) && descripcion) {
+            // El nivel 3 actúa como una subcategoría más específica dentro del nivel 2
+            subcategoriaActual = descripcion.trim();
+            subcategoriasDetectadas.push({ clave: claveStr, descripcion: subcategoriaActual, categoria: categoriaActual });
+            console.log(`📄 CATEGORÍA N3: ${claveStr} - ${subcategoriaActual}`);
+            continue;
+        }
 
-// 2. SUBCATEGORÍA (I.1, I.2...)
-if (esSubcategoria(claveNormalizada) && descripcion) {
-
-    subcategoriaActual = descripcion.trim();
-
-    subcategoriasDetectadas.push({
-        clave: claveNormalizada,
-        descripcion: subcategoriaActual,
-        categoria: categoriaActual
-    });
-
-    console.log(`📂 SUBCATEGORÍA DETECTADA: ${claveNormalizada} - ${subcategoriaActual}`);
-    continue;
-}
+        const claveNormalizada = claveStr;
         
         // 3. Si la fila tiene CLAVE y DESCRIPCIÓN, es un concepto válido
         if (clave && descripcion) {
@@ -987,7 +984,12 @@ if (esSubcategoria(claveNormalizada) && descripcion) {
                 unidad_medida: unidad || obtenerUnidadDesdeDescripcion(descripcion),
                 categoria: categoriaActual || '',
                 subcategoria: subcategoriaActual || '',
-                numero_original: numero || String(numeroSecuencial)
+                numero_original: numero || String(numeroSecuencial),
+                cantidad: cantidad || '',
+                precio_unitario: precioUnitario || '',
+                importe: importe || '',
+                fecha_inicio: fechaInicio ? normalizarFecha(fechaInicio) : '',
+                fecha_fin: fechaFin ? normalizarFecha(fechaFin) : ''
             };
             
             conceptos.push(concepto);
@@ -1016,7 +1018,12 @@ function detectarEncabezados(fila) {
         numero: -1,
         clave: -1,
         descripcion: -1,
-        unidad: -1
+        unidad: -1,
+        cantidad: -1,
+        precio_unitario: -1,
+        importe: -1,
+        fecha_inicio: -1,
+        fecha_fin: -1,
     };
     
     fila.forEach((celda, index) => {
@@ -1058,18 +1065,71 @@ function detectarEncabezados(fila) {
             valorNormalizado === 'MEDIDA') {
             mapeo.unidad = index;
         }
+
+        // Detectar CANTIDAD (OPCIONAL)
+        if (valorNormalizado === 'CANTIDAD' ||
+            valorNormalizado === 'CANT' ||
+            valorNormalizado === 'QTY' ||
+            valorNormalizado === 'QUANTITY') {
+            mapeo.cantidad = index;
+        }
+
+        // Detectar PRECIO UNITARIO (OPCIONAL) — soporta P.U., P.U, PRECIO UNITARIO
+        if (valorNormalizado === 'P.U.' ||
+            valorNormalizado === 'P.U' ||
+            valorNormalizado === 'PU' ||
+            valorNormalizado.includes('PRECIO UNITARIO') ||
+            valorNormalizado === 'P.UNITARIO' ||
+            valorNormalizado === 'PRECIO' ||
+            valorNormalizado === 'UNIT PRICE') {
+            mapeo.precio_unitario = index;
+        }
+
+        // Detectar IMPORTE (OPCIONAL)
+        if (valorNormalizado === 'IMPORTE' ||
+            valorNormalizado.includes('MONTO') ||
+            valorNormalizado === 'AMOUNT') {
+            mapeo.importe = index;
+        }
+
+        // Detectar FECHA INICIO (OPCIONAL)
+        if (valorNormalizado.includes('FECHA DE INICIO') ||
+            valorNormalizado.includes('FECHA INICIO') ||
+            valorNormalizado.includes('F.INICIO') ||
+            valorNormalizado === 'INICIO' ||
+            valorNormalizado === 'START DATE') {
+            mapeo.fecha_inicio = index;
+        }
+
+        // Detectar FECHA FIN (OPCIONAL)
+        if (valorNormalizado.includes('FECHA DE FINALIZACION') ||
+            valorNormalizado.includes('FECHA FINALIZACION') ||
+            valorNormalizado.includes('FECHA FIN') ||
+            valorNormalizado.includes('FECHA TERMINO') ||
+            valorNormalizado.includes('F.FIN') ||
+            valorNormalizado === 'FIN' ||
+            valorNormalizado === 'TERMINO' ||
+            valorNormalizado === 'END DATE') {
+            mapeo.fecha_fin = index;
+        }
+
     });
     
     // SOLO requiere CLAVE y DESCRIPCIÓN
-    // NUMERO y UNIDAD son opcionales
+    // El resto son opcionales
     const valido = mapeo.clave !== -1 && mapeo.descripcion !== -1;
     
     if (valido) {
         console.log('Encabezados detectados:', {
-            NUMERO: mapeo.numero !== -1 ? `Columna ${mapeo.numero}` : 'No encontrado (opcional)',
-            CLAVE: `Columna ${mapeo.clave} ✓`,
-            DESCRIPCION: `Columna ${mapeo.descripcion} ✓`,
-            UNIDAD: mapeo.unidad !== -1 ? `Columna ${mapeo.unidad}` : 'No encontrado (opcional)'
+            NUMERO:          mapeo.numero          !== -1 ? `Columna ${mapeo.numero}` : 'No encontrado (opcional)',
+            CLAVE:           `Columna ${mapeo.clave} ✓`,
+            DESCRIPCION:     `Columna ${mapeo.descripcion} ✓`,
+            UNIDAD:          mapeo.unidad          !== -1 ? `Columna ${mapeo.unidad}` : 'No encontrado (opcional)',
+            CANTIDAD:        mapeo.cantidad        !== -1 ? `Columna ${mapeo.cantidad}` : 'No encontrado (opcional)',
+            PRECIO_UNITARIO: mapeo.precio_unitario !== -1 ? `Columna ${mapeo.precio_unitario}` : 'No encontrado (opcional)',
+            IMPORTE:         mapeo.importe         !== -1 ? `Columna ${mapeo.importe}` : 'No encontrado (opcional)',
+            FECHA_INICIO:    mapeo.fecha_inicio    !== -1 ? `Columna ${mapeo.fecha_inicio}` : 'No encontrado (opcional)',
+            FECHA_FIN:       mapeo.fecha_fin       !== -1 ? `Columna ${mapeo.fecha_fin}` : 'No encontrado (opcional)',
         });
     }
     
@@ -1119,263 +1179,327 @@ function obtenerUnidadDesdeDescripcion(descripcion) {
     return '';
 }
 
+/**
+ * Normaliza fechas que pueden venir como serial de Excel o como string
+ * Retorna 'YYYY-MM-DD' que es lo que acepta MySQL DATE
+ */
+function normalizarFecha(valor) {
+    if (!valor) return '';
+
+    // Si es número, es un serial de Excel (días desde 1900-01-01)
+    const num = parseFloat(valor);
+    if (!isNaN(num) && num > 1000) {
+        // Excel serial: epoch es 1899-12-30
+        const fecha = new Date(Math.round((num - 25569) * 86400 * 1000));
+        if (!isNaN(fecha.getTime())) {
+            return fecha.toISOString().split('T')[0];
+        }
+    }
+
+    // Si ya es string con formato reconocible, intentar parsearlo
+    const str = String(valor).trim();
+
+    // dd/mm/yyyy o dd-mm-yyyy
+    const matchDMY = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (matchDMY) {
+        return `${matchDMY[3]}-${matchDMY[2].padStart(2,'0')}-${matchDMY[1].padStart(2,'0')}`;
+    }
+
+    // yyyy-mm-dd (ya en formato correcto)
+    const matchYMD = str.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+    if (matchYMD) {
+        return `${matchYMD[1]}-${matchYMD[2].padStart(2,'0')}-${matchYMD[3].padStart(2,'0')}`;
+    }
+
+    // Intentar con Date nativo como último recurso
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+        return d.toISOString().split('T')[0];
+    }
+
+    return '';
+}
+
 // ====================================
 // FUNCIONES PARA VER DETALLES, ITEMS Y ELIMINAR CONCEPTOS
 // ====================================
 
-function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre, obraId, obraNombre) {
-    const manager = new CatalogosManager();
-    
-    manager.obtenerDetalleConcepto(conceptoId).then(data => {
-        if (data.success && data.concepto) {
-            const concepto = data.concepto;
+function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
+    catalogosManager.obtenerDetalleConcepto(conceptoId)
+        .then(resp => {
+            // Normalizar respuesta
+            let concepto = resp;
+            if (resp && typeof resp === 'object' && ('success' in resp)) {
+                if (resp.success === false) {
+                    Swal.fire('Error', resp.error || resp.message || 'Error al cargar concepto', 'error');
+                    return;
+                }
+                if (resp.concepto) {
+                    concepto = resp.concepto;
+                }
+            }
+
+            const montoTotal = parseFloat(concepto.monto_total) || 0;
+            const totalItems = parseInt(concepto.total_items) || 0;
             
-            let html = `
-                <div class="detail-container">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Código</h6>
-                                <p class="detail-value">${escapeHtml(concepto.codigo_concepto || 'N/A')}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Número Original</h6>
-                                <p class="detail-value">${escapeHtml(concepto.numero_original || 'N/A')}</p>
-                            </div>
-                        </div>
+            // Formatear fechas correctamente (YYYY-MM-DD a DD/MM/YYYY)
+            const formatearFecha = (fecha) => {
+                if (!fecha || fecha === '0000-00-00') return 'N/A';
+                const partes = fecha.split('-');
+                if (partes.length === 3) {
+                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                }
+                return fecha;
+            };
+            
+            // Formatear números
+            const formatearNumero = (valor, decimales = 2, moneda = false) => {
+                if (!valor || isNaN(valor)) return 'N/A';
+                const num = parseFloat(valor);
+                if (moneda) {
+                    return '$' + num.toLocaleString('es-MX', {minimumFractionDigits: decimales, maximumFractionDigits: decimales});
+                }
+                return num.toLocaleString('es-MX', {minimumFractionDigits: decimales, maximumFractionDigits: 3});
+            };
+            
+            // Escapar correctamente los valores
+            const nombreConcepto = String(concepto.nombre_concepto || '').replace(/'/g, "\\'");
+            const catalogoNombreEscaped = String(catalogoNombre || '').replace(/'/g, "\\'");
+            
+            let detalleHtml = `
+                <div class="concepto-simple">
+                    <!-- Información principal -->
+                    <div class="mb-3 text-center">
+                        <h5 class="text-primary">${concepto.codigo_concepto || 'N/A'}</h5>
                     </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Nombre del Concepto</h6>
-                                <p class="detail-value">${escapeHtml(concepto.nombre_concepto || 'N/A')}</p>
-                            </div>
+
+                    <!-- Datos básicos -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span>Unidad:</span>
+                            <strong>${concepto.unidad_medida || 'N/A'}</strong>
                         </div>
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span>Categoría:</span>
+                            <strong>${concepto.categoria || 'N/A'}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span>Subcategoría:</span>
+                            <strong>${concepto.subcategoria || 'N/A'}</strong>
+                        </div>
+                        ${concepto.numero_original ? `
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span>Número:</span>
+                            <strong>${concepto.numero_original}</strong>
+                        </div>
+                        ` : ''}
                     </div>
-                    
+
+                    <!-- Descripción si existe -->
                     ${concepto.descripcion ? `
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Descripción</h6>
-                                <p class="detail-value">${escapeHtml(concepto.descripcion)}</p>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <strong class="text-muted d-block">Descripción:</strong>
+                        <div class="bg-light p-2 rounded small">${concepto.descripcion}</div>
                     </div>
                     ` : ''}
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Categoría</h6>
-                                <p class="detail-value">${escapeHtml(concepto.categoria || 'Sin Categoría')}</p>
+
+                    <!-- ===== NUEVA SECCIÓN: CAMPOS ADICIONALES ===== -->
+                    <div class="mb-3">
+                        <h6 class="text-primary border-bottom pb-2">Detalles del Concepto</h6>
+                        
+                        <!-- Cantidad (NUEVO) -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-sort-numeric-up me-1"></i>Cantidad:</span>
+                            <strong class="text-dark">${formatearNumero(concepto.cantidad, 3)}</strong>
+                        </div>
+                        
+                        <!-- Precio Unitario -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-tag me-1"></i>Precio Unitario:</span>
+                            <strong class="text-success">${formatearNumero(concepto.precio_unitario, 2, true)}</strong>
+                        </div>
+                        
+                        <!-- Importe -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-currency-dollar me-1"></i>Importe:</span>
+                            <strong class="text-success">${formatearNumero(concepto.importe, 2, true)}</strong>
+                        </div>
+                        
+                        <!-- Fecha Inicio -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-calendar me-1"></i>Fecha Inicio:</span>
+                            <strong>${formatearFecha(concepto.fecha_inicio)}</strong>
+                        </div>
+                        
+                        <!-- Fecha Fin -->
+                        <div class="d-flex justify-content-between border-bottom py-1">
+                            <span><i class="bi bi-calendar me-1"></i>Fecha Fin:</span>
+                            <strong>${formatearFecha(concepto.fecha_fin)}</strong>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Estadísticas de items -->
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="text-primary fw-bold">${totalItems}</div>
+                                <small class="text-muted">Items</small>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Subcategoría</h6>
-                                <p class="detail-value">${escapeHtml(concepto.subcategoria || 'General')}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Unidad de Medida</h6>
-                                <p class="detail-value">${escapeHtml(concepto.unidad_medida || 'N/A')}</p>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="text-success fw-bold">$${montoTotal.toLocaleString('es-MX', {minimumFractionDigits: 2})}</div>
+                                <small class="text-muted">Total en items</small>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="detail-section">
-                                <h6 class="detail-label">Información Adicional</h6>
-                                <ul class="list-unstyled">
-                                    <li><strong>ID:</strong> ${concepto.id}</li>
-                                    <li><strong>Catálogo:</strong> ${escapeHtml(catalogoNombre)}</li>
-                                    ${obraNombre ? `<li><strong>Obra:</strong> ${escapeHtml(obraNombre)}</li>` : ''}
-                                    <li><strong>Fecha de Creación:</strong> ${concepto.fecha_creacion ? new Date(concepto.fecha_creacion).toLocaleDateString('es-MX') : 'N/A'}</li>
-                                </ul>
-                            </div>
-                        </div>
+
+                    <!-- Botones -->
+                    <div class="gap-2 d-flex justify-content-center">
+                        <button class="btn btn-sm" style="background-color:#17a2b8;color:white;border:none;" 
+                            onclick="verItemsConcepto(${conceptoId}, '${nombreConcepto}', ${catalogoId}, '${catalogoNombreEscaped}')">
+                            <i class="bi bi-list-ul me-1"></i>Ver Items
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="Swal.close()">
+                            <i class="bi bi-x-circle me-1"></i>Cerrar
+                        </button>
                     </div>
                 </div>
             `;
             
             Swal.fire({
-                title: 'Detalles del Concepto',
-                html: html,
-                icon: 'info',
-                width: '600px',
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#0d6efd'
+                title: 'Detalle del Concepto',
+                html: detalleHtml,
+                width: '90%',
+                maxWidth: '450px',
+                showCloseButton: true,
+                showConfirmButton: false
             });
-        } else {
-            Swal.fire('Error', 'No se pudo cargar los detalles del concepto', 'error');
-        }
-    }).catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Error', 'Error al cargar los detalles: ' + error.message, 'error');
-    });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'No se pudo cargar el detalle del concepto', 'error');
+        });
 }
 
 /**
  * Mostrar items del concepto desde orden_compra_items
  */
+// ====================================
+// FUNCIÓN CORREGIDA - VER ITEMS
+// ====================================
 function verItemsConcepto(conceptoId, conceptoNombre, catalogoId, catalogoNombre) {
-    // Construir la URL para obtener los items
-    const url = `/orders/see_oc.php?concepto_id=${conceptoId}`;
+    // Mostrar loading
+    Swal.fire({
+        title: 'Cargando items...',
+        html: '<div class="text-center"><div class="spinner-border text-primary"></div><p class="mt-2">Por favor espere</p></div>',
+        allowOutsideClick: false,
+        showConfirmButton: false
+    });
     
-    // Crear modal personalizado para mostrar items
-    let html = `
-        <div class="items-loader">
-            <div class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando items...</span>
-                </div>
-                <p class="mt-2">Cargando items del concepto...</p>
-            </div>
-        </div>
-    `;
-    
-    const modalHtml = Swal.fire({
-        title: 'Items del Concepto',
-        subtitle: escapeHtml(conceptoNombre),
-        html: html,
-        icon: 'info',
-        width: '900px',
-        confirmButtonText: 'Cerrar',
-        confirmButtonColor: '#0d6efd',
-        didOpen: () => {
-            // Cargar items via AJAX
-            fetch(`/api/get_concepto_items.php?concepto_id=${conceptoId}`)
-                .then(response => response.json())
-                .then(data => {
-                    let itemsHtml = '';
+    // CORRECCIÓN: Ruta absoluta desde la raíz
+    fetch(`/api/get_concepto_items.php?concepto_id=${conceptoId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            Swal.close();
+            
+            if (data.success && data.items && data.items.length > 0) {
+                let itemsHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Descripción</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">Unidad</th>
+                                    <th class="text-end">Precio Unitario</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th class="text-center">Orden</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                let totalGeneral = 0;
+                
+                data.items.forEach(item => {
+                    const cantidad = parseFloat(item.cantidad) || 0;
+                    const precio = parseFloat(item.precio_unitario) || 0;
+                    const subtotal = cantidad * precio;
+                    totalGeneral += subtotal;
                     
-                    if (data.success && data.items && data.items.length > 0) {
-                        itemsHtml = `
-                            <div class="table-responsive">
-                                <table class="table table-hover table-sm">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Descripción</th>
-                                            <th class="text-center">Cantidad</th>
-                                            <th class="text-center">Unidad</th>
-                                            <th class="text-end">Precio Unitario</th>
-                                            <th class="text-end">Subtotal</th>
-                                            <th class="text-center">Orden Compra</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${data.items.map(item => `
-                                            <tr>
-                                                <td>${escapeHtml(item.descripcion || '')}</td>
-                                                <td class="text-center">${parseFloat(item.cantidad).toFixed(3)}</td>
-                                                <td class="text-center">${escapeHtml(item.unidad_medida || 'N/A')}</td>
-                                                <td class="text-end">$${parseFloat(item.precio_unitario).toFixed(2)}</td>
-                                                <td class="text-end fw-bold">$${parseFloat(item.subtotal).toFixed(2)}</td>
-                                                <td class="text-center">
-                                                    <span class="badge bg-success">${item.folio_oc || 'OC-' + item.orden_compra_id}</span>
-                                                </td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                    <tfoot class="table-light fw-bold">
-                                        <tr>
-                                            <td colspan="4" class="text-end">Total:</td>
-                                            <td class="text-end">$${data.items.reduce((sum, item) => sum + parseFloat(item.subtotal), 0).toFixed(2)}</td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        `;
-                    } else {
-                        itemsHtml = `
-                            <div class="alert alert-info text-center">
-                                <i class="bi bi-inbox display-1"></i>
-                                <p class="mt-2">No hay items asignados a este concepto</p>
-                            </div>
-                        `;
-                    }
-                    
-                    // Actualizar el contenido del modal
-                    document.querySelector('.swal2-html-container').innerHTML = itemsHtml;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.querySelector('.swal2-html-container').innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            Error al cargar los items: ${error.message}
-                        </div>
+                    itemsHtml += `
+                        <tr>
+                            <td>${escapeHtml(item.descripcion || '')}</td>
+                            <td class="text-center">${cantidad.toFixed(3)}</td>
+                            <td class="text-center">${escapeHtml(item.unidad_medida || 'N/A')}</td>
+                            <td class="text-end">$${precio.toFixed(2)}</td>
+                            <td class="text-end fw-bold">$${subtotal.toFixed(2)}</td>
+                            <td class="text-center">
+                                <span class="badge bg-success">${item.folio_oc || 'OC-' + item.orden_compra_id}</span>
+                            </td>
+                        </tr>
                     `;
                 });
-        }
-    });
+                
+                itemsHtml += `
+                            </tbody>
+                            <tfoot class="table-light fw-bold">
+                                <tr>
+                                    <td colspan="4" class="text-end">Total:</td>
+                                    <td class="text-end">$${totalGeneral.toFixed(2)}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                `;
+                
+                Swal.fire({
+                    title: `Items de: ${conceptoNombre}`,
+                    html: itemsHtml,
+                    width: '90%',
+                    maxWidth: '1000px',
+                    confirmButtonText: 'Cerrar',
+                    confirmButtonColor: '#0d6efd'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Sin items',
+                    html: `
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox display-1 text-muted"></i>
+                            <p class="mt-3">No hay items asignados a este concepto</p>
+                            <small class="text-muted">Los items aparecen cuando se aprueban órdenes de compra</small>
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'Cerrar'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                html: `
+                    <p>No se pudieron cargar los items</p>
+                    <small class="text-muted">${error.message}</small>
+                    <p class="mt-3"><strong>Verifica:</strong> El archivo API debe existir en la lista de conceptos.</p>
+                `,
+                confirmButtonText: 'Cerrar'
+            });
+        });
 }
 
-/**
- * Eliminar concepto de forma permanente
- */
-function eliminarConcepto(conceptoId, catalogoId, catalogoNombre, obraId, obraNombre) {
-    Swal.fire({
-        title: '¿Eliminar concepto?',
-        text: 'Esta acción eliminará el concepto de forma permanente. Esta acción no se puede deshacer.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Mostrar loading
-            Swal.fire({
-                title: 'Eliminando...',
-                html: 'Por favor espere mientras se elimina el concepto',
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            
-            // Enviar solicitud de eliminación
-            fetch('projects/catalogos_manager.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    action: 'eliminar_concepto',
-                    concepto_id: conceptoId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Eliminado',
-                        text: 'El concepto ha sido eliminado correctamente',
-                        icon: 'success',
-                        confirmButtonColor: '#0d6efd'
-                    }).then(() => {
-                        // Recargar la página para reflejar los cambios
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire('Error', data.message || 'No se pudo eliminar el concepto', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Error al eliminar: ' + error.message, 'error');
-            });
-        }
-    });
-}
 
 /**
  * Función helper para escapar HTML

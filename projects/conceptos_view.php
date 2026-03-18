@@ -39,7 +39,10 @@ if ($obra_id > 0) {
     $stmt_obra->execute();
     $obra_info = $stmt_obra->get_result()->fetch_assoc();
 }
-// Obtener conceptos del catálogo con conteo de items y monto total
+
+// Obtener conceptos del catálogo ordenados jerárquicamente
+// NOTA: contabilizamos y sumamos items directamente desde `orden_compra_items`
+// sólo cuando la orden asociada tiene estado 'pagado'. No hacemos transferencias.
 $sql_conceptos = "SELECT c.*, 
                                  (SELECT COUNT(*) FROM orden_compra_items oci JOIN ordenes_compra oc ON oci.orden_compra_id = oc.id WHERE oci.concepto_id = c.id AND oc.estado = 'pagado') as total_items,
                                  (SELECT COALESCE(SUM(oci.subtotal), 0) 
@@ -47,23 +50,17 @@ $sql_conceptos = "SELECT c.*,
                                     WHERE oci.concepto_id = c.id AND oc.estado = 'pagado') as monto_total
                                  FROM conceptos c 
                                  WHERE c.catalogo_id = ? 
-                                 ORDER BY 
-                                     CASE 
-                                         WHEN c.categoria IS NULL THEN 1
-                                         ELSE 0 
-                                     END,
-                                     CAST(c.numero_original AS UNSIGNED) ASC,
-                                     c.codigo_concepto ASC";
+                                 ORDER BY c.id ASC";
 
 $conceptos = null;
 $stmt_conceptos = $conn->prepare($sql_conceptos);
 
 if ($stmt_conceptos) {
     $stmt_conceptos->bind_param("i", $catalogo_id);
-
+    
     if ($stmt_conceptos->execute()) {
         $conceptos = $stmt_conceptos->get_result();
-
+        
         if (!$conceptos) {
             error_log("Error al obtener resultados: " . $stmt_conceptos->error);
             $conceptos = null;
@@ -136,6 +133,10 @@ $stmt_stats->execute();
 $stats = $stmt_stats->get_result()->fetch_assoc();
 
 
+// No se realiza transferencia automática a una tabla separada.
+// Ahora los items asignados a conceptos se leen directamente desde
+// `orden_compra_items` cuando la orden asociada tiene `estado = 'pagado'`.
+
 // Organizar conceptos en estructura jerárquica
 $estructura_jerarquica = [];
 $conceptos_sin_categoria = [];
@@ -145,7 +146,7 @@ if ($conceptos) {
     while ($concepto = $conceptos->fetch_assoc()) {
         $categoria = $concepto['categoria'] ?: 'Sin Categoría';
         $subcategoria = $concepto['subcategoria'] ?: 'General';
-
+        
         if ($categoria === 'Sin Categoría') {
             $conceptos_sin_categoria[] = $concepto;
         } else {
@@ -163,9 +164,28 @@ if ($conceptos) {
 }
 ?>
 
+<?php
+// ============================================================
+// HELPER: detectar si un codigo_concepto es categoría/subcategoría
+// ============================================================
+function getTipoConcepto($codigo) {
+    $c = trim($codigo);
+    // Nivel 1: I, II, III, IV... (solo romanos)
+    if (preg_match('/^[IVXLCDM]+$/i', $c)) return 'nivel1';
+    // Nivel 2 romano: I.1, II.3, etc.
+    if (preg_match('/^[IVXLCDM]+\.\d+$/i', $c)) return 'nivel2';
+    // Nivel 2 numérico: 1.2, 11.1, etc.
+    if (preg_match('/^\d+\.\d+$/', $c)) return 'nivel2';
+    // Nivel 3 numérico: 1.2.1, 11.2.3, etc.
+    if (preg_match('/^\d+\.\d+\.\d+$/', $c)) return 'nivel3';
+    // Nivel 3 romano+número+número: II.3.2, I.2.1, etc.
+    if (preg_match('/^[IVXLCDM]+\.\d+\.\d+$/i', $c)) return 'nivel3';
+    return 'concepto';
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,75 +193,55 @@ if ($conceptos) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="/assets/styles/details.css">
     <style>
         .item-orden-pagada {
             border-left: 4px solid #28a745;
             background-color: rgba(40, 167, 69, 0.05);
         }
-
         .badge-pagado {
             background-color: #28a745;
         }
-
         .btn-ordenes-pagadas {
             background-color: #ffc107;
             border-color: #ffc107;
             color: #212529;
         }
-
         .btn-ordenes-pagadas:hover {
             background-color: #e0a800;
             border-color: #d39e00;
             color: #212529;
         }
 
-        .filter-badge {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .filter-badge.active {
-            background-color: #0d6efd !important;
-            color: white !important;
-        }
-
         .concepto-badge {
             min-width: 80px;
             text-align: center;
         }
-
         .action-buttons .btn-group .btn {
             padding: 0.25rem 0.5rem;
             font-size: 0.875rem;
         }
-
         .btn-inf {
-            background-color: gray;
+            background-color: #17a2b8;
             color: white;
             border: none;
         }
-
         .btn-ed {
             background-color: #ffc107;
             color: #212529;
             border: none;
         }
-
         .btn-del {
             background-color: #dc3545;
             color: white;
             border: none;
         }
-
         .status-badge {
             font-size: 0.7rem;
             padding: 0.2rem 0.5rem;
         }
     </style>
 </head>
-
 <body>
     <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -249,7 +249,7 @@ if ($conceptos) {
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
-                <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
                 <a href="list_project.php"> Registro de Obras</a>
                 <span>/</span>
@@ -257,7 +257,7 @@ if ($conceptos) {
                 <span>/</span>
                 <span>Catalogo - <?= htmlspecialchars($catalogo['nombre_catalogo']) ?></span>
             </div>
-
+            
             <div class="row align-items-end">
                 <div class="col-lg-8">
                     <h1 class="hero-title"><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></h1>
@@ -285,17 +285,7 @@ if ($conceptos) {
                     </div>
                     <h3>Información General</h3>
                 </div>
-                <div class="filter-container">
-                    <span class="badge bg-primary filter-badge active" onclick="toggleFilter('todos')">
-                        <i class="bi bi-check-all"></i> Todos los conceptos
-                    </span>
-                    <span class="badge bg-success filter-badge" onclick="toggleFilter('conItems')">
-                        <i class="bi bi-box"></i> Con items
-                    </span>
-                    <span class="badge bg-secondary filter-badge" onclick="toggleFilter('sinItems')">
-                        <i class="bi bi-box-x"></i> Sin items
-                    </span>
-                </div>
+
             </div>
 
             <div class="budget-stats">
@@ -322,11 +312,21 @@ if ($conceptos) {
         <!-- BOTONES DE ACCIÓN -->
         <div class="budget-dashboard">
             <div class="dashboard-header">
-                <div class="dashboard-title">
-                    <div class="title-icon">
-                        <i class="bi bi-list-ul"></i>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="dashboard-title mb-0">
+                        <div class="title-icon">
+                            <i class="bi bi-list-ul"></i>
+                        </div>
+                        <h3>Conceptos</h3>
                     </div>
-                    <h3>Conceptos</h3>
+                    <select id="filtroItems" class="form-select form-select-sm" style="width:auto;">
+                        <option value="todos">-- Todos los conceptos --</option>
+                        <option value="conItems">Con items</option>
+                        <option value="sinItems">Sin items</option>
+                    </select>
+                    <button class="btn btn-sm" style="background-color:#1a7a4a;color:white;border:none;" onclick="toggleFilter(document.getElementById('filtroItems').value)">
+                        <i class="bi bi-funnel"></i> Filtrar
+                    </button>
                 </div>
                 <div>
                     <button class="btn btn-success btn-sm" onclick="mostrarFormConcepto()">
@@ -340,7 +340,7 @@ if ($conceptos) {
 
             <!-- ESTRUCTURA JERÁRQUICA DE CONCEPTOS -->
             <?php if (!empty($estructura_jerarquica) || !empty($conceptos_sin_categoria)): ?>
-
+                
                 <!-- CONCEPTOS ORGANIZADOS POR CATEGORÍA Y SUBCATEGORÍA -->
                 <?php foreach ($estructura_jerarquica as $categoria => $subcategorias): ?>
                     <?php
@@ -354,9 +354,9 @@ if ($conceptos) {
                         }
                     }
                     ?>
-
-                    <div class="categoria-section mb-4 concepto-container"
-                        data-total-items="<?= $total_items_categoria ?>">
+                    
+                    <div class="categoria-section mb-4 concepto-container" 
+                         data-total-items="<?= $total_items_categoria ?>">
                         <div class="categoria-header p-3 rounded" style="background: #f8fafc;border: 1px solid var(--border);">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center">
@@ -371,14 +371,14 @@ if ($conceptos) {
                                 </div>
                             </div>
                         </div>
-
+                        
                         <?php foreach ($subcategorias as $subcategoria => $conceptos_sub): ?>
                             <?php
                             // Calcular total para esta subcategoría
                             $total_items_sub = array_sum(array_column($conceptos_sub, 'total_items'));
                             $total_monto_sub = array_sum(array_column($conceptos_sub, 'monto_total'));
                             ?>
-
+                            
                             <div class="subcategoria-section ms-4 mt-3">
                                 <?php if (count($subcategorias) > 1 || $subcategoria !== 'General'): ?>
                                     <div class="subcategoria-header p-2 rounded mb-2" style="background: #f8fafc;border: 1px solid var(--border);">
@@ -396,93 +396,144 @@ if ($conceptos) {
                                         </div>
                                     </div>
                                 <?php endif; ?>
-
+                                
                                 <div class="conceptos-container">
                                     <?php foreach ($conceptos_sub as $concepto): ?>
-                                        <div class="concepto-item card mb-2 border-0 shadow-sm"
-                                            data-concepto-id="<?= $concepto['id'] ?>"
-                                            data-tiene-items="<?= $concepto['total_items'] > 0 ? 'si' : 'no' ?>">
-                                            <div class="card-body <?= $concepto['total_items'] > 0 ? 'item-orden-pagada' : '' ?>">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-8">
-                                                        <div class="d-flex align-items-start mb-2">
-                                                            <div class="concepto-badge bg-primary text-white rounded px-2 py-1 me-3">
-                                                                <small class="fw-bold"><?= htmlspecialchars($concepto['codigo_concepto']) ?></small>
-                                                            </div>
-                                                            <?php if ($concepto['numero_original']): ?>
-                                                                <small class="text-muted align-self-center">
-                                                                    #<?= htmlspecialchars($concepto['numero_original']) ?>
-                                                                </small>
-                                                            <?php endif; ?>
-                                                        </div>
+                                        <?php $tipoCodigo = getTipoConcepto($concepto['codigo_concepto']); ?>
+                                        
+                                        <?php if ($tipoCodigo === 'nivel2'): ?>
+                                            <!-- TÍTULO NIVEL 2 -->
+                                            <div class="subtitulo-nivel2 d-flex align-items-center px-2 py-2 mt-3 mb-1"
+                                                 style="background:linear-gradient(90deg,#e8f4fd 0%,transparent 100%);border-left:3px solid #17a2b8;border-radius:0 4px 4px 0;">
+                                                <i class="bi bi-folder2-open text-info me-2"></i>
+                                                <span class="fw-semibold text-secondary" style="font-size:0.85rem;">
+                                                    <?= htmlspecialchars($concepto['codigo_concepto']) ?>
+                                                    <?php if ($concepto['nombre_concepto']): ?>
+                                                        &nbsp;—&nbsp;<?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
 
-                                                        <h6 class="concepto-nombre mb-2 text-dark">
-                                                            <?= htmlspecialchars($concepto['nombre_concepto']) ?>
-                                                        </h6>
+                                        <?php elseif ($tipoCodigo === 'nivel3'): ?>
+                                            <!-- TÍTULO NIVEL 3 -->
+                                            <div class="subtitulo-nivel3 d-flex align-items-center px-2 py-1 mt-2 mb-1 ms-3"
+                                                 style="background:linear-gradient(90deg,#f0f9f0 0%,transparent 100%);border-left:2px solid #6c757d;border-radius:0 4px 4px 0;">
+                                                <i class="bi bi-file-earmark-text text-secondary me-2" style="font-size:0.75rem;"></i>
+                                                <span class="text-muted" style="font-size:0.8rem;">
+                                                    <?= htmlspecialchars($concepto['codigo_concepto']) ?>
+                                                    <?php if ($concepto['nombre_concepto']): ?>
+                                                        &nbsp;—&nbsp;<?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
 
-                                                        <div class="concepto-meta d-flex align-items-center">
-                                                            <?php if ($concepto['unidad_medida']): ?>
-                                                                <span class="badge bg-light text-dark me-2">
-                                                                    <i class="bi bi-rulers me-1"></i>
-                                                                    <?= htmlspecialchars($concepto['unidad_medida']) ?>
-                                                                </span>
-                                                            <?php endif; ?>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div class="concepto-stats text-end">
-                                                                <div class="mb-2">
-                                                                    <?php if ($concepto['total_items'] > 0): ?>
-                                                                        <span class="badge bg-info">
-                                                                            <i class="bi bi-box me-1"></i>
-                                                                            <?= $concepto['total_items'] ?> items
-                                                                        </span>
-                                                                    <?php else: ?>
-                                                                        <span class="badge bg-secondary">
-                                                                            <i class="bi bi-box me-1"></i>
-                                                                            Sin items
-                                                                        </span>
-                                                                    <?php endif; ?>
+                                        <?php else: ?>
+                                            <!-- CONCEPTO NORMAL -->
+                                            <div class="concepto-item card mb-2 border-0 shadow-sm" 
+                                                 data-concepto-id="<?= $concepto['id'] ?>"
+                                                 data-tiene-items="<?= $concepto['total_items'] > 0 ? 'si' : 'no' ?>">
+                                                <div class="card-body <?= $concepto['total_items'] > 0 ? 'item-orden-pagada' : '' ?>">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-8">
+                                                            <div class="d-flex align-items-start mb-2">
+                                                                <div class="concepto-badge bg-primary text-white rounded px-2 py-1 me-3">
+                                                                    <small class="fw-bold"><?= htmlspecialchars($concepto['codigo_concepto']) ?></small>
                                                                 </div>
-                                                                <div>
-                                                                    <span class="fs-6 fw-bold <?= $concepto['total_items'] > 0 ? 'text-success' : 'text-muted' ?>">
-                                                                        $<?= number_format($concepto['monto_total'], 2) ?>
+                                                                <?php if ($concepto['numero_original']): ?>
+                                                                    <small class="text-muted align-self-center">
+                                                                        #<?= htmlspecialchars($concepto['numero_original']) ?>
+                                                                    </small>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <h6 class="concepto-nombre mb-2 text-dark">
+                                                                <?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                                            </h6>
+                                                            <div class="concepto-meta d-flex align-items-center flex-wrap gap-1">
+                                                                <?php if ($concepto['unidad_medida']): ?>
+                                                                    <span class="badge bg-light text-dark me-2">
+                                                                        <i class="bi bi-rulers me-1"></i>
+                                                                        <?= htmlspecialchars($concepto['unidad_medida']) ?>
                                                                     </span>
-                                                                    <?php if ($concepto['total_items'] > 0): ?>
-                                                                        <div><small class="text-muted">Monto total</small></div>
-                                                                    <?php endif; ?>
-                                                                </div>
+                                                                <?php endif; ?>
                                                             </div>
-                                                            <div class="action-buttons ms-3">
-                                                                <div class="btn-group">
-                                                                    <button class="btn-inf btn-sm"
-                                                                        onclick="verDetalleConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['codigo_concepto'])) ?>')"
-                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles">
-                                                                        <i class="bi bi-eye"></i>
-                                                                    </button>
-                                                                    <button class="btn-inf btn-sm"
-                                                                        onclick="verItemsConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['nombre_concepto'])) ?>')"
-                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Items">
-                                                                        <i class="bi bi-list-ul"></i>
-                                                                    </button>
-                                                                    <button class="btn-del btn-sm"
-                                                                        onclick="eliminarConceptoView(<?= $concepto['id'] ?>, <?= $catalogo_id ?>, '<?= htmlspecialchars(addslashes($catalogo['nombre_catalogo'])) ?>', <?= $obra_id ?: 'null' ?>, '<?= $obra_info ? htmlspecialchars(addslashes($obra_info['nombre_obra'])) : '' ?>')"
-                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Concepto">
-                                                                        <i class="bi bi-trash3"></i>
-                                                                    </button>
+                                                            <div class="concepto-extra mt-2 d-flex flex-wrap gap-2">
+                                                                <?php if (!empty($concepto['cantidad'])): ?>
+                                                                    <small class="text-muted">
+                                                                        <i class="bi bi-sort-numeric-up me-1"></i>
+                                                                        Cantidad: <strong class="text-dark"><?= number_format($concepto['cantidad'], 3) ?></strong>
+                                                                    </small>
+                                                                <?php endif; ?>
+                                                                <?php if (!empty($concepto['precio_unitario'])): ?>
+                                                                    <small class="text-muted">
+                                                                        <i class="bi bi-tag me-1"></i>
+                                                                        P.U.: <strong class="text-dark">$<?= number_format($concepto['precio_unitario'], 2) ?></strong>
+                                                                    </small>
+                                                                <?php endif; ?>
+                                                                <?php if (!empty($concepto['importe'])): ?>
+                                                                    <small class="text-muted">
+                                                                        <i class="bi bi-currency-dollar me-1"></i>
+                                                                        Importe: <strong class="text-dark">$<?= number_format($concepto['importe'], 2) ?></strong>
+                                                                    </small>
+                                                                <?php endif; ?>
+                                                                <?php if (!empty($concepto['fecha_inicio']) || !empty($concepto['fecha_fin'])): ?>
+                                                                    <small class="text-muted">
+                                                                        <i class="bi bi-calendar-range me-1"></i>
+                                                                        <?= !empty($concepto['fecha_inicio']) ? date('d/m/Y', strtotime($concepto['fecha_inicio'])) : '—' ?>
+                                                                        →
+                                                                        <?= !empty($concepto['fecha_fin']) ? date('d/m/Y', strtotime($concepto['fecha_fin'])) : '—' ?>
+                                                                    </small>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <div class="concepto-stats text-end">
+                                                                    <div class="mb-2">
+                                                                        <?php if ($concepto['total_items'] > 0): ?>
+                                                                            <span class="badge bg-info">
+                                                                                <i class="bi bi-box me-1"></i>
+                                                                                <?= $concepto['total_items'] ?> items
+                                                                            </span>
+                                                                        <?php else: ?>
+                                                                            <span class="badge bg-secondary">
+                                                                                <i class="bi bi-box me-1"></i>
+                                                                                Sin items
+                                                                            </span>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span class="fs-6 fw-bold <?= $concepto['total_items'] > 0 ? 'text-success' : 'text-muted' ?>">
+                                                                            $<?= number_format($concepto['monto_total'], 2) ?>
+                                                                        </span>
+                                                                        <?php if ($concepto['total_items'] > 0): ?>
+                                                                            <div><small class="text-muted">Monto total</small></div>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="action-buttons ms-3">
+                                                                    <div class="btn-group">
+                                                                        <button class="btn-inf btn-sm" 
+                                                                                onclick="verDetalleConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['codigo_concepto'])) ?>')"
+                                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles">
+                                                                            <i class="bi bi-eye"></i>
+                                                                        </button>
+                                                                        <button class="btn-del btn-sm" 
+                                                                                onclick="eliminarConceptoView(<?= $concepto['id'] ?>, <?= $catalogo_id ?>, '<?= htmlspecialchars(addslashes($catalogo['nombre_catalogo'])) ?>', <?= $obra_id ?: 'null' ?>, '<?= $obra_info ? htmlspecialchars(addslashes($obra_info['nombre_obra'])) : '' ?>')"
+                                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Concepto">
+                                                                            <i class="bi bi-trash3"></i>
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
-                                </div>
                             </div>
-                        <?php endforeach; ?>
+                                    </div>
+                                <?php endforeach; ?>
                     </div>
                 <?php endforeach; ?>
 
@@ -508,124 +559,159 @@ if ($conceptos) {
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div class="conceptos-container mt-3">
                             <?php foreach ($conceptos_sin_categoria as $concepto): ?>
-                                <div class="concepto-item card mb-2 border-0 shadow-sm"
-                                    data-concepto-id="<?= $concepto['id'] ?>"
-                                    data-tiene-items="<?= $concepto['total_items'] > 0 ? 'si' : 'no' ?>">
-                                    <div class="card-body <?= $concepto['total_items'] > 0 ? 'item-orden-pagada' : '' ?>">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-8">
-                                                <div class="d-flex align-items-start mb-2">
-                                                    <div class="concepto-badge bg-secondary text-white rounded px-2 py-1 me-3">
-                                                        <small class="fw-bold"><?= htmlspecialchars($concepto['codigo_concepto']) ?></small>
+                                <?php $tipoCodigo = getTipoConcepto($concepto['codigo_concepto']); ?>
+
+                                <?php if ($tipoCodigo === 'nivel2'): ?>
+                                    <!-- TÍTULO NIVEL 2 -->
+                                    <div class="subtitulo-nivel2 d-flex align-items-center px-2 py-2 mt-3 mb-1"
+                                         style="background:linear-gradient(90deg,#e8f4fd 0%,transparent 100%);border-left:3px solid #17a2b8;border-radius:0 4px 4px 0;">
+                                        <i class="bi bi-folder2-open text-info me-2"></i>
+                                        <span class="fw-semibold text-secondary" style="font-size:0.85rem;">
+                                            <?= htmlspecialchars($concepto['codigo_concepto']) ?>
+                                            <?php if ($concepto['nombre_concepto']): ?>
+                                                &nbsp;—&nbsp;<?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                            <?php endif; ?>
+                                        </span>
+                                    </div>
+
+                                <?php elseif ($tipoCodigo === 'nivel3'): ?>
+                                    <!-- TÍTULO NIVEL 3 -->
+                                    <div class="subtitulo-nivel3 d-flex align-items-center px-2 py-1 mt-2 mb-1 ms-3"
+                                         style="background:linear-gradient(90deg,#f0f9f0 0%,transparent 100%);border-left:2px solid #6c757d;border-radius:0 4px 4px 0;">
+                                        <i class="bi bi-file-earmark-text text-secondary me-2" style="font-size:0.75rem;"></i>
+                                        <span class="text-muted" style="font-size:0.8rem;">
+                                            <?= htmlspecialchars($concepto['codigo_concepto']) ?>
+                                            <?php if ($concepto['nombre_concepto']): ?>
+                                                &nbsp;—&nbsp;<?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                            <?php endif; ?>
+                                        </span>
+                                    </div>
+
+                                <?php else: ?>
+                                    <!-- CONCEPTO NORMAL -->
+                                    <div class="concepto-item card mb-2 border-0 shadow-sm" 
+                                         data-concepto-id="<?= $concepto['id'] ?>"
+                                         data-tiene-items="<?= $concepto['total_items'] > 0 ? 'si' : 'no' ?>">
+                                        <div class="card-body <?= $concepto['total_items'] > 0 ? 'item-orden-pagada' : '' ?>">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-8">
+                                                    <div class="d-flex align-items-start mb-2">
+                                                        <div class="concepto-badge bg-secondary text-white rounded px-2 py-1 me-3">
+                                                            <small class="fw-bold"><?= htmlspecialchars($concepto['codigo_concepto']) ?></small>
+                                                        </div>
+                                                        <?php if ($concepto['numero_original']): ?>
+                                                            <small class="text-muted align-self-center">
+                                                                #<?= htmlspecialchars($concepto['numero_original']) ?>
+                                                            </small>
+                                                        <?php endif; ?>
                                                     </div>
-                                                    <?php if ($concepto['numero_original']): ?>
-                                                        <small class="text-muted align-self-center">
-                                                            #<?= htmlspecialchars($concepto['numero_original']) ?>
-                                                        </small>
+                                                    <h6 class="concepto-nombre mb-1 text-dark">
+                                                        <?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                                    </h6>
+                                                    <?php if ($concepto['descripcion']): ?>
+                                                        <p class="concepto-descripcion text-muted mb-2 small">
+                                                            <?= htmlspecialchars($concepto['descripcion']) ?>
+                                                        </p>
                                                     <?php endif; ?>
-                                                </div>
-
-                                                <h6 class="concepto-nombre mb-1 text-dark">
-                                                    <?= htmlspecialchars($concepto['nombre_concepto']) ?>
-                                                </h6>
-
-                                                <?php if ($concepto['descripcion']): ?>
-                                                    <p class="concepto-descripcion text-muted mb-2 small">
-                                                        <?= htmlspecialchars($concepto['descripcion']) ?>
-                                                    </p>
-                                                <?php endif; ?>
-
-                                                <div class="concepto-meta d-flex align-items-center">
-                                                    <?php if ($concepto['unidad_medida']): ?>
-                                                        <span class="badge bg-light text-dark me-2">
-                                                            <i class="bi bi-rulers me-1"></i>
-                                                            <?= htmlspecialchars($concepto['unidad_medida']) ?>
-                                                        </span>
-                                                    <?php endif; ?>
-                                                    <?php if ($concepto['total_items'] > 0): ?>
-                                                        <span class="badge bg-success">
-                                                            <i class="bi bi-box me-1"></i>
-                                                            <?= $concepto['total_items'] ?> items asignados
-                                                        </span>
-                                                    <?php endif; ?>
-                                                    <?php if ($tabla_ordenes_compra_existe): ?>
-                                                        <?php
-                                                        // Contar órdenes de compra relacionadas con este concepto
-                                                        $sql_ordenes = "SELECT COUNT(*) as total_ordenes 
-                                                                       FROM ordenes_compra 
-                                                                       WHERE concepto_id = ? 
-                                                                       AND estado = 'pagado'";
-                                                        $stmt_ordenes = $conn->prepare($sql_ordenes);
-                                                        $stmt_ordenes->bind_param("i", $concepto['id']);
-                                                        $stmt_ordenes->execute();
-                                                        $result_ordenes = $stmt_ordenes->get_result();
-                                                        $ordenes_data = $result_ordenes->fetch_assoc();
-                                                        $total_ordenes_pagadas = $ordenes_data['total_ordenes'] ?? 0;
-                                                        ?>
-                                                        <?php if ($total_ordenes_pagadas > 0): ?>
-                                                            <span class="badge badge-pagado status-badge">
-                                                                <i class="bi bi-cash-coin me-1"></i>
-                                                                <?= $total_ordenes_pagadas ?> OC pagadas
+                                                    <div class="concepto-meta d-flex align-items-center flex-wrap gap-1">
+                                                        <?php if ($concepto['unidad_medida']): ?>
+                                                            <span class="badge bg-light text-dark me-2">
+                                                                <i class="bi bi-rulers me-1"></i>
+                                                                <?= htmlspecialchars($concepto['unidad_medida']) ?>
                                                             </span>
                                                         <?php endif; ?>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div class="concepto-stats text-end">
-                                                        <div class="mb-2">
-                                                            <?php if ($concepto['total_items'] > 0): ?>
-                                                                <span class="badge bg-info">
-                                                                    <i class="bi bi-box me-1"></i>
-                                                                    <?= $concepto['total_items'] ?> items
-                                                                </span>
-                                                            <?php else: ?>
-                                                                <span class="badge bg-secondary">
-                                                                    <i class="bi bi-box me-1"></i>
-                                                                    Sin items
+                                                        <?php if ($concepto['total_items'] > 0): ?>
+                                                            <span class="badge bg-success">
+                                                                <i class="bi bi-box me-1"></i>
+                                                                <?= $concepto['total_items'] ?> items asignados
+                                                            </span>
+                                                        <?php endif; ?>
+                                                        <?php if ($tabla_ordenes_compra_existe): ?>
+                                                            <?php
+                                                            $sql_ordenes = "SELECT COUNT(*) as total_ordenes FROM ordenes_compra WHERE concepto_id = ? AND estado = 'pagado'";
+                                                            $stmt_ordenes = $conn->prepare($sql_ordenes);
+                                                            $stmt_ordenes->bind_param("i", $concepto['id']);
+                                                            $stmt_ordenes->execute();
+                                                            $result_ordenes = $stmt_ordenes->get_result();
+                                                            $ordenes_data = $result_ordenes->fetch_assoc();
+                                                            $total_ordenes_pagadas = $ordenes_data['total_ordenes'] ?? 0;
+                                                            ?>
+                                                            <?php if ($total_ordenes_pagadas > 0): ?>
+                                                                <span class="badge badge-pagado status-badge">
+                                                                    <i class="bi bi-cash-coin me-1"></i>
+                                                                    <?= $total_ordenes_pagadas ?> OC pagadas
                                                                 </span>
                                                             <?php endif; ?>
-                                                        </div>
-                                                        <div>
-                                                            <span class="fs-6 fw-bold <?= $concepto['total_items'] > 0 ? 'text-success' : 'text-muted' ?>">
-                                                                $<?= number_format($concepto['monto_total'], 2) ?>
-                                                            </span>
-                                                        </div>
+                                                        <?php endif; ?>
                                                     </div>
-                                                    <div class="action-buttons ms-3">
-                                                        <div class="btn-group">
-                                                            <button class="btn-inf btn-sm"
-                                                                onclick="verDetalleConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['codigo_concepto'])) ?>')"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles">
-                                                                <i class="bi bi-eye"></i>
-                                                            </button>
-                                                            <button class="btn-inf btn-sm"
-                                                                onclick="verItemsConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['nombre_concepto'])) ?>')"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Items">
-                                                                <i class="bi bi-list-ul"></i>
-                                                            </button>
-                                                            <button class="btn-ed btn-sm"
-                                                                onclick="editarConceptoView(<?= $concepto['id'] ?>)"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Concepto">
-                                                                <i class="bi bi-pencil"></i>
-                                                            </button>
-                                                            <button class="btn-del btn-sm"
-                                                                onclick="eliminarConceptoView(<?= $concepto['id'] ?>, <?= $catalogo_id ?>, '<?= htmlspecialchars(addslashes($catalogo['nombre_catalogo'])) ?>', <?= $obra_id ?: 'null' ?>, '<?= $obra_info ? htmlspecialchars(addslashes($obra_info['nombre_obra'])) : '' ?>')"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Concepto">
-                                                                <i class="bi bi-trash3"></i>
-                                                            </button>
+                                                    <div class="concepto-extra mt-2 d-flex flex-wrap gap-2">
+                                                        <?php if (!empty($concepto['precio_unitario'])): ?>
+                                                            <small class="text-muted">
+                                                                <i class="bi bi-tag me-1"></i>
+                                                                P.U.: <strong class="text-dark">$<?= number_format($concepto['precio_unitario'], 2) ?></strong>
+                                                            </small>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($concepto['importe'])): ?>
+                                                            <small class="text-muted">
+                                                                <i class="bi bi-currency-dollar me-1"></i>
+                                                                Importe: <strong class="text-dark">$<?= number_format($concepto['importe'], 2) ?></strong>
+                                                            </small>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($concepto['fecha_inicio']) || !empty($concepto['fecha_fin'])): ?>
+                                                            <small class="text-muted">
+                                                                <i class="bi bi-calendar-range me-1"></i>
+                                                                <?= !empty($concepto['fecha_inicio']) ? date('d/m/Y', strtotime($concepto['fecha_inicio'])) : '—' ?>
+                                                                →
+                                                                <?= !empty($concepto['fecha_fin']) ? date('d/m/Y', strtotime($concepto['fecha_fin'])) : '—' ?>
+                                                            </small>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="concepto-stats text-end">
+                                                            <div class="mb-2">
+                                                                <?php if ($concepto['total_items'] > 0): ?>
+                                                                    <span class="badge bg-info">
+                                                                        <i class="bi bi-box me-1"></i>
+                                                                        <?= $concepto['total_items'] ?> items
+                                                                    </span>
+                                                                <?php else: ?>
+                                                                    <span class="badge bg-secondary">
+                                                                        <i class="bi bi-box me-1"></i>
+                                                                        Sin items
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <div>
+                                                                <span class="fs-6 fw-bold <?= $concepto['total_items'] > 0 ? 'text-success' : 'text-muted' ?>">
+                                                                    $<?= number_format($concepto['monto_total'], 2) ?>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="action-buttons ms-3">
+                                                            <div class="btn-group">
+                                                                <button class="btn-inf btn-sm" 
+                                                                        onclick="verDetalleConceptoView(<?= $concepto['id'] ?>, '<?= htmlspecialchars(addslashes($concepto['codigo_concepto'])) ?>')"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles">
+                                                                    <i class="bi bi-eye"></i>
+                                                                </button>
+                                                                <button class="btn-del btn-sm" 
+                                                                        onclick="eliminarConceptoView(<?= $concepto['id'] ?>, <?= $catalogo_id ?>, '<?= htmlspecialchars(addslashes($catalogo['nombre_catalogo'])) ?>', <?= $obra_id ?: 'null' ?>, '<?= $obra_info ? htmlspecialchars(addslashes($obra_info['nombre_obra'])) : '' ?>')"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Concepto">
+                                                                    <i class="bi bi-trash3"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -665,7 +751,7 @@ if ($conceptos) {
                         <i class="bi bi-info-circle me-2"></i>
                         <strong>Mostrando solo órdenes con estado: <span class="text-success">PAGADO</span></strong>
                     </div>
-
+                    
                     <div class="mb-3">
                         <label for="searchOrden" class="form-label">Buscar órdenes:</label>
                         <div class="input-group">
@@ -678,18 +764,18 @@ if ($conceptos) {
                             </button>
                         </div>
                     </div>
-
+                    
                     <div id="loadingOrdenes" class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Cargando órdenes pagadas...</span>
                         </div>
                         <p class="mt-2">Cargando órdenes pagadas...</p>
                     </div>
-
+                    
                     <div id="listaOrdenesPagadas" class="d-none">
                         <!-- Las órdenes se cargarán aquí -->
                     </div>
-
+                    
                     <div id="noOrdenesDisponibles" class="text-center py-4 d-none">
                         <i class="bi bi-inbox display-4 text-muted"></i>
                         <h5 class="mt-3 text-muted">No hay órdenes pagadas disponibles</h5>
@@ -704,7 +790,7 @@ if ($conceptos) {
     </div>
 
     <!-- FLOATING ACTION BUTTONS -->
-    <div class="fab-container-backbtn">
+    <div class="fab-container-backbtn">  
         <a onclick="history.back()" class="fab-button-backbtn">
             <i class="bi bi-arrow-left"></i>
             <span class="fab-tooltip-backbtn">Volver</span>
@@ -733,19 +819,13 @@ if ($conceptos) {
 
         // Función para filtrar conceptos
         function toggleFilter(tipo) {
-            // Actualizar badges activos
-            document.querySelectorAll('.filter-badge').forEach(badge => {
-                badge.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
             // Mostrar/ocultar conceptos según filtro
             const conceptos = document.querySelectorAll('.concepto-item');
-
+            
             conceptos.forEach(concepto => {
                 const tieneItems = concepto.getAttribute('data-tiene-items') === 'si';
-
-                switch (tipo) {
+                
+                switch(tipo) {
                     case 'todos':
                         concepto.style.display = 'block';
                         break;
@@ -757,20 +837,20 @@ if ($conceptos) {
                         break;
                 }
             });
-
+            
             // También mostrar/ocultar categorías vacías
             const categorias = document.querySelectorAll('.categoria-section');
             categorias.forEach(categoria => {
                 const itemsVisibles = categoria.querySelectorAll('.concepto-item[style*="display: block"], .concepto-item:not([style*="display: none"])');
                 const subcategorias = categoria.querySelectorAll('.subcategoria-section');
-
+                
                 let tieneConceptosVisibles = false;
                 subcategorias.forEach(subcat => {
                     const itemsSubcat = subcat.querySelectorAll('.concepto-item[style*="display: block"], .concepto-item:not([style*="display: none"])');
                     subcat.style.display = itemsSubcat.length > 0 ? 'block' : 'none';
                     if (itemsSubcat.length > 0) tieneConceptosVisibles = true;
                 });
-
+                
                 categoria.style.display = tieneConceptosVisibles ? 'block' : 'none';
             });
         }
@@ -786,19 +866,19 @@ if ($conceptos) {
                 });
                 return;
             }
-
+            
             currentConceptoId = conceptoId;
             document.getElementById('currentConceptoId').value = conceptoId;
             modalSoloVer = !!soloVer;
-
+            
             // Actualizar título del modal
             const titulo = soloVer ? 'Órdenes de Compra Pagadas' : 'Agregar Items desde Órdenes Pagadas';
             document.getElementById('modalTitulo').textContent = titulo;
-
+            
             // Mostrar modal
             const modal = new bootstrap.Modal(document.getElementById('modalOrdenesPagadas'));
             modal.show();
-
+            
             // Cargar órdenes pagadas
             cargarOrdenesPagadas();
         }
@@ -808,12 +888,12 @@ if ($conceptos) {
             document.getElementById('loadingOrdenes').classList.remove('d-none');
             document.getElementById('listaOrdenesPagadas').classList.add('d-none');
             document.getElementById('noOrdenesDisponibles').classList.add('d-none');
-
+            
             fetch(`/api/get_ordenes_pagadas.php?catalogo_id=${catalogoId}&busqueda=${encodeURIComponent(busqueda)}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('loadingOrdenes').classList.add('d-none');
-
+                    
                     if (data.success && data.ordenes && data.ordenes.length > 0) {
                         mostrarOrdenesPagadas(data.ordenes);
                         document.getElementById('listaOrdenesPagadas').classList.remove('d-none');
@@ -824,7 +904,7 @@ if ($conceptos) {
                 .catch(error => {
                     console.error('Error:', error);
                     document.getElementById('loadingOrdenes').classList.add('d-none');
-                    document.getElementById('listaOrdenesPagadas').innerHTML =
+                    document.getElementById('listaOrdenesPagadas').innerHTML = 
                         '<div class="alert alert-danger">Error al cargar las órdenes pagadas: ' + error.message + '</div>';
                     document.getElementById('listaOrdenesPagadas').classList.remove('d-none');
                 });
@@ -833,12 +913,12 @@ if ($conceptos) {
         // Función para mostrar órdenes pagadas
         function mostrarOrdenesPagadas(ordenes) {
             let html = '';
-
+            
             if (ordenes.length === 0) {
                 html = '<div class="alert alert-info">No se encontraron órdenes pagadas para este catálogo</div>';
             } else {
                 html += `<p class="text-muted mb-3">Mostrando ${ordenes.length} orden(es) pagada(s)</p>`;
-
+                
                 ordenes.forEach(orden => {
                     html += `
                     <div class="card mb-3 border-success">
@@ -907,7 +987,7 @@ if ($conceptos) {
                     </div>`;
                 });
             }
-
+            
             document.getElementById('listaOrdenesPagadas').innerHTML = html;
         }
 
@@ -922,7 +1002,7 @@ if ($conceptos) {
             console.log('Verificando funciones...');
             console.log('mostrarImportarExcelConceptos:', typeof mostrarImportarExcelConceptos);
             console.log('mostrarFormularioConcepto:', typeof mostrarFormularioConcepto);
-
+            
             if (typeof mostrarImportarExcelConceptos === 'undefined') {
                 console.error('Función mostrarImportarExcelConceptos no está disponible');
                 return false;
@@ -948,7 +1028,7 @@ if ($conceptos) {
                 mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId, obraNombre);
             } else {
                 Swal.fire('Error', 'Las funciones no están disponibles. Recarga la página.', 'error');
-            }
+                }
         }
 
         function eliminarConceptoView(conceptoId) {
@@ -1001,5 +1081,4 @@ if ($conceptos) {
 
     <?php include __DIR__ . "/../includes/footer.php"; ?>
 </body>
-
 </html>

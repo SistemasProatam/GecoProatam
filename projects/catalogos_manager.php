@@ -171,14 +171,19 @@ try {
             break;
             
         case 'crear_concepto':
-            $catalogo_id = $_POST['catalogo_id'] ?? 0;
+            $catalogo_id     = $_POST['catalogo_id']     ?? 0;
             $codigo_concepto = $_POST['codigo_concepto'] ?? '';
             $nombre_concepto = $_POST['nombre_concepto'] ?? '';
-            $descripcion = $_POST['descripcion'] ?? '';
-            $unidad_medida = $_POST['unidad_medida'] ?? '';
-            $categoria = $_POST['categoria'] ?? '';
-            $subcategoria = $_POST['subcategoria'] ?? '';
+            $descripcion     = $_POST['descripcion']     ?? '';
+            $unidad_medida   = $_POST['unidad_medida']   ?? '';
+            $categoria       = $_POST['categoria']       ?? '';
+            $subcategoria    = $_POST['subcategoria']    ?? '';
             $numero_original = $_POST['numero_original'] ?? '';
+            $cantidad        = isset($_POST['cantidad']) && $_POST['cantidad'] !== '' ? floatval($_POST['cantidad']) : null;
+            $precio_unitario = $_POST['precio_unitario'] !== '' ? $_POST['precio_unitario'] : null;
+            $importe         = $_POST['importe']         !== '' ? $_POST['importe']         : null;
+            $fecha_inicio    = !empty($_POST['fecha_inicio']) ? $_POST['fecha_inicio']       : null;
+            $fecha_fin       = !empty($_POST['fecha_fin'])    ? $_POST['fecha_fin']          : null;
             $permitir_duplicados = ($_POST['permitir_duplicados'] ?? 'false') === 'true';
             
             if ($catalogo_id <= 0 || empty($codigo_concepto) || empty($nombre_concepto)) {
@@ -210,13 +215,15 @@ try {
                 exit;
             }
             
-            // Insertar concepto
+            // Insertar concepto con los nuevos campos
             $sql_insert = "INSERT INTO conceptos 
                           (catalogo_id, codigo_concepto, nombre_concepto, descripcion, 
-                           unidad_medida, categoria, subcategoria, numero_original, fecha_creacion) 
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                           unidad_medida, categoria, subcategoria, numero_original,
+                           cantidad, precio_unitario, importe, fecha_inicio, fecha_fin,
+                           fecha_creacion) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             $stmt_insert = $conn->prepare($sql_insert);
-            $stmt_insert->bind_param("isssssss", 
+            $stmt_insert->bind_param("isssssssdddss", 
                 $catalogo_id, 
                 $codigo_concepto, 
                 $nombre_concepto, 
@@ -224,15 +231,19 @@ try {
                 $unidad_medida, 
                 $categoria, 
                 $subcategoria, 
-                $numero_original
+                $numero_original,
+                $cantidad,
+                $precio_unitario,
+                $importe,
+                $fecha_inicio,
+                $fecha_fin
             );
-            
             if ($stmt_insert->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Concepto creado correctamente']);
-            } else {
-                echo json_encode(['success' => false, 'error' => 'Error al crear concepto: ' . $stmt_insert->error]);
-            }
-            break;
+        echo json_encode(['success' => true, 'message' => 'Concepto creado correctamente']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Error al crear concepto: ' . $stmt_insert->error]);
+    }
+    break;
             
         case 'importar_conceptos_excel':
             $catalogo_id = $_POST['catalogo_id'] ?? 0;
@@ -259,44 +270,30 @@ try {
                     try {
                         $codigo_concepto = $concepto_data['codigo_concepto'] ?? '';
                         $nombre_concepto = $concepto_data['nombre_concepto'] ?? '';
-                        $descripcion = $concepto_data['descripcion'] ?? '';
-                        $unidad_medida = $concepto_data['unidad_medida'] ?? '';
-                        $categoria = $concepto_data['categoria'] ?? '';
-                        $subcategoria = $concepto_data['subcategoria'] ?? '';
+                        $descripcion     = $concepto_data['descripcion']     ?? '';
+                        $unidad_medida   = $concepto_data['unidad_medida']   ?? '';
+                        $categoria       = $concepto_data['categoria']       ?? '';
+                        $subcategoria    = $concepto_data['subcategoria']    ?? '';
                         $numero_original = $concepto_data['numero_original'] ?? '';
-                        
+                        $cantidad        = isset($concepto_data['cantidad']) && $concepto_data['cantidad'] !== '' ? floatval($concepto_data['cantidad']) : null;
+                        $precio_unitario = isset($concepto_data['precio_unitario']) && $concepto_data['precio_unitario'] !== '' ? $concepto_data['precio_unitario'] : null;
+                        $importe         = isset($concepto_data['importe'])         && $concepto_data['importe']         !== '' ? $concepto_data['importe']         : null;
+                        $fecha_inicio    = !empty($concepto_data['fecha_inicio'])   ? $concepto_data['fecha_inicio']    : null;
+                        $fecha_fin       = !empty($concepto_data['fecha_fin'])      ? $concepto_data['fecha_fin']       : null;
                         if (empty($codigo_concepto) || empty($nombre_concepto)) {
                             $errores[] = "Fila " . ($index + 1) . ": código o nombre vacío";
                             continue;
                         }
                         
-                        // Verificación de duplicados
-                        if ($permitir_duplicados) {
-                            $sql_check = "SELECT id FROM conceptos 
-                                         WHERE catalogo_id = ? AND codigo_concepto = ? AND categoria = ? AND subcategoria = ?";
-                            $stmt_check = $conn->prepare($sql_check);
-                            $stmt_check->bind_param("isss", $catalogo_id, $codigo_concepto, $categoria, $subcategoria);
-                        } else {
-                            $sql_check = "SELECT id FROM conceptos WHERE catalogo_id = ? AND codigo_concepto = ?";
-                            $stmt_check = $conn->prepare($sql_check);
-                            $stmt_check->bind_param("is", $catalogo_id, $codigo_concepto);
-                        }
-                        
-                        $stmt_check->execute();
-                        $result_check = $stmt_check->get_result();
-                        
-                        if ($result_check->num_rows > 0) {
-                            $errores[] = "Fila " . ($index + 1) . ": código '$codigo_concepto' duplicado";
-                            continue;
-                        }
-                        
-                        // Insertar concepto
+                        // Insertar concepto con los nuevos campos
                         $sql_insert = "INSERT INTO conceptos 
                                       (catalogo_id, codigo_concepto, nombre_concepto, descripcion, 
-                                       unidad_medida, categoria, subcategoria, numero_original, fecha_creacion) 
-                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                                       unidad_medida, categoria, subcategoria, numero_original,
+                                       cantidad, precio_unitario, importe, fecha_inicio, fecha_fin,
+                                       fecha_creacion) 
+                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
                         $stmt_insert = $conn->prepare($sql_insert);
-                        $stmt_insert->bind_param("isssssss", 
+                        $stmt_insert->bind_param("isssssssdddss", 
                             $catalogo_id, 
                             $codigo_concepto, 
                             $nombre_concepto, 
@@ -304,7 +301,12 @@ try {
                             $unidad_medida, 
                             $categoria, 
                             $subcategoria, 
-                            $numero_original
+                            $numero_original,
+                            $cantidad,
+                            $precio_unitario,
+                            $importe,
+                            $fecha_inicio,
+                            $fecha_fin
                         );
                         
                         if ($stmt_insert->execute()) {
@@ -461,15 +463,19 @@ try {
             break;
             
         case 'actualizar_concepto':
-            $concepto_id = $_POST['concepto_id'] ?? 0;
+            $concepto_id     = $_POST['concepto_id']     ?? 0;
             $codigo_concepto = $_POST['codigo_concepto'] ?? '';
             $nombre_concepto = $_POST['nombre_concepto'] ?? '';
-            $descripcion = $_POST['descripcion'] ?? '';
-            $unidad_medida = $_POST['unidad_medida'] ?? '';
-            $categoria = $_POST['categoria'] ?? '';
-            $subcategoria = $_POST['subcategoria'] ?? '';
+            $descripcion     = $_POST['descripcion']     ?? '';
+            $unidad_medida   = $_POST['unidad_medida']   ?? '';
+            $categoria       = $_POST['categoria']       ?? '';
+            $subcategoria    = $_POST['subcategoria']    ?? '';
             $numero_original = $_POST['numero_original'] ?? '';
-            
+            $cantidad        = isset($_POST['cantidad']) && $_POST['cantidad'] !== '' ? floatval($_POST['cantidad']) : null;
+            $precio_unitario = isset($_POST['precio_unitario']) && $_POST['precio_unitario'] !== '' ? $_POST['precio_unitario'] : null;
+            $importe         = isset($_POST['importe'])         && $_POST['importe']         !== '' ? $_POST['importe']         : null;
+            $fecha_inicio    = !empty($_POST['fecha_inicio'])   ? $_POST['fecha_inicio']    : null;
+            $fecha_fin       = !empty($_POST['fecha_fin'])      ? $_POST['fecha_fin']       : null;
             if ($concepto_id <= 0 || empty($codigo_concepto) || empty($nombre_concepto)) {
                 echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
                 exit;
@@ -488,14 +494,15 @@ try {
                 exit;
             }
             
-            // Actualizar concepto
+            // Actualizar concepto con los nuevos campos
             $sql_update = "UPDATE conceptos 
                           SET codigo_concepto = ?, nombre_concepto = ?, descripcion = ?, 
                               unidad_medida = ?, categoria = ?, subcategoria = ?, numero_original = ?,
+                              cantidad = ?, precio_unitario = ?, importe = ?, fecha_inicio = ?, fecha_fin = ?,
                               fecha_actualizacion = NOW()
                           WHERE id = ?";
             $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("sssssssi", 
+            $stmt_update->bind_param("sssssssdddssi", 
                 $codigo_concepto, 
                 $nombre_concepto, 
                 $descripcion, 
@@ -503,6 +510,11 @@ try {
                 $categoria, 
                 $subcategoria, 
                 $numero_original,
+                $cantidad,
+                $precio_unitario,
+                $importe,
+                $fecha_inicio,
+                $fecha_fin,
                 $concepto_id
             );
             
