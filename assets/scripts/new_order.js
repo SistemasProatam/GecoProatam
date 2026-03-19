@@ -591,7 +591,9 @@ function addItem(itemData = null) {
       <input type="hidden" name="tipo[]" value="">
     </td>
     <td>
-      <input type="number" name="cantidad[]" class="form-control cantidad" min="1" value="1" onchange="calcularSubtotal(this)" required>
+      <input type="number" name="cantidad[]" class="form-control cantidad" 
+       min="0.001" step="0.001" value="1" 
+       onchange="calcularSubtotal(this)" required>
     </td>
     <td>
       <select name="unidad_id[]" class="form-select" required>

@@ -23,15 +23,17 @@ function subirArchivo($inputName, $carpetaDestino, $maxMB = 10) {
         return null;
     }
     $file = $_FILES[$inputName];
-    if ($file['error'] !== UPLOAD_ERR_OK) { die("Error archivo ({$inputName}): " . $file['error']); }
-    
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        error_log("Error subiendo {$inputName}: " . $file['error']);
+        return null;
+    }
     if ($maxMB > 0 && $file['size'] > $maxMB * 1024 * 1024) {
         error_log("Archivo {$inputName} supera {$maxMB} MB.");
         return null;
     }
     $ext    = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $nombre = uniqid('', true) . '.' . $ext;
-    $dir    = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $carpetaDestino . '/';
+    $dir = __DIR__ . '/../uploads/' . $carpetaDestino . '/';
     if (!is_dir($dir)) mkdir($dir, 0775, true);
     $dest = $dir . $nombre;
     if (!move_uploaded_file($file['tmp_name'], $dest)) {
