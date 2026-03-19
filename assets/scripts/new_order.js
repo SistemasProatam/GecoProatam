@@ -844,7 +844,7 @@ function eliminarArchivoTemporal(archivoId, btn) {
 }
 
 function descargarArchivo(archivoId) {
-  window.open('/PROATAM/orders/download_archivo.php?id=' + archivoId, '_blank');
+  window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
 }
 
 // Función para sincronizar selects con campos ocultos
@@ -1081,7 +1081,7 @@ function setupEntidadChange() {
     const numeroOrdenInput = document.getElementById('numeroOrden');
     numeroOrdenInput.value = 'Generando...';
 
-    fetch('/PROATAM/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
+    fetch('/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');

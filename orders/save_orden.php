@@ -397,7 +397,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'concepto' => ($oc_data['codigo_concepto'] ?? '') . ' - ' . ($oc_data['nombre_concepto'] ?? 'N/A'),
                     'total' => '$' . number_format($oc_data['total'], 2),
                     'fecha_solicitud' => date('d/m/Y H:i', strtotime($oc_data['fecha_solicitud'])),
-                    'url_sistema' => 'http://localhost/PROATAM/orders/see_oc.php?id=' . $orden_compra_id
+                    'url_sistema' => 'https://proatamgoc.duckdns.org/orders/see_oc.php?id=' . $orden_compra_id
                 ];
 
                 // Obtener Subdirector General 
