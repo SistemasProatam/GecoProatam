@@ -765,8 +765,11 @@ function calcularSubtotal(input) {
   
   const subtotal = cantidad * precio;
   
+  // Redondear a dos decimales
+  const subtotalRedondeado = Math.round(subtotal * 100) / 100;
+  
   // Actualizar el subtotal en la tabla
-  row.querySelector('.subtotal').textContent = '$' + subtotal.toLocaleString('es-MX', {minimumFractionDigits: 2});
+  row.querySelector('.subtotal').textContent = '$' + subtotalRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   
   // Recalcular todos los totales
   calcularTotales();
@@ -782,8 +785,11 @@ function calcularTotales() {
     subtotalGeneral += valor;
   });
 
+  // Redondear a dos decimales
+  subtotalGeneral = Math.round(subtotalGeneral * 100) / 100;
+
   // Actualizar el subtotal general
-  document.getElementById('subtotalGeneral').textContent = '$' + subtotalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2});
+  document.getElementById('subtotalGeneral').textContent = '$' + subtotalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   
   // Recalcular IVA y total general
   calcularIVA();
@@ -798,8 +804,12 @@ function calcularIVA() {
   const ivaTotal = subtotal * (ivaPorcentaje / 100);
   const totalGeneral = subtotal + ivaTotal;
 
-  document.getElementById('ivaTotal').textContent = '$' + ivaTotal.toLocaleString('es-MX', {minimumFractionDigits: 2});
-  document.getElementById('totalGeneral').textContent = '$' + totalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2});
+  // Redondear a dos decimales
+  const ivaTotalRedondeado = Math.round(ivaTotal * 100) / 100;
+  const totalGeneralRedondeado = Math.round(totalGeneral * 100) / 100;
+
+  document.getElementById('ivaTotal').textContent = '$' + ivaTotalRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  document.getElementById('totalGeneral').textContent = '$' + totalGeneralRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
   actualizarPresupuesto();
 }
@@ -834,7 +844,7 @@ function eliminarArchivoTemporal(archivoId, btn) {
 }
 
 function descargarArchivo(archivoId) {
-  window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
+  window.open('/PROATAM/orders/download_archivo.php?id=' + archivoId, '_blank');
 }
 
 // Función para sincronizar selects con campos ocultos
@@ -1071,7 +1081,7 @@ function setupEntidadChange() {
     const numeroOrdenInput = document.getElementById('numeroOrden');
     numeroOrdenInput.value = 'Generando...';
 
-    fetch('/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
+    fetch('/PROATAM/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');
@@ -1118,11 +1128,6 @@ function setupCloseAutocomplete() {
       });
     }
   });
-}
-
-// Función placeholder para guardar borrador
-function guardarBorrador() {
-  alert('Función de guardar borrador pendiente de implementar');
 }
 
 // ===== FUNCIONES PARA CASCADA PROYECTO -> OBRA -> CATÁLOGO -> CONCEPTOS =====

@@ -14,15 +14,16 @@ require_once __DIR__ . '/../EmailHandler.php';
 
 // Función para limpiar valores monetarios
 function limpiarValorMonetario($valor) {
-    if (is_numeric($valor)) {
-        return floatval($valor);
-    }
-    $valorLimpio = preg_replace('/[^\d.-]/', '', $valor);
-    return floatval($valorLimpio);
+    $valor = str_replace(',', '.', $valor);
+    $valor = preg_replace('/[^\d.]/', '', $valor);
+    $valor = floatval($valor);
+    // Redondear a dos decimales
+    return round($valor, 2);
 }
 
 // Función para enviar respuestas JSON
-function sendJsonResponse($success, $message, $redirect = null) {
+function sendJsonResponse($success, $message, $redirect = null)
+{
     if (ob_get_length()) ob_clean();
     header('Content-Type: application/json');
     echo json_encode([
@@ -34,21 +35,22 @@ function sendJsonResponse($success, $message, $redirect = null) {
 }
 
 // Función para generar nuevo folio cuando hay duplicado
-function generarNuevoFolio($conn, $entidad_id, $folio_original) {
+function generarNuevoFolio($conn, $entidad_id, $folio_original)
+{
     $sql_entidad = "SELECT prefijo FROM entidades WHERE id = ?";
     $stmt_entidad = $conn->prepare($sql_entidad);
     $stmt_entidad->bind_param("i", $entidad_id);
     $stmt_entidad->execute();
     $result_entidad = $stmt_entidad->get_result();
-    
+
     if ($result_entidad->num_rows === 0) {
         return $folio_original . '-DUP';
     }
-    
+
     $entidad = $result_entidad->fetch_assoc();
     $prefijo = $entidad['prefijo'];
     $anio_actual = date('Y');
-    
+
     $sql_ultimo = "SELECT folio FROM ordenes_compra 
                    WHERE folio LIKE ? 
                    ORDER BY CAST(SUBSTRING_INDEX(folio, '-', -1) AS UNSIGNED) DESC 
@@ -58,7 +60,7 @@ function generarNuevoFolio($conn, $entidad_id, $folio_original) {
     $stmt_ultimo->bind_param("s", $like_pattern);
     $stmt_ultimo->execute();
     $result_ultimo = $stmt_ultimo->get_result();
-    
+
     $numero = 1;
     if ($result_ultimo->num_rows > 0) {
         $ultimo = $result_ultimo->fetch_assoc();
@@ -66,13 +68,13 @@ function generarNuevoFolio($conn, $entidad_id, $folio_original) {
             $numero = intval($matches[2]) + 1;
         }
     }
-    
+
     return sprintf("OC-%s-%s-%04d", $prefijo, $anio_actual, $numero);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (ob_get_length()) ob_clean();
-    
+
     if (!isset($_SESSION['user_id'])) {
         sendJsonResponse(false, "Usuario no autenticado.");
     }
@@ -83,28 +85,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $entidad_id     = $_POST['entidad'] ?? null;
     $categoria_id   = $_POST['categoria_id'] ?? $_POST['categoria'] ?? null;
     $proyecto_id    = $_POST['proyecto_id'] ?? $_POST['proyecto'] ?? null;
-    
+
     // CORRECCIÓN: Usar los nombres correctos de los campos
     $obra_id        = !empty($_POST['obra']) ? $_POST['obra'] : null;
     $catalogo_id    = !empty($_POST['catalogo']) ? $_POST['catalogo'] : null;
-    
+
     // IMPORTANTE: concepto_id para la orden principal debe ser nulo o un valor único
     // Ya que cada item tiene su propio concepto_id
     $concepto_id    = null; // Para la orden principal, no usamos concepto_id
-    
+
     $proveedor_id   = $_POST['proveedor'] ?? null;
     $solicitante_id = $_SESSION['user_id'];
     $descripcion    = $_POST['descripcion_general'] ?? '';
     $observaciones  = $_POST['observaciones'] ?? '';
-    
+
     // Valores monetarios
     $subtotal       = limpiarValorMonetario($_POST['subtotal'] ?? 0);
     $iva_porcentaje = limpiarValorMonetario($_POST['iva'] ?? 0);
     $iva_monto      = $subtotal * ($iva_porcentaje / 100);
     $total          = limpiarValorMonetario($_POST['total'] ?? 0);
-    
-    $fecha_solicitud= $_POST['fecha_solicitud'] ?? date('Y-m-d H:i:s');
-    
+
+    $fecha_solicitud = $_POST['fecha_solicitud'] ?? date('Y-m-d H:i:s');
+
     // Nuevos datos para items
     $descripciones  = $_POST['descripcion'] ?? [];
     $cantidades     = $_POST['cantidad'] ?? [];
@@ -113,20 +115,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productos_ids  = $_POST['producto_id'] ?? [];
     $tipos          = $_POST['tipo'] ?? [];
     $conceptos_ids  = $_POST['concepto_id'] ?? []; // Array de conceptos por item
-    
+
     $archivos_eliminados = $_POST['archivos_eliminados'] ?? [];
 
     // ================================
     // VALIDACIONES
     // ================================
     $campos_faltantes = [];
-    
+
     if (!$folio) $campos_faltantes[] = 'folio (número de orden)';
     if (!$entidad_id) $campos_faltantes[] = 'entidad';
     if (!$proveedor_id) $campos_faltantes[] = 'proveedor';
     if (!$proyecto_id) $campos_faltantes[] = 'proyecto';
     if (!$categoria_id) $campos_faltantes[] = 'categoría';
-    
+
     if (!empty($campos_faltantes)) {
         sendJsonResponse(false, "Faltan datos obligatorios: " . implode(', ', $campos_faltantes));
     }
@@ -138,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_check->bind_param("i", $requisicion_id);
         $stmt_check->execute();
         $result_check = $stmt_check->get_result();
-        
+
         if ($result_check->num_rows === 0) {
             $requisicion_id = null;
         }
@@ -154,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_check_folio->bind_param("s", $folio);
     $stmt_check_folio->execute();
     $result_check_folio = $stmt_check_folio->get_result();
-    
+
     if ($result_check_folio->num_rows > 0) {
         $folio = generarNuevoFolio($conn, $entidad_id, $folio);
     }
@@ -228,26 +230,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $descripcion_item = $descripciones[$i] ?? '';
                     $cantidad = limpiarValorMonetario($cantidades[$i] ?? 1);
                     $unidad_id = !empty($unidades_ids[$i]) ? $unidades_ids[$i] : null;
-                    
+
                     // CORRECCIÓN: Obtener concepto_id para este item específico
                     $concepto_item_id = !empty($conceptos_ids[$i]) ? $conceptos_ids[$i] : null;
-                    
+
                     $precio_unitario = limpiarValorMonetario($precios_unit[$i] ?? 0);
                     $subtotal_item = $cantidad * $precio_unitario;
 
                     $stmt_item->bind_param(
-                        "iissiiidd", 
+                        "iissdiidd",
                         $orden_compra_id,
                         $producto_id,
                         $tipo,
-                        $descripcion_item, 
-                        $cantidad, 
+                        $descripcion_item,
+                        $cantidad,
                         $unidad_id,
                         $concepto_item_id,
-                        $precio_unitario, 
+                        $precio_unitario,
                         $subtotal_item
                     );
-                    
+
                     if (!$stmt_item->execute()) {
                         error_log("Error insertando item: " . $stmt_item->error);
                     }
@@ -259,20 +261,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ================================
         // MANEJO DE ARCHIVOS
         // ================================
-        
+
         // 1. Copiar archivos de la requisición (excepto los eliminados)
         if ($requisicion_id) {
             $sql_archivos_requisicion = "SELECT id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime 
                                         FROM requisicion_archivos 
                                         WHERE requisicion_id = ?";
-            
+
             if (!empty($archivos_eliminados)) {
                 $placeholders = implode(',', array_fill(0, count($archivos_eliminados), '?'));
                 $sql_archivos_requisicion .= " AND id NOT IN ($placeholders)";
             }
-            
+
             $stmt_archivos = $conn->prepare($sql_archivos_requisicion);
-            
+
             if (!empty($archivos_eliminados)) {
                 $types = 'i' . str_repeat('i', count($archivos_eliminados));
                 $params = array_merge([$requisicion_id], $archivos_eliminados);
@@ -280,7 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $stmt_archivos->bind_param("i", $requisicion_id);
             }
-            
+
             $stmt_archivos->execute();
             $archivos = $stmt_archivos->get_result();
 
@@ -321,14 +323,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $tmpName = $_FILES['archivos_nuevos']['tmp_name'][$key];
                     $tamaño = $_FILES['archivos_nuevos']['size'][$key];
                     $tipo = $_FILES['archivos_nuevos']['type'][$key];
-                    
+
                     $nombreArchivo = basename($nombre);
                     $extension = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
                     $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
                     $nombreUnico = $nombreSinExtension . '_' . uniqid() . '.' . $extension;
-                    
+
                     $rutaArchivo = $uploadDir . $nombreUnico;
-                    
+
                     if (move_uploaded_file($tmpName, $rutaArchivo)) {
                         $sql_file = "INSERT INTO orden_compra_archivos 
                                         (orden_compra_id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime)
@@ -350,7 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->commit();
 
         // ================================
-        // NOTIFICACIONES POR CORREO (OPCIONAL - COMENTAR SI CAUSA ERROR)
+        // NOTIFICACIONES POR CORREO 
         // ================================
         try {
             // Obtener datos completos de la orden de compra recién creada
@@ -379,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_oc_datos->bind_param("i", $orden_compra_id);
             $stmt_oc_datos->execute();
             $oc_data = $stmt_oc_datos->get_result()->fetch_assoc();
-            
+
             if ($oc_data) {
                 // Preparar datos para notificación
                 $datosOrdenCompra = [
@@ -395,9 +397,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'concepto' => ($oc_data['codigo_concepto'] ?? '') . ' - ' . ($oc_data['nombre_concepto'] ?? 'N/A'),
                     'total' => '$' . number_format($oc_data['total'], 2),
                     'fecha_solicitud' => date('d/m/Y H:i', strtotime($oc_data['fecha_solicitud'])),
-                    'url_sistema' => 'https://proatamgoc.duckdns.org/orders/see_oc.php?id=' . $orden_compra_id
+                    'url_sistema' => 'http://localhost/PROATAM/orders/see_oc.php?id=' . $orden_compra_id
                 ];
-                
+
                 // Obtener Subdirector General 
                 $sql_subdirector = "SELECT correo_corporativo, CONCAT(nombres, ' ', apellidos) as nombre_completo 
                        FROM usuarios 
@@ -407,11 +409,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        AND activo = 1
                        AND correo_corporativo IS NOT NULL";
                 $result_subdirector = $conn->query($sql_subdirector);
-                
+
                 // Enviar notificación a Subdirector General usando EmailHandler
                 if ($result_subdirector && $result_subdirector->num_rows > 0) {
                     $emailHandler = new EmailHandler();
-                    
+
                     while ($subdirector = $result_subdirector->fetch_assoc()) {
                         $emailHandler->enviarNotificacionNuevaOrdenCompra(
                             $subdirector['correo_corporativo'],
@@ -419,7 +421,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $datosOrdenCompra
                         );
                     }
-                    
+
                     error_log("Notificación enviada a Subdirector General para orden de compra " . $datosOrdenCompra['folio']);
                 }
             }
@@ -429,17 +431,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         sendJsonResponse(true, "Orden de compra guardada exitosamente", "list_oc.php?msg=success&folio=" . urlencode($folio));
-
     } catch (Exception $e) {
         $conn->rollback();
         error_log("Error en save_orden.php: " . $e->getMessage());
         sendJsonResponse(false, "Error al guardar la orden: " . $e->getMessage());
     }
-
 } else {
     header("Location: new_order.php");
     exit;
 }
 
 if (ob_get_length()) ob_end_clean();
-?>
