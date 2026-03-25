@@ -606,7 +606,7 @@ function addItem(itemData = null) {
       </select>
     </td>
     <td>
-      <input type="number"  name="precio_unitario[]" class="form-control precio" min="0" step="0.01" placeholder="0.00" onchange="calcularSubtotal(this)" required>
+      <input type="number"  name="precio_unitario[]" class="form-control precio" min="0" step="0.001" placeholder="0.000" onchange="calcularSubtotal(this)" required>
     </td>
     <td class="subtotal">$0.00</td>
     <td>

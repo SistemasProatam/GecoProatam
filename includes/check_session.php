@@ -41,9 +41,9 @@ function checkSession() {
         safeRedirect("/login.php?error=session_expired");
     }
     
-    // Verificar inactividad general (15 minutos para cierre forzoso)
+    // Verificar inactividad general (30 minutos para cierre forzoso)
     if (SessionManager::exists('last_activity')) {
-        $inactive_time = 900; // 15 minutos
+        $inactive_time = 1800; // 30 minutos
         $current_time = time();
         
         if (($current_time - SessionManager::get('last_activity')) > $inactive_time) {
