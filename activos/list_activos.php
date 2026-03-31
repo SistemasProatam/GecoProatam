@@ -302,10 +302,6 @@ function urlFiltros(array $extras = []): string {
                     </li>
 
                 </ul>
-                <p class="text-center text-muted" style="font-size:.85rem;">
-                    Página <?= $pagina ?> de <?= $totalPaginas ?>
-                    &nbsp;·&nbsp; <?= $totalRegistros ?> registros en total
-                </p>
             </nav>
             <?php endif; ?>
 

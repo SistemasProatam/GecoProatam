@@ -1,2 +1,17 @@
 DirectoryIndex login.php
 
+# Límites generales (soportar 600MB + 1GB)
+php_value upload_max_filesize 1100M
+php_value post_max_size 1700M
+
+# Tiempos
+php_value max_execution_time 3600
+php_value max_input_time 3600
+
+# Memoria
+php_value memory_limit 2048M
+
+# Múltiples archivos
+php_value max_file_uploads 50
+php_value max_input_vars 5000
+

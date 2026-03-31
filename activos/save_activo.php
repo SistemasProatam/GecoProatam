@@ -8,6 +8,11 @@ preventCaching();
 include(__DIR__ . "/../conexion.php");
 require_once __DIR__ . "/qr_generator.php";
 
+// ─── CONSTANTES ─────────────────────────────────────────────────────────────
+define('MAX_DOCUMENTO_MB', 10);           // 10 MB por documento normal
+define('MAX_CATALOGO_MB', 1024);          // 1 GB para catálogo de refacciones
+define('MAX_IMAGEN_MB', 10);              // 10 MB para imágenes
+
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function sanitize($val) {
@@ -19,11 +24,7 @@ function nullIfEmpty($val) {
     return ($v === '' || $v === null) ? null : $v;
 }
 
-/**
- * Sube un archivo y devuelve la ruta relativa, o null si no hay archivo.
- * $maxMB = 0 → sin límite práctico (p.ej. catálogo refacciones 1 GB)
- */
-function subirArchivo($inputName, $carpetaDestino, $maxMB = 10) {
+function subirArchivo($inputName, $carpetaDestino, $maxMB = MAX_DOCUMENTO_MB) {
     if (!isset($_FILES[$inputName]) || $_FILES[$inputName]['error'] === UPLOAD_ERR_NO_FILE) {
         return null;
     }
@@ -32,10 +33,15 @@ function subirArchivo($inputName, $carpetaDestino, $maxMB = 10) {
         error_log("Error subiendo {$inputName}: código " . $file['error']);
         return null;
     }
-    if ($maxMB > 0 && $file['size'] > $maxMB * 1024 * 1024) {
-        error_log("Archivo {$inputName} supera {$maxMB} MB.");
+    
+    $maxBytes = $maxMB * 1024 * 1024;
+    if ($maxMB > 0 && $file['size'] > $maxBytes) {
+        $sizeMB = round($file['size'] / 1024 / 1024, 2);
+        error_log("Archivo {$inputName} supera {$maxMB} MB. Tamaño: {$sizeMB} MB");
+        $_SESSION['upload_errors'][] = "El archivo '" . $file['name'] . "' excede el límite de {$maxMB} MB";
         return null;
     }
+    
     $ext      = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $nombre   = uniqid('', true) . '.' . $ext;
     $dirBase  = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $carpetaDestino . '/';
@@ -50,10 +56,7 @@ function subirArchivo($inputName, $carpetaDestino, $maxMB = 10) {
     return '/uploads/' . $carpetaDestino . '/' . $nombre;
 }
 
-/**
- * Sube un input type="file" múltiple y devuelve array de rutas.
- */
-function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = 10) {
+function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = MAX_IMAGEN_MB) {
     $rutas = [];
     if (!isset($_FILES[$inputName]) || empty($_FILES[$inputName]['name'][0])) {
         return $rutas;
@@ -61,7 +64,10 @@ function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = 10) {
     $total = count($_FILES[$inputName]['name']);
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES[$inputName]['error'][$i] !== UPLOAD_ERR_OK) continue;
-        if ($maxMB > 0 && $_FILES[$inputName]['size'][$i] > $maxMB * 1024 * 1024) continue;
+        if ($maxMB > 0 && $_FILES[$inputName]['size'][$i] > $maxMB * 1024 * 1024) {
+            error_log("Archivo múltiple supera {$maxMB} MB: " . $_FILES[$inputName]['name'][$i]);
+            continue;
+        }
         $ext     = strtolower(pathinfo($_FILES[$inputName]['name'][$i], PATHINFO_EXTENSION));
         $nombre  = uniqid('', true) . '.' . $ext;
         $dirBase = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $carpetaDestino . '/';
@@ -118,7 +124,7 @@ $qr_token  = QRGenerator::generarToken();
 
 // ─── Subir imagen principal ─────────────────────────────────────────────────
 
-$img_principal = subirArchivo('img_foto_principal', 'fotos', 10);
+$img_principal = subirArchivo('img_foto_principal', 'fotos', MAX_IMAGEN_MB);
 
 // ─── Insertar activo principal ──────────────────────────────────────────────
 
@@ -190,8 +196,6 @@ if (str_contains($tipo_norm, 'vehiculo') || str_contains($tipo_norm, 'vehiculos'
     $v_gravamen         = nullIfEmpty($_POST['v_gravamen']         ?? '');
     $v_propietario      = nullIfEmpty($_POST['v_nombre_propietario'] ?? '');
 
-    // Los campos de aseguradora tienen el mismo name en MX y USA, PHP toma el último
-    // Para diferenciarlos el form debe usar names distintos; aquí los recibimos así:
     $v_aseg_mx_nombre   = nullIfEmpty($_POST['v_nombre_aseguradora_mx']      ?? '');
     $v_aseg_mx_tel      = nullIfEmpty($_POST['v_telefono_aseguradora_mx']    ?? '');
     $v_aseg_mx_fecha    = nullIfEmpty($_POST['v_fecha_vencimiento_seguro_mx'] ?? '');
@@ -211,7 +215,7 @@ if (str_contains($tipo_norm, 'vehiculo') || str_contains($tipo_norm, 'vehiculos'
 
 // ── Maquinaria ────────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'maquinaria')) {
-    $foto_motor = subirArchivo('m_foto_motor', 'maquinaria', 10);
+    $foto_motor = subirArchivo('m_foto_motor', 'maquinaria', MAX_IMAGEN_MB);
     $sql_m = "INSERT INTO maquinaria_detalle
               (activo_id, marca, modelo, numero_serie, kilometraje, foto_motor)
               VALUES (?,?,?,?,?,?)";
@@ -320,14 +324,14 @@ if (str_contains($tipo_norm, 'tic')) {
 // ─── Documentos ─────────────────────────────────────────────────────────────
 
 $docs = [
-    'doc_factura'               => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'factura'],
-    'doc_pedimento'             => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'pedimento'],
-    'doc_poliza_seguro'         => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'poliza_seguro_mx'],
-    'doc_poliza_seguro_usa'     => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'poliza_seguro_usa'],
-    'doc_manual'                => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'manual_usuario'],
-    'doc_manual_mantenimiento'  => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'manual_mantenimiento'],
-    'doc_catalogo_refacciones'  => ['carpeta' => 'documentos', 'maxMB' => 1024,       'tipo' => 'catalogo_refacciones'], // hasta 1 GB
-    'doc_contrato'              => ['carpeta' => 'documentos', 'maxMB' => 10,         'tipo' => 'contrato'],
+    'doc_factura'               => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'factura'],
+    'doc_pedimento'             => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'pedimento'],
+    'doc_poliza_seguro'         => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'poliza_seguro_mx'],
+    'doc_poliza_seguro_usa'     => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'poliza_seguro_usa'],
+    'doc_manual'                => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'manual_usuario'],
+    'doc_manual_mantenimiento'  => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'manual_mantenimiento'],
+    'doc_catalogo_refacciones'  => ['carpeta' => 'documentos', 'maxMB' => MAX_CATALOGO_MB, 'tipo' => 'catalogo_refacciones'],
+    'doc_contrato'              => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'contrato'],
 ];
 
 $stmt_doc = $conn->prepare(
@@ -352,32 +356,28 @@ $stmt_img = $conn->prepare(
      VALUES (?, ?, ?, NOW())"
 );
 
-// Fotos generales (múltiple)
-$fotos_generales = subirArchivoMultiple('img_foto_general', 'fotos', 10);
+$fotos_generales = subirArchivoMultiple('img_foto_general', 'fotos', MAX_IMAGEN_MB);
 foreach ($fotos_generales as $ruta) {
     $tipo = 'foto_general';
     $stmt_img->bind_param("iss", $activo_id, $tipo, $ruta);
     $stmt_img->execute();
 }
 
-// Foto placa
-$foto_placa = subirArchivo('img_foto_placa', 'fotos', 10);
+$foto_placa = subirArchivo('img_foto_placa', 'fotos', MAX_IMAGEN_MB);
 if ($foto_placa) {
     $tipo = 'foto_placa';
     $stmt_img->bind_param("iss", $activo_id, $tipo, $foto_placa);
     $stmt_img->execute();
 }
 
-// Foto número de serie
-$foto_serie = subirArchivo('img_foto_numero_serie', 'fotos', 10);
+$foto_serie = subirArchivo('img_foto_numero_serie', 'fotos', MAX_IMAGEN_MB);
 if ($foto_serie) {
     $tipo = 'foto_numero_serie';
     $stmt_img->bind_param("iss", $activo_id, $tipo, $foto_serie);
     $stmt_img->execute();
 }
 
-// ─── Expediente Control Fiscal / Tenencia / Predial ─────────────────────────
-// y Documentación Extra — se envían como documentos[] desde JS
+// ─── Documentos extra (fiscal + extra) ──────────────────────────────────────
 
 if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
     $total = count($_FILES['documentos']['name']);
@@ -391,7 +391,12 @@ if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
     );
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES['documentos']['error'][$i] !== UPLOAD_ERR_OK) continue;
-        if ($_FILES['documentos']['size'][$i] > 10 * 1024 * 1024) continue;
+        
+        if ($_FILES['documentos']['size'][$i] > MAX_DOCUMENTO_MB * 1024 * 1024) {
+            error_log("Documento extra excede " . MAX_DOCUMENTO_MB . " MB: " . $_FILES['documentos']['name'][$i]);
+            continue;
+        }
+        
         $ext     = strtolower(pathinfo($_FILES['documentos']['name'][$i], PATHINFO_EXTENSION));
         $nom     = uniqid('', true) . '.' . $ext;
         $dir     = $_SERVER['DOCUMENT_ROOT'] . '/uploads/documentos/';
