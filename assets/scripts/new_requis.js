@@ -266,29 +266,33 @@ function cargarObras(proyectoId) {
         });
 }
 
-function cargarCatalogos(obraId) {
+function cargarCatalogos() {
+
+    const obraId = obraSelect.value;
+    if (!obraId) {
+        resetSelect(catalogoSelect, 'Primero seleccione una obra');
+        return;
+    }
     catalogoSelect.disabled = true;
-    catalogoSelect.innerHTML = '<option value="">Cargando catálogos...</option>';
-    
+    catalogoSelect.innerHTML = '<option>Cargando catálogo...</option>';
     fetch(`get_catalogos_by_obra.php?obra_id=${obraId}`)
-        .then(response => response.json())
+        .then(r => r.json())
         .then(catalogos => {
-            if (catalogos.error) {
-                catalogoSelect.innerHTML = `<option value="">Error: ${catalogos.error}</option>`;
+            if (!catalogos.length) {
+                catalogoSelect.innerHTML = '<option>No existe catálogo</option>';
                 return;
             }
-            
-            catalogoSelect.innerHTML = '<option value="">Seleccionar Catálogo</option>';
-            catalogos.forEach(catalogo => {
-                catalogoSelect.innerHTML += `<option value="${catalogo.id}">${catalogo.nombre_catalogo}</option>`;
-            });
+            const catalogo = catalogos[0];
+            catalogoSelect.innerHTML =
+                `<option value="${catalogo.id}">${catalogo.nombre_catalogo}</option>`;
+            catalogoSelect.value = catalogo.id;
             catalogoSelect.disabled = false;
-            
-            resetAllItemConceptos('Primero seleccione un catálogo');
+            // cargar conceptos automáticamente
+            cargarConceptosEnItems();
         })
-        .catch(error => {
-            console.error('Error:', error);
-            catalogoSelect.innerHTML = '<option value="">Error al cargar catálogos</option>';
+        .catch(err => {
+            console.error(err);
+            catalogoSelect.innerHTML = '<option>Error al cargar catálogo</option>';
         });
 }
 
