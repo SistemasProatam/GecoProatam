@@ -93,7 +93,6 @@ if ($result_productos && $result_productos->num_rows > 0) {
 // Obtener items de la requisición si existe
 $requisicion_items = [];
 if (!empty($requisicion_id)) {
-    // CORRECCIÓN: Agregar ri.concepto_id explícitamente
     $sql_items = "SELECT ri.*, ri.concepto_id, ps.nombre as producto_nombre, ps.tipo as producto_tipo, u.nombre as unidad_nombre 
                   FROM requisicion_items ri 
                   LEFT JOIN productos_servicios ps ON ri.producto_id = ps.id 
@@ -252,12 +251,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-              <label class="form-label">Requisición Relacionada</label>
-              <input type="text" class="form-control" 
-                     value="<?= htmlspecialchars($folio_requisicion) ?>" 
-                     readonly />
-              <input type="hidden" name="requisicion_id" value="<?= $requisicion_id ?>">
-            </div>
+                  <label class="form-label">Requisición Relacionada</label>
+                  <input type="text" class="form-control" value="<?= htmlspecialchars($folio_requisicion) ?>" readonly />
+                  <input type="hidden" name="requisicion_id" value="<?= $requisicion_id ?>">
+                </div>
               </div>
               
               <!-- Num de orden -->
@@ -292,7 +289,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                 </div>
                 </div>
 
-                <!-- Realizo -->
+                <!-- Solicitante -->
                 <div class="col-md-6">
                 <div class="form-group">
                 <label class="form-label">
@@ -313,94 +310,246 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                 </div>
                 </div>
 
-                <!-- Entidad -->
-                <div class="row">
-                  <div class="col-md-6">
-              <div class="form-group">
+                <!-- Entidad / Proyecto -->
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="form-group">
               <label class="form-label">
-              Entidad <span class="required">*</span>
+                Entidad <span class="required">*</span>
               </label>
-                <select class="form-select" id="entidad" name="entidad" required>
-                  <option value="">Seleccionar Entidad</option>
-                <?php
-                    if ($result_entidades && $result_entidades->num_rows > 0) {
-                      while ($row = $result_entidades->fetch_assoc()) {
-                        $selected = ($requisicion && $requisicion['entidad_id'] == $row['id']) ? "selected" : "";
-                        echo '<option value="' . htmlspecialchars($row['id']) . '" '.$selected.'>' 
-                            . htmlspecialchars($row['nombre']) . '</option>';
-                      }
-                    }
-                    ?>
-                </select>
-              </div>
-              </div>
 
-          <!-- Categoria -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label"
-                    >Categoría <span class="required">*</span></label
-                  >
-                  <select class="form-select" id="categoria" name="categoria" required>
-                  <option value="">Seleccionar Categoría</option>
-                  <?php
-                    if ($result_categorias && $result_categorias->num_rows > 0) {
-                      while ($row = $result_categorias->fetch_assoc()) {
-                        $selected = ($requisicion && $requisicion['categoria_id'] == $row['id']) ? "selected" : "";
-                        echo '<option value="' . htmlspecialchars($row['id']) . '" '.$selected.'>' 
-                             . htmlspecialchars($row['nombre']) . '</option>';
-                      }
-                    }
-                    ?>
-                  </select>
-                </div>
-              </div>
-              </div>
-              
-               <!-- Proyecto, Obra y Catálogo -->
-              <div class="section-title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</div>
+              <select class="form-select" id="entidad" name="entidad" required>
+                <option value="">Seleccionar Entidad</option>
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="form-label">Proyecto <span class="required">*</span></label>
-            <select class="form-select" id="proyecto" name="proyecto" required onchange="cargarObras()">
-                <option value="">Seleccionar Proyecto</option>
                 <?php
-                if ($result_proyectos && $result_proyectos->num_rows > 0) {
-                    while ($row = $result_proyectos->fetch_assoc()) {
-                        $selected = ($requisicion && $requisicion['proyecto_id'] == $row['id']) ? "selected" : "";
-                        echo '<option value="' . htmlspecialchars($row['id']) . '" '.$selected.'>' 
-                            . htmlspecialchars($row['nombre_proyecto']) . ' - ' . htmlspecialchars($row['numero_contrato']) . '</option>';
-                    }
-                } else {
-                    echo '<option value="">No hay proyectos disponibles</option>';
+                if ($result_entidades && $result_entidades->num_rows > 0) {
+                  while ($row = $result_entidades->fetch_assoc()) {
+
+                    $selected = ($requisicion && $requisicion['entidad_id'] == $row['id']) ? "selected" : "";
+
+                    echo '<option value="' . htmlspecialchars($row['id']) . '" ' . $selected . '>'
+                      . htmlspecialchars($row['nombre']) .
+                      '</option>';
+                  }
                 }
                 ?>
-            </select>
-        </div>
-    </div>
+              </select>
 
-    <!-- Obra -->
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="form-label">Obra</label>
-            <select class="form-select" id="obra" name="obra" onchange="cargarCatalogos()">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">
+                Proyecto <span class="required">*</span>
+              </label>
+
+              <select class="form-select"
+                      id="proyecto"
+                      name="proyecto"
+                      required
+                      onchange="cargarObras()">
+
+                <option value="">Seleccionar Proyecto</option>
+
+                <?php
+                if ($result_proyectos && $result_proyectos->num_rows > 0) {
+
+                  while ($row = $result_proyectos->fetch_assoc()) {
+
+                    $selected = ($requisicion && $requisicion['proyecto_id'] == $row['id']) ? "selected" : "";
+
+                    echo '<option value="' . htmlspecialchars($row['id']) . '" ' . $selected . '>'
+                      . htmlspecialchars($row['nombre_proyecto']) . ' - '
+                      . htmlspecialchars($row['numero_contrato']) .
+                      '</option>';
+                  }
+
+                } else {
+
+                  echo '<option value="">No hay proyectos disponibles</option>';
+
+                }
+                ?>
+              </select>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Obra / Catálogo -->
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Obra</label>
+
+              <select class="form-select"
+                      id="obra"
+                      name="obra"
+                      onchange="cargarCatalogos()">
+
                 <option value="">-- Sin obra específica --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Catálogo</label>
+
+              <select class="form-select"
+                      id="catalogo"
+                      name="catalogo"
+                      onchange="cargarConceptosEnItems()">
+
+                <option value="">-- Sin catálogo específico --</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Categoría / Proveedor -->
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="form-group">
+
+              <label class="form-label">
+                Categoría <span class="required">*</span>
+              </label>
+              <select class="form-select"
+                      id="categoria"
+                      name="categoria"
+                      required
+                      onchange="handleCategoriaChange()">
+                <option value="">Seleccionar Categoría</option>
+                <?php
+                if ($result_categorias && $result_categorias->num_rows > 0) {
+                  while ($row = $result_categorias->fetch_assoc()) {
+                    $selected = ($requisicion && $requisicion['categoria_id'] == $row['id']) ? "selected" : "";
+                    echo '<option value="' . htmlspecialchars($row['id']) . '" ' . $selected . '>'
+                      . htmlspecialchars($row['nombre']) .
+                      '</option>';
+                  }
+                }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Proveedor <span class="required">*</span>
+            </label>
+            <select class="form-select" id="proveedor" name="proveedor" required>
+              <option value="">Seleccionar proveedor</option>
+              <?php
+              if ($result_proveedores && $result_proveedores->num_rows > 0) {
+                while ($row = $result_proveedores->fetch_assoc()) {
+                  echo '<option value="' . htmlspecialchars($row['id']) . '">'
+                    . htmlspecialchars($row['razon_social']) .
+                    '</option>';
+                }
+              }
+              ?>
             </select>
+            <small class="text-muted d-block mt-1">
+              <i class="bi bi-info-circle"></i>
+              En caso de seleccionar un subcontrato, este valor se seleccionará automáticamente.  
+            </small>
+          </div>
+        </div>
+
+<!-- Contenedor de Subcontrato (para mostrar/ocultar todo el bloque) -->
+<div id="subcontratoContainer" style="display: none;">
+    <!-- Selector de Subcontrato -->
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="form-label">
+                    Seleccionar Subcontrato <span class="required">*</span>
+                </label>
+                <select class="form-select" id="subcontrato" name="subcontrato">
+                    <option value="">-- Primero seleccione una obra --</option>
+                </select>
+                <small class="text-muted d-block mt-1">
+                    <i class="bi bi-info-circle"></i>
+                    Seleccione el subcontrato que se utilizará para esta orden de compra.
+                </small>
+            </div>
         </div>
     </div>
 
-    <!-- Catálogo -->
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="form-label">Catálogo</label>
-            <select class="form-select" id="catalogo" name="catalogo" onchange="cargarConceptosEnItems()">
-                <option value="">-- Sin catálogo específico --</option>
-            </select>
+    <!-- Panel informativo del subcontrato -->
+<div id="infoSubcontrato" style="display:none">
+    <div class="row g-3 mt-1">
+      <label class="form-label">
+        Presupuesto de Subcontrato 
+      </label>
+    <div class="col-6 col-md-3">
+        <div class="budget-stat p-3 bg-light rounded shadow-sm">
+            <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Total contrato</div>
+            <div class="budget-stat-value h5 fw-bold text-success mb-0" id="subcontratoTotal">$0.00</div>
         </div>
     </div>
-</div>
+    <div class="col-6 col-md-3">
+        <div class="budget-stat p-3 bg-light rounded shadow-sm">
+            <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Pagado real</div>
+            <div class="budget-stat-value h5 fw-bold text-primary mb-0" id="subcontratoUtilizado">$0.00</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="budget-stat p-3 bg-light rounded shadow-sm">
+            <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Comprometido</div>
+            <div class="budget-stat-value h5 fw-bold text-warning mb-0" id="subcontratoComprometido">$0.00</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="budget-stat p-3 bg-light rounded shadow-sm">
+            <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Disponible</div>
+            <div class="budget-stat-value h5 fw-bold text-info mb-0" id="subcontratoDisponible">$0.00</div>
+        </div>
+    </div>
+  </div>
+  </div>
+</div>  
+
+ <!-- Panel obra -->
+<div id="infoObra" style="display:none">
+    <div class="row g-3 mt-1">
+      <label class="form-label">
+        Presupuesto de Obra 
+      </label>
+        <div class="col-6 col-md-3">
+            <div class="budget-stat p-3 bg-light rounded shadow-sm">
+                <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Costo directo obra</div>
+                <div class="budget-stat-value h5 fw-bold text-dark mb-0" id="montoObra">$0.00</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="budget-stat p-3 bg-light rounded shadow-sm">
+                <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Total contratos (subcontratos)</div>
+                <div class="budget-stat-value h5 fw-bold text-primary mb-0" id="contratosObra">$0.00</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="budget-stat p-3 bg-light rounded shadow-sm">
+                <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Comprometido (OC activas)</div>
+                <div class="budget-stat-value h5 fw-bold text-warning mb-0" id="comprometidoObra">$0.00</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="budget-stat p-3 bg-light rounded shadow-sm">
+                <div class="budget-stat-label text-muted small text-uppercase fw-semibold">Disponible obra</div>
+                <div class="budget-stat-value h5 fw-bold text-success mb-0" id="disponibleObra">$0.00</div>
+            </div>
+        </div>
+    </div>
+  </div>  
               
             <!-- Items de la Orden -->
             <div class="section-title">

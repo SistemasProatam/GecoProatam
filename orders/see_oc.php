@@ -38,7 +38,7 @@ function traducirEstado($estado)
 // ==============================================================================
 function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
 {
-  error_log("💰 ACTUALIZANDO MONTOS DISPONIBLES PARA ORDEN PAGADA");
+  error_log(" ACTUALIZANDO MONTOS DISPONIBLES PARA ORDEN PAGADA");
   error_log("   Orden ID: {$orden_id}");
   error_log("   Total Orden: {$total_orden}");
 
@@ -80,9 +80,9 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
       $stmt_update_proyecto->bind_param("di", $nuevo_utilizado_proyecto, $proyecto_data['id']);
 
       if ($stmt_update_proyecto->execute()) {
-        error_log("✅ Proyecto actualizado: {$nuevo_utilizado_proyecto}");
+        error_log(" Proyecto actualizado: {$nuevo_utilizado_proyecto}");
       } else {
-        error_log("❌ Error actualizando proyecto: " . $stmt_update_proyecto->error);
+        error_log(" Error actualizando proyecto: " . $stmt_update_proyecto->error);
       }
       $stmt_update_proyecto->close();
     } else {
@@ -106,9 +106,9 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
       );
 
       if ($stmt_insert_proyecto->execute()) {
-        error_log("✅ Registro creado para proyecto");
+        error_log(" Registro creado para proyecto");
       } else {
-        error_log("❌ Error creando registro proyecto: " . $stmt_insert_proyecto->error);
+        error_log(" Error creando registro proyecto: " . $stmt_insert_proyecto->error);
       }
       $stmt_insert_proyecto->close();
     }
@@ -135,9 +135,9 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
       $stmt_update_obra->bind_param("di", $nuevo_utilizado_obra, $obra_data['id']);
 
       if ($stmt_update_obra->execute()) {
-        error_log("✅ Obra actualizada: {$nuevo_utilizado_obra}");
+        error_log(" Obra actualizada: {$nuevo_utilizado_obra}");
       } else {
-        error_log("❌ Error actualizando obra: " . $stmt_update_obra->error);
+        error_log(" Error actualizando obra: " . $stmt_update_obra->error);
       }
       $stmt_update_obra->close();
     } else {
@@ -162,16 +162,16 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
       );
 
       if ($stmt_insert_obra->execute()) {
-        error_log("✅ Registro creado para obra");
+        error_log(" Registro creado para obra");
       } else {
-        error_log("❌ Error creando registro obra: " . $stmt_insert_obra->error);
+        error_log(" Error creando registro obra: " . $stmt_insert_obra->error);
       }
       $stmt_insert_obra->close();
     }
     $stmt_obra->close();
   }
 
-  error_log("💰 FIN ACTUALIZACIÓN MONTOS DISPONIBLES");
+  error_log(" FIN ACTUALIZACIÓN MONTOS DISPONIBLES");
 }
 
 // ================================
@@ -234,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
     $stmt_update->bind_param("si", $nuevo_estado, $id);
 
     if ($stmt_update->execute()) {
-      error_log("✅ Estado actualizado en BD");
+      error_log(" Estado actualizado en BD");
 
       // ========================================
       // REGISTRAR EN HISTORIAL
@@ -265,9 +265,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
 
         $stmt_historial->bind_param("iiss", $id, $_SESSION['user_id'], $accion_texto, $comentario);
         $stmt_historial->execute();
-        error_log("✅ Historial registrado");
+        error_log(" Historial registrado");
       } catch (Exception $e) {
-        error_log("⚠️ Error en historial: " . $e->getMessage());
+        error_log(" Error en historial: " . $e->getMessage());
       }
 
       // ========================================
@@ -285,9 +285,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
           // No se realiza transferencia automática a `concepto_items` porque
           // dicha tabla no existe en esta BD. Los items quedan vinculados
           // en `orden_compra_items` y se consultan directamente desde allí.
-          error_log("⚠️ Transferencia a tabla 'concepto_items' omitida (tabla inexistente). Items quedan en orden_compra_items.");
+          error_log(" Transferencia a tabla 'concepto_items' omitida (tabla inexistente). Items quedan en orden_compra_items.");
         } else {
-          error_log("⚠️ No se puede transferir: falta catálogo");
+          error_log(" No se puede transferir: falta catálogo");
         }
       }
 
@@ -469,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
           }
         }
 
-        error_log("📧 NOTIFICACIONES: {$correos_enviados} enviados, {$correos_fallidos} fallidos");
+        error_log(" NOTIFICACIONES: {$correos_enviados} enviados, {$correos_fallidos} fallidos");
 
         // Redirect con parámetros
         $params = "id={$id}&success=1";
@@ -485,13 +485,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
         header("Location: see_oc.php?{$params}");
         exit;
       } catch (Exception $e) {
-        error_log("❌ EXCEPCIÓN AL ENVIAR CORREO: " . $e->getMessage());
+        error_log(" EXCEPCIÓN AL ENVIAR CORREO: " . $e->getMessage());
         header("Location: see_oc.php?id=$id&success=1&email=excepcion");
         exit;
       }
     } else {
       $mensaje_error = "Error al actualizar el estado: " . $stmt_update->error;
-      error_log("❌ Error al actualizar estado: " . $stmt_update->error);
+      error_log(" Error al actualizar estado: " . $stmt_update->error);
     }
   } else {
     $mensaje_error = "No tiene permisos para realizar esta acción";
@@ -557,7 +557,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_comprobante']))
 $sql = "SELECT oc.*, e.nombre AS entidad, u.nombres, u.apellidos, c.nombre AS categoria, 
         p.nombre AS proveedor, r.folio AS folio_requisicion, 
         pro.nombre_proyecto, ob.nombre_obra, cat.nombre_catalogo, 
-        con.codigo_concepto, con.nombre_concepto
+        con.codigo_concepto, con.nombre_concepto,
+        sub.id as subcontrato_id, sub.proveedor_id as subcontrato_proveedor_id,
+        prov_sub.nombre as subcontrato_proveedor_nombre
         FROM ordenes_compra oc
         JOIN entidades e ON oc.entidad_id = e.id
         JOIN usuarios u ON oc.solicitante_id = u.id
@@ -568,6 +570,8 @@ $sql = "SELECT oc.*, e.nombre AS entidad, u.nombres, u.apellidos, c.nombre AS ca
         LEFT JOIN obras ob ON oc.obra_id = ob.id
         LEFT JOIN catalogos cat ON oc.catalogo_id = cat.id
         LEFT JOIN conceptos con ON oc.concepto_id = con.id
+        LEFT JOIN subcontratos sub ON oc.subcontrato_id = sub.id
+        LEFT JOIN proveedores prov_sub ON sub.proveedor_id = prov_sub.id
         WHERE oc.id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
@@ -931,6 +935,15 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_catalogo']) ?></div>
               </div>
             <?php endif; ?>
+
+            <?php if($orden_compra['subcontrato_id']): ?>
+            <div class="col-md-6 mb-3">
+              <label class="form-label"><strong>Subcontrato</strong></label>
+              <div class="form-control-plaintext">
+                <?= htmlspecialchars($orden_compra['subcontrato_proveedor_nombre'] ?? 'Subcontrato #' . $orden_compra['subcontrato_id']) ?>
+              </div>
+            </div>
+          <?php endif; ?>
 
             <?php if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
               <div class="col-md-6 mb-3">
@@ -1341,6 +1354,11 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
             <a href="edit_oc.php?id=<?= $orden_compra['id'] ?>" class="btn btn-warning">
               <i class="bi bi-pencil"></i> Editar Orden de Compra
             </a>
+            <?php if($orden_compra['subcontrato_id']): ?>
+            <small class="text-muted ms-2">
+              <i class="bi bi-info-circle"></i> Esta orden está asociada a un subcontrato
+            </small>
+            <?php endif; ?>
           <?php endif; ?>
         </div>
       </div>

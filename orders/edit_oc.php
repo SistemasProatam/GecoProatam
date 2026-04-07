@@ -33,6 +33,25 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $orden_compra = $stmt->get_result()->fetch_assoc();
 
+// Obtener subcontrato asociado
+$subcontrato_id = null;
+$subcontrato_nombre = null;
+if ($orden_compra['subcontrato_id']) {
+    $sql_subcontrato = "SELECT s.id, s.proveedor_id, p.nombre as proveedor_nombre 
+                        FROM subcontratos s
+                        LEFT JOIN proveedores p ON s.proveedor_id = p.id
+                        WHERE s.id = ?";
+    $stmt_sub = $conn->prepare($sql_subcontrato);
+    $stmt_sub->bind_param("i", $orden_compra['subcontrato_id']);
+    $stmt_sub->execute();
+    $sub_data = $stmt_sub->get_result()->fetch_assoc();
+    if ($sub_data) {
+        $subcontrato_id = $sub_data['id'];
+        $subcontrato_nombre = $sub_data['proveedor_nombre'];
+    }
+    $stmt_sub->close();
+}
+
 if (!$orden_compra) {
     die("Orden de compra no encontrada");
 }
@@ -105,12 +124,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_oc'])) {
         // 1. Actualizar la orden de compra
         $sql_update = "UPDATE ordenes_compra 
                        SET entidad_id = ?, categoria_id = ?, proveedor_id = ?, 
-                           proyecto_id = ?, obra_id = ?, descripcion = ?, observaciones = ?,
+                           proyecto_id = ?, obra_id = ?, subcontrato_id = ?,
+                           descripcion = ?, observaciones = ?,
                            estado = 'pendiente', fecha_actualizacion = CURRENT_TIMESTAMP
                        WHERE id = ?";
         $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("iiissssi", $entidad_id, $categoria_id, $proveedor_id,
-                                 $proyecto_id, $obra_id, $descripcion, $observaciones, $id);
+        $stmt_update->bind_param("iiiiisssi", $entidad_id, $categoria_id, $proveedor_id,
+                                 $proyecto_id, $obra_id, $subcontrato_id,
+                                 $descripcion, $observaciones, $id);
         $stmt_update->execute();
 
         // 2. Eliminar items antiguos
@@ -399,6 +420,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
+                    
                     <div class="col-md-6">
                         <label class="form-label">Solicitante <span class="text-muted">(No editable)</span></label>
                         <input type="text" class="form-control"
@@ -409,15 +431,20 @@ while ($archivo = $archivos->fetch_assoc()) {
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Categoría <span class="text-danger">*</span></label>
-                        <select class="form-select" name="categoria_id" required>
+                        <select class="form-select" name="categoria_id" id="categoria_id" required>
                             <option value="">Seleccionar categoría</option>
-                            <?php while ($categoria = $categorias->fetch_assoc()): ?>
-                                <option value="<?= $categoria['id'] ?>" <?= $categoria['id'] == $orden_compra['categoria_id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($categoria['nombre']) ?>
+                            <?php 
+                            $categorias->data_seek(0);
+                            while ($categoria = $categorias->fetch_assoc()): ?>
+                            <option value="<?= $categoria['id'] ?>" 
+                                <?= $categoria['id'] == $orden_compra['categoria_id'] ? 'selected' : '' ?>
+                                data-es-subcontrato="<?= in_array($categoria['id'], [2,5]) ? '1' : '0' ?>">
+                                <?= htmlspecialchars($categoria['nombre']) ?>
                                 </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
+
                     <div class="col-md-6">
                         <label class="form-label">Proveedor <span class="text-danger">*</span></label>
                         <select class="form-select" name="proveedor_id" required>
@@ -458,6 +485,16 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
+                    <select class="form-select" name="subcontrato_id" id="subcontrato_id_edit" <?= !$subcontrato_id ? 'disabled' : '' ?>>
+                        <option value="">-- Seleccionar subcontrato --</option>
+                        <?php if ($subcontrato_id): ?>
+                            <option value="<?= $subcontrato_id ?>" selected><?= htmlspecialchars($subcontrato_nombre) ?></option>
+                        <?php endif; ?>
+                    </select>
                 </div>
 
                 <!-- ── Items ── -->

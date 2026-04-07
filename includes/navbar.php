@@ -83,204 +83,233 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         <p class="dept-label"><?php echo htmlspecialchars($departamento_sesion); ?></p>
         <div class="separator"></div>
 
-        <!-- REQUISICIONES - Con submenu -->
-        <?php
-        $ver_requisiciones = in_array($departamento_sesion, [
-          'Director General',
-          'Subdirector General',
-          'Gerente de Operaciones',
-          'Supervisor de Proyecto',
-          'Tecnico de Sistemas',
-          'Coordinador de Control de Documentos y Facturación',
-          'Gerente de Seguridad Salud y Medio Ambiente',
-          'Procura',
-          'Supervisor del sistema de Administración',
-          'Supervisor de Calidad',
-          'Residente de Obra'
-        ]);
-        ?>
-        <?php if ($ver_requisiciones): ?>
-          <li class="menu-item" id="requisMenu">
-            <button class="menu-header" onclick="toggleSubmenu('requisMenu')">
-              <i class="bi bi-journal-arrow-up"></i>
-              <p class="menu-label">Requisiciones</p>
-              <i class="bi bi-chevron-down expand-arrow"></i>
-            </button>
-            <div class="submenu">
-              <?php
-              $crear_requisicion = in_array($departamento_sesion, [
-                'Director General',
-                'Subdirector General',
-                'Gerente de Operaciones',
-                'Supervisor de Proyecto',
-                'Tecnico de Sistemas',
-                'Coordinador de Control de Documentos y Facturación',
-                'Gerente de Seguridad Salud y Medio Ambiente',
-                'Procura',
-                'Supervisor del sistema de Administración',
-                'Supervisor de Calidad',
-                'Residente de Obra'
-              ]);
-              ?>
-              <?php if ($crear_requisicion): ?>
-                <a href="/orders/new_requis.php" class="submenu-item">
-                  <i class="bi bi-plus-circle"></i> Crear Requisición
-                </a>
-              <?php endif; ?>
-              <a href="/orders/list_requis.php" class="submenu-item">
-                <i class="bi bi-list-ul"></i> Ver Registros
-              </a>
-            </div>
-          </li>
-        <?php endif; ?>
+        <!-- ACTIVOS - Elemento simple -->
+<?php
+$ver_activos = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Operaciones',
+  'Coordinador de Control de Documentos y Facturación',
+  'Gerente de Seguridad Salud y Medio Ambiente',
+  'Tecnico de Sistemas',
+  'Procura'
+]);
+?>
+<?php if ($ver_activos): ?>
+  <a href="/activos/list_activos.php" class="text-decoration-none">
+    <li class="simple-menu-item">
+      <i class="bi bi-clipboard2-check"></i>
+      <p class="menu-label">Activos</p>
+    </li>
+  </a>
+<?php endif; ?>
 
-        <!-- ÓRDENES DE COMPRA - Con submenu -->
-        <?php
-        $ver_ordenes = in_array($departamento_sesion, [
-          'Director General',
-          'Subdirector General',
-          'Gerente de Operaciones',
-          'Tecnico de Sistemas',
-          'Gerente de Recursos Humanos',
-          'Procura'
-        ]);
-        ?>
-        <?php if ($ver_ordenes): ?>
-          <li class="menu-item" id="ordenesMenu">
-            <button class="menu-header" onclick="toggleSubmenu('ordenesMenu')">
-              <i class="bi bi-journal-bookmark"></i>
-              <p class="menu-label">Órdenes de compra</p>
-              <i class="bi bi-chevron-down expand-arrow"></i>
-            </button>
-            <div class="submenu">
-              <?php
-              $crear_orden = in_array($departamento_sesion, [
-                'Director General',
-                'Subdirector General',
-                'Gerente de Operaciones',
-                'Tecnico de Sistemas',
-                'Procura'
-              ]);
-              ?>
-              <?php if ($crear_orden): ?>
-                <a href="/orders/new_order.php" class="submenu-item">
-                  <i class="bi bi-plus-circle"></i> Crear Nueva Orden
-                </a>
-              <?php endif; ?>
-              <a href="/orders/list_oc.php" class="submenu-item">
-                <i class="bi bi-list-ul"></i> Ver Registros
-              </a>
-            </div>
-          </li>
-        <?php endif; ?>
+<!-- CATÁLOGO - Elemento simple -->
+<?php
+$ver_catalogo = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Operaciones',
+  'Supervisor de Proyecto',
+  'Tecnico de Sistemas',
+  'Procura'
+]);
+?>
+<?php if ($ver_catalogo): ?>
+  <a href="/catalog/list_catalog.php" class="text-decoration-none">
+    <li class="simple-menu-item">
+      <i class="bi bi-grid"></i>
+      <p class="menu-label">Catálogo</p>
+    </li>
+  </a>
+<?php endif; ?>
 
-        <!-- PROYECTOS - Elemento simple -->
-        <?php
-        $ver_proyectos = in_array($departamento_sesion, [
-          'Director General',
-          'Subdirector General',
-          'Gerente de Operaciones',
-          'Tecnico de Sistemas',
-          'Procura'
-        ]);
-        ?>
-        <?php if ($ver_proyectos): ?>
-          <a href="/projects/list_project.php" class="text-decoration-none">
-            <li class="simple-menu-item">
-              <i class="bi bi-buildings"></i>
-              <p class="menu-label">Proyectos</p>
-            </li>
-          </a>
-        <?php endif; ?>
-
-        <!-- INVENTARIO - Elemento simple -->
-        <?php
-        $ver_catalogo = in_array($departamento_sesion, [
-          'Director General',
-          'Subdirector General',
-          'Gerente de Operaciones',
-          'Tecnico de Sistemas',
-          'Procura'
-        ]);
-        ?>
-        <?php if ($ver_catalogo): ?>
-          <a href="/catalog/list_catalog.php" class="text-decoration-none">
-            <li class="simple-menu-item">
-              <i class="bi bi-grid"></i>
-              <p class="menu-label">Catálogo</p>
-            </li>
-          </a>
-        <?php endif; ?>
-
-      <!-- Activos - Elemento simple -->
-       <?php
-        $ver_activos = in_array($departamento_sesion, [
-          'SUPER_ADMIN',
-          'Director General',
-          'Subdirector General',
-          'Coordinador de Control de Documentos y Facturación',
-          'Gerente de Seguridad Salud y Medio Ambiente',
-          'Tecnico de Sistemas'
-        ]);
-        ?>
-        <?php if ($ver_activos): ?>
-          <a href="/activos/list_activos.php" class="text-decoration-none">
-            <li class="simple-menu-item">
-              <i class="bi bi-clipboard2-check"></i>
-              <p class="menu-label">Activos</p>
-            </li>
-          </a>
-          <?php endif; ?>
-      </ul>
-      <div class="separator"></div>
-
-      <!-- ADMINISTRACIÓN DE USUARIOS - Solo para autorizados -->
+<!-- PROYECTOS - Con submenu -->
+<?php
+$ver_proyectos = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Operaciones',
+  'Supervisor de Proyecto',
+  'Tecnico de Sistemas',
+  'Procura'
+]);
+?>
+<?php if ($ver_proyectos): ?>
+  <li class="menu-item" id="ProyectosMenu">
+    <button class="menu-header" onclick="toggleSubmenu('ProyectosMenu')">
+      <i class="bi bi-building-gear"></i>
+      <p class="menu-label">Control de Proyectos</p>
+      <i class="bi bi-chevron-down expand-arrow"></i>
+    </button>
+    <div class="submenu">
       <?php
-      $ver_admin_usuarios = in_array($departamento_sesion, [
-        'Director General',
-        'Subdirector General',
-        'Gerente de Recursos Humanos',
-        'Tecnico de Sistemas'
-      ]);
-      ?>
-      <?php if ($ver_admin_usuarios): ?>
-        <ul class="menu-list">
-          <a href="/users/list_users.php" class="text-decoration-none">
-            <li class="simple-menu-item settings">
-              <i class="bi bi-person-vcard"></i>
-              <p class="menu-label">Administrar Usuarios</p>
-            </li>
-          </a>
-      <?php endif; ?>
-
-      <!-- Solicitud de mantenimiento - Elemento simple -->
-          <a href="/solicitud_soporte.php" class="text-decoration-none">
-            <li class="simple-menu-item">
-              <i class="bi bi-person-raised-hand"></i>
-              <p class="menu-label">Solicitud de Mantenimiento</p>
-            </li>
-          </a>
-
-          <!-- Dashboard -->
-           <?php
-      $ver_dash = in_array($departamento_sesion, [
+      $ver_plan_obra = in_array($departamento_sesion, [
         'Director General',
         'Subdirector General',
         'Gerente de Operaciones',
-        'Tecnico de Sistemas'
+        'Tecnico de Sistemas',
+        'Procura'
       ]);
       ?>
-      <?php if ($ver_dash): ?>
-          <a href="/dashboard.php" class="text-decoration-none">
-            <li class="simple-menu-item">
-              <i class="bi bi-bar-chart-line"></i>
-              <p class="menu-label">Panel de Control</p>
-            </li>
-          </a>
-          <?php endif; ?>
-        </ul>  
+      <?php if ($ver_plan_obra): ?>
+        <a href="/projects/plan_obra.php" class="submenu-item">
+          <i class="bi bi-calendar4-range"></i> Plan de Obra
+        </a>
+      <?php endif; ?>
+      <a href="/projects/list_project.php" class="submenu-item">
+        <i class="bi bi-building"></i> Ver Proyectos
+      </a>
+    </div>
+  </li>
+<?php endif; ?>
 
-      <div class="separator"></div>
+<!-- COTIZACIONES - Con submenu  PENDIENTE -->
+
+
+<!-- ÓRDENES DE COMPRA - Con submenu -->
+<?php
+$ver_ordenes = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Operaciones',
+  'Supervisor de Proyecto',
+  'Tecnico de Sistemas',
+  'Gerente de Recursos Humanos',
+  'Procura'
+]);
+?>
+<?php if ($ver_ordenes): ?>
+  <li class="menu-item" id="ordenesMenu">
+    <button class="menu-header" onclick="toggleSubmenu('ordenesMenu')">
+      <i class="bi bi-journal-bookmark"></i>
+      <p class="menu-label">Órdenes de compra</p>
+      <i class="bi bi-chevron-down expand-arrow"></i>
+    </button>
+    <div class="submenu">
+      <?php
+      $crear_orden = in_array($departamento_sesion, [
+        'Director General',
+        'Subdirector General',
+        'Gerente de Operaciones',
+        'Supervisor de Proyecto',
+        'Tecnico de Sistemas',
+        'Procura'
+      ]);
+      ?>
+      <?php if ($crear_orden): ?>
+        <a href="/orders/new_order.php" class="submenu-item">
+          <i class="bi bi-plus-circle"></i> Crear Nueva Orden
+        </a>
+      <?php endif; ?>
+      <a href="/orders/list_oc.php" class="submenu-item">
+        <i class="bi bi-list-ul"></i> Ver Registros
+      </a>
+    </div>
+  </li>
+<?php endif; ?>
+
+<!-- REQUISICIONES - Con submenu -->
+<?php
+$ver_requisiciones = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Operaciones',
+  'Supervisor de Proyecto',
+  'Tecnico de Sistemas',
+  'Coordinador de Control de Documentos y Facturación',
+  'Gerente de Seguridad Salud y Medio Ambiente',
+  'Procura',
+  'Supervisor del sistema de Administración',
+  'Supervisor de Calidad',
+  'Residente de Obra'
+]);
+?>
+<?php if ($ver_requisiciones): ?>
+  <li class="menu-item" id="requisMenu">
+    <button class="menu-header" onclick="toggleSubmenu('requisMenu')">
+      <i class="bi bi-journal-arrow-up"></i>
+      <p class="menu-label">Requisiciones</p>
+      <i class="bi bi-chevron-down expand-arrow"></i>
+    </button>
+    <div class="submenu">
+      <?php
+      $crear_requisicion = in_array($departamento_sesion, [
+        'Director General',
+        'Subdirector General',
+        'Gerente de Operaciones',
+        'Supervisor de Proyecto',
+        'Tecnico de Sistemas',
+        'Coordinador de Control de Documentos y Facturación',
+        'Gerente de Seguridad Salud y Medio Ambiente',
+        'Procura',
+        'Supervisor del sistema de Administración',
+        'Supervisor de Calidad',
+        'Residente de Obra'
+      ]);
+      ?>
+      <?php if ($crear_requisicion): ?>
+        <a href="/orders/new_requis.php" class="submenu-item">
+          <i class="bi bi-plus-circle"></i> Crear Requisición
+        </a>
+      <?php endif; ?>
+      <a href="/orders/list_requis.php" class="submenu-item">
+        <i class="bi bi-list-ul"></i> Ver Registros
+      </a>
+    </div>
+  </li>
+<?php endif; ?>
+        </ul>
+
+<div class="separator"></div>
+
+<!-- ADMINISTRACIÓN DE USUARIOS - Solo para autorizados -->
+<?php
+$ver_admin_usuarios = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Recursos Humanos',
+  'Tecnico de Sistemas'
+]);
+?>
+<?php if ($ver_admin_usuarios): ?>
+  <ul class="menu-list">
+    <a href="/users/list_users.php" class="text-decoration-none">
+      <li class="simple-menu-item">
+        <i class="bi bi-person-vcard"></i>
+        <p class="menu-label">Administrar Usuarios</p>
+      </li>
+    </a>
+<?php endif; ?>
+
+<!-- Solicitud de mantenimiento - Elemento simple -->
+<a href="/solicitud_soporte.php" class="text-decoration-none">
+  <li class="simple-menu-item">
+    <i class="bi bi-person-raised-hand"></i>
+    <p class="menu-label">Solicitud de Mantenimiento</p>
+  </li>
+</a>
+
+<!-- Dashboard -->
+<?php
+$ver_dash = in_array($departamento_sesion, [
+  'Director General',
+  'Subdirector General',
+  'Gerente de Operaciones',
+  'Tecnico de Sistemas'
+]);
+?>
+<?php if ($ver_dash): ?>
+  <a href="/dashboard.php" class="text-decoration-none">
+    <li class="simple-menu-item">
+      <i class="bi bi-bar-chart-line"></i>
+      <p class="menu-label">Panel de Control</p>
+    </li>
+  </a>
+<?php endif; ?>
+</ul>
+
+<div class="separator"></div>
 
       <ul class="menu-list">
         <a href="/logout.php" class="text-decoration-none">

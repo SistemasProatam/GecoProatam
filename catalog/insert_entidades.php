@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $nombre = $_POST['nombre'] ?? '';
-$descripcion = $_POST['descripcion'] ?? '';
 
 if (empty($nombre)) {
     echo json_encode(['status' => 'error', 'message' => 'El nombre es obligatorio']);
@@ -25,14 +24,14 @@ if (empty($nombre)) {
 }
 
 try {
-    $sql = "INSERT INTO entidades (nombre, descripcion) VALUES (?, ?)";
+    $sql = "INSERT INTO entidades (nombre) VALUES (?)";
     $stmt = $conn->prepare($sql);
     
     if (!$stmt) {
         throw new Exception("Error al preparar consulta: " . $conn->error);
     }
     
-    $stmt->bind_param("ss", $nombre, $descripcion);
+    $stmt->bind_param("s", $nombre);
     
     if ($stmt->execute()) {
         echo json_encode([

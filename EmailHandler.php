@@ -907,4 +907,93 @@ class EmailHandler
 
         return $colores[$estado] ?? $colores['Pendiente'];
     }
+
+    /**
+ * Enviar alerta a Subdirección cuando subcontratos superan el costo directo de la obra
+ */
+public function enviarAlertaExcesoSubcontratos($destinatario, $nombreDestinatario, $datos)
+{
+    try {
+        $this->mail->clearAddresses();
+        $this->mail->addAddress($destinatario, $nombreDestinatario);
+
+        $this->mail->Subject = "Alerta: Subcontratos superan costo directo - {$datos['obra_nombre']}";
+
+        $cuerpoHTML = "
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+            <div style='background-color: #dc3545; color: white; padding: 20px; text-align: center;'>
+                <h2>Alerta de Subcontratos</h2>
+                <p style='margin:0; font-size: 0.95em;'>Los subcontratos superan el costo directo de la obra</p>
+            </div>
+
+            <div style='padding: 20px; background-color: #f8f9fa;'>
+                <p>Hola <strong>{$nombreDestinatario}</strong>,</p>
+                <p>Se le notifica que el valor total de los subcontratos registrados para la siguiente obra
+                   ha superado su costo directo autorizado:</p>
+
+                <div style='background-color: white; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;'>
+                    <table style='width: 100%; border-collapse: collapse;'>
+                        <tr>
+                            <td style='padding: 8px; font-weight: bold; width: 45%;'>Obra:</td>
+                            <td style='padding: 8px;'><strong>{$datos['obra_nombre']}</strong></td>
+                        </tr>
+                        <tr style='background-color: #f8f9fa;'>
+                            <td style='padding: 8px; font-weight: bold;'>Costo directo autorizado:</td>
+                            <td style='padding: 8px;'>
+                                <strong style='color: #198754;'>\${$datos['costo_directo']}</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style='padding: 8px; font-weight: bold;'>Total subcontratos (incl. extraordinarios):</td>
+                            <td style='padding: 8px;'>
+                                <strong style='color: #dc3545;'>\${$datos['suma_subcontratos']}</strong>
+                            </td>
+                        </tr>
+                        <tr style='background-color: #fff3cd;'>
+                            <td style='padding: 8px; font-weight: bold;'>Exceso:</td>
+                            <td style='padding: 8px;'>
+                                <strong style='color: #856404; font-size: 1.05em;'>\${$datos['exceso']}</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style='padding: 8px; font-weight: bold;'>Registrado por:</td>
+                            <td style='padding: 8px;'>{$datos['usuario']}</td>
+                        </tr>
+                        <tr style='background-color: #f8f9fa;'>
+                            <td style='padding: 8px; font-weight: bold;'>Fecha:</td>
+                            <td style='padding: 8px;'>" . date('d/m/Y H:i') . "</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style='background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;'>
+                    <strong>Importante:</strong><br>
+                    El monto de la obra <strong>NO ha sido modificado</strong>. 
+                    Se requiere su revisión para determinar si se autoriza un ajuste al costo directo.
+                </div>
+
+                <p style='text-align: center; margin-top: 30px;'>
+                    <a href='{$this->baseUrl}projects/details_obra.php?id={$datos['obra_id']}'
+                       style='background-color: #dc3545; color: white; padding: 12px 30px;
+                              text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
+                        Ver Detalles de la Obra
+                    </a>
+                </p>
+            </div>
+
+            <div style='background-color: #e9ecef; padding: 15px; text-align: center; font-size: 12px; color: #6c757d;'>
+                <p>Este es un correo automático del Sistema PROATAM. Por favor no responder.</p>
+            </div>
+        </div>
+        ";
+
+        $this->mail->Body    = $cuerpoHTML;
+        $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $cuerpoHTML));
+
+        return $this->mail->send();
+    } catch (Exception $e) {
+        error_log("Error enviando alerta de exceso de subcontratos: " . $e->getMessage());
+        return false;
+    }
+}
 }

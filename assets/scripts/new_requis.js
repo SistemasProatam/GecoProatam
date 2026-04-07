@@ -242,7 +242,6 @@ function resetAllItemConceptos(placeholder) {
 function cargarObras(proyectoId) {
     obraSelect.disabled = true;
     obraSelect.innerHTML = '<option value="">Cargando obras...</option>';
-    
     fetch(`get_obras_by_proyecto.php?proyecto_id=${proyectoId}`)
         .then(response => response.json())
         .then(obras => {
@@ -250,13 +249,12 @@ function cargarObras(proyectoId) {
                 obraSelect.innerHTML = `<option value="">Error: ${obras.error}</option>`;
                 return;
             }
-            
             obraSelect.innerHTML = '<option value="">Seleccionar Obra</option>';
             obras.forEach(obra => {
                 obraSelect.innerHTML += `<option value="${obra.id}">${obra.nombre_obra}</option>`;
             });
             obraSelect.disabled = false;
-            
+            // Reset catálogo y conceptos
             resetSelect(catalogoSelect, 'Primero seleccione una obra');
             resetAllItemConceptos('Primero seleccione un catálogo');
         })
@@ -267,7 +265,6 @@ function cargarObras(proyectoId) {
 }
 
 function cargarCatalogos() {
-
     const obraId = obraSelect.value;
     if (!obraId) {
         resetSelect(catalogoSelect, 'Primero seleccione una obra');

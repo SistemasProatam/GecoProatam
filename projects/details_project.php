@@ -96,7 +96,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 
             <button class="btn-add-oc" onclick="verObras(<?= $proyecto_id ?>)"
               data-bs-toggle="tooltip" data-bs-placement="top" title="Gestionar Obras">
-              <i class="bi bi-tools"></i>
+              <i class="bi bi-cone-striped"></i>
             </button>
           </div>
 

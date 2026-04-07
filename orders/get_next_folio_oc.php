@@ -25,6 +25,7 @@ $prefijos = [
     '2' => 'LBO-OC',  // LUBYCOMP
     '3' => 'DG-OC',   // DAVID GOMEZ
     '4' => 'ING-OC',  // INGETAM
+    '5' => 'GEN-OC',  // GENERAL (para cualquier otra entidad)
 ];
 
 $prefijo = $prefijos[$entidad_id] ?? 'OCGEN';

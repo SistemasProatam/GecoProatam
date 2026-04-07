@@ -1,5 +1,4 @@
 <?php
-// save_orden.php - VERSIÓN CORREGIDA
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ob_start();
@@ -64,12 +63,12 @@ function generarNuevoFolio($conn, $entidad_id, $folio_original)
     $numero = 1;
     if ($result_ultimo->num_rows > 0) {
         $ultimo = $result_ultimo->fetch_assoc();
-        if (preg_match('/OC-' . preg_quote($prefijo, '/') . '-(\d{4})-(\d+)/', $ultimo['folio'], $matches)) {
+        if (preg_match('/OC-' . preg_quote($prefijo, '/') , $ultimo['folio'], $matches)) {
             $numero = intval($matches[2]) + 1;
         }
     }
 
-    return sprintf("OC-%s-%s-%04d", $prefijo, $anio_actual, $numero);
+    return sprintf("OC-%s-%s-%04d", $prefijo, $numero);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -85,16 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $entidad_id     = $_POST['entidad'] ?? null;
     $categoria_id   = $_POST['categoria_id'] ?? $_POST['categoria'] ?? null;
     $proyecto_id    = $_POST['proyecto_id'] ?? $_POST['proyecto'] ?? null;
-
-    // CORRECCIÓN: Usar los nombres correctos de los campos
+    $subcontrato_id = !empty($_POST['subcontrato']) ? $_POST['subcontrato'] : null;
     $obra_id        = !empty($_POST['obra']) ? $_POST['obra'] : null;
     $catalogo_id    = !empty($_POST['catalogo']) ? $_POST['catalogo'] : null;
-
-    // IMPORTANTE: concepto_id para la orden principal debe ser nulo o un valor único
-    // Ya que cada item tiene su propio concepto_id
     $concepto_id    = null; // Para la orden principal, no usamos concepto_id
-
-    $proveedor_id   = $_POST['proveedor'] ?? null;
+    $proveedor_id = $_POST['proveedor'] ?? $_POST['proveedor_from_subcontrato'] ?? null;
     $solicitante_id = $_SESSION['user_id'];
     $descripcion    = $_POST['descripcion_general'] ?? '';
     $observaciones  = $_POST['observaciones'] ?? '';
@@ -107,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $fecha_solicitud = $_POST['fecha_solicitud'] ?? date('Y-m-d H:i:s');
 
-    // Nuevos datos para items
+    // Datos para items
     $descripciones  = $_POST['descripcion'] ?? [];
     $cantidades     = $_POST['cantidad'] ?? [];
     $unidades_ids   = $_POST['unidad_id'] ?? [];
@@ -128,6 +122,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$proveedor_id) $campos_faltantes[] = 'proveedor';
     if (!$proyecto_id) $campos_faltantes[] = 'proyecto';
     if (!$categoria_id) $campos_faltantes[] = 'categoría';
+
+    // Si la categoría es Destajo o Subcontrato, validar que tenga subcontrato
+        $esCategoriaSubcontrato = ($categoria_id == '2' || $categoria_id == '5');
+    if ($esCategoriaSubcontrato && !$subcontrato_id) {
+        $campos_faltantes[] = 'subcontrato (obligatorio para categoría Destajo/Subcontrato)';
+    }
 
     if (!empty($campos_faltantes)) {
         sendJsonResponse(false, "Faltan datos obligatorios: " . implode(', ', $campos_faltantes));
@@ -172,9 +172,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Insertar orden de compra (SIN concepto_id)
         // ================================
         $sql = "INSERT INTO ordenes_compra 
-                    (folio, requisicion_id, entidad_id, categoria_id, proyecto_id, obra_id, catalogo_id, proveedor_id, 
-                     solicitante_id, descripcion, observaciones, subtotal, iva, total, estado, fecha_solicitud) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)";
+                    (folio, requisicion_id, entidad_id, categoria_id, proyecto_id, obra_id, catalogo_id, subcontrato_id, proveedor_id, 
+                    solicitante_id, descripcion, observaciones, subtotal, iva, total, estado, fecha_solicitud) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)";
 
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
@@ -182,11 +182,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Asegurar valores nulos para campos opcionales
+        $obra_id_sp = $obra_id; 
         $obra_id = empty($obra_id) ? null : $obra_id;
         $catalogo_id = empty($catalogo_id) ? null : $catalogo_id;
+        $subcontrato_id = empty($subcontrato_id) ? null : $subcontrato_id;
 
         $stmt->bind_param(
-            "siiiiiiisssddds",
+            "siiiiiiiiisssdds",
             $folio,
             $requisicion_id,
             $entidad_id,
@@ -194,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $proyecto_id,
             $obra_id,
             $catalogo_id,
+            $subcontrato_id,
             $proveedor_id,
             $solicitante_id,
             $descripcion,
@@ -231,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cantidad = limpiarValorMonetario($cantidades[$i] ?? 1);
                     $unidad_id = !empty($unidades_ids[$i]) ? $unidades_ids[$i] : null;
 
-                    // CORRECCIÓN: Obtener concepto_id para este item específico
+                    // Obtener concepto_id para este item específico
                     $concepto_item_id = !empty($conceptos_ids[$i]) ? $conceptos_ids[$i] : null;
 
                     $precio_unitario = limpiarValorMonetario($precios_unit[$i] ?? 0);
@@ -256,6 +259,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             $stmt_item->close();
+        }
+
+        // ================================
+        // ACTUALIZAR PRESUPUESTO DEL SUBCONTRATO (si aplica)
+        // ================================
+        if ($esCategoriaSubcontrato && $subcontrato_id) {
+            // Recalcular el monto real del subcontrato basado en las órdenes pagadas
+            $sql_recalcular = "CALL sp_recalcular_monto_real(?, ?)";
+            $stmt_recalc = $conn->prepare($sql_recalcular);
+            $stmt_recalc->bind_param("ii", $obra_id_sp, $subcontrato_id);
+            $stmt_recalc->execute();
+            $stmt_recalc->close();
         }
 
         // ================================
@@ -361,10 +376,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             CONCAT(u.nombres, ' ', u.apellidos) as solicitante_nombre,
                             e.nombre as entidad_nombre,
                             c.nombre as categoria_nombre,
-                            p.nombre as proveedor_nombre,
+                            p.razon_social as proveedor_nombre,
                             pro.nombre_proyecto,
                             ob.nombre_obra,
                             cat.nombre_catalogo,
+                            subc.proveedor_id as subcontrato_proveedor_id,
+                            subc.total_estimado as subcontrato_total,
                             con.codigo_concepto,
                             con.nombre_concepto
                             FROM ordenes_compra oc
@@ -375,6 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             LEFT JOIN proyectos pro ON oc.proyecto_id = pro.id
                             LEFT JOIN obras ob ON oc.obra_id = ob.id
                             LEFT JOIN catalogos cat ON oc.catalogo_id = cat.id
+                            LEFT JOIN subcontratos subc ON oc.subcontrato_id = subc.id
                             LEFT JOIN conceptos con ON oc.concepto_id = con.id
                             WHERE oc.id = ?";
             $stmt_oc_datos = $conn->prepare($sql_oc_datos);
@@ -394,6 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'proyecto' => $oc_data['nombre_proyecto'] ?? 'Sin especificar',
                     'obra' => $oc_data['nombre_obra'] ?? 'N/A',
                     'catalogo' => $oc_data['nombre_catalogo'] ?? 'N/A',
+                    'subcontrato' => $subcontrato_id ? 'Sí' : 'No',
                     'concepto' => ($oc_data['codigo_concepto'] ?? '') . ' - ' . ($oc_data['nombre_concepto'] ?? 'N/A'),
                     'total' => '$' . number_format($oc_data['total'], 2),
                     'fecha_solicitud' => date('d/m/Y H:i', strtotime($oc_data['fecha_solicitud'])),

@@ -10,7 +10,7 @@
     </span>
     <span class="separator">|</span>
     <span class="update">
-      Versión 1.3.2 - Última actualización: 19/03/2026
+      Versión 1.4.0 - Última actualización: 06/04/2026
     </span>
     <span class="separator">|</span>
     <a href="/politicas_privacidad.php" class="footer-link">Aviso de Privacidad</a>

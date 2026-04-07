@@ -209,7 +209,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
           </div>
         </div>
 
-               <!-- Categoria-->
+        <!-- Categoria-->
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
@@ -230,7 +230,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
         <div class="section-title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</div>
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Proyecto</label>
               <select class="form-select" id="proyecto" name="proyecto_id" required>
@@ -244,7 +244,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
             </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Obra</label>
               <select class="form-select" id="obra" name="obra_id" disabled required>
@@ -252,10 +252,9 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
               </select>
             </div>
           </div>
-        </div>
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Catálogo</label>
               <select class="form-select" id="catalogo" name="catalogo_id" disabled required>
