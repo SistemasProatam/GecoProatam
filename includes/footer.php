@@ -1,5 +1,5 @@
 <?php
-// includes/footer.php
+require_once __DIR__ . '/../version.php';
 ?>
 <link rel="stylesheet" href="/assets/styles/footer.css" />
 
