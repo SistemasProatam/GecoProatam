@@ -15,3 +15,8 @@ php_value memory_limit 2048M
 php_value max_file_uploads 50
 php_value max_input_vars 5000
 
+# Bloquear acceso directo a archivos sensibles
+<FilesMatch "^(config\.php|conexion\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
