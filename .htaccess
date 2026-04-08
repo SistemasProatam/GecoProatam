@@ -20,3 +20,14 @@ php_value max_input_vars 5000
     Order Allow,Deny
     Deny from all
 </FilesMatch>
+
+# Headers de seguridad
+
+# Evita que el navegador adivine el tipo de archivo
+Header always set X-Content-Type-Options "nosniff" 
+
+# Evita que el sitio sea embebido en un iframe de otro sitio
+Header always set X-Frame-Options "SAMEORIGIN"
+
+# Activa el filtro XSS del navegador
+Header always set X-XSS-Protection "1; mode=block"
