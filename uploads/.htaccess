@@ -1,5 +1,11 @@
-# No permitir ejecución de PHP en uploads
-<FilesMatch "\.php$">
+# Bloquear ejecución de PHP y scripts
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
     Order Allow,Deny
     Deny from all
+</FilesMatch>
+
+# Permitir solo tipos de archivo seguros
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|pdf|doc|docx|xls|xlsx)$">
+    Order Allow,Deny
+    Allow from all
 </FilesMatch>
