@@ -31,6 +31,6 @@ TODAY=$(date +%d/%m/%Y)
 
 # Actualizar version.php
 sed -i "s/APP_VERSION', '[^']*'/APP_VERSION', '$NEW_VERSION'/" version.php
-sed -i "s/APP_UPDATE', '[^']*'/APP_UPDATE', '$TODAY'/" version.php
+sed -i "s|APP_UPDATE', '[^']*'|APP_UPDATE', '$TODAY'|" version.php
 
 echo "Versión actualizada a $NEW_VERSION"
