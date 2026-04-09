@@ -557,28 +557,6 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
               Items de la Orden
             </div>
 
-            <!-- Información del Proveedor -->
-              <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label"
-                    >Proveedor <span class="required">*</span></label
-                  >
-                  <select class="form-select" id="proveedor" name="proveedor" required>
-                    <option value="">Seleccionar proveedor</option>
-                    <?php
-                      if ($result_proveedores && $result_proveedores->num_rows > 0) {
-                      while ($row = $result_proveedores->fetch_assoc()) {
-                      echo '<option value="' . htmlspecialchars($row['id']) . '">' 
-                      . htmlspecialchars($row['razon_social']) . '</option>';
-                        }
-                      }
-                    ?>
-                  </select>
-                </div>
-              </div>
-            </div>
-
             <div class="items-table">
               <table class="table" id="itemsTable">
                 <thead>
