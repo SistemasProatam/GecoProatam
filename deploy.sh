@@ -40,7 +40,7 @@ sed -i "s|APP_UPDATE', '[^']*'|APP_UPDATE', '$TODAY'|" version.php
 
 echo "Versión actualizada a $NEW_VERSION"
 
-# Subir cambio de vuelta a GitLab
+# Subir cambios de vuelta a GitLab
 git add version.php
 git commit -m "version: $NEW_VERSION [skip ci]"
 git push origin main
