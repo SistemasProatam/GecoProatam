@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             case 'obtener_conceptos_obra':
                 $oid = (int)($_POST['obra_id'] ?? 0);
-                $sql = "SELECT c.id, c.codigo_concepto, c.nombre_concepto, c.unidad_medida, c.categoria, c.subcategoria,
+                $sql = "SELECT c.id, c.codigo_concepto, c.nombre_concepto, c.cantidad, c.unidad_medida, c.categoria, c.subcategoria,
                                GROUP_CONCAT(DISTINCT scc.subcontrato_id ORDER BY scc.subcontrato_id) AS subcontratos_ids,
                                GROUP_CONCAT(DISTINCT COALESCE(pr_a.nombre,'') ORDER BY scc.subcontrato_id) AS proveedores_asignados
                         FROM conceptos c
@@ -1295,8 +1295,8 @@ function scRenderZona(zoneId,lista,filtro,esAsig){
       +' ondblclick="scMoverConcepto('+c.id+',\''+(esAsig?'disp':'asig')+'\')" title="Doble clic para mover">'
       +'<span class="chip-cat">'+(c.categoria||'-')+'</span>'
       +'<span class="chip-cod">'+c.codigo_concepto+'</span>'
-      +'<span class="chip-nom">'+c.nombre_concepto+'</span>'
       +'<span class="chip-um">'+(c.unidad_medida||'')+'</span>'
+      +'<span class="chip-name">'+c.cantidad+'</span>'
       +alsoLabel+'</div>';
   }).join('');
 }
