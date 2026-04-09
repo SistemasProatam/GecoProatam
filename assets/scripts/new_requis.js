@@ -18,7 +18,7 @@ function mostrarCatalogoProductos() {
     modal.show();
 }
 
-function seleccionarProducto(productoId, nombre) {
+function seleccionarProducto(productoId) {
     
     const tableBody = document.querySelector('#itemsTable tbody');
     const lastRow = tableBody.lastElementChild;
