@@ -1483,7 +1483,7 @@ function calcularTotales() {
   });
 
   // Actualizar el subtotal general
-  document.getElementById('subtotalGeneral').textContent = '$' + subtotalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2});
+  document.getElementById('subtotalGeneral').textContent = '$' + subtotalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 3, maximumFractionDigits: 3});
   
   // Recalcular IVA y total general
   calcularIVA();
@@ -1495,11 +1495,11 @@ function calcularIVA() {
   const subtotal = parseFloat(subtotalTexto) || 0;
   
   const ivaPorcentaje = parseFloat(document.getElementById('iva').value) || 0;
-  const ivaTotal = subtotal * (ivaPorcentaje / 100);
-  const totalGeneral = subtotal + ivaTotal;
+  const ivaTotal = parseFloat((subtotal * (ivaPorcentaje / 100)).toFixed(3));
+  const totalGeneral = parseFloat((subtotal + ivaTotal).toFixed(2));
 
-  document.getElementById('ivaTotal').textContent = '$' + ivaTotal.toLocaleString('es-MX', {minimumFractionDigits: 2});
-  document.getElementById('totalGeneral').textContent = '$' + totalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2});
+  document.getElementById('ivaTotal').textContent = '$' + ivaTotal.toLocaleString('es-MX', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+  document.getElementById('totalGeneral').textContent = '$' + totalGeneral.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
   actualizarPresupuesto();
 }
