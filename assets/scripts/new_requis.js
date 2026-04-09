@@ -14,11 +14,19 @@ const catalogoSelect = document.getElementById('catalogo');
 // CATÁLOGO DE PRODUCTOS
 // ====================================
 function mostrarCatalogoProductos() {
-    const modal = new bootstrap.Modal(document.getElementById('modalCatalogo'));
+
+    const modalElement = document.getElementById('modalCatalogo');
+    let modal = bootstrap.Modal.getInstance(modalElement);
+
+    if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+    }
+
     modal.show();
 }
 
 function seleccionarProducto(productoId) {
+    addItem();
     
     const tableBody = document.querySelector('#itemsTable tbody');
     const lastRow = tableBody.lastElementChild;
@@ -37,7 +45,6 @@ function seleccionarProducto(productoId) {
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalCatalogo'));
     modal.hide();
 
-    addItem();
 }
 
 // ====================================
