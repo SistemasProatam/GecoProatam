@@ -1,4 +1,4 @@
 <?php
 //control de versiones automatico
-define('APP_VERSION', '1.4.4');
+define('APP_VERSION', '1.4.5');
 define('APP_UPDATE', '09/04/2026');
