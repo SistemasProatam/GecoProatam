@@ -16,7 +16,7 @@ php_value max_file_uploads 50
 php_value max_input_vars 5000
 
 # Bloquear acceso directo a archivos sensibles
-<FilesMatch "^(config\.php|conexion\.php)$">
+<FilesMatch "^(config\.php|conexion\.php|version\.php|deploy\.sh)$">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
