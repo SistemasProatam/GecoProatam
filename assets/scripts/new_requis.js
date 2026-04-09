@@ -35,11 +35,9 @@ function seleccionarProducto(productoId, nombre) {
         }
     }
     
-    const modal = bootstrap.Modal.getInstance(
-    document.getElementById('modalCatalogo')
-);
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCatalogo'));
 
-if (modal) {
+    if (modal) {
     modal.hide(); }
 }
 
