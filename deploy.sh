@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Configurar git
+git config user.email "ci@proatam.com"
+git config user.name "GitLab CI"
+
 # Leer versión actual
 VERSION=$(grep "APP_VERSION" version.php | grep -oP "\d+\.\d+\.\d+")
 MAJOR=$(echo $VERSION | cut -d. -f1)
@@ -23,6 +27,7 @@ elif echo "$COMMIT_TYPE" | grep -qE "^(fix|security|config|refactor|docs)$"; the
     echo "Incrementando PATCH"
 else
     echo "Tipo no reconocido, versión sin cambios"
+    exit 0
 fi
 
 # Nueva versión
@@ -34,3 +39,10 @@ sed -i "s/APP_VERSION', '[^']*'/APP_VERSION', '$NEW_VERSION'/" version.php
 sed -i "s|APP_UPDATE', '[^']*'|APP_UPDATE', '$TODAY'|" version.php
 
 echo "Versión actualizada a $NEW_VERSION"
+
+# Subir cambio de vuelta a GitLab
+git add version.php
+git commit -m "version: $NEW_VERSION [skip ci]"
+git push origin main
+
+echo "version.php actualizado en GitLab"
