@@ -252,6 +252,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
               </select>
             </div>
           </div>
+        </div>
 
         <div class="row">
           <div class="col-md-4">
