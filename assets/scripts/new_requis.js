@@ -19,7 +19,6 @@ function mostrarCatalogoProductos() {
 }
 
 function seleccionarProducto(productoId, nombre) {
-    addItem();
     
     const tableBody = document.querySelector('#itemsTable tbody');
     const lastRow = tableBody.lastElementChild;
@@ -36,9 +35,9 @@ function seleccionarProducto(productoId, nombre) {
     }
     
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalCatalogo'));
+    modal.hide();
 
-    if (modal) {
-    modal.hide(); }
+    addItem();
 }
 
 // ====================================
