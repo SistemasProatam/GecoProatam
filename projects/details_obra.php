@@ -1293,7 +1293,6 @@ function scRenderZona(zoneId,lista,filtro,esAsig){
     return '<div class="concept-chip'+(enOtro?' already':'')+'" draggable="true" data-id="'+c.id+'"'
       +' ondragstart="scOnDragStart(event,'+c.id+')" ondragend="scOnDragEnd(event)"'
       +' ondblclick="scMoverConcepto('+c.id+',\''+(esAsig?'disp':'asig')+'\')" title="Doble clic para mover">'
-      +'<span class="chip-cat">'+(c.categoria||'-')+'</span>'
       +'<span class="chip-cod">'+c.codigo_concepto+'</span>'
       +'<span class="chip-um">'+(c.unidad_medida||'')+'</span>'
       +'<span class="chip-name">'+c.cantidad+'</span>'
