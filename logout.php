@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 session_start();
 
 // Determinar el mensaje según la razón del logout
@@ -45,8 +47,10 @@ if (ini_get("session.use_cookies")) {
 <body>
 
 <script>
-const message = "<?php echo $message; ?>";
-const icon = "<?php echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
+const message = "<?php
+ echo $message; ?>";
+const icon = "<?php
+ echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
 
 Swal.fire({
     title: '¡Sesión cerrada!',
@@ -64,3 +68,4 @@ Swal.fire({
 
 </body>
 </html>
+

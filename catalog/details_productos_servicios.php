@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -38,7 +40,8 @@ if (!$producto) {
         <?= ucfirst($producto['tipo']) ?>
     </div>
     
-    <?php if (!empty($producto['descripcion'])): ?>
+    <?php
+ if (!empty($producto['descripcion'])): ?>
     <div class="mb-3">
         <strong>Descripción:</strong><br>
         <?= nl2br(htmlspecialchars($producto['descripcion'])) ?>

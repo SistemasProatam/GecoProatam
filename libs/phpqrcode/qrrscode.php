@@ -1,4 +1,5 @@
 <?php
+
 /*
  * PHP QR Code encoder
  *
@@ -208,3 +209,4 @@
             return $rs;
         }
     }
+

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -66,7 +68,7 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
   <title>Imprimir QR – <?= htmlspecialchars($activo['codigo']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
@@ -148,20 +150,36 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
     </a>
   </div>
 
-  <?php $cantidad = max(1, min(8, (int)($_GET['cantidad'] ?? 1))); ?>
-  <?php if ($cantidad > 1): ?><div class="multi-print"><?php endif; ?>
+  <?php
+require_once __DIR__ . '/config.php';
+ $cantidad = max(1, min(8, (int)($_GET['cantidad'] ?? 1))); ?>
+  <?php
+require_once __DIR__ . '/config.php';
+ if ($cantidad > 1): ?><div class="multi-print"><?php
+require_once __DIR__ . '/config.php';
+ endif; ?>
 
-  <?php for ($c = 0; $c < $cantidad; $c++): ?>
+  <?php
+require_once __DIR__ . '/config.php';
+ for ($c = 0; $c < $cantidad; $c++): ?>
   <div class="qr-card-wrap">
     <div class="qr-card" id="qr-card-<?= $c ?>">
 
       <div class="logo-wrap">
-        <?php $logo_path = $_SERVER['DOCUMENT_ROOT'] . '/assets/img/logo.png'; ?>
-        <?php if (file_exists($logo_path)): ?>
-          <img src="/assets/img/logo.png" alt="Logo PROATAM" />
-        <?php else: ?>
+        <?php
+require_once __DIR__ . '/config.php';
+ $logo_path = $_SERVER['DOCUMENT_ROOT'] . '/assets/img/logo.png'; ?>
+        <?php
+require_once __DIR__ . '/config.php';
+ if (file_exists($logo_path)): ?>
+          <img src="<?= BASE_URL ?>/assets/img/logo.png" alt="Logo PROATAM" />
+        <?php
+require_once __DIR__ . '/config.php';
+ else: ?>
           <div class="logo-texto">PROATAM</div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . '/config.php';
+ endif; ?>
       </div>
 
       <hr class="divider" />
@@ -184,9 +202,15 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
 
     </div>
   </div>
-  <?php endfor; ?>
+  <?php
+require_once __DIR__ . '/config.php';
+ endfor; ?>
 
-  <?php if ($cantidad > 1): ?></div><?php endif; ?>
+  <?php
+require_once __DIR__ . '/config.php';
+ if ($cantidad > 1): ?></div><?php
+require_once __DIR__ . '/config.php';
+ endif; ?>
 
   <script>
     function descargarPNG(btn) {
@@ -222,3 +246,4 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
 
 </body>
 </html>
+

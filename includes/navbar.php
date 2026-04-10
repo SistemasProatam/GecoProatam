@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -25,7 +27,7 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="/assets/styles/navbar.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/navbar.css" />
 
 </head>
 
@@ -44,9 +46,9 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
       </button>
 
       <!-- Logo -->
-      <a class="navbar-brand" href="/index.php">
+      <a class="navbar-brand" href="<?= BASE_URL ?>/index.php">
         <img
-          src="/assets/img/proatam.png"
+          src="<?= BASE_URL ?>/assets/img/proatam.png"
           alt="Logo PROATAM"
           width="200"
           height="auto"
@@ -64,7 +66,7 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
     aria-labelledby="staticBackdropLabel">
     <div class="offcanvas-header">
       <img
-        src="/assets/img/logo_proat.png"
+        src="<?= BASE_URL ?>/assets/img/logo_proat.png"
         alt="Logo PROATAM"
         width="20"
         height="auto"
@@ -80,7 +82,8 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
       <ul class="menu-list">
 
         <!-- DEPARTAMENTO EN SESIÓN -->
-        <p class="dept-label"><?php echo htmlspecialchars($departamento_sesion); ?></p>
+        <p class="dept-label"><?php
+        echo htmlspecialchars($departamento_sesion); ?></p>
         <div class="separator"></div>
 
         <!-- ACTIVOS - Elemento simple -->
@@ -95,14 +98,17 @@ $ver_activos = in_array($departamento_sesion, [
   'Procura'
 ]);
 ?>
-<?php if ($ver_activos): ?>
-  <a href="/activos/list_activos.php" class="text-decoration-none">
+
+<?php
+ if ($ver_activos): ?>
+  <a href="<?= BASE_URL ?>/activos/list_activos.php" class="text-decoration-none">
     <li class="simple-menu-item">
       <i class="bi bi-clipboard2-check"></i>
       <p class="menu-label">Activos</p>
     </li>
   </a>
-<?php endif; ?>
+<?php
+ endif; ?>
 
 <!-- CATÁLOGO - Elemento simple -->
 <?php
@@ -115,17 +121,20 @@ $ver_catalogo = in_array($departamento_sesion, [
   'Procura'
 ]);
 ?>
-<?php if ($ver_catalogo): ?>
-  <a href="/catalog/list_catalog.php" class="text-decoration-none">
+<?php
+ if ($ver_catalogo): ?>
+  <a href="<?= BASE_URL ?>/catalog/list_catalog.php" class="text-decoration-none">
     <li class="simple-menu-item">
       <i class="bi bi-grid"></i>
       <p class="menu-label">Catálogo</p>
     </li>
   </a>
-<?php endif; ?>
+<?php
+ endif; ?>
 
 <!-- PROYECTOS - Con submenu -->
 <?php
+
 $ver_proyectos = in_array($departamento_sesion, [
   'Director General',
   'Subdirector General',
@@ -135,7 +144,8 @@ $ver_proyectos = in_array($departamento_sesion, [
   'Procura'
 ]);
 ?>
-<?php if ($ver_proyectos): ?>
+<?php
+ if ($ver_proyectos): ?>
   <li class="menu-item" id="ProyectosMenu">
     <button class="menu-header" onclick="toggleSubmenu('ProyectosMenu')">
       <i class="bi bi-building-gear"></i>
@@ -144,6 +154,7 @@ $ver_proyectos = in_array($departamento_sesion, [
     </button>
     <div class="submenu">
       <?php
+
       $ver_plan_obra = in_array($departamento_sesion, [
         'Director General',
         'Subdirector General',
@@ -152,23 +163,27 @@ $ver_proyectos = in_array($departamento_sesion, [
         'Procura'
       ]);
       ?>
-      <?php if ($ver_plan_obra): ?>
-        <a href="/projects/plan_obra.php" class="submenu-item">
+      <?php
+ if ($ver_plan_obra): ?>
+        <a href="<?= BASE_URL ?>/projects/plan_obra.php" class="submenu-item">
           <i class="bi bi-calendar4-range"></i> Plan de Obra
         </a>
-      <?php endif; ?>
-      <a href="/projects/list_project.php" class="submenu-item">
+      <?php
+ endif; ?>
+      <a href="<?= BASE_URL ?>/projects/list_project.php" class="submenu-item">
         <i class="bi bi-building"></i> Ver Proyectos
       </a>
     </div>
   </li>
-<?php endif; ?>
+<?php
+ endif; ?>
 
 <!-- COTIZACIONES - Con submenu  PENDIENTE -->
 
 
 <!-- ÓRDENES DE COMPRA - Con submenu -->
 <?php
+
 $ver_ordenes = in_array($departamento_sesion, [
   'Director General',
   'Subdirector General',
@@ -179,7 +194,9 @@ $ver_ordenes = in_array($departamento_sesion, [
   'Procura'
 ]);
 ?>
-<?php if ($ver_ordenes): ?>
+
+<?php
+ if ($ver_ordenes): ?>
   <li class="menu-item" id="ordenesMenu">
     <button class="menu-header" onclick="toggleSubmenu('ordenesMenu')">
       <i class="bi bi-journal-bookmark"></i>
@@ -197,17 +214,20 @@ $ver_ordenes = in_array($departamento_sesion, [
         'Procura'
       ]);
       ?>
-      <?php if ($crear_orden): ?>
-        <a href="/orders/new_order.php" class="submenu-item">
+      <?php
+ if ($crear_orden): ?>
+        <a href="<?= BASE_URL ?>/orders/new_order.php" class="submenu-item">
           <i class="bi bi-plus-circle"></i> Crear Nueva Orden
         </a>
-      <?php endif; ?>
-      <a href="/orders/list_oc.php" class="submenu-item">
+      <?php
+ endif; ?>
+      <a href="<?= BASE_URL ?>/orders/list_oc.php" class="submenu-item">
         <i class="bi bi-list-ul"></i> Ver Registros
       </a>
     </div>
   </li>
-<?php endif; ?>
+<?php
+ endif; ?>
 
 <!-- REQUISICIONES - Con submenu -->
 <?php
@@ -225,7 +245,8 @@ $ver_requisiciones = in_array($departamento_sesion, [
   'Residente de Obra'
 ]);
 ?>
-<?php if ($ver_requisiciones): ?>
+<?php
+ if ($ver_requisiciones): ?>
   <li class="menu-item" id="requisMenu">
     <button class="menu-header" onclick="toggleSubmenu('requisMenu')">
       <i class="bi bi-journal-arrow-up"></i>
@@ -248,17 +269,20 @@ $ver_requisiciones = in_array($departamento_sesion, [
         'Residente de Obra'
       ]);
       ?>
-      <?php if ($crear_requisicion): ?>
-        <a href="/orders/new_requis.php" class="submenu-item">
+      <?php
+ if ($crear_requisicion): ?>
+        <a href="<?= BASE_URL ?>/orders/new_requis.php" class="submenu-item">
           <i class="bi bi-plus-circle"></i> Crear Requisición
         </a>
-      <?php endif; ?>
-      <a href="/orders/list_requis.php" class="submenu-item">
+      <?php
+ endif; ?>
+      <a href="<?= BASE_URL ?>/orders/list_requis.php" class="submenu-item">
         <i class="bi bi-list-ul"></i> Ver Registros
       </a>
     </div>
   </li>
-<?php endif; ?>
+<?php
+ endif; ?>
         </ul>
 
 <div class="separator"></div>
@@ -272,18 +296,20 @@ $ver_admin_usuarios = in_array($departamento_sesion, [
   'Tecnico de Sistemas'
 ]);
 ?>
-<?php if ($ver_admin_usuarios): ?>
+<?php
+ if ($ver_admin_usuarios): ?>
   <ul class="menu-list">
-    <a href="/users/list_users.php" class="text-decoration-none">
+    <a href="<?= BASE_URL ?>/users/list_users.php" class="text-decoration-none">
       <li class="simple-menu-item">
         <i class="bi bi-person-vcard"></i>
         <p class="menu-label">Administrar Usuarios</p>
       </li>
     </a>
-<?php endif; ?>
+<?php
+ endif; ?>
 
 <!-- Solicitud de mantenimiento - Elemento simple -->
-<a href="/solicitud_soporte.php" class="text-decoration-none">
+<a href="<?= BASE_URL ?>/solicitud_soporte.php" class="text-decoration-none">
   <li class="simple-menu-item">
     <i class="bi bi-person-raised-hand"></i>
     <p class="menu-label">Solicitud de Mantenimiento</p>
@@ -299,20 +325,22 @@ $ver_dash = in_array($departamento_sesion, [
   'Tecnico de Sistemas'
 ]);
 ?>
-<?php if ($ver_dash): ?>
-  <a href="/dashboard.php" class="text-decoration-none">
+<?php
+ if ($ver_dash): ?>
+  <a href="<?= BASE_URL ?>/dashboard.php" class="text-decoration-none">
     <li class="simple-menu-item">
       <i class="bi bi-bar-chart-line"></i>
       <p class="menu-label">Panel de Control</p>
     </li>
   </a>
-<?php endif; ?>
+<?php
+ endif; ?>
 </ul>
 
 <div class="separator"></div>
 
       <ul class="menu-list">
-        <a href="/logout.php" class="text-decoration-none">
+        <a href="<?= BASE_URL ?>/logout.php" class="text-decoration-none">
           <li class="simple-menu-item logout">
             <i class="bi bi-box-arrow-left"></i>
             <p class="menu-label">Cerrar Sesión</p>
@@ -355,8 +383,9 @@ $ver_dash = in_array($departamento_sesion, [
 
   <!-- Session Timeout Script -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="/assets/scripts/session_timeout.js"></script>
+  <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
 </body>
 
 </html>
+

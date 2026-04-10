@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 include(__DIR__ . "/../conexion.php");
 header('Content-Type: application/json');
 
@@ -290,3 +292,4 @@ try {
 $stmt->close();
 $conn->close();
 exit;
+

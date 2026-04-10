@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -651,8 +653,8 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
   <title>Ver Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="/assets/styles/new_order.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
   <style>
     .estado-badge {
       font-size: 1rem;
@@ -738,13 +740,13 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
     <div class="container hero-content">
       <div class="breadcrumb-custom">
-        <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
         <span>/</span>
         <span>Ver Orden de Compra</span>
       </div>
@@ -1126,7 +1128,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
                         title="Ver archivo">
                         <i class="bi bi-eye"></i> Ver
                       </button>
-                      <a href="/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>"
+                      <a href="<?= BASE_URL ?>/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>"
                         class="btn btn-sm btn-outline-success"
                         title="Descargar archivo">
                         <i class="bi bi-download"></i> Descargar
@@ -1162,7 +1164,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
                   title="Ver comprobante de pago">
                   <i class="bi bi-eye"></i> Ver Comprobante
                 </button>
-                <a href="/orders/download_comprobante.php?id=<?= $id ?>&download=1"
+                <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1"
                   class="btn btn-sm btn-outline-success"
                   title="Descargar comprobante">
                   <i class="bi bi-download"></i> Descargar

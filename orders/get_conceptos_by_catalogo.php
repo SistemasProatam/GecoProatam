@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 require_once __DIR__ . "/../conexion.php";
@@ -41,3 +43,4 @@ while ($row = $result->fetch_assoc()) {
 echo json_encode($conceptos);
 $conn->close();
 ?>
+

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -280,7 +282,7 @@ while ($archivo = $archivos->fetch_assoc()) {
     <title>Editar Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/assets/styles/new_order.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .form-body { padding-top: 0; }
@@ -366,7 +368,7 @@ while ($archivo = $archivos->fetch_assoc()) {
         <div class="breadcrumb-custom">
             <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
             <span>/</span>
-            <a href="/orders/list_oc.php">Registro de Órdenes de Compra</a>
+            <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
             <span>/</span>
             <span>Editar Orden de Compra</span>
         </div>
@@ -680,7 +682,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                                             </small>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <a href="/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc"
+                                            <a href="<?= BASE_URL ?>/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc"
                                                class="btn btn-sm btn-primary" target="_blank">
                                                 <i class="bi bi-download"></i> Descargar
                                             </a>
@@ -1362,3 +1364,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -152,10 +154,10 @@ $estatus_badges = [
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     crossorigin="anonymous" />
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="/assets/styles/new_order.css" />
-  <link rel="stylesheet" href="/assets/styles/details_mobile.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_mobile.css" />
   <style>
     /* ── Hero image ── */
     .hero-img-wrap {
@@ -279,7 +281,8 @@ $estatus_badges = [
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php
+ include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
 <!-- HERO -->
 <div class="hero-section">
@@ -287,7 +290,7 @@ $estatus_badges = [
     <div class="breadcrumb-custom">
       <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="/activos/list_activos.php">Registro de Activos</a>
+      <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
       <span>/</span>
       <span><?= htmlspecialchars($activo['codigo']) ?></span>
     </div>

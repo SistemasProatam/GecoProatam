@@ -2873,3 +2873,4 @@ if (!class_exists('QRcode', false)) {
 
 } // END OF "class_exists QRcode"
 ?>
+

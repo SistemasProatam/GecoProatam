@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -103,9 +105,9 @@ function urlFiltros(array $extras = []): string {
     <title>Registro de Activos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/assets/styles/list.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
 
     <style>
         /* Badge estatus */
@@ -120,7 +122,7 @@ function urlFiltros(array $extras = []): string {
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -339,3 +341,4 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 </html>
+

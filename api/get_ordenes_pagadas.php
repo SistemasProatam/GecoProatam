@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -93,3 +95,4 @@ try {
 }
 
 $conn->close();
+

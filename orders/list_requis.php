@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -141,8 +143,8 @@ while ($ent = $entidadesRes->fetch_assoc()) {
     <title>Registro de Requisiciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/assets/styles/list.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
     <style>
         /* CONTENEDOR CON SCROLL HORIZONTAL */
         .table-container {
@@ -246,13 +248,13 @@ while ($ent = $entidadesRes->fetch_assoc()) {
 </head>
 
 <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
-                <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
                 <span>Registro de Requisiciones</span>
             </div>
@@ -424,3 +426,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
+

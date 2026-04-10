@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -389,3 +391,4 @@ function generarTextoUbicacion($requisicion_data)
 
     return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicación específica";
 }
+

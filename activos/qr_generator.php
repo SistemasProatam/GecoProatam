@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 /**
  * QR Generator – PROATAM
  * Genera códigos QR utilizando phpqrcode y fallback con GD.
@@ -218,3 +220,4 @@ class QRGenerator
         return 'data:image/png;base64,' . base64_encode($bytes);
     }
 }
+

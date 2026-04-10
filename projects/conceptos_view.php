@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // conceptos_view.php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -165,6 +167,7 @@ if ($conceptos) {
 ?>
 
 <?php
+
 // ============================================================
 // HELPER: detectar si un codigo_concepto es categoría/subcategoría
 // ============================================================
@@ -193,8 +196,8 @@ function getTipoConcepto($codigo) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/assets/styles/details.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
     <style>
         .item-orden-pagada {
             border-left: 4px solid #28a745;
@@ -445,6 +448,12 @@ function getTipoConcepto($codigo) {
                                                                 <?= htmlspecialchars($concepto['nombre_concepto']) ?>
                                                             </h6>
                                                             <div class="concepto-meta d-flex align-items-center flex-wrap gap-1">
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <h6 class="concepto-nombre mb-2 text-dark">
+                                                                <?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                                            </h6>
+                                                            <div class="concepto-meta d-flex align-items-center flex-wrap gap-1">
                                                                 <?php if ($concepto['unidad_medida']): ?>
                                                                     <span class="badge bg-light text-dark me-2">
                                                                         <i class="bi bi-rulers me-1"></i>
@@ -525,11 +534,10 @@ function getTipoConcepto($codigo) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php endif; ?>
                                     <?php endforeach; ?>
+                                </div>
                             </div>
-                                    </div>
-                                <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </div>
                 <?php endforeach; ?>
 
@@ -801,7 +809,7 @@ function getTipoConcepto($codigo) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="/assets/scripts/catalogo-obras.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
 
     <script>
         // Variables globales para esta vista

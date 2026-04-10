@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 // Incluir el gestor de sesiones para consistencia
 require_once "includes/session_manager.php";
 require_once "includes/check_session.php";
@@ -84,3 +86,4 @@ try {
 
 $conn->close();
 ?>
+

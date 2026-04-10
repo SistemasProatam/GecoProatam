@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
 
@@ -69,7 +71,7 @@ while ($row = $result_activos->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/styles/new_order.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .activo-autocomplete { position: relative; }
@@ -117,7 +119,8 @@ while ($row = $result_activos->fetch_assoc()) {
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php
+ include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -190,7 +193,8 @@ while ($row = $result_activos->fetch_assoc()) {
                 <div class="form-group">
                     <label class="form-label">Buscar Activo</label>
 
-                    <?php if ($activo_pre): ?>
+                    <?php
+ if ($activo_pre): ?>
                     <!-- Activo pre-seleccionado desde la vista de detalle -->
                     <div id="activoBadge" class="activo-badge">
                         <i class="bi bi-box-seam"></i>
@@ -208,7 +212,8 @@ while ($row = $result_activos->fetch_assoc()) {
                     <input type="hidden" name="activo_nombre" id="activoNombre" value="<?= htmlspecialchars($activo_pre['nombre']) ?>">
                     <input type="hidden" name="activo_tipo"   id="activoTipo"   value="<?= htmlspecialchars($activo_pre['tipo']) ?>">
                     <div id="activoSearchWrap" style="display:none;">
-                    <?php else: ?>
+                    <?php
+ else: ?>
                     <div id="activoBadge" class="activo-badge" style="display:none;">
                         <i class="bi bi-box-seam"></i>
                         <span id="activoBadgeText"></span>
@@ -221,7 +226,8 @@ while ($row = $result_activos->fetch_assoc()) {
                     <input type="hidden" name="activo_nombre" id="activoNombre" value="">
                     <input type="hidden" name="activo_tipo"   id="activoTipo"   value="">
                     <div id="activoSearchWrap">
-                    <?php endif; ?>
+                    <?php
+ endif; ?>
 
                         <div class="activo-autocomplete">
                             <input type="text" id="activoBusqueda" class="form-control"
@@ -559,7 +565,9 @@ document.querySelectorAll('input, textarea, select').forEach(el => {
 });
 </script>
 
-<?php include 'includes/footer.php'; ?>
-<script src="/assets/scripts/session_timeout.js"></script>
+<?php
+ include 'includes/footer.php'; ?>
+<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>
 </html>
+

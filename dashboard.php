@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
 
@@ -124,10 +126,10 @@ $tipo_colores = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="/assets/styles/dashboard.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/dashboard.css">
 </head>
 <body>
 
@@ -155,7 +157,7 @@ $tipo_colores = [
     <div class="section-label">Resumen general</div>
     <div class="grid-4 mb-section">
 
-    <a href="/projects/list_project.php" class="kpi-card-link">
+    <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
         <div class="kpi-card c-green fade-up delay-1">
             <i class="bi bi-folder2-open kpi-icon"></i>
             <div class="kpi-label">Proyectos Vigentes</div>
@@ -176,7 +178,7 @@ $tipo_colores = [
         </div>
     </a>
 
-    <a href="/activos/list_activos.php" class="kpi-card-link">
+    <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
         <div class="kpi-card c-gold fade-up delay-3">
             <i class="bi bi-boxes kpi-icon"></i>
             <div class="kpi-label">Activos Registrados</div>
@@ -188,7 +190,7 @@ $tipo_colores = [
         </div>
     </a>
 
-    <a href="/users/list_users.php" class="kpi-card-link">
+    <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
         <div class="kpi-card c-purple fade-up delay-4">
             <i class="bi bi-people kpi-icon"></i>
             <div class="kpi-label">Usuarios Activos</div>

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -417,3 +419,4 @@ if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
 
 header("Location: details_activo.php?id={$activo_id}&success=1");
 exit;
+

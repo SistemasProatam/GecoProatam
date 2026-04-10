@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // details_obra.php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -304,8 +306,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="/assets/styles/details.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
   <style>
   .sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
   .sc-card{border:1px solid rgba(0,0,0,.09);border-radius:12px;overflow:hidden;background:#fff;transition:box-shadow .2s,transform .2s;box-shadow:0 2px 6px rgba(0,0,0,.05)}
@@ -438,7 +440,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="list_obras.php">Registro de Obras</a>
       <span>/</span>
@@ -1384,7 +1386,7 @@ function extEliminar(id){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="/assets/scripts/catalogo-obras.js"></script>
+<script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 

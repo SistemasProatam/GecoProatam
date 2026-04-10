@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 // =========================
 // login.php
 // =========================
@@ -13,7 +15,7 @@ if (isset($_SESSION['user_id'])) {
     if (isset($_SESSION['active_tabs'])) {
         $_SESSION['active_tabs'] = [];
     }
-    header("Location: /index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit();
 }
 $_SESSION['active_tabs'] = []; // Limpiar pestañas anteriores
@@ -44,8 +46,8 @@ if (isset($_GET['error'])) {
 <title>Inicio de Sesión</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<link rel="stylesheet" href="/assets/styles/login.css"> 
-<link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/login.css"> 
+<link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
@@ -56,7 +58,7 @@ if (isset($_GET['error'])) {
         <div class="w-100 px-2 px-lg-2">
             <div class="form-container">
                 <a class="navbar-brand">
-                    <img src="/assets/img/proatam.png" alt="Logo PROATAM"/>
+                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM"/>
                 </a>
                 <h2>Inicio de Sesión</h2>
 
@@ -97,15 +99,15 @@ if (isset($_GET['error'])) {
          <div class="carousel-track">
              <div class="carousel-slide active">
                 <source srcset="/assets/img/slider1.webp" type="image/webp">
-                 <img src="/assets/img/slider1.png" alt="Imagen decorativa 1" class="img-fluid w-100 h-80 object-fit-cover">
+                 <img src="<?= BASE_URL ?>/assets/img/slider1.png" alt="Imagen decorativa 1" class="img-fluid w-100 h-80 object-fit-cover">
              </div>
              <div class="carousel-slide">
                 <source srcset="/assets/img/slider2.webp" type="image/webp">
-                 <img src="/assets/img/slider2.png" alt="Imagen decorativa 2" loading="lazy" class="img-fluid w-100 h-80 object-fit-cover">
+                 <img src="<?= BASE_URL ?>/assets/img/slider2.png" alt="Imagen decorativa 2" loading="lazy" class="img-fluid w-100 h-80 object-fit-cover">
              </div>
              <div class="carousel-slide">
                 <source srcset="/assets/img/slider3.webp" type="image/webp">
-                 <img src="/assets/img/slider3.png" alt="Imagen decorativa 3" loading="lazy" class="img-fluid w-100 h-80 object-fit-cover">
+                 <img src="<?= BASE_URL ?>/assets/img/slider3.png" alt="Imagen decorativa 3" loading="lazy" class="img-fluid w-100 h-80 object-fit-cover">
              </div>
          </div>
      </div>
@@ -250,3 +252,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+

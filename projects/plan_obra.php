@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -232,8 +234,8 @@ if ($obra_id > 0) {
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="/assets/styles/plan_obra.css">
-<link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/plan_obra.css">
+<link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
 
 <style>
 .prov-sec { margin-bottom: 28px; }
@@ -282,7 +284,7 @@ if ($obra_id > 0) {
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
 <div class="hero-section">
   <div class="hero-content">
@@ -940,3 +942,4 @@ function togProv(id, hdrEl) {
 
 </body>
 </html>
+

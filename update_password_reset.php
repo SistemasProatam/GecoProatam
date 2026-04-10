@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 session_start();
 header('Content-Type: application/json');
 include(__DIR__ . "/conexion.php");
@@ -64,3 +66,4 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Error del servidor al actualizar la contraseña.']);
 }
 ?>
+

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 session_start();
 $page_title = "Aviso de Privacidad";
 ?>
@@ -11,8 +13,8 @@ $page_title = "Aviso de Privacidad";
     <title><?php echo $page_title; ?> - PROATAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/assets/styles/new_order.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
 
 
     <style>
@@ -455,8 +457,9 @@ $page_title = "Aviso de Privacidad";
     <?php include __DIR__ . "/includes/footer.php"; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/scripts/session_timeout.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
 </body>
 
 </html>
+

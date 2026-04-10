@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -76,3 +78,4 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Error al eliminar la obra: ' . $e->getMessage()]);
 }
 ?>
+

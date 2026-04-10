@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 header('Content-Type: application/json');
 session_start();
 
@@ -116,3 +118,4 @@ echo json_encode([
 ]);
 exit;
 ?>
+

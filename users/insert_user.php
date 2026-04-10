@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 header('Content-Type: application/json; charset=utf-8');
 include(__DIR__ . "/../conexion.php");
 
@@ -154,7 +156,7 @@ function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseñ
                     </div>
                     
                     <p>Puedes acceder al sistema a través del siguiente enlace:</p>
-                    <a href='https://proatamgoc.duckdns.org' class='button'>Acceder al Sistema</a>
+                    <a href='#' class='button'>Acceder al Sistema</a>
                     
                     <p style='margin-top: 20px;'>Si tienes algún problema para acceder, contacta al departamento de sistemas.</p>
                 </div>
@@ -394,3 +396,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => 'Excepción: ' . $e->getMessage()]);
 }
+

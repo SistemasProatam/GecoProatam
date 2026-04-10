@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 include(__DIR__ . "/../conexion.php");
 
 $requisicion_id = $_GET['requisicion_id'] ?? null;
@@ -24,3 +26,4 @@ while ($row = $result->fetch_assoc()) {
 }
 
 echo json_encode($items);
+

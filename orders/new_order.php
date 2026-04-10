@@ -1,4 +1,6 @@
-<?php 
+<?php
+require_once __DIR__ . '/../config.php';
+ 
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -139,12 +141,12 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
-    <link rel="stylesheet" href="/assets/styles/new_order.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
     <style>
       .presupuesto-info {
         background: #f8f9fa;
@@ -197,15 +199,15 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
   </head>
   <body>
 
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . "" . BASE_URL . "/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="/orders/list_oc.php">Registro de Órdenes de Compra</a>
+      <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
       <span>/</span>
       <span>Nueva Orden de Compra</span>
     </div>
@@ -830,7 +832,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
     ></script>
 
     <!-- JavaScript Externo -->
-    <script src="/assets/scripts/new_order.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/new_order.js"></script>
     
     <!-- Configuración e Inicialización -->
     <script>
