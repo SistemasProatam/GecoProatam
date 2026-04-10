@@ -61,7 +61,7 @@ Swal.fire({
     timerProgressBar: true,
     willClose: () => {
         // Redirigir automáticamente al login al cerrar el modal
-        window.location.href = '/login.php';
+        window.location.href = '<?= BASE_URL ?>/login.php';
     }
 });
 </script>
