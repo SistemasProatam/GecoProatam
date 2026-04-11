@@ -178,7 +178,33 @@ $ver_proyectos = in_array($departamento_sesion, [
 <?php
  endif; ?>
 
-<!-- COTIZACIONES - Con submenu  PENDIENTE -->
+<!-- COTIZACIONES - Con submenu -->
+        <?php
+        $ver_cotizaciones = in_array($dep_id_sesion, [
+        'Director General',
+        'Subdirector General',
+        'Gerente de Operaciones',
+        'Tecnico de Sistemas',
+        'Procura'
+        ]);
+        ?>
+        <?php if ($ver_cotizaciones): ?>
+          <li class="menu-item" id="cotizMenu">
+            <button class="menu-header" onclick="toggleSubmenu('cotizMenu')">
+              <i class="bi bi-file-earmark-text"></i>
+              <p class="menu-label">Cotizaciones</p>
+              <i class="bi bi-chevron-down expand-arrow"></i>
+            </button>
+            <div class="submenu">
+              <a href="<?= BASE_URL ?>/cotizaciones/cotizacion.php" class="submenu-item">
+                <i class="bi bi-plus-circle"></i> Nueva Cotización
+              </a>
+              <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php" class="submenu-item">
+                <i class="bi bi-list-ul"></i> Ver Registros
+              </a>
+            </div>
+          </li>
+        <?php endif; ?>
 
 
 <!-- ÓRDENES DE COMPRA - Con submenu -->
