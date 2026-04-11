@@ -178,7 +178,7 @@ $ver_proyectos = in_array($departamento_sesion, [
 <?php
  endif; ?>
 
-<!-- COTIZACIONES - Con submenu -->
+<!-- COTIZACIONES -->
         <?php
         $ver_cotizaciones = in_array($dep_id_sesion, [
         'Director General',
