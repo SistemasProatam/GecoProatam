@@ -184,8 +184,14 @@ $ver_proyectos = in_array($departamento_sesion, [
         'Director General',
         'Subdirector General',
         'Gerente de Operaciones',
+        'Supervisor de Proyecto',
         'Tecnico de Sistemas',
-        'Procura'
+        'Coordinador de Control de Documentos y Facturación',
+        'Gerente de Seguridad Salud y Medio Ambiente',
+        'Procura',
+        'Supervisor del sistema de Administración',
+        'Supervisor de Calidad',
+        'Residente de Obra'
         ]);
         ?>
         <?php if ($ver_cotizaciones): ?>
