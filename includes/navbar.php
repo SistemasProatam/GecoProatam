@@ -180,7 +180,7 @@ $ver_proyectos = in_array($departamento_sesion, [
 
 <!-- COTIZACIONES -->
         <?php
-        $ver_cotizaciones = in_array($dep_id_sesion, [
+        $ver_cotizaciones = in_array($departamento_sesion, [
         'Director General',
         'Subdirector General',
         'Gerente de Operaciones',
