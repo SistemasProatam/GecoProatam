@@ -58,19 +58,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($action) {
 
             case 'obtener_subcontratos':
-                $oid = (int)($_POST['obra_id'] ?? 0);
-                $sql = "SELECT sc.id, sc.proveedor_id, p.nombre AS proveedor_nombre,
-                               sc.total_estimado, sc.anticipo_pct, sc.anticipo_monto,
-                               sc.monto_real, sc.descripcion,
-                               (SELECT COUNT(*) FROM subcontrato_conceptos WHERE subcontrato_id=sc.id) AS total_conceptos,
-                               COALESCE(ext.total_ext,0) AS total_extraordinarios,
-                               COALESCE(ext.num_ext,0)   AS num_extraordinarios
-                        FROM subcontratos sc
-                        LEFT JOIN proveedores p ON p.id=sc.proveedor_id
-                        LEFT JOIN (SELECT subcontrato_id, SUM(monto) AS total_ext, COUNT(*) AS num_ext
-                                   FROM subcontrato_extraordinarios GROUP BY subcontrato_id) ext
-                               ON ext.subcontrato_id=sc.id
-                        WHERE sc.obra_id=? ORDER BY p.nombre ASC";
+    $oid = (int)($_POST['obra_id'] ?? 0);
+    $sql = "SELECT sc.id, sc.proveedor_id, p.nombre AS proveedor_nombre,
+                   sc.total_estimado, sc.anticipo_pct, sc.anticipo_monto,
+                   sc.descripcion,
+                   vpm.utilizado_pagado AS monto_real,   -- ← de la vista
+                   (SELECT COUNT(*) FROM subcontrato_conceptos WHERE subcontrato_id=sc.id) AS total_conceptos,
+                   COALESCE(ext.total_ext,0) AS total_extraordinarios,
+                   COALESCE(ext.num_ext,0)   AS num_extraordinarios
+            FROM subcontratos sc
+            LEFT JOIN proveedores p ON p.id=sc.proveedor_id
+            LEFT JOIN vista_presupuesto_maestro vpm ON vpm.subcontrato_id = sc.id
+            LEFT JOIN (SELECT subcontrato_id, SUM(monto) AS total_ext, COUNT(*) AS num_ext
+                       FROM subcontrato_extraordinarios GROUP BY subcontrato_id) ext
+                   ON ext.subcontrato_id=sc.id
+            WHERE sc.obra_id=? ORDER BY p.nombre ASC";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $oid);
                 $stmt->execute();
@@ -1105,10 +1107,8 @@ function scRender(){
     var extraordinarios = parseFloat(sc.total_extraordinarios || 0);
     // Importe Total = (Monto de contrato + total extraordinarios)
     var totalConExtraordinarios = (totalEstimado + extraordinarios) || 0;
-    // Utilizado = monto_real (OC)
-    var realPagado = totalReal;
     // Monto por pagar = Importe total - monto_real (OC)
-    var porPagar = totalConExtraordinarios - realPagado;
+    var porPagar = totalConExtraordinarios - totalReal;
     var descHtml=sc.descripcion?'<div class="sc-desc-badge"><i class="bi bi-chat-left-text me-1" style="opacity:.5"></i>'+escHtml(sc.descripcion)+'</div>':'';
     html+='<div class="sc-card" id="sc-card-'+sc.id+'">';
     html+='<div class="sc-card-head"><div class="sc-avatar"><i class="bi bi-person-gear"></i></div>';
@@ -1123,7 +1123,7 @@ function scRender(){
     html+='<div class="monto-item"><div class="monto-lbl">Monto de contrato</div><div class="monto-val mv-blue">'+scFmt(totalEstimado)+'</div></div>';
     html+='<div class="monto-item"><div class="monto-lbl">Anticipo '+sc.anticipo_pct+'%</div><div class="monto-val mv-amber">'+scFmt(anticipo)+'</div></div>';
     html+='<div class="monto-item"><div class="monto-lbl">Total extraordinarios</div><div class="ext-total-val">'+scFmt(extraordinarios)+'</div></div>';
-    html+='<div class="monto-item"><div class="monto-lbl">Utilizado</div><div class="monto-val mv-red">'+scFmt(realPagado)+'</div></div>';
+    html+='<div class="monto-item"><div class="monto-lbl">Utilizado</div><div class="monto-val mv-red">'+scFmt(totalReal)+'</div></div>';
     html+='<div class="monto-item"><div class="monto-lbl">Importe total</div><div class="sc-total-real-val">'+scFmt(totalConExtraordinarios)+'</div></div>';
     html+='</div>';
     html+='<div class="sc-total-real"><span class="monto-lbl"><i class="bi bi-sigma me-1"></i>Por pagar</span><span>'+scFmt(porPagar)+'</span></div>';
