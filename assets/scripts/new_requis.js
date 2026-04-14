@@ -67,7 +67,7 @@ function addItem() {
       `<option value="${u.id}">${u.unidad}</option>`
     ).join('');
 
-    // ✅ Obtener el estado actual del catálogo seleccionado
+    // Obtener el estado actual del catálogo seleccionado
     const catalogoId = catalogoSelect.value;
     const conceptoPlaceholder = catalogoId ? 
         'Cargando conceptos...' : 
@@ -88,7 +88,7 @@ function addItem() {
         </td>
         <td>
             <input type="number" name="items[${rowCount}][cantidad]" 
-                   class="form-control cantidad" min="1" value="1" required>
+                   class="form-control cantidad" min="0.001" value="1.000" step="0.001" required>
         </td>
         <td>
             <select name="items[${rowCount}][unidad_id]" class="form-select" required>
@@ -110,7 +110,7 @@ function addItem() {
     
     tableBody.appendChild(newRow);
 
-    // ✅ Si hay un catálogo seleccionado, cargar conceptos para esta nueva fila
+    //  Si hay un catálogo seleccionado, cargar conceptos para esta nueva fila
     if (catalogoId) {
         cargarConceptosParaFila(newRow, catalogoId);
     }
@@ -141,7 +141,7 @@ function addItem() {
     });
 }
 
-// ✅ Nueva función auxiliar para cargar conceptos en una fila específica
+//  Nueva función auxiliar para cargar conceptos en una fila específica
 function cargarConceptosParaFila(row, catalogoId) {
     const conceptoSelect = row.querySelector('.concepto-select');
     

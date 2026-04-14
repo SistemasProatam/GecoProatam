@@ -831,6 +831,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
       crossorigin="anonymous"
     ></script>
 
+    <script>
+      const BASE_URL = "<?= BASE_URL ?>";
+    </script>
+
     <!-- JavaScript Externo -->
     <script src="<?= BASE_URL ?>/assets/scripts/new_order.js"></script>
     

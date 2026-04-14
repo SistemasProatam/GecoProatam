@@ -360,7 +360,7 @@ while ($archivo = $archivos->fetch_assoc()) {
     </style>
 </head>
 <body>
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
