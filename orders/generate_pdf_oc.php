@@ -647,7 +647,7 @@ $pdf->SetFont('Arial', '', 8);
 $pdf->SetTextColor(73, 80, 87);
 
 // Primera fila de nombres
-$pdf->Cell(90, 4, $orden_compra['nombres'] . ' ' . $orden_compra['apellidos'], 0, 0, 'C');
+$pdf->Cell(90, 4, 'Diana Giselle Ramírez Ávila', 0, 0, 'C');
 $pdf->Cell(110, 4, 'Director/Responsable', 0, 1, 'C');
 
 // Output
