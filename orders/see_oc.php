@@ -895,18 +895,41 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
           </div>
         </div>
 
-        <?php if ($orden_compra['estado'] === 'revisado' && !empty($comentario)): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-chat-dots"></i>
-            Comentario del Revisor
-          </div>
-          <div class="comentario">
-            <div class="comentario-header">
-              <i class="bi bi-info-circle"></i> Comentario del Revisor:
-            </div>
-            <p class="mb-0"><?= nl2br(htmlspecialchars($comentario)) ?></p>
-          </div>
-        <?php endif; ?>
+        <?php
+// Obtener comentario del revisor (Gerente de Operaciones) o aprobador (Subdirector General)
+$comentario_decision = '';
+if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'comprobante_subido'])) {
+    // Buscar primero si hay un comentario de "revisado" o "aprobado"
+    $sql_comentario_decision = "SELECT accion, comentario FROM orden_compra_historial 
+                                WHERE orden_compra_id = ? 
+                                AND (accion = 'Revisó orden de compra' OR accion = 'Aprobó orden de compra')
+                                ORDER BY fecha_cambio DESC LIMIT 1";
+    $stmt_comentario_decision = $conn->prepare($sql_comentario_decision);
+    $stmt_comentario_decision->bind_param("i", $id);
+    $stmt_comentario_decision->execute();
+    $result_comentario_decision = $stmt_comentario_decision->get_result();
+    
+    if ($result_comentario_decision && $result_comentario_decision->num_rows > 0) {
+        $row = $result_comentario_decision->fetch_assoc();
+        $comentario_decision = $row['comentario'];
+        $accion_decision = $row['accion'];
+    }
+}
+?>
+
+<?php if (!empty($comentario_decision)): ?>
+<div class="section-title mt-4">
+    <i class="bi bi-chat-dots"></i>
+    Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
+</div>
+<div class="comentario" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd; padding: 15px; border-radius: 4px; margin-top: 10px;">
+    <div class="comentario-header">
+        <i class="bi bi-info-circle"></i> 
+        <?= $accion_decision === 'Revisó orden de compra' ? 'Comentario del Revisor (Gerente de Operaciones):' : 'Comentario del Aprobador (Subdirector General):' ?>
+    </div>
+    <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_decision)) ?></p>
+</div>
+<?php endif; ?>
 
         <!-- Mostrar comentario de rechazo si está rechazada -->
         <?php if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
