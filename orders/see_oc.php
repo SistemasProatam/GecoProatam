@@ -895,6 +895,19 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
           </div>
         </div>
 
+        <?php if ($orden_compra['estado'] === 'revisado' && !empty($comentario)): ?>
+          <div class="section-title mt-4">
+            <i class="bi bi-chat-dots"></i>
+            Comentario del Revisor
+          </div>
+          <div class="comentario">
+            <div class="comentario-header">
+              <i class="bi bi-info-circle"></i> Comentario del Revisor:
+            </div>
+            <p class="mb-0"><?= nl2br(htmlspecialchars($comentario)) ?></p>
+          </div>
+        <?php endif; ?>
+
         <!-- Mostrar comentario de rechazo si está rechazada -->
         <?php if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
           <div class="section-title mt-4">
