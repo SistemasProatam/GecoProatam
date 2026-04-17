@@ -922,10 +922,10 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
     <i class="bi bi-chat-dots"></i>
     Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
 </div>
-<div class="comentario" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd; padding: 15px; border-radius: 4px; margin-top: 10px;">
-    <div class="comentario-header">
+<div class="comentario" style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px;">
+    <div class="comentario-header-decision" style="font-weight: bold; margin-bottom: 8px;">
         <i class="bi bi-info-circle"></i> 
-        <?= $accion_decision === 'Revisó orden de compra' ? 'Comentario del Revisor (Gerente de Operaciones):' : 'Comentario del Aprobador (Subdirector General):' ?>
+        <?= $accion_decision === 'Revisó orden de compra' ? 'Gerente de Operaciones:' : 'Subdirector General:' ?>
     </div>
     <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_decision)) ?></p>
 </div>
