@@ -1273,7 +1273,7 @@ function addItem(itemData = null) {
       <input type="hidden" name="tipo[]" value="">
     </td>
     <td>
-      <input type="number" name="cantidad[]" class="form-control cantidad" min="1" value="1" onchange="calcularSubtotal(this)" required>
+      <input type="number" name="cantidad[]" class="form-control cantidad" min="0.001" value="1.000" step="0.001" onchange="calcularSubtotal(this)" required>
     </td>
     <td>
       <select name="unidad_id[]" class="form-select" required>
@@ -1286,7 +1286,7 @@ function addItem(itemData = null) {
       </select>
     </td>
     <td>
-      <input type="number"  name="precio_unitario[]" class="form-control precio" min="0" step="0.01" placeholder="0.00" onchange="calcularSubtotal(this)" required>
+      <input type="number"  name="precio_unitario[]" class="form-control precio" min="0.001" value="1.000" step="0.001" placeholder="0.00" onchange="calcularSubtotal(this)" required>
     </td>
     <td class="subtotal">$0.00</td>
     <td>
@@ -1770,7 +1770,7 @@ function setupEntidadChange() {
     const numeroOrdenInput = document.getElementById('numeroOrden');
     numeroOrdenInput.value = 'Generando...';
 
-    fetch('/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
+    fetch(BASE_URL + '/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');

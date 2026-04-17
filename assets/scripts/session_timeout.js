@@ -164,7 +164,7 @@ class SessionManager {
             timerProgressBar: true,
             willClose: () => {
                 // Redirigir al logout con razón de timeout
-                window.location.href = '/logout.php?reason=timeout';
+                window.location.href = '". BASE_URL ."/logout.php?reason=timeout';
             }
         });
     }

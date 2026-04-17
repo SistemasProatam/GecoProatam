@@ -10,13 +10,13 @@ function preventDirectAccess() {
     
     // Si no hay sesión y no está en páginas permitidas, redirigir al login
     if (!isset($_SESSION['user_id']) && !in_array($current_page, $allowed_pages)) {
-        header("Location: /login.php");
+        header("Location: " . BASE_URL . "/login.php");
         exit();
     }
     
     // Si hay sesión y está en login, redirigir al index
     if (isset($_SESSION['user_id']) && $current_page == 'login.php') {
-        header("Location: /index.php");
+        header("Location: " . BASE_URL . "/index.php");
         exit();
     }
 }
@@ -24,4 +24,3 @@ function preventDirectAccess() {
 // Ejecutar la verificación
 preventDirectAccess();
 ?>
-
