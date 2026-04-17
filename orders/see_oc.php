@@ -362,6 +362,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
               $destinatarios[] = $gerente;
             }
           }
+
+          // 3. Obtener Gerente de Operaciones
+          $sql_gerente_op = "SELECT u.id, u.correo_corporativo, CONCAT(u.nombres, ' ', u.apellidos) as nombre_completo 
+                                      FROM usuarios u
+                                      JOIN departamentos d ON u.departamento_id = d.id
+                                      WHERE d.nombre LIKE '%Gerente de Operaciones%'
+                                      AND u.activo = 1
+                                      AND u.correo_corporativo IS NOT NULL";
+          $result_gerente_op = $conn->query($sql_gerente_op);
+          if ($result_gerente_op && $result_gerente_op->num_rows > 0) {
+            while ($gerente_op = $result_gerente_op->fetch_assoc()) {
+              $destinatarios[] = $gerente_op;
+            }
+          }
         } elseif ($nuevo_estado === 'pagado') {
           // Notificar al SOLICITANTE y SUBDIRECTOR GENERAL
 
@@ -395,6 +409,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
           if ($result_subdirector && $result_subdirector->num_rows > 0) {
             while ($subdirector = $result_subdirector->fetch_assoc()) {
               $destinatarios[] = $subdirector;
+            }
+          }
+          // 3. Obtener Gerente de Operaciones
+          $sql_gerente_op = "SELECT u.id, u.correo_corporativo, CONCAT(u.nombres, ' ', u.apellidos) as nombre_completo 
+                                      FROM usuarios u
+                                      JOIN departamentos d ON u.departamento_id = d.id
+                                      WHERE d.nombre LIKE '%Gerente de Operaciones%'
+                                      AND u.activo = 1
+                                      AND u.correo_corporativo IS NOT NULL";
+          $result_gerente_op = $conn->query($sql_gerente_op);
+          if ($result_gerente_op && $result_gerente_op->num_rows > 0) {
+            while ($gerente_op = $result_gerente_op->fetch_assoc()) {
+              $destinatarios[] = $gerente_op;
             }
           }
         } elseif ($nuevo_estado === 'revisado') {
