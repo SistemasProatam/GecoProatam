@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -31,7 +33,9 @@ if (!$categoria) {
     <div class="mb-3">
         <strong>Descripción:</strong><br>
         <?php
-            $desc = trim($categoria['descripcion'] ?? '');
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+$desc = trim($categoria['descripcion'] ?? '');
             echo $desc !== '' ? nl2br(htmlspecialchars($desc)) : '<em>Sin descripción</em>';
         ?>
     </div>
@@ -41,3 +45,4 @@ if (!$categoria) {
         <?= date('d/m/Y H:i', strtotime($categoria['fecha_creacion'])) ?>
     </div>
 </div>
+

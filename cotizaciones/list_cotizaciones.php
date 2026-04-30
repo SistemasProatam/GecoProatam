@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -85,7 +87,10 @@ $entidadColores = [
 </head>
 
 <body>
-  <?php require_once __DIR__ . "/../includes/navbar.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -123,8 +128,14 @@ $entidadColores = [
         </div>
 
         <div class="list-group">
-          <?php if ($result && $result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()):
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($result && $result->num_rows > 0): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+while ($row = $result->fetch_assoc()):
               $id    = $row['id'];
               $folio = $row['folio'];
               $ent   = strtoupper($row['entidad'] ?? 'PROATAM');
@@ -175,45 +186,75 @@ $entidadColores = [
                   </div>
                 </div>
               </div>
-            <?php endwhile; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endwhile; ?>
         </div>
 
         <!-- Paginación -->
-        <?php if ($totalPags > 1): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($totalPags > 1): ?>
           <nav class="mt-4">
             <ul class="pagination pagination-sm justify-content-center mb-0">
               <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
                 <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina - 1 ?>">‹</a>
               </li>
-              <?php foreach (range(max(1, $pagina - 2), min($totalPags, $pagina + 2)) as $i): ?>
+              <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach (range(max(1, $pagina - 2), min($totalPags, $pagina + 2)) as $i): ?>
                 <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
                   <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>"><?= $i ?></a>
                 </li>
-              <?php endforeach; ?>
+              <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endforeach; ?>
               <li class="page-item <?= $pagina >= $totalPags ? 'disabled' : '' ?>">
                 <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina + 1 ?>">›</a>
               </li>
             </ul>
           </nav>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
 
-      <?php else: ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
         <div class="text-center text-muted py-5">
           <i class="bi bi-file-earmark-x" style="font-size:3rem;"></i>
           <p class="mt-2">
             <?= $busqueda ? 'No hay resultados para "' . htmlspecialchars($busqueda) . '"' : 'No hay cotizaciones registradas' ?>
           </p>
-          <?php if (!$busqueda): ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!$busqueda): ?>
             <button type="button" onclick="location.href='<?= BASE_URL ?>/cotizaciones/cotizacion.php'" class="button-56">
               <i class="bi bi-plus-circle"></i> Crear primera cotización
             </button>
-          <?php else: ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
             <button type="button" onclick="location.href='<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php'" class="button-56">
               <i class="bi bi-plus-circle"></i> Limpiar búsqueda
             </button>
-          <?php endif; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
         </div>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
         </div> <!-- /table-container-wrapper -->
 
       </div>
@@ -491,7 +532,10 @@ $entidadColores = [
     }
   </script>
 
-  <?php include __DIR__ . "/../includes/footer.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
 
   <script>
     // Función para actualizar la lista vía AJAX
@@ -565,3 +609,4 @@ $entidadColores = [
 </body>
 
 </html>
+

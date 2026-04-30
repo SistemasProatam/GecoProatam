@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -51,7 +53,9 @@ if (!$proveedor) {
     <div class="mb-3">
         <strong>Dirección:</strong><br>
         <?php
-            $direccion = trim($proveedor['direccion'] ?? '');
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+$direccion = trim($proveedor['direccion'] ?? '');
             echo $direccion !== ''
                 ? nl2br(htmlspecialchars($direccion))
                 : '<em>No especificada</em>';
@@ -61,7 +65,9 @@ if (!$proveedor) {
     <div class="mb-3">
         <strong>Contacto:</strong><br>
         <?php
-            $contacto = trim($proveedor['contacto'] ?? '');
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+$contacto = trim($proveedor['contacto'] ?? '');
             echo $contacto !== ''
                 ? htmlspecialchars($contacto)
                 : '<em>No especificado</em>';
@@ -75,3 +81,5 @@ if (!$proveedor) {
             : '-' ?>
     </div>
 </div>
+
+

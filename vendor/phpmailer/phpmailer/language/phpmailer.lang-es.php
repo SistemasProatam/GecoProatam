@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Spanish PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -36,3 +36,4 @@ $PHPMAILER_LANG['smtp_error']           = 'Error del servidor SMTP: ';
 $PHPMAILER_LANG['variable_set']         = 'No se pudo configurar la variable: ';
 $PHPMAILER_LANG['imap_recommended']     = 'No se recomienda usar el analizador de direcciones simplificado. Instala la extensión IMAP de PHP para un análisis RFC822 más completo.';
 $PHPMAILER_LANG['deprecated_argument']  = 'El argumento $useimap ha quedado obsoleto';
+

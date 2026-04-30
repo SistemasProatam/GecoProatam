@@ -1,4 +1,6 @@
 <?php
+require_once "config.php";
+
 require_once 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -997,3 +999,4 @@ public function enviarAlertaExcesoSubcontratos($destinatario, $nombreDestinatari
     }
 }
 }
+

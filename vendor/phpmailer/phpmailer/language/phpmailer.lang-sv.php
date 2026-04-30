@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Swedish PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -25,3 +25,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect() misslyckades.';
 $PHPMAILER_LANG['smtp_error']           = 'SMTP serverfel: ';
 $PHPMAILER_LANG['variable_set']         = 'Kunde inte definiera eller återställa variabel: ';
 $PHPMAILER_LANG['extension_missing']    = 'Tillägg ej tillgängligt: ';
+

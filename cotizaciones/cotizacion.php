@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -58,7 +60,10 @@ $result_entidades = $conn->query($sql_entidades);
 </head>
 
 <body>
-  <?php require_once __DIR__ . "/../includes/navbar.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -96,11 +101,17 @@ $result_entidades = $conn->query($sql_entidades);
               <div class="form-group">
                 <label class="form-label">Empresa emisora <span class="text-danger">*</span></label>
                 <select name="entidad" id="entidadSelect" class="form-select" onchange="actualizarFolio()">
-                  <?php while ($row = $result_entidades->fetch_assoc()): ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+while ($row = $result_entidades->fetch_assoc()): ?>
                     <option value="<?= htmlspecialchars($row['id']) ?>" <?= $row['id'] === $entidadSel ? 'selected' : '' ?>>
                       <?= htmlspecialchars($row['nombre']) ?>
                     </option>
-                  <?php endwhile; ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endwhile; ?>
                 </select>
               </div>
             </div>
@@ -202,7 +213,9 @@ $result_entidades = $conn->query($sql_entidades);
           </div>
           <div class="checks-grid">
             <?php
-            $alcancesOpc = [
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+$alcancesOpc = [
               'ejecucion'   => 'Ejecución de trabajos',
               'materiales'  => 'Materiales y mano de obra',
               'supervision' => 'Supervisión técnica',
@@ -217,7 +230,10 @@ $result_entidades = $conn->query($sql_entidades);
                 <input type="checkbox" name="alcances[]" value="<?= $key ?>" checked>
                 <span><?= htmlspecialchars($label) ?></span>
               </label>
-            <?php endforeach; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endforeach; ?>
           </div>
           <div class="form-group mt-3">
             <label class="form-label">Otros alcances o precisiones</label>
@@ -282,7 +298,9 @@ $result_entidades = $conn->query($sql_entidades);
   <script>
     const BASE_URL = '<?= BASE_URL ?>';
     const opcionesUnidad = `<option value="">-- Unidad --</option><?php
-                                                                  foreach ($unidades as $u)
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach ($unidades as $u)
                                                                     echo '<option value="' . htmlspecialchars($u['nombre'], ENT_QUOTES) . '">' . htmlspecialchars($u['nombre']) . '</option>';
                                                                   ?>`;
     let filaCount = 0;
@@ -436,8 +454,12 @@ $result_entidades = $conn->query($sql_entidades);
     recalcular();
   </script>
 
-  <?php include __DIR__ . "/../includes/footer.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
   <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>
 
 </html>
+

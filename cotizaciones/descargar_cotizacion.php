@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // descargar_cotizacion.php — Lee cotización de BD y genera el PDF
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . "/../includes/session_manager.php";
@@ -77,3 +79,4 @@ if (ob_get_length()) ob_end_clean();
 
 // generar_pdf.php lee $_POST y $_GET['inline']
 require __DIR__ . '/generar_pdf.php';
+

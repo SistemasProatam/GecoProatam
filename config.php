@@ -1,4 +1,6 @@
 <?php
+require_once "config.php";
+
 // Copia este archivo como config.php y ajusta tus credenciales locales
 // NUNCA subas config.php a GitHub
 
@@ -12,3 +14,5 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 define('BASE_URL', '/LOCAL-PROATAMSGI');
+
+

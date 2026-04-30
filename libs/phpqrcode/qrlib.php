@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../../config.php";
+require_once __DIR__ . "/../../config.php";
 /*
  * PHP QR Code encoder
  *
@@ -40,4 +42,6 @@
 	include $QR_BASEDIR."qrrscode.php";
 	include $QR_BASEDIR."qrmask.php";
 	include $QR_BASEDIR."qrencode.php";
+
+
 

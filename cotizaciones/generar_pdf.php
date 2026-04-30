@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // ============================================================
 // generar_pdf.php — Solo genera y envía el PDF (VERSIÓN CORREGIDA)
 // Cambios: Tabla estilo amarillo, totales compactos, firma en primera hoja
@@ -504,3 +506,4 @@ $filename = 'Cotizacion_' . preg_replace('/[^A-Za-z0-9\-_]/', '_', $folio) . '.p
 $isInline = isset($_GET['inline']) && $_GET['inline'] === '1';
 $pdf->Output($isInline ? 'I' : 'D', $filename);
 exit;
+

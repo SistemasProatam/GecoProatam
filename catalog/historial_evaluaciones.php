@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -67,7 +70,7 @@ if (isset($_SESSION['mensaje_error'])) {
     <title>Historial de Evaluaciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/assets/styles/list.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .badge-excelente { background-color: #28a745; }
@@ -77,13 +80,16 @@ if (isset($_SESSION['mensaje_error'])) {
     </style>
 </head>
 <body>
-<?php include __DIR__ . "/../includes/navbar.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <span>Historial de Proveedor</span>
     </div>
@@ -103,19 +109,31 @@ if (isset($_SESSION['mensaje_error'])) {
   <div class="form-container">
     <div class="form-body">
     
-    <?php if (isset($mensaje_exito)): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_exito)): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle"></i> <?= $mensaje_exito ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
     
-    <?php if (isset($mensaje_error)): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <i class="bi bi-exclamation-circle"></i> <?= $mensaje_error ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
     <!-- Lista de evaluaciones con scroll horizontal -->
     <div class="table-container">
@@ -131,15 +149,24 @@ if (isset($_SESSION['mensaje_error'])) {
           </tr>
         </thead>
         <tbody>
-          <?php if($evaluaciones->num_rows > 0): ?>
-            <?php while($eval = $evaluaciones->fetch_assoc()): ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if($evaluaciones->num_rows > 0): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while($eval = $evaluaciones->fetch_assoc()): ?>
               <tr>
                 <td><?= date('d/m/Y H:i', strtotime($eval['fecha_creacion'])) ?></td>
                 <td><?= htmlspecialchars($eval['nombres'] . ' ' . $eval['apellidos']) ?></td>
                 <td><?= htmlspecialchars($eval['contrato_numero']) ?></td>
                 <td><strong><?= number_format($eval['total_puntuacion'], 1) ?></strong></td>
                 <td>
-                  <?php 
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; 
                     $badge_classes = [
                       'excelente' => 'badge-excelente',
                       'bueno' => 'badge-bueno', 
@@ -177,8 +204,14 @@ if (isset($_SESSION['mensaje_error'])) {
                   </div>
                 </td>
               </tr>
-            <?php endwhile; ?>
-          <?php else: ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
             <tr>
               <td colspan="6" class="text-center text-muted py-4">
                 <i class="bi bi-inbox" style="font-size: 3rem;"></i>
@@ -188,7 +221,10 @@ if (isset($_SESSION['mensaje_error'])) {
                 </a>
               </td>
             </tr>
-          <?php endif; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
         </tbody>
       </table>
     </div>
@@ -340,3 +376,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+

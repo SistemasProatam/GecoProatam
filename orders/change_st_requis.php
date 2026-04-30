@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -197,11 +199,20 @@ $requisicion = $result->fetch_assoc();
                         <tr>
                             <td><strong>Correo:</strong></td>
                             <td>
-                                <?php if(!empty($requisicion['correo_corporativo'])): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if(!empty($requisicion['correo_corporativo'])): ?>
                                     <small class="text-muted"><?= htmlspecialchars($requisicion['correo_corporativo']) ?></small>
-                                <?php else: ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
                                     <span class="badge bg-warning text-dark">Sin correo registrado</span>
-                                <?php endif; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                             </td>
                         </tr>
                         <tr>
@@ -217,8 +228,10 @@ $requisicion = $result->fetch_assoc();
                 <div class="col-md-6">
                     <h5 class="text-primary">Estado Actual</h5>
                     <div class="d-flex align-items-center mb-3">
-                        <?php 
-                        $badge_class = [
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+$badge_class = [
                             'espera' => 'bg-warning',
                             'pendiente' => 'bg-warning',
                             'aprobada' => 'bg-success',
@@ -230,14 +243,20 @@ $requisicion = $result->fetch_assoc();
                         </span>
                     </div>
                     
-                    <?php if(!empty($requisicion['comentarios_operaciones'])): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if(!empty($requisicion['comentarios_operaciones'])): ?>
                     <div class="mt-3">
                         <h6>Comentarios anteriores:</h6>
                         <div class="alert alert-info py-2">
                             <small><?= htmlspecialchars($requisicion['comentarios_operaciones']) ?></small>
                         </div>
                     </div>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                 </div>
             </div>
 
@@ -265,20 +284,29 @@ $requisicion = $result->fetch_assoc();
                               placeholder="Agregue comentarios sobre el cambio de estado..."><?= htmlspecialchars($requisicion['comentarios_operaciones'] ?? '') ?></textarea>
                 </div>
 
-                <?php if(!empty($requisicion['correo_corporativo'])): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if(!empty($requisicion['correo_corporativo'])): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle"></i> 
                     <strong>Notificación por correo:</strong> Al cambiar el estado, se enviará automáticamente 
                     un correo a <strong><?= htmlspecialchars($requisicion['nombre_solicitante']) ?></strong> 
                     (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>)
                 </div>
-                <?php else: ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
                 <div class="alert alert-warning">
                     <i class="bi bi-exclamation-triangle"></i> 
                     <strong>Advertencia:</strong> El solicitante no tiene correo corporativo registrado. 
                     No se enviará notificación automática.
                 </div>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-success">
@@ -297,3 +325,4 @@ $requisicion = $result->fetch_assoc();
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

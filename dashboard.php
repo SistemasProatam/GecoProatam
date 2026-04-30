@@ -1,4 +1,6 @@
 <?php
+require_once "config.php";
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
@@ -149,7 +151,10 @@ $tipo_colores = [
 </head>
 <body>
 
-<?php include __DIR__ . "/includes/navbar.php"; ?>
+<?php
+require_once "config.php";
+
+include __DIR__ . "/includes/navbar.php"; ?>
 
 <div class="hero-section">
     <div class="container hero-content">
@@ -299,7 +304,9 @@ $tipo_colores = [
                 </div>
                 <div style="width:100%">
                     <?php
-                    $oc_legend = [
+require_once "config.php";
+
+$oc_legend = [
                         ['Pendientes', $oc_pendientes, 'var(--gold)'],
                         ['Aprobadas',  $oc_aprobadas,  'var(--accent)'],
                         ['Rechazadas', $oc_rechazadas, 'var(--rose)'],
@@ -314,7 +321,10 @@ $tipo_colores = [
                         </div>
                         <span style="font-size:.8rem;font-weight:600;"><?= $val ?></span>
                     </div>
-                    <?php endforeach; ?>
+                    <?php
+require_once "config.php";
+
+endforeach; ?>
                 </div>
             </div>
         </div>
@@ -336,7 +346,10 @@ $tipo_colores = [
                         </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($ultimas_oc as $oc):
+                    <?php
+require_once "config.php";
+
+foreach ($ultimas_oc as $oc):
                         $estado = $oc['estado'];
                         $pill_class = match($estado) {
                             'pendiente'          => 'pill-gold',
@@ -355,10 +368,19 @@ $tipo_colores = [
                         <td style="font-weight:600;"><?= fmt($oc['total']) ?></td>
                         <td><span class="pill <?= $pill_class ?>"><?= $estado_label ?></span></td>
                     </tr>
-                    <?php endforeach; ?>
-                    <?php if (empty($ultimas_oc)): ?>
+                    <?php
+require_once "config.php";
+
+endforeach; ?>
+                    <?php
+require_once "config.php";
+
+if (empty($ultimas_oc)): ?>
                     <tr><td colspan="5" style="text-align:center;padding:24px;">Sin registros</td></tr>
-                    <?php endif; ?>
+                    <?php
+require_once "config.php";
+
+endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -369,13 +391,22 @@ $tipo_colores = [
                 <div class="panel-title"><i class="bi bi-alarm" style="color:var(--rose);margin-right:8px;"></i>Vencen en 30 días</div>
             </div>
             <div class="panel-body">
-                <?php if (empty($proximos_vencer)): ?>
+                <?php
+require_once "config.php";
+
+if (empty($proximos_vencer)): ?>
                     <div style="text-align:center;color:var(--ink2);padding:30px 0;font-size:.83rem;">
                         <i class="bi bi-check-circle" style="font-size:1.8rem;color:var(--accent);display:block;margin-bottom:8px;"></i>
                         Sin proyectos próximos a vencer
                     </div>
-                <?php else: ?>
-                    <?php foreach ($proximos_vencer as $p):
+                <?php
+require_once "config.php";
+
+else: ?>
+                    <?php
+require_once "config.php";
+
+foreach ($proximos_vencer as $p):
                         $dias = $p['dias_restantes'];
                         $color = $dias <= 7 ? 'var(--rose)' : ($dias <= 15 ? 'var(--gold)' : 'var(--sky)');
                     ?>
@@ -389,8 +420,14 @@ $tipo_colores = [
                             <div class="alert-client"><?= htmlspecialchars($p['cliente'] ?? 'Sin cliente') ?> · <?= date('d/m/Y', strtotime($p['fecha_fin'])) ?></div>
                         </div>
                     </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                    <?php
+require_once "config.php";
+
+endforeach; ?>
+                <?php
+require_once "config.php";
+
+endif; ?>
             </div>
         </div>
 
@@ -425,7 +462,10 @@ $tipo_colores = [
                         </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($activos_por_tipo as $i => $tipo):
+                    <?php
+require_once "config.php";
+
+foreach ($activos_por_tipo as $i => $tipo):
                         $c = $tipo_colores[$i % count($tipo_colores)];
                     ?>
                     <tr>
@@ -437,12 +477,24 @@ $tipo_colores = [
                         <td style="text-align:right;font-weight:600;"><?= $tipo['cantidad'] ?></td>
                         <td style="text-align:right;font-weight:600;"><?= fmt($tipo['valor_total']) ?></td>
                     </tr>
-                    <?php endforeach; ?>
-                    <?php if (empty($activos_por_tipo)): ?>
+                    <?php
+require_once "config.php";
+
+endforeach; ?>
+                    <?php
+require_once "config.php";
+
+if (empty($activos_por_tipo)): ?>
                     <tr><td colspan="4" style="text-align:center;padding:24px;">Sin registros</td></tr>
-                    <?php endif; ?>
+                    <?php
+require_once "config.php";
+
+endif; ?>
                     </tbody>
-                    <?php if (!empty($activos_por_tipo)): ?>
+                    <?php
+require_once "config.php";
+
+if (!empty($activos_por_tipo)): ?>
                     <tfoot>
                         <tr>
                             <td colspan="2" style="font-weight:600;font-size:.78rem;padding:10px 12px;color:var(--secondary-color);">TOTAL</td>
@@ -450,7 +502,10 @@ $tipo_colores = [
                             <td style="text-align:right;font-weight:700;color:var(--secondary-color);"><?= fmt($activos_valor_total) ?></td>
                         </tr>
                     </tfoot>
-                    <?php endif; ?>
+                    <?php
+require_once "config.php";
+
+endif; ?>
                 </table>
             </div>
         </div>
@@ -643,6 +698,10 @@ new Chart(document.getElementById('chartCondicion'), {
 });
 </script>
 
-<?php include __DIR__ . "/includes/footer.php"; ?>
+<?php
+require_once "config.php";
+
+include __DIR__ . "/includes/footer.php"; ?>
 </body>
 </html>
+

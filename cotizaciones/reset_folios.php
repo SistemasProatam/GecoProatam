@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -34,7 +36,10 @@ foreach ($entidades as $entidad) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <?php require_once __DIR__ . "/../includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -63,14 +68,20 @@ foreach ($entidades as $entidad) {
                 </div>
                 
                 <div class="row g-3">
-                    <?php foreach ($resultados as $res): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach ($resultados as $res): ?>
                         <div class="col-md-6">
                             <div class="p-3 bg-light border rounded-3 d-flex align-items-center gap-3">
                                 <i class="bi bi-check-circle-fill text-success fs-4"></i>
                                 <span class="fw-bold"><?= htmlspecialchars($res) ?></span>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endforeach; ?>
                 </div>
 
                 <div class="alert alert-warning mt-5 border-0 shadow-sm rounded-3 p-4">
@@ -98,7 +109,11 @@ foreach ($entidades as $entidad) {
         </div>
     </div>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
     <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>
 </html>
+

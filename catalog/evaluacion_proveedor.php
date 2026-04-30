@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -115,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/assets/styles/evaluacion.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/evaluacion.css" />
     <style>
         .rating-options > div {
             padding: 10px;
@@ -140,15 +143,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
+      <a href="<?= BASE_URL ?>/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
       <span>/</span>
       <span>Evaluación de Proveedor</span>
     </div>
@@ -174,19 +180,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="form-container">
     <div class="form-body">
       
-      <?php if (isset($mensaje_exito)): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_exito)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <?= $mensaje_exito ?>
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
       
-      <?php if (isset($mensaje_error)): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
           <?= $mensaje_error ?>
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
       
       <form method="POST" id="evaluationForm">
         <div class="section-title">
@@ -413,7 +431,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           Responsable:
         </div>
         <input type="text" class="form-control" name="responsibles" 
-               value="<?php echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+               value="<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
                 readonly />
 
         <!-- Guardar -->
@@ -490,7 +511,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 </html>
+
+

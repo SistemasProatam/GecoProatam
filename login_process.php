@@ -1,8 +1,11 @@
 <?php
+require_once "config.php";
+
 header('Content-Type: application/json');
 session_start();
 
 // Incluir conexión
+require_once __DIR__ . "/config.php";
 include __DIR__ . "/conexion.php";
 
 // Verificar conexión
@@ -86,9 +89,9 @@ $row = $result->fetch_assoc();
         $redirect = "index.php"; // Por defecto
 
         if ($row['password_temporal']) {
-            $redirect = "change_password.php";
+            $redirect = BASE_URL . "/change_password.php";
         } else if ($row['departamento_nombre'] === 'Gerente de Operaciones') {
-            $redirect = "/orders/list_requis.php";
+            $redirect = BASE_URL . "/orders/list_requis.php";
         }
 
         /**
@@ -116,3 +119,4 @@ echo json_encode([
 ]);
 exit;
 ?>
+

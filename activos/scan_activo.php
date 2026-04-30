@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 /** 
  * Punto de entrada cuando alguien escanea el QR físico de un activo.
  * 
@@ -19,7 +22,7 @@ $token = trim($_GET['token'] ?? '');
 
 if (!$token || !preg_match('/^[A-Z0-9]{8}$/', $token)) {
     // Token inválido o ausente
-    header("Location: /activos/qr_invalido.php?razon=token");
+    header("Location: " . BASE_URL . "/activos/qr_invalido.php?razon=token");
     exit;
 }
 
@@ -31,7 +34,7 @@ $stmt->execute();
 $activo = $stmt->get_result()->fetch_assoc();
 
 if (!$activo) {
-    header("Location: /activos/qr_invalido.php?razon=no_encontrado");
+    header("Location: " . BASE_URL . "/activos/qr_invalido.php?razon=no_encontrado");
     exit;
 }
 
@@ -49,7 +52,7 @@ if (!$sesion_activa) {
     $_SESSION['redirect_after_login'] = $url_destino;
     $_SESSION['qr_scan_nombre']       = $activo['nombre']; // para mostrar mensaje en login
 
-    header("Location: /login.php?from=qr");
+    header("Location: " . BASE_URL . "/login.php?from=qr");
     exit;
 }
 
@@ -70,7 +73,7 @@ $departamentos_permitidos = [
 // Verificar acceso
 if (!in_array($departamento_usuario, $departamentos_permitidos)) {
 
-    header("Location: /activos/qr_invalido.php");
+    header("Location: " . BASE_URL . "/activos/qr_invalido.php");
     exit;
 }
 
@@ -78,3 +81,5 @@ if (!in_array($departamento_usuario, $departamentos_permitidos)) {
 
 header("Location: " . $url_destino);
 exit;
+
+

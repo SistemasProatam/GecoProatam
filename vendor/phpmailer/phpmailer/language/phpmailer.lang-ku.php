@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Kurdish (Sorani) PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -25,3 +25,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect()پەیوەندی شکس
 $PHPMAILER_LANG['smtp_error']           = 'هەڵەی ئاستی سێرڤەری SMTP: ';
 $PHPMAILER_LANG['variable_set']         = 'ناتوانرێت بیگۆڕیت یان دوبارە بینێریتەوە: ';
 $PHPMAILER_LANG['extension_missing']    = 'درێژکراوە نەماوە: ';
+

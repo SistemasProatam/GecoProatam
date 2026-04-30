@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../../../config.php";
+require_once __DIR__ . "/../../../config.php";
 require('../fpdf.php');
 
 class PDF extends FPDF
@@ -111,3 +113,5 @@ $pdf->SetFontSize(14);
 $pdf->WriteHTML($html);
 $pdf->Output();
 ?>
+
+

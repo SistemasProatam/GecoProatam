@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -52,3 +54,5 @@ function mostrarValor($valor) {
         <?= date('d/m/Y H:i', strtotime($cliente['fecha_creacion'])) ?>
     </div>
 </div>
+
+

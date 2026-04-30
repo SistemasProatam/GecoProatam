@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . '/../config.php';
 
 // Incluir el gestor de sesiones UNA sola vez
@@ -87,7 +89,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-<?php include __DIR__ . "/../includes/navbar.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -147,9 +152,15 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       </div>
 
       <!-- Lista -->
-      <?php if($result && $result->num_rows>0): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if($result && $result->num_rows>0): ?>
       <ul class="list-group">
-        <?php while($row = $result->fetch_assoc()): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+while($row = $result->fetch_assoc()): ?>
         <li class="list-group-item d-flex justify-content-between align-items-center text-nowrap">
           <div>
             <strong><?= htmlspecialchars($row['nombres'].' '.$row['apellidos']) ?></strong>
@@ -173,38 +184,62 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
           </div>
 
         </li>
-        <?php endwhile; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endwhile; ?>
       </ul>
 
       <!-- Paginación -->
-      <?php if($totalPaginas>1): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if($totalPaginas>1): ?>
       <nav aria-label="Paginación">
         <ul class="pagination justify-content-center mt-3">
-          <?php for($i=1;$i<=$totalPaginas;$i++): ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+for($i=1;$i<=$totalPaginas;$i++): ?>
           <li class="page-item <?= $i==$pagina?'active':'' ?>">
             <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&departamento=<?= urlencode($departamento_id) ?>&page=<?= $i ?>">
               <?= $i ?>
             </a>
           </li>
-          <?php endfor; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endfor; ?>
         </ul>
       </nav>
-      <?php endif; ?>
-      <?php else: ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
        <tr>
           <td colspan="9" class="text-center text-muted py-4">
             <i class="bi bi-inbox" style="font-size: 3rem;"></i>
             <p class="mt-2">No hay usuarios registrados</p>
           </td>
         </tr>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
       </div> <!-- /table-container-wrapper -->
     </div>
   </div>
 </div>
       </div>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 function eliminarUsuario(id) {
@@ -356,3 +391,5 @@ document.addEventListener('DOMContentLoaded', initAJAX);
 
 </body>
 </html>
+
+

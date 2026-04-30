@@ -1,9 +1,3 @@
-# Dependencias
-vendor/
-
-# Configuración sensible
-config.php
-
 # Archivos del sistema
 .DS_Store
 Thumbs.db

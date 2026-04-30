@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Estonian PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -26,3 +26,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect() ebaõnnestus.';
 $PHPMAILER_LANG['smtp_error']           = 'SMTP serveri viga: ';
 $PHPMAILER_LANG['variable_set']         = 'Ei õnnestunud määrata või lähtestada muutujat: ';
 $PHPMAILER_LANG['extension_missing']    = 'Nõutud laiendus on puudu: ';
+

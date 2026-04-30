@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -103,9 +106,9 @@ function urlFiltros(array $extras = []): string {
     <title>Registro de Activos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/assets/styles/list.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
 
     <style>
         /* Badge estatus */
@@ -120,7 +123,10 @@ function urlFiltros(array $extras = []): string {
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -143,18 +149,30 @@ function urlFiltros(array $extras = []): string {
         <div class="form-body">
 
             <!-- ===== Alertas de sesión ===== -->
-            <?php if ($msg_success): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($msg_success): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle"></i> <?= $msg_success ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <?php endif; ?>
-            <?php if ($msg_error): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($msg_error): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="bi bi-exclamation-triangle"></i> <?= $msg_error ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
             <!-- ===== Buscador ===== -->
             <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
@@ -180,11 +198,17 @@ function urlFiltros(array $extras = []): string {
                 <div style="flex:0 0 auto; min-width:160px;">
                     <select name="tipo" class="form-select">
                         <option value="">-- Tipo --</option>
-                        <?php while ($t = $tipos->fetch_assoc()): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($t = $tipos->fetch_assoc()): ?>
                             <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($t['nombre']) ?>
                             </option>
-                        <?php endwhile; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                     </select>
                 </div>
 
@@ -196,11 +220,17 @@ function urlFiltros(array $extras = []): string {
                     </select>
                 </div>
 
-                <?php if ($busqueda || $tipo_id || $estatus): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($busqueda || $tipo_id || $estatus): ?>
                 <a href="list_activos.php" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle"></i> Limpiar
                 </a>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
             </form>
 
             <div id="table-container-wrapper">
@@ -214,9 +244,15 @@ function urlFiltros(array $extras = []): string {
             </div>
 
             <!-- ===== Lista ===== -->
-            <?php if ($result && $result->num_rows > 0): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($result && $result->num_rows > 0): ?>
             <ul class="list-group">
-                <?php while ($row = $result->fetch_assoc()): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($row = $result->fetch_assoc()): ?>
                 <li class="list-group-item d-flex justify-content-between align-items-center gap-2 py-3">
 
                     <div style="min-width:0; flex:1;">
@@ -229,9 +265,15 @@ function urlFiltros(array $extras = []): string {
                         <div class="mt-1"><?= htmlspecialchars($row['nombre']) ?></div>
                         <small class="text-muted">
                             <i class="bi bi-tag"></i> <?= htmlspecialchars($row['tipo']) ?>
-                            <?php if ($row['ubicacion']): ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($row['ubicacion']): ?>
                                 &nbsp;|&nbsp;<i class="bi bi-geo-alt"></i> <?= htmlspecialchars($row['ubicacion']) ?>
-                            <?php endif; ?> |
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?> |
                             <span <?= $row['condicion'] ?>>
                                 <?= ucfirst($row['condicion']) ?>
                             </span>
@@ -253,11 +295,17 @@ function urlFiltros(array $extras = []): string {
                     </div>
 
                 </li>
-                <?php endwhile; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
             </ul>
 
             <!-- ===== Paginación ===== -->
-            <?php if ($totalPaginas > 1): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($totalPaginas > 1): ?>
             <nav class="mt-4">
                 <ul class="pagination justify-content-center flex-wrap">
 
@@ -269,6 +317,9 @@ function urlFiltros(array $extras = []): string {
                     </li>
 
                     <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                     // Mostrar máximo 5 páginas alrededor de la actual
                     $inicio = max(1, $pagina - 2);
                     $fin    = min($totalPaginas, $pagina + 2);
@@ -277,25 +328,52 @@ function urlFiltros(array $extras = []): string {
                         <li class="page-item">
                             <a class="page-link" href="<?= urlFiltros(['page' => 1]) ?>">1</a>
                         </li>
-                        <?php if ($inicio > 2): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($inicio > 2): ?>
                             <li class="page-item disabled"><span class="page-link">…</span></li>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-                    <?php for ($p = $inicio; $p <= $fin; $p++): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; for ($p = $inicio; $p <= $fin; $p++): ?>
                         <li class="page-item <?= $p === $pagina ? 'active' : '' ?>">
                             <a class="page-link" href="<?= urlFiltros(['page' => $p]) ?>"><?= $p ?></a>
                         </li>
-                    <?php endfor; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endfor; ?>
 
-                    <?php if ($fin < $totalPaginas): ?>
-                        <?php if ($fin < $totalPaginas - 1): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($fin < $totalPaginas): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($fin < $totalPaginas - 1): ?>
                             <li class="page-item disabled"><span class="page-link">…</span></li>
-                        <?php endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                         <li class="page-item">
                             <a class="page-link" href="<?= urlFiltros(['page' => $totalPaginas]) ?>"><?= $totalPaginas ?></a>
                         </li>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
                     <!-- Siguiente -->
                     <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
@@ -306,19 +384,34 @@ function urlFiltros(array $extras = []): string {
 
                 </ul>
             </nav>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-            <?php else: ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
             <div class="text-center text-muted py-5">
                 <i class="bi bi-inbox" style="font-size:3rem;"></i>
                 <p class="mt-2">No hay activos registrados<?= ($busqueda || $tipo_id || $estatus) ? ' con esos filtros' : '' ?></p>
-                <?php if ($busqueda || $tipo_id || $estatus): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($busqueda || $tipo_id || $estatus): ?>
                     <a href="list_activos.php" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-x-circle"></i> Limpiar filtros
                     </a>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
             </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
             </div> <!-- /table-container-wrapper -->
 
         </div><!-- /form-body -->
@@ -340,7 +433,10 @@ document.addEventListener('DOMContentLoaded', function() {
         crossorigin="anonymous">
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 // Función para actualizar la lista vía AJAX
@@ -427,3 +523,5 @@ document.addEventListener('DOMContentLoaded', initAJAX);
 
 </body>
 </html>
+
+

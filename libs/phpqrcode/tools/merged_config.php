@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../../../config.php";
+require_once __DIR__ . "/../../../config.php";
 /*
  * PHP QR Code encoder
  *
@@ -15,3 +17,4 @@
                                                   
     define('QR_PNG_MAXIMUM_SIZE',  1024);                                                       // maximum allowed png image width (in pixels), tune to make sure GD and PHP can handle such big images
                                                   
+

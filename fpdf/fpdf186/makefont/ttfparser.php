@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../../../config.php";
+require_once __DIR__ . "/../../../config.php";
 /*******************************************************************************
 * Class to parse and subset TrueType fonts                                     *
 *                                                                              *
@@ -712,3 +714,5 @@ class TTFParser
 	}
 }
 ?>
+
+

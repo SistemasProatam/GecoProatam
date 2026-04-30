@@ -1,4 +1,6 @@
 <?php
+require_once "config.php";
+
 // Configuración de la base de datos
 require_once __DIR__ . '/config.php';
 
@@ -13,3 +15,5 @@ if ($conn->connect_error) {
 // Configurar charset
 $conn->set_charset("utf8mb4");
 ?>
+
+

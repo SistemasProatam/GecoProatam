@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../../../../config.php";
+require_once __DIR__ . "/../../../../config.php";
 //============================================================+
 // File name   : qrcode.php
 // Begin       : 2010-03-22
@@ -2873,3 +2875,5 @@ if (!class_exists('QRcode', false)) {
 
 } // END OF "class_exists QRcode"
 ?>
+
+

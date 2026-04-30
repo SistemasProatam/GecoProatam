@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -90,8 +93,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <title>Registro de Obras</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/assets/styles/list.css">
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .badge-presupuesto {
@@ -121,13 +124,16 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   </style>
 </head>
 <body>
-<?php include __DIR__ . "/../includes/navbar.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="list_project.php">Registro de Proyectos</a>
       <span>/</span>
@@ -164,11 +170,17 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         <div style="flex: 0 0 auto; min-width: 250px;">
           <select name="proyecto_id" class="form-select">
             <option value="">-- Todos los proyectos --</option>
-            <?php foreach ($proyectos as $p): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; foreach ($proyectos as $p): ?>
               <option value="<?= $p['id'] ?>" <?= $proyecto_id == $p['id'] ? 'selected' : '' ?>>
                 <?= htmlspecialchars($p['nombre_proyecto']) ?>
               </option>
-            <?php endforeach; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endforeach; ?>
           </select>
         </div>
       </form>
@@ -184,9 +196,15 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       </div>
 
       <!-- Lista de obras -->
-      <?php if($result && $result->num_rows > 0): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if($result && $result->num_rows > 0): ?>
       <ul class="list-group">
-        <?php while($row = $result->fetch_assoc()): 
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while($row = $result->fetch_assoc()): 
           $costo_disponible = $row['costo_directo'] - $row['costo_directo_utilizado'];
           $porcentaje_utilizado = $row['costo_directo'] > 0 ? ($row['costo_directo_utilizado'] / $row['costo_directo']) * 100 : 0;
           $progress_class = $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
@@ -213,25 +231,43 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             </button>
           </div>
         </li>
-        <?php endwhile; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
       </ul>
 
       <!-- Paginación -->
-      <?php if($totalPaginas > 1): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if($totalPaginas > 1): ?>
       <nav aria-label="Paginación">
         <ul class="pagination justify-content-center mt-3">
-          <?php for($i = 1; $i <= $totalPaginas; $i++): ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; for($i = 1; $i <= $totalPaginas; $i++): ?>
           <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
             <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= $proyecto_id ?>&page=<?= $i ?>">
               <?= $i ?>
             </a>
           </li>
-          <?php endfor; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endfor; ?>
         </ul>
       </nav>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
       
-      <?php else: ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
       <div class="text-center text-muted py-4">
         <i class="bi bi-inbox" style="font-size: 3rem;"></i>
         <p class="mt-2">No hay obras registradas</p>
@@ -239,7 +275,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             <i class="bi bi-plus-circle"></i> Crear primera obra
           </button>
       </div>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
       </div> <!-- /table-container-wrapper -->
     </div>
   </div>
@@ -497,7 +536,10 @@ function verObras(proyectoId) {
 }
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 // Función para actualizar la lista vía AJAX
@@ -582,7 +624,9 @@ function initAJAX() {
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
-<script src="/assets/scripts/session_timeout.js"></script>
+<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
 </body>
 </html>
+
+

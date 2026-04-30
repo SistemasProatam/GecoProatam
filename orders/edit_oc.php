@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -317,8 +320,8 @@ while ($archivo = $archivos->fetch_assoc()) {
     <title>Editar Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/assets/styles/new_order.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .form-body {
@@ -485,7 +488,10 @@ while ($archivo = $archivos->fetch_assoc()) {
 </head>
 
 <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -493,7 +499,7 @@ while ($archivo = $archivos->fetch_assoc()) {
             <div class="breadcrumb-custom">
                 <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
-                <a href="/orders/list_oc.php">Registro de Órdenes de Compra</a>
+                <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
                 <span>/</span>
                 <span>Editar Orden de Compra</span>
             </div>
@@ -510,12 +516,18 @@ while ($archivo = $archivos->fetch_assoc()) {
         <div class="form-container">
             <div class="form-body">
 
-                <?php if (isset($mensaje_error)): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
                 <form method="POST" id="formEditarOC" enctype="multipart/form-data">
 
@@ -540,11 +552,17 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <label class="form-label">Entidad <span class="text-danger">*</span></label>
                             <select class="form-select" name="entidad_id" required>
                                 <option value="">Seleccionar entidad</option>
-                                <?php while ($entidad = $entidades->fetch_assoc()): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($entidad = $entidades->fetch_assoc()): ?>
                                     <option value="<?= $entidad['id'] ?>" <?= $entidad['id'] == $orden_compra['entidad_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($entidad['nombre']) ?>
                                     </option>
-                                <?php endwhile; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                             </select>
                         </div>
 
@@ -561,6 +579,9 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <select class="form-select" name="categoria_id" id="categoria_id" required>
                                 <option value="">Seleccionar categoría</option>
                                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                                 $categorias->data_seek(0);
                                 while ($categoria = $categorias->fetch_assoc()): ?>
                                     <option value="<?= $categoria['id'] ?>"
@@ -568,7 +589,10 @@ while ($archivo = $archivos->fetch_assoc()) {
                                         data-es-subcontrato="<?= in_array($categoria['id'], [2, 5]) ? '1' : '0' ?>">
                                         <?= htmlspecialchars($categoria['nombre']) ?>
                                     </option>
-                                <?php endwhile; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                             </select>
                         </div>
 
@@ -576,12 +600,18 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <label class="form-label">Proveedor <span class="text-danger">*</span></label>
                             <select class="form-select" name="proveedor_id" required>
                                 <option value="">Seleccionar proveedor</option>
-                                <?php while ($proveedor = $proveedores->fetch_assoc()): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($proveedor = $proveedores->fetch_assoc()): ?>
                                     <option value="<?= $proveedor['id'] ?>"
                                         <?= $proveedor['id'] == $orden_compra['proveedor_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($proveedor['nombre'] ?: $proveedor['razon_social']) ?>
                                     </option>
-                                <?php endwhile; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                             </select>
                         </div>
                     </div>
@@ -591,25 +621,37 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <label class="form-label">Proyecto</label>
                             <select class="form-select" name="proyecto_id" id="proyecto_id">
                                 <option value="">Sin proyecto</option>
-                                <?php while ($proyecto = $proyectos->fetch_assoc()): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($proyecto = $proyectos->fetch_assoc()): ?>
                                     <option value="<?= $proyecto['id'] ?>"
                                         <?= $proyecto['id'] == $orden_compra['proyecto_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($proyecto['nombre_proyecto']) ?>
                                     </option>
-                                <?php endwhile; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Obra</label>
                             <select class="form-select" name="obra_id" id="obra_id">
                                 <option value="">Sin obra</option>
-                                <?php while ($obra = $obras->fetch_assoc()): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($obra = $obras->fetch_assoc()): ?>
                                     <option value="<?= $obra['id'] ?>"
                                         data-proyecto="<?= $obra['proyecto_id'] ?>"
                                         <?= $obra['id'] == $orden_compra['obra_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($obra['nombre_obra']) ?> (<?= htmlspecialchars($obra['nombre_proyecto']) ?>)
                                     </option>
-                                <?php endwhile; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                             </select>
                         </div>
                     </div>
@@ -618,9 +660,15 @@ while ($archivo = $archivos->fetch_assoc()) {
                         <label class="form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
                         <select class="form-select" name="subcontrato_id" id="subcontrato_id_edit" <?= !$subcontrato_id ? 'disabled' : '' ?>>
                             <option value="">-- Seleccionar subcontrato --</option>
-                            <?php if ($subcontrato_id): ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($subcontrato_id): ?>
                                 <option value="<?= $subcontrato_id ?>" selected><?= htmlspecialchars($subcontrato_nombre) ?></option>
-                            <?php endif; ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                         </select>
                     </div>
 
@@ -646,6 +694,9 @@ while ($archivo = $archivos->fetch_assoc()) {
                             </thead>
                             <tbody id="itemsTableBody">
                                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                                 $item_index = 0;
                                 $items->data_seek(0);
                                 while ($item = $items->fetch_assoc()):
@@ -678,6 +729,9 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                 name="items[<?= $item_index ?>][unidad_id]">
                                                 <option value="">— Unidad —</option>
                                                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                                                 $unidades->data_seek(0);
                                                 while ($unidad = $unidades->fetch_assoc()):
                                                 ?>
@@ -685,7 +739,10 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                         <?= $unidad['id'] == $item['unidad_id'] ? 'selected' : '' ?>>
                                                         <?= htmlspecialchars($unidad['nombre']) ?>
                                                     </option>
-                                                <?php endwhile; ?>
+                                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                                             </select>
                                         </td>
                                         <td>
@@ -693,6 +750,9 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                 name="items[<?= $item_index ?>][concepto_id]">
                                                 <option value="">— Concepto —</option>
                                                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                                                 $conceptos->data_seek(0);
                                                 while ($concepto = $conceptos->fetch_assoc()):
                                                 ?>
@@ -700,7 +760,10 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                         <?= (isset($item['concepto_id']) && $item['concepto_id'] == $concepto['id']) ? 'selected' : '' ?>>
                                                         <?= htmlspecialchars($concepto['nombre_concepto']) ?>
                                                     </option>
-                                                <?php endwhile; ?>
+                                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
                                             </select>
                                         </td>
                                         <td>
@@ -726,6 +789,9 @@ while ($archivo = $archivos->fetch_assoc()) {
                                         </td>
                                     </tr>
                                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                                     $item_index++;
                                 endwhile;
                                 ?>
@@ -795,8 +861,14 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <!-- Archivos actuales -->
                             <h6 class="mt-3">Archivos actuales:</h6>
                             <div class="list-group" id="lista-archivos">
-                                <?php if (count($archivos_array) > 0): ?>
-                                    <?php foreach ($archivos_array as $archivo): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (count($archivos_array) > 0): ?>
+                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; foreach ($archivos_array as $archivo): ?>
                                         <div class="list-group-item d-flex justify-content-between align-items-center archivo-item"
                                             data-id="<?= $archivo['id'] ?>">
                                             <div>
@@ -807,7 +879,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                 </small>
                                             </div>
                                             <div class="d-flex gap-2">
-                                                <a href="/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc"
+                                                <a href="<?= BASE_URL ?>/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc"
                                                     class="btn btn-sm btn-primary" target="_blank">
                                                     <i class="bi bi-download"></i> Descargar
                                                 </a>
@@ -818,13 +890,22 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                 </button>
                                             </div>
                                         </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
+                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endforeach; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
                                     <div class="text-center text-muted p-3">
                                         <i class="bi bi-inbox display-4"></i>
                                         <p class="mt-2">No hay archivos adjuntos</p>
                                     </div>
-                                <?php endif; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                             </div>
 
                             <!-- Nuevos archivos -->
@@ -1502,8 +1583,13 @@ while ($archivo = $archivos->fetch_assoc()) {
         });
     </script>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
+
+

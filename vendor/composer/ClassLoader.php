@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../config.php";
 /*
  * This file is part of Composer.
  *
@@ -577,3 +577,4 @@ class ClassLoader
         }, null, null);
     }
 }
+

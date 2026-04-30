@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 $razon = $_GET['razon'] ?? 'departamento';
 $mensajes = [
     'token'        => 'El código QR no tiene un formato válido.',
@@ -15,7 +18,7 @@ $mensaje = $mensajes[$razon] ?? $mensajes['desconocido'];
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Usuario No Autorizado</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <style>
     body { background: #f0f4f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -35,3 +38,5 @@ $mensaje = $mensajes[$razon] ?? $mensajes['desconocido'];
   </div>
 </body>
 </html>
+
+

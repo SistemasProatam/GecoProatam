@@ -1,4 +1,6 @@
 <?php
+require_once "config.php";
+
 session_start();
 header('Content-Type: application/json');
 include(__DIR__ . "/conexion.php");
@@ -226,3 +228,4 @@ function sendResetTokenEmail($email, $nombres, $apellidos, $token) {
     }
 }
 ?>
+

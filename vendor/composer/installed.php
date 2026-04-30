@@ -1,4 +1,6 @@
-<?php return array(
+<?php
+require_once __DIR__ . "/../../config.php";
+return array(
     'root' => array(
         'name' => '__root__',
         'pretty_version' => 'dev-main',
@@ -30,3 +32,4 @@
         ),
     ),
 );
+

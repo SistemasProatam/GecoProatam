@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -176,31 +178,69 @@ function renderNodo(array &$nodo): void {
                 <i class="bi <?= $est['icon'] ?>"></i>
                 <span style="font-size:<?= $est['fs'] ?>;font-weight:<?= $est['fw'] ?>;">
                     <?= htmlspecialchars($nodo['clave']) ?>
-                    <?php if (!empty($nodo['titulo']) && $nodo['titulo'] !== $nodo['clave']): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($nodo['titulo']) && $nodo['titulo'] !== $nodo['clave']): ?>
                         <span style="font-weight:400;opacity:.85;"> &mdash; <?= htmlspecialchars($nodo['titulo']) ?></span>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                 </span>
             </div>
-            <?php if ($t_items > 0 || $t_monto > 0): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($t_items > 0 || $t_monto > 0): ?>
                 <div class="d-flex gap-2">
-                    <?php if ($t_items > 0): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($t_items > 0): ?>
                         <span class="badge bg-info" style="font-size:.7rem;"><?= $t_items ?> items</span>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                     <span class="badge bg-success" style="font-size:.7rem;">$<?= number_format($t_monto, 2) ?></span>
                 </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
         </div>
 
-        <?php foreach ($nodo['conceptos'] as $concepto): ?>
-            <?php renderConcepto($concepto, $indent + 18); ?>
-        <?php endforeach; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach ($nodo['conceptos'] as $concepto): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+renderConcepto($concepto, $indent + 18); ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endforeach; ?>
 
-        <?php foreach ($nodo['hijos'] as &$hijo): ?>
-            <?php renderNodo($hijo); ?>
-        <?php endforeach; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach ($nodo['hijos'] as &$hijo): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+renderNodo($hijo); ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endforeach; ?>
 
     </div>
     <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 }
 
 function renderConcepto(array $c, int $indent_px): void {
@@ -217,45 +257,90 @@ function renderConcepto(array $c, int $indent_px): void {
                         <span class="badge bg-primary" style="font-size:.75rem;min-width:70px;text-align:center;">
                             <?= htmlspecialchars($c['codigo_concepto']) ?>
                         </span>
-                        <?php if ($c['numero_original']): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($c['numero_original']): ?>
                             <small class="text-muted">#<?= htmlspecialchars($c['numero_original']) ?></small>
-                        <?php endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                     </div>
                     <div class="fw-semibold text-dark" style="font-size:.88rem;line-height:1.3;">
                         <?= htmlspecialchars($c['nombre_concepto']) ?>
                     </div>
                     <div class="d-flex flex-wrap gap-3 mt-1" style="font-size:.78rem;color:#6c757d;">
-                        <?php if ($c['unidad_medida']): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($c['unidad_medida']): ?>
                             <span><i class="bi bi-rulers me-1"></i><?= htmlspecialchars($c['unidad_medida']) ?></span>
-                        <?php endif; ?>
-                        <?php if (!empty($c['cantidad'])): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($c['cantidad'])): ?>
                             <span>Cant: <strong class="text-dark"><?= number_format($c['cantidad'], 3) ?></strong></span>
-                        <?php endif; ?>
-                        <?php if (!empty($c['precio_unitario'])): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($c['precio_unitario'])): ?>
                             <span>P.U.: <strong class="text-dark">$<?= number_format($c['precio_unitario'], 2) ?></strong></span>
-                        <?php endif; ?>
-                        <?php if (!empty($c['importe'])): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($c['importe'])): ?>
                             <span>Importe: <strong class="text-dark">$<?= number_format($c['importe'], 2) ?></strong></span>
-                        <?php endif; ?>
-                        <?php if (!empty($c['fecha_inicio']) || !empty($c['fecha_fin'])): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($c['fecha_inicio']) || !empty($c['fecha_fin'])): ?>
                             <span><i class="bi bi-calendar-range me-1"></i>
                                 <?= !empty($c['fecha_inicio']) ? date('d/m/Y', strtotime($c['fecha_inicio'])) : '&mdash;' ?>
                                 &rarr;
                                 <?= !empty($c['fecha_fin']) ? date('d/m/Y', strtotime($c['fecha_fin'])) : '&mdash;' ?>
                             </span>
-                        <?php endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex justify-content-end align-items-center gap-3">
                         <div class="text-end">
-                            <?php if ($c['total_items'] > 0): ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($c['total_items'] > 0): ?>
                                 <span class="badge bg-info mb-1"><?= $c['total_items'] ?> items</span><br>
                                 <span class="fw-bold text-success" style="font-size:.9rem;">$<?= number_format($c['monto_total'], 2) ?></span>
-                            <?php else: ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
                                 <span class="badge bg-secondary mb-1">Sin items</span><br>
                                 <span class="text-muted" style="font-size:.85rem;">$0.00</span>
-                            <?php endif; ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                         </div>
                         <div class="btn-group" role="group">
                             <button class="btn-edit btn-sm"
@@ -280,6 +365,8 @@ function renderConcepto(array $c, int $indent_px): void {
         </div>
     </div>
     <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 }
 ?>
 <!DOCTYPE html>
@@ -291,8 +378,8 @@ function renderConcepto(array $c, int $indent_px): void {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="icon" href="/assets/img/chinior.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/assets/styles/details.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
     <style>
         .item-orden-pagada { border-left: 4px solid #28a745; background: rgba(40,167,69,.05); }
         .nodo-header       { transition: box-shadow .15s; cursor: default; }
@@ -312,25 +399,46 @@ function renderConcepto(array $c, int $indent_px): void {
     </style>
 </head>
 <body>
-    <?php include __DIR__ . "/../includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/navbar.php"; ?>
 
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
                 <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a> <span>/</span>
                 <a href="list_project.php">Registro de Obras</a> <span>/</span>
-                <?php if ($obra_info): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($obra_info): ?>
                     <a href="details_obra.php?id=<?= $obra_id ?>"><?= htmlspecialchars($obra_info['nombre_obra']) ?></a> <span>/</span>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                 <span><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></span>
             </div>
             <h1 class="hero-title"><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></h1>
-            <?php if (!empty($catalogo['descripcion'])): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($catalogo['descripcion'])): ?>
                 <p class="lead mb-0" style="color:#ddd;font-size:14px;"><?= htmlspecialchars($catalogo['descripcion']) ?></p>
-            <?php endif; ?>
-            <?php if ($obra_info): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($obra_info): ?>
                 <p class="mb-0" style="color:#ddd;font-size:13px;"><small>Obra: <?= htmlspecialchars($obra_info['nombre_obra']) ?></small></p>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
             <div class="mt-3">
                 <button class="btn btn-sm btn-outline-light" 
                         onclick="editarCatalogo(<?= $catalogo_id ?>, '<?= addslashes($catalogo['nombre_catalogo']) ?>', '<?= addslashes($catalogo['descripcion']) ?>')">
@@ -398,13 +506,22 @@ function renderConcepto(array $c, int $indent_px): void {
                 </div>
             </div>
 
-            <?php if (!empty($raices) || !empty($conceptos_sin_nodo)): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($raices) || !empty($conceptos_sin_nodo)): ?>
 
                 <!-- ÁRBOL N NIVELES -->
-                <?php foreach ($raices as &$raiz): renderNodo($raiz); endforeach; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach ($raices as &$raiz): renderNodo($raiz); endforeach; ?>
 
                 <!-- SIN CATEGORÍA -->
-                <?php if (!empty($conceptos_sin_nodo)): ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($conceptos_sin_nodo)): ?>
                     <div class="mt-4">
                         <div class="nodo-header d-flex align-items-center gap-2 px-3 py-2 mb-2"
                              style="background:#f8fafc;border-left:4px solid #adb5bd;border-radius:0 6px 6px 0;">
@@ -412,11 +529,20 @@ function renderConcepto(array $c, int $indent_px): void {
                             <span class="fw-semibold text-muted" style="font-size:.9rem;">Sin Categoría</span>
                             <span class="badge bg-secondary ms-auto"><?= count($conceptos_sin_nodo) ?></span>
                         </div>
-                        <?php foreach ($conceptos_sin_nodo as $c): renderConcepto($c, 18); endforeach; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+foreach ($conceptos_sin_nodo as $c): renderConcepto($c, 18); endforeach; ?>
                     </div>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
 
-            <?php else: ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
                 <div class="text-center py-5">
                     <i class="bi bi-inbox display-1 text-muted"></i>
                     <h4 class="text-muted mt-3">No hay conceptos registrados</h4>
@@ -430,7 +556,10 @@ function renderConcepto(array $c, int $indent_px): void {
                         </button>
                     </div>
                 </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
         </div>
 
     </div><!-- /.content-wrapper -->
@@ -579,7 +708,7 @@ function renderConcepto(array $c, int $indent_px): void {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="/assets/scripts/catalogo-obras.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
     <script>
     const catalogoId     = <?= $catalogo_id ?>;
     const catalogoNombre = '<?= addslashes($catalogo['nombre_catalogo']) ?>';
@@ -740,6 +869,11 @@ function renderConcepto(array $c, int $indent_px): void {
     }
     </script>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 </html>
+
+

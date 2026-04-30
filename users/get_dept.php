@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 header('Content-Type: application/json; charset=utf-8');
 include("../conexion.php");
 
@@ -9,3 +11,5 @@ while($row = $result->fetch_assoc()){
 }
 echo json_encode($departamentos);
 $conn->close();
+
+

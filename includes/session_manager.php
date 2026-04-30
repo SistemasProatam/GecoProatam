@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 /**
  * Gestor de Sesiones - Maneja sesiones de forma centralizada
  */
@@ -97,3 +99,4 @@ class SessionManager {
     }
 }
 ?>
+

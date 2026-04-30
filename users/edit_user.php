@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -43,8 +46,8 @@ while ($dep = $departamentos->fetch_assoc()) {
     <title>Editar Usuario - <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/assets/styles/list.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <style>
         .form-container-custom {
             background: white;
@@ -83,13 +86,16 @@ while ($dep = $departamentos->fetch_assoc()) {
 </head>
 
 <body>
-    <?php include __DIR__ . "/../includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
-                <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
                 <a href="list_users.php"> Registro de Usuarios</a>
                 <span>/</span>
@@ -231,24 +237,60 @@ while ($dep = $departamentos->fetch_assoc()) {
                     <div class="document-section">
                         <div class="row">
                             <div class="col-md-6">
-                                <?php mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
-                                <?php mostrarCampoArchivo('identificacion_pdf', 'Identificación Oficial', $user); ?>
-                                <?php mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
-                                <?php mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
-                                <?php mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de Situación Fiscal', $user); ?>
-                                <?php mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('identificacion_pdf', 'Identificación Oficial', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de Situación Fiscal', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
-                                <?php mostrarCampoArchivo('nss_pdf', 'Número de Seguro Social', $user); ?>
-                                <?php mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
-                                <?php mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
-                                <?php mostrarCampoArchivo('comprobante_estudios_pdf', 'Último Comprobante de Estudios', $user); ?>
-                                <?php mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('nss_pdf', 'Número de Seguro Social', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('comprobante_estudios_pdf', 'Último Comprobante de Estudios', $user); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
-                                <?php mostrarSeccionContratos($id, $conn); ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; mostrarSeccionContratos($id, $conn); ?>
                             </div>
 
                         </div>
@@ -268,7 +310,10 @@ while ($dep = $departamentos->fetch_assoc()) {
         </div>
     </div>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
     <div id="loadingOverlay">
         <div class="loading-box">
@@ -395,6 +440,9 @@ while ($dep = $departamentos->fetch_assoc()) {
 </html>
 
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Función para mostrar campos de archivo
 function mostrarCampoArchivo($campo, $label, $user)
 {
@@ -404,24 +452,39 @@ function mostrarCampoArchivo($campo, $label, $user)
     <div class="mb-3">
         <label class="form-label"><?= $label ?></label>
         <input type="file" name="<?= $campo ?>" class="form-control" accept="<?= $accept ?>">
-        <?php if ($archivo): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($archivo): ?>
             <div class="current-file">
                 <i class="bi bi-file-earmark"></i> Archivo actual:
                 <a href="../uploads/usuarios/<?= htmlspecialchars($archivo) ?>" target="_blank">
                     <?= htmlspecialchars($archivo) ?>
                 </a>
             </div>
-        <?php else: ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
             <div class="current-file text-muted">
                 <i class="bi bi-file-earmark"></i> No hay archivo subido
             </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
     </div>
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 }
 ?>
 
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Función para mostrar la sección de contratos
 function mostrarSeccionContratos($id, $conn)
 {
@@ -430,6 +493,9 @@ function mostrarSeccionContratos($id, $conn)
         <label class="form-label">Contratos (PDF)</label>
         <div id="contratos-container">
             <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
             // Mostrar contratos existentes
             $sql_contratos = "SELECT * FROM contratos_usuario WHERE usuario_id = ? ORDER BY tipo_contrato DESC";
             $stmt_contratos = $conn->prepare($sql_contratos);
@@ -444,7 +510,10 @@ function mostrarSeccionContratos($id, $conn)
                         <!-- Campo hidden para ID del contrato -->
                         <input type="hidden" name="contrato_id[]" value="<?= $contrato['id'] ?>">
 
-                        <?php if (!empty($contrato['nombre_archivo'])): ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($contrato['nombre_archivo'])): ?>
                             <div class="current-file mt-1">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="flex-grow-1">
@@ -471,19 +540,34 @@ function mostrarSeccionContratos($id, $conn)
                                     </div>
                                 </div>
                             </div>
-                        <?php else: ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
                             <div class="current-file text-muted mt-1">
                                 <i class="bi bi-file-earmark"></i> No hay archivo subido
                             </div>
-                        <?php endif; ?>
+                        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                     </div>
                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                 endwhile;
             else:
                 ?>
                 <p class="text-muted">No hay contratos registrados.</p>
-            <?php endif; ?>
-            <?php $stmt_contratos->close(); ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; $stmt_contratos->close(); ?>
 
             <!-- Nuevos contratos -->
             <div id="nuevos-contratos"></div>
@@ -495,5 +579,10 @@ function mostrarSeccionContratos($id, $conn)
         <small class="text-muted d-block mt-1">Puedes agregar múltiples contratos</small>
     </div>
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 }
 ?>
+
+

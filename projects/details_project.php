@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . '/../config.php';
 
 require_once __DIR__ . "/../includes/session_manager.php";
@@ -62,7 +64,10 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 </head>
 
 <body>
-  <?php include __DIR__ . "/../includes/navbar.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -211,7 +216,10 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
       </div>
     </div>
 
-    <?php if ($proyecto['total_obras'] > 0): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($proyecto['total_obras'] > 0): ?>
       <!-- WORKS SECTION -->
       <div class="works-section">
         <div class="section-header">
@@ -232,7 +240,10 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
               </tr>
             </thead>
             <tbody>
-              <?php while ($obra = $obras->fetch_assoc()):
+              <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+while ($obra = $obras->fetch_assoc()):
                 $costo_disponible_obra = $obra['costo_directo'] - $obra['costo_directo_utilizado'];
                 $porcentaje_utilizado_obra = $obra['costo_directo'] > 0 ?
                   ($obra['costo_directo_utilizado'] / $obra['costo_directo']) * 100 : 0;
@@ -266,12 +277,18 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
                     </div>
                   </td>
                 </tr>
-              <?php endwhile; ?>
+              <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endwhile; ?>
             </tbody>
           </table>
         </div>
       </div>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
 
   </div>
 
@@ -583,7 +600,9 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 
       // 2. Preparar datos agrupados por Obra (PHP -> JS)
       <?php
-      $obras_data = [];
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+$obras_data = [];
       $stmt_obras_exp = $conn->prepare("SELECT id, nombre_obra, numero_obra, costo_directo FROM obras WHERE proyecto_id = ? ORDER BY numero_obra");
       $stmt_obras_exp->bind_param("i", $proyecto_id);
       $stmt_obras_exp->execute();
@@ -817,8 +836,12 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
     }
   </script>
 
-  <?php include __DIR__ . "/../includes/footer.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
+

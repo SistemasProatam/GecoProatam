@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../config.php";
 /**
  * PHPMailer - PHP email creation and transport class.
  * PHP Version 5.5
@@ -72,7 +72,8 @@ if (!isset($_GET['code']) && !isset($_POST['provider'])) {
 </body>
 </html>
     <?php
-    exit;
+require_once __DIR__ . "/../../../config.php";
+exit;
 }
 
 require 'vendor/autoload.php';
@@ -180,3 +181,4 @@ if (!isset($_GET['code'])) {
     //Use this to get a new access token if the old one expires
     echo 'Refresh Token: ', htmlspecialchars($token->getRefreshToken());
 }
+

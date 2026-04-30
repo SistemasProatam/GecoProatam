@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // save_cotizacion.php — Guarda cotización en BD, devuelve JSON con id
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -188,3 +190,4 @@ if ($stmt->execute()) {
 
 $conn->close();
 ?>
+

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../../../config.php";
+require_once __DIR__ . "/../../../config.php";
 require('../fpdf.php');
 
 class PDF extends FPDF
@@ -107,3 +109,5 @@ $pdf->PrintChapter(1,'UN RIZO DE HUIDA','20k_c1.txt');
 $pdf->PrintChapter(2,'LOS PROS Y LOS CONTRAS','20k_c2.txt');
 $pdf->Output();
 ?>
+
+

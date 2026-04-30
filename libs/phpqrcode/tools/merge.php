@@ -1,5 +1,6 @@
 <?php
-
+require_once __DIR__ . "/../../../config.php";
+require_once __DIR__ . "/../../../config.php";
 /*
  * PHP QR Code encoder
  *
@@ -68,3 +69,4 @@
     file_put_contents($outputFile, $outputContents);
     
     
+

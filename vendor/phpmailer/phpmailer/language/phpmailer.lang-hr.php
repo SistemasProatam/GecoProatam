@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Croatian PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -25,3 +25,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'Spajanje na SMTP poslužitelj nije us
 $PHPMAILER_LANG['smtp_error']           = 'Greška SMTP poslužitelja: ';
 $PHPMAILER_LANG['variable_set']         = 'Ne mogu postaviti varijablu niti ju vratiti nazad: ';
 $PHPMAILER_LANG['extension_missing']    = 'Nedostaje proširenje: ';
+

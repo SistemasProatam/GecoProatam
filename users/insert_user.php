@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 header('Content-Type: application/json; charset=utf-8');
 include(__DIR__ . "/../conexion.php");
 
@@ -394,3 +396,5 @@ try {
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => 'Excepción: ' . $e->getMessage()]);
 }
+
+

@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . '/../config.php';
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -134,8 +137,8 @@ if ($obrasRes) {
     <title>Registro de Órdenes de Compra</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/assets/styles/list.css">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
     <style>
         .table-container {
             width: 100%;
@@ -241,13 +244,16 @@ if ($obrasRes) {
 </head>
 
 <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include $_SERVER['DOCUMENT_ROOT'] . BASE_URL . "/includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
-                <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
                 <span>Registro de Órdenes de Compra</span>
             </div>
@@ -322,17 +328,29 @@ if ($obrasRes) {
                     </div>
 
                     <!-- Mensaje de éxito -->
-                    <?php if (isset($_GET['msg']) && $_GET['msg'] === 'success'): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (isset($_GET['msg']) && $_GET['msg'] === 'success'): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="bi bi-check-circle-fill"></i>
                             <strong>¡Éxito!</strong> Orden de compra
-                            <?php if (isset($_GET['folio'])): ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (isset($_GET['folio'])): ?>
                                 <strong><?= htmlspecialchars($_GET['folio']) ?></strong>
-                            <?php endif; ?>
+                            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                             creada correctamente.
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
 
                     <!-- Lista de órdenes de compra con scroll horizontal -->
                     <div class="table-container">
@@ -348,21 +366,38 @@ if ($obrasRes) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if ($result && $result->num_rows > 0): ?>
-                                    <?php while ($oc = $result->fetch_assoc()): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($result && $result->num_rows > 0): ?>
+                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+while ($oc = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td><?= htmlspecialchars($oc['folio']) ?></td>
                                             <td><?= htmlspecialchars($oc['entidad']) ?></td>
                                             <td>
-                                                <?php if ($oc['folio_requisicion']): ?>
+                                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($oc['folio_requisicion']): ?>
                                                     <span><?= htmlspecialchars($oc['folio_requisicion']) ?></span>
-                                                <?php else: ?>
+                                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
                                                     <span class="text-muted">-</span>
-                                                <?php endif; ?>
+                                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                                             </td>
                                             <td>
                                                 <?php
-                                                switch ($oc['estado']) {
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+switch ($oc['estado']) {
                                                     case 'pendiente':
                                                         echo '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente</span>';
                                                         break;
@@ -397,51 +432,84 @@ if ($obrasRes) {
                                                         <i class="bi bi-info-circle"></i>
                                                     </button>
 
-                                                    <?php if ($oc['estado'] == 'devuelto'): ?>
+                                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($oc['estado'] == 'devuelto'): ?>
                                                         <!-- Botón de descargar PDF -->
                                                         <button class="btn-ed" onclick="descargarPDF(<?= $oc['id'] ?>)" title="Descargar PDF"
                                                             data-bs-toggle="tooltip" data-bs-placement="top">
                                                             <i class="bi bi-download"></i>
                                                         </button>
-                                                    <?php endif; ?>
+                                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
 
-                                                    <?php if ($oc['estado'] == 'pagado'): ?>
+                                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($oc['estado'] == 'pagado'): ?>
                                                         <!-- Botón de descargar PDF -->
                                                         <button class="btn-download" onclick="descargarPDF(<?= $oc['id'] ?>)" title="Descargar PDF"
                                                             data-bs-toggle="tooltip" data-bs-placement="top">
                                                             <i class="bi bi-download"></i>
                                                         </button>
-                                                    <?php endif; ?>
+                                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                                                 </div>
                                             </td>
                                         </tr>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
+                                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endwhile; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+else: ?>
                                     <tr>
                                         <td colspan="7" class="text-center text-muted py-4">
                                             <i class="bi bi-inbox" style="font-size: 3rem;"></i>
                                             <p class="mt-2">No hay órdenes de compra registradas</p>
                                         </td>
                                     </tr>
-                                <?php endif; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Paginación estilo catálogo -->
-                    <?php if ($totalPaginas > 1): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if ($totalPaginas > 1): ?>
                         <nav aria-label="Paginación">
                             <ul class="pagination justify-content-center mt-3">
-                                <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+for ($i = 1; $i <= $totalPaginas; $i++): ?>
                                     <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
                                         <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= $i ?>">
                                             <?= $i ?>
                                         </a>
                                     </li>
-                                <?php endfor; ?>
+                                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endfor; ?>
                             </ul>
                         </nav>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
                 </div>
             </div>
         </div>
@@ -532,11 +600,11 @@ if ($obrasRes) {
             [searchForm, filterForm].forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
+
                     const params = new URLSearchParams(new FormData(filterForm));
                     const searchData = new FormData(searchForm);
                     params.set('q', searchData.get('q') || "");
-                    
+
                     params.set('page', '1'); // Resetear a página 1 al filtrar/buscar
                     updateList('?' + params.toString());
                 });
@@ -561,8 +629,12 @@ if ($obrasRes) {
         }
     </script>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
+

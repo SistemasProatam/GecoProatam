@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // get_cotizacion.php — Devuelve datos de una cotización en JSON
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -42,3 +44,4 @@ $row['fecha_emision'] = $row['fecha_emision']
     : '';
 
 echo json_encode(['success' => true, 'cotizacion' => $row]);
+

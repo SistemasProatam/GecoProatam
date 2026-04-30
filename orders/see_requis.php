@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -268,8 +271,8 @@ function generarTextoUbicacion($requisicion_data)
   <title>Detalles Requisición <?= htmlspecialchars($requisicion['folio']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="/assets/styles/new_order.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
   <style>
     .estado-badge {
       font-size: 1rem;
@@ -343,15 +346,18 @@ function generarTextoUbicacion($requisicion_data)
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
     <div class="container hero-content">
       <div class="breadcrumb-custom">
-        <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
         <span>/</span>
-        <a href="/orders/list_requis.php">Registro de Requisiciones</a>
+        <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
         <span>/</span>
         <span>Detalles de Requisición</span>
       </div>
@@ -373,8 +379,14 @@ function generarTextoUbicacion($requisicion_data)
 
       <div class="form-body">
         <!-- Mostrar mensajes -->
-        <?php if (isset($_GET['success'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($_GET['success'])): ?>
           <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
           $email_status = $_GET['email'] ?? '';
           $mensaje_clase = 'success';
           $icono = 'check-circle';
@@ -407,14 +419,23 @@ function generarTextoUbicacion($requisicion_data)
             <i class="bi bi-<?= $icono ?>"></i> <?= $mensaje ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-        <?php if (isset($mensaje_error)): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Información General -->
         <div class="section-title">
@@ -441,15 +462,24 @@ function generarTextoUbicacion($requisicion_data)
           <div class="col-md-6">
             <label class="form-label">Solicitante</label>
             <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?>" readonly>
-            <?php if (!empty($requisicion['correo_corporativo'])): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['correo_corporativo'])): ?>
               <small class="text-muted">
                 <i class="bi bi-envelope"></i> <?= htmlspecialchars($requisicion['correo_corporativo']) ?>
               </small>
-            <?php else: ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
               <small class="text-warning">
                 <i class="bi bi-exclamation-triangle"></i> Sin correo registrado
               </small>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
           </div>
         </div>
 
@@ -462,6 +492,9 @@ function generarTextoUbicacion($requisicion_data)
             <label class="form-label">Estado Actual</label>
             <div class="mt-1">
               <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
               switch ($requisicion['estado']) {
                 case 'pendiente':
                   echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-clock"></i> Pendiente</span>';
@@ -479,7 +512,10 @@ function generarTextoUbicacion($requisicion_data)
         </div>
 
         <!-- Ubicación del Presupuesto -->
-        <?php if (
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (
           !empty($requisicion['nombre_proyecto']) || !empty($requisicion['nombre_obra']) ||
           !empty($requisicion['nombre_catalogo'])
         ): ?>
@@ -489,33 +525,57 @@ function generarTextoUbicacion($requisicion_data)
           </div>
 
           <div class="row mb-3">
-            <?php if (!empty($requisicion['nombre_proyecto'])): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['nombre_proyecto'])): ?>
               <div class="col-md-6">
                 <label class="form-label">Proyecto</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_proyecto']) ?>" readonly>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-            <?php if (!empty($requisicion['nombre_obra'])): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['nombre_obra'])): ?>
               <div class="col-md-6">
                 <label class="form-label">Obra</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_obra']) ?>" readonly>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
           </div>
 
           <div class="row mb-3">
-            <?php if (!empty($requisicion['nombre_catalogo'])): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['nombre_catalogo'])): ?>
               <div class="col-md-6">
                 <label class="form-label">Catálogo</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_catalogo']) ?>" readonly>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Mostrar comentario de rechazo si está rechazada -->
-        <?php if ($requisicion['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($requisicion['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-dots"></i>
             Motivo del Rechazo
@@ -526,7 +586,10 @@ function generarTextoUbicacion($requisicion_data)
             </div>
             <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Items -->
         <div class="section-title mt-4">
@@ -547,6 +610,9 @@ function generarTextoUbicacion($requisicion_data)
           </thead>
           <tbody>
             <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
             $i = 1;
             while ($item = $items->fetch_assoc()): ?>
               <tr>
@@ -556,38 +622,68 @@ function generarTextoUbicacion($requisicion_data)
                 <td><?= htmlspecialchars($item['cantidad']) ?></td>
                 <td><?= htmlspecialchars($item['unidad']) ?></td>
                 <td>
-                  <?php if (!empty($item['codigo_concepto'])): ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($item['codigo_concepto'])): ?>
                     <div class="concepto-info">
-                      <?php if (!empty($item['numero_original'])): ?>
+                      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($item['numero_original'])): ?>
                         <span class="concepto-badge">
                           <i class="bi bi-hash"></i> <?= htmlspecialchars($item['numero_original']) ?>
                         </span>
-                      <?php endif; ?>
+                      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                       <span class="concepto-badge">
                         <i class="bi bi-tag"></i> <?= htmlspecialchars($item['codigo_concepto']) ?>
                       </span>
-                      <?php if (!empty($item['nombre_concepto'])): ?>
+                      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($item['nombre_concepto'])): ?>
                         <br>
                         <small><?= htmlspecialchars($item['nombre_concepto']) ?></small>
-                      <?php endif; ?>
+                      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                     </div>
-                  <?php else: ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
                     <span class="text-muted">-</span>
-                  <?php endif; ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                 </td>
               </tr>
-            <?php endwhile; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
           </tbody>
         </table>
 
         <!-- Extra -->
-        <?php if (!empty($requisicion['extra'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['extra'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-plus-circle"></i>
             Producto/servicio no listado
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['extra']) ?></textarea>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Descripción -->
         <div class="section-title mt-4">
@@ -597,13 +693,19 @@ function generarTextoUbicacion($requisicion_data)
         <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['descripcion']) ?></textarea>
 
         <!-- Observaciones -->
-        <?php if (!empty($requisicion['observaciones'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['observaciones'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-text"></i>
             Observaciones
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['observaciones']) ?></textarea>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Archivos Adjuntos -->
         <div class="section-title mt-4">
@@ -611,7 +713,10 @@ function generarTextoUbicacion($requisicion_data)
           Archivos Adjuntos
         </div>
 
-        <?php if ($archivos->num_rows > 0): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($archivos->num_rows > 0): ?>
           <div class="table-responsive">
             <table class="table table-hover">
               <thead>
@@ -625,6 +730,9 @@ function generarTextoUbicacion($requisicion_data)
               </thead>
               <tbody>
                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                 $i = 1;
                 while ($archivo = $archivos->fetch_assoc()):
                   $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
@@ -673,18 +781,30 @@ function generarTextoUbicacion($requisicion_data)
                       </button>
                     </td>
                   </tr>
-                <?php endwhile; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
               </tbody>
             </table>
           </div>
-        <?php else: ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
           <div class="alert alert-info">
             <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta requisición.
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Cambiar Estado (solo para requisiciones pendientes y si es supervisor) -->
         <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
         $esEncargado = isset($_SESSION['departamento']) && in_array($_SESSION['departamento'], ['Gerente de Operaciones', 'Procura']);
         if ($requisicion['estado'] === 'pendiente' && $esEncargado):
         ?>
@@ -693,20 +813,29 @@ function generarTextoUbicacion($requisicion_data)
             Cambiar Estado
           </div>
 
-          <?php if (!empty($requisicion['correo_corporativo'])): ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($requisicion['correo_corporativo'])): ?>
             <div class="alert alert-info mb-3">
               <i class="bi bi-envelope"></i>
               <strong>Notificación automática:</strong> Al cambiar el estado, se enviará un correo a
               <strong><?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?></strong>
               (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>)
             </div>
-          <?php else: ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
             <div class="alert alert-warning mb-3">
               <i class="bi bi-exclamation-triangle"></i>
               <strong>Advertencia:</strong> El solicitante no tiene correo registrado.
               No se enviará notificación automática.
             </div>
-          <?php endif; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
           <form method="POST" class="mb-4">
             <div class="row">
@@ -744,7 +873,10 @@ function generarTextoUbicacion($requisicion_data)
               </div>
             </div>
           </form>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
       </div>
     </div>
   </div>
@@ -809,10 +941,15 @@ function generarTextoUbicacion($requisicion_data)
     });
   </script>
 
-  <script src="/assets/scripts/session_timeout.js"></script>
-  <?php include __DIR__ . "/../includes/footer.php"; ?>
+  <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 
 </body>
 
 </html>
+
+

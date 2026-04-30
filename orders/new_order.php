@@ -1,4 +1,7 @@
-<?php 
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; 
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -139,12 +142,12 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
-    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
-    <link rel="stylesheet" href="/assets/styles/new_order.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
     <style>
       .presupuesto-info {
         background: #f8f9fa;
@@ -197,15 +200,18 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
   </head>
   <body>
 
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="/orders/list_oc.php">Registro de Órdenes de Compra</a>
+      <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
       <span>/</span>
       <span>Nueva Orden de Compra</span>
     </div>
@@ -302,7 +308,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                 name="solicitante"
                 placeholder="Nombre de quien realiza la orden de compra"
                 required
-                value="<?php echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+                value="<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
                 readonly
                 />
                 <input type="hidden" name="solicitante_id" value="<?= $_SESSION['user_id'] ?>">
@@ -323,6 +332,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                 <option value="">Seleccionar Entidad</option>
 
                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                 if ($result_entidades && $result_entidades->num_rows > 0) {
                   while ($row = $result_entidades->fetch_assoc()) {
 
@@ -354,6 +366,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                 <option value="">Seleccionar Proyecto</option>
 
                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                 if ($result_proyectos && $result_proyectos->num_rows > 0) {
 
                   while ($row = $result_proyectos->fetch_assoc()) {
@@ -428,6 +443,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                       onchange="handleCategoriaChange()">
                 <option value="">Seleccionar Categoría</option>
                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                 if ($result_categorias && $result_categorias->num_rows > 0) {
                   while ($row = $result_categorias->fetch_assoc()) {
                     $selected = ($requisicion && $requisicion['categoria_id'] == $row['id']) ? "selected" : "";
@@ -448,6 +466,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
             <select class="form-select" id="proveedor" name="proveedor" required>
               <option value="">Seleccionar proveedor</option>
               <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
               if ($result_proveedores && $result_proveedores->num_rows > 0) {
                 while ($row = $result_proveedores->fetch_assoc()) {
                   echo '<option value="' . htmlspecialchars($row['id']) . '">'
@@ -688,7 +709,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
 </div>
 
 <!-- Archivos heredados de la requisición (si existe) -->
-<?php if(!empty($archivos_requisicion)): ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if(!empty($archivos_requisicion)): ?>
 <div class="mt-4">
   <div class="section-title"><i class="bi bi-files"></i> Archivos de la Requisición</div>
   
@@ -708,7 +732,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
       </tr>
     </thead>
     <tbody id="tablaArchivos">
-      <?php $i=1; foreach($archivos_requisicion as $archivo): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; $i=1; foreach($archivos_requisicion as $archivo): ?>
         <tr data-archivo-id="<?= $archivo['id'] ?>">
           <td><?= $i++ ?></td>
           <td>
@@ -730,11 +757,17 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
             </button>
           </td>
         </tr>
-      <?php endforeach; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endforeach; ?>
     </tbody>
   </table>
 </div>
-<?php endif; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
             <!-- Guardar -->
             <div class="form-actions mt-3">
@@ -782,8 +815,14 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                   </tr>
                 </thead>
                 <tbody id="tbodyCatalogo">
-                  <?php if ($result_productos && $result_productos->num_rows > 0): ?>
-                    <?php while ($producto = $result_productos->fetch_assoc()): ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($result_productos && $result_productos->num_rows > 0): ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($producto = $result_productos->fetch_assoc()): ?>
                       <tr>
                         <td><?= htmlspecialchars($producto['nombre']) ?></td>
                         <td><?= htmlspecialchars($producto['descripcion'] ?? '') ?></td>
@@ -799,14 +838,23 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                           </button>
                         </td>
                       </tr>
-                    <?php endwhile; ?>
-                  <?php else: ?>
+                    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
                     <tr>
                       <td colspan="4" class="text-center text-muted">
                         No hay productos o servicios registrados
                       </td>
                     </tr>
-                  <?php endif; ?>
+                  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
                 </tbody>
               </table>
             </div>
@@ -830,7 +878,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
     ></script>
 
     <!-- JavaScript Externo -->
-    <script src="/assets/scripts/new_order.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/new_order.js"></script>
     
     <!-- Configuración e Inicialización -->
     <script>
@@ -867,7 +915,12 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
 }
     </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
   </body>
 </html>
+
+

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // delete_cotizacion.php — Elimina FÍSICAMENTE una cotización de la BD
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -48,3 +50,4 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+

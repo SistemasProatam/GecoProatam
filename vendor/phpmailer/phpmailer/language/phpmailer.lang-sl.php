@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Slovene PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -34,3 +34,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'Ne morem vzpostaviti povezave s SMTP 
 $PHPMAILER_LANG['smtp_detail']          = 'Podrobnosti: ';
 $PHPMAILER_LANG['smtp_error']           = 'Napaka SMTP strežnika: ';
 $PHPMAILER_LANG['variable_set']         = 'Ne morem nastaviti oz. ponastaviti spremenljivke: ';
+

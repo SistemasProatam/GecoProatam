@@ -1,5 +1,7 @@
 <!-- Archivo para cambiar contraseña temporal -->
 <?php
+require_once "config.php";
+
 // Incluir el gestor de sesiones UNA sola vez
 require_once "includes/session_manager.php";
 require_once "includes/check_session.php";
@@ -18,7 +20,7 @@ preventCaching();
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<link rel="stylesheet" href="assets/styles/change_pass.css"> 
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css"> 
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -38,9 +40,9 @@ preventCaching();
 
 <div class="form-container">
     <!-- Logo -->
-    <a class="navbar-brand" href="/index.php">
+    <a class="navbar-brand" href="<?= BASE_URL ?>/index.php">
         <img
-            src="/assets/img/proatam.png"
+            src="<?= BASE_URL ?>/assets/img/proatam.png"
             alt="Logo PROATAM"
             width="200"
             height="auto"
@@ -212,3 +214,5 @@ document.getElementById('changePassForm').addEventListener('submit', async funct
 
 </body>
 </html>
+
+

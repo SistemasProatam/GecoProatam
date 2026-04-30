@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Hebrew PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -25,3 +25,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect() failed.';
 $PHPMAILER_LANG['smtp_error']           = 'שגיאת שרת SMTP: ';
 $PHPMAILER_LANG['variable_set']         = 'לא ניתן לקבוע או לשנות את המשתנה: ';
 //$PHPMAILER_LANG['extension_missing']    = 'Extension missing: ';
+

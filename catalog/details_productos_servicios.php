@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -38,12 +40,18 @@ if (!$producto) {
         <?= ucfirst($producto['tipo']) ?>
     </div>
     
-    <?php if (!empty($producto['descripcion'])): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+if (!empty($producto['descripcion'])): ?>
     <div class="mb-3">
         <strong>Descripción:</strong><br>
         <?= nl2br(htmlspecialchars($producto['descripcion'])) ?>
     </div>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+endif; ?>
     
     <div class="mb-3">
         <strong>Fecha de creación:</strong><br>
@@ -52,7 +60,10 @@ if (!$producto) {
 </div>
 
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Cerrar conexión
 $stmt->close();
 $conn->close();
 ?>
+

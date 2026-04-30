@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -36,3 +38,5 @@ if ($cliente = $result->fetch_assoc()) {
         'message' => 'Cliente no encontrado'
     ]);
 }
+
+

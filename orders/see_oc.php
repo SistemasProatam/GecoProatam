@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -679,8 +682,8 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
   <title>Ver Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="/assets/styles/new_order.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
   <style>
     .estado-badge {
       font-size: 1rem;
@@ -766,13 +769,16 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
     <div class="container hero-content">
       <div class="breadcrumb-custom">
-        <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
         <span>/</span>
         <span>Ver Orden de Compra</span>
       </div>
@@ -792,8 +798,14 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
       <div class="form-body">
         <!-- Mostrar mensajes -->
-        <?php if (isset($_GET['success'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($_GET['success'])): ?>
           <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
           $email_status = $_GET['email'] ?? '';
           $comprobante_status = $_GET['comprobante'] ?? '';
           $transferidos = $_GET['transferidos'] ?? 0;
@@ -836,14 +848,23 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
             <i class="bi bi-<?= $icono ?>"></i> <?= $mensaje ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-        <?php if (isset($mensaje_error)): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Información General -->
         <div class="section-title">
@@ -893,6 +914,9 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
             <label class="form-label">Estado Actual</label>
             <div class="mt-1">
               <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
               switch ($orden_compra['estado']) {
                 case 'pendiente':
                   echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-clock"></i> Pendiente</span>';
@@ -922,6 +946,9 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
         </div>
 
         <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Obtener comentario del revisor (Gerente de Operaciones) o aprobador (Subdirector General)
 $comentario_decision = '';
 if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'comprobante_subido'])) {
@@ -943,7 +970,10 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
 }
 ?>
 
-<?php if (!empty($comentario_decision)): ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($comentario_decision)): ?>
 <div class="section-title mt-4">
     <i class="bi bi-chat-dots"></i>
     Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
@@ -955,10 +985,16 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
     </div>
     <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_decision)) ?></p>
 </div>
-<?php endif; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Mostrar comentario de rechazo si está rechazada -->
-        <?php if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-dots"></i>
             Motivo del Rechazo
@@ -969,7 +1005,10 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
             </div>
             <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Ubicación del Presupuesto -->
         <div class="section-title mt-4">
@@ -979,41 +1018,71 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
 
         <div class="ubicacion-box">
           <div class="row">
-            <?php if ($orden_compra['nombre_proyecto']): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['nombre_proyecto']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Proyecto</strong></label>
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_proyecto']) ?></div>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-            <?php if ($orden_compra['nombre_obra']): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['nombre_obra']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Obra</strong></label>
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_obra']) ?></div>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-            <?php if ($orden_compra['nombre_catalogo']): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['nombre_catalogo']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Catálogo</strong></label>
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_catalogo']) ?></div>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-            <?php if($orden_compra['subcontrato_id']): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if($orden_compra['subcontrato_id']): ?>
             <div class="col-md-6 mb-3">
               <label class="form-label"><strong>Subcontrato</strong></label>
               <div class="form-control-plaintext">
                 <?= htmlspecialchars($orden_compra['subcontrato_proveedor_nombre'] ?? 'Subcontrato #' . $orden_compra['subcontrato_id']) ?>
               </div>
             </div>
-          <?php endif; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
-            <?php if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Concepto</strong></label>
                 <div class="form-control-plaintext">
                   <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                   if ($orden_compra['codigo_concepto'] && $orden_compra['nombre_concepto']) {
                     echo htmlspecialchars($orden_compra['codigo_concepto'] . ' - ' . $orden_compra['nombre_concepto']);
                   } elseif ($orden_compra['codigo_concepto']) {
@@ -1026,7 +1095,10 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
                   ?>
                 </div>
               </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
           </div>
         </div>
 
@@ -1048,6 +1120,9 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
           </thead>
           <tbody>
             <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
             $i = 1;
             $total_general = 0;
             while ($item = $items->fetch_assoc()):
@@ -1069,7 +1144,10 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
                 <td>$<?= number_format($item['precio_unitario'], 2) ?></td>
                 <td>$<?= number_format($subtotal, 2) ?></td>
               </tr>
-            <?php endwhile; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
           </tbody>
         </table>
 
@@ -1083,6 +1161,9 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </div>
               <div class="row mb-2">
                 <div class="col-6"><strong>IVA <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                                                 if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
                                                   $porcentaje_iva = ($orden_compra['iva'] / $orden_compra['subtotal']) * 100;
                                                   if ($porcentaje_iva >= 15) {
@@ -1107,22 +1188,34 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
         </div>
 
         <!-- Descripción -->
-        <?php if (!empty($orden_compra['descripcion'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($orden_compra['descripcion'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-file-text"></i>
             Descripción
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($orden_compra['descripcion']) ?></textarea>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Observaciones -->
-        <?php if (!empty($orden_compra['observaciones'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($orden_compra['observaciones'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-text"></i>
             Observaciones
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($orden_compra['observaciones']) ?></textarea>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Archivos Adjuntos -->
         <div class="section-title mt-4">
@@ -1130,7 +1223,10 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
           Archivos Adjuntos
         </div>
 
-        <?php if ($archivos->num_rows > 0): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($archivos->num_rows > 0): ?>
           <div class="table-responsive">
             <table class="table table-hover">
               <thead>
@@ -1144,6 +1240,9 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </thead>
               <tbody>
                 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
                 $i = 1;
                 while ($archivo = $archivos->fetch_assoc()):
                   $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
@@ -1190,25 +1289,37 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
                         title="Ver archivo">
                         <i class="bi bi-eye"></i> Ver
                       </button>
-                      <a href="/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>"
+                      <a href="<?= BASE_URL ?>/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>"
                         class="btn btn-sm btn-outline-success"
                         title="Descargar archivo">
                         <i class="bi bi-download"></i> Descargar
                       </a>
                     </td>
                   </tr>
-                <?php endwhile; ?>
+                <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
               </tbody>
             </table>
           </div>
-        <?php else: ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
           <div class="alert alert-info">
             <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta orden de compra.
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Comprobante de Pago -->
-        <?php if (!empty($orden_compra['comprobante_pago'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($orden_compra['comprobante_pago'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-receipt"></i>
             Comprobante de Pago
@@ -1226,7 +1337,7 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
                   title="Ver comprobante de pago">
                   <i class="bi bi-eye"></i> Ver Comprobante
                 </button>
-                <a href="/orders/download_comprobante.php?id=<?= $id ?>&download=1"
+                <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1"
                   class="btn btn-sm btn-outline-success"
                   title="Descargar comprobante">
                   <i class="bi bi-download"></i> Descargar
@@ -1234,10 +1345,16 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </div>
             </div>
           </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- SECCIÓN DE ACCIONES PARA Gerente de Operaciones (ESTADO PENDIENTE) -->
-        <?php if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
           <div class="section-title mt-4">
             <i class="bi bi-gear"></i>
             Acciones Disponibles - Gerente de Operaciones
@@ -1286,10 +1403,16 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </div>
             </div>
           </form>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- SECCIÓN DE ACCIONES PARA SUBDIRECTOR GENERAL (ESTADO REVISADO) -->
-        <?php if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
           <div class="section-title mt-4">
             <i class="bi bi-gear"></i>
             Acciones Disponibles - Subdirector General
@@ -1342,10 +1465,16 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </div>
             </div>
           </form>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- SECCIÓN DE COMPROBANTE - Solo Gerente de RRHH cuando está aprobado -->
-        <?php if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
           <div class="section-title mt-4">
             <i class="bi bi-receipt"></i>
             Subir Comprobante de Pago
@@ -1374,10 +1503,16 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </div>
             </div>
           </form>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- SECCIÓN DE MARCAR COMO PAGADO - Solo Gerente de RRHH cuando hay comprobante -->
-        <?php if ($orden_compra['estado'] === 'comprobante_subido' && $puede_marcar_pagado): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($orden_compra['estado'] === 'comprobante_subido' && $puede_marcar_pagado): ?>
           <div class="section-title mt-4">
             <i class="bi bi-currency-dollar"></i>
             Marcar como Pagado y Completado
@@ -1386,10 +1521,16 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
           <div class="alert alert-info mb-3">
             <i class="bi bi-envelope"></i>
             <strong>Notificación automática:</strong> Al marcar como pagado, se notificará al solicitante y subdirector.
-            <?php if (!empty($orden_compra['nombre_catalogo'])): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if (!empty($orden_compra['nombre_catalogo'])): ?>
               <br><i class="bi bi-diagram-3"></i>
               <strong>Transferencia automática:</strong> Los items se transferirán al catálogo "<?= htmlspecialchars($orden_compra['nombre_catalogo']) ?>".
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
           </div>
 
           <form method="POST" class="mb-4">
@@ -1410,23 +1551,38 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
               </div>
             </div>
           </form>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
         <!-- Botones de acción -->
         <div class="form-actions mt-4">
-          <?php 
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; 
           $es_sistemas = (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas');
           if (($orden_compra['estado'] == 'devuelto' && $_SESSION['user_id'] == $orden_compra['solicitante_id']) || $es_sistemas): 
           ?>
             <a href="edit_oc.php?id=<?= $orden_compra['id'] ?>" class="btn btn-warning">
               <i class="bi bi-pencil"></i> Editar Orden de Compra
             </a>
-            <?php if($orden_compra['subcontrato_id']): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if($orden_compra['subcontrato_id']): ?>
             <small class="text-muted ms-2">
               <i class="bi bi-info-circle"></i> Esta orden está asociada a un subcontrato
             </small>
-            <?php endif; ?>
-          <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
+          <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
         </div>
       </div>
     </div>
@@ -1499,8 +1655,13 @@ if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'compro
     });
   </script>
 
-  <?php include __DIR__ . "/../includes/footer.php"; ?>
+  <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
+
+

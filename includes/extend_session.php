@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . '/session_manager.php';
 
 header('Content-Type: application/json');
@@ -30,3 +32,4 @@ if (isset($_SESSION['last_activity'])) {
     echo json_encode(['success' => false, 'message' => 'Error extendiendo sesión']);
 }
 ?>
+

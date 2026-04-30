@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../../../../config.php";
 /**
  * Romanian PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -31,3 +31,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'Conectarea la serverul SMTP a eșuat.
 $PHPMAILER_LANG['smtp_detail']          = 'Detalii SMTP: ';
 $PHPMAILER_LANG['smtp_error']           = 'Eroare server SMTP: ';
 $PHPMAILER_LANG['variable_set']         = 'Nu se poate seta/reseta variabila. ';
+

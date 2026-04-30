@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 /**
  * API para obtener items de un concepto desde orden_compra_items
  * Items mostrados son aquellos cuya orden tiene estado 'pagado'
@@ -94,3 +96,5 @@ $conn->close();
 
 echo json_encode(['success' => true, 'items' => $items]);
 ?>
+
+

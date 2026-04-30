@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -145,8 +148,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <title>Catálogo</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/assets/styles/list.css">
-  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .catalog-card {
@@ -174,14 +177,17 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 </style>
 </head>
 <body>
-<?php include __DIR__ . "/../includes/navbar.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
 
 
 <!-- HERO SECTION -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-        <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="list_project.php"> Cátalogo del sistema</a>
     </div>
@@ -203,7 +209,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     <div class="form-body">
      <!-- Cards de Selección de Entidades -->
 <div class="row mb-5">
-    <?php foreach ($entidades as $key => $entidad): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; foreach ($entidades as $key => $entidad): ?>
     <div class="col-md-4 col-lg-2 mb-3">
         <div class="card catalog-card <?= $entidad_seleccionada === $key ? 'active' : '' ?>"
              onclick="seleccionarEntidad('<?= $key ?>')"
@@ -216,7 +225,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             </div>
         </div>
     </div>
-    <?php endforeach; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endforeach; ?>
 </div>
 
 <div id="contenido-lista" data-entidad-actual="<?= $entidad_seleccionada ?>">
@@ -236,7 +248,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <div id="table-container-wrapper">
 
       <!-- Filtros Específicos por Entidad -->
-      <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($entidad_seleccionada === 'productos_servicios'): ?>
       <div class="mb-2">
         <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
           <i class="bi bi-funnel"></i> Filtros
@@ -254,7 +269,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
           </select>
         </div>
       </form>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 
       <!-- Botón de agregar -->
       <div class="d-flex justify-content-between mb-3">
@@ -265,35 +283,62 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       </div>
 
       <!-- Lista -->
-      <?php if ($result && $result->num_rows > 0): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($result && $result->num_rows > 0): ?>
       <ul class="list-group">
-        <?php while ($row = $result->fetch_assoc()): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; while ($row = $result->fetch_assoc()): ?>
         <li class="list-group-item text-nowrap d-flex justify-content-between align-items-center">
          <div>
     <strong>
-        <?php if ($entidad_seleccionada === 'clientes' && !empty($row['nombre_abreviado'])): ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($entidad_seleccionada === 'clientes' && !empty($row['nombre_abreviado'])): ?>
             <?= htmlspecialchars($row['nombre_abreviado']) ?>
-        <?php else: ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
             <?= htmlspecialchars($row['nombre']) ?>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
     </strong>
     
-    <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($entidad_seleccionada === 'productos_servicios'): ?>
     <br>
     <small class="text-muted">
         Tipo: <?= ucfirst($row['tipo']) ?>
     </small>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
 </div>
           <div class="btn-group" style="gap:5px;">
             <button class="btn-inf" onclick="mostrarItem(<?= $row['id'] ?>)">
               <i class="bi bi-info-circle"></i>
             </button>
-            <?php if ($entidad_seleccionada === 'proveedores'): ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($entidad_seleccionada === 'proveedores'): ?>
                 <button class="btn-eva" onclick="evaluarProveedor(<?= $row['id'] ?>)">
                 <i class="bi bi-star"></i>
                 </button>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
             <button class="btn-ed" onclick="editarItem(<?= $row['id'] ?>)">
               <i class="bi bi-pencil"></i>
             </button>
@@ -302,13 +347,22 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             </button>
           </div>
         </li>
-        <?php endwhile; ?>
+        <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endwhile; ?>
       </ul>
 
       <!-- Paginación -->
-      <?php if ($totalPaginas > 1): ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; if ($totalPaginas > 1): ?>
 
 <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
 $maxVisible = 10; // cantidad máxima de números visibles
 
 // Calcular bloque actual de 10 páginas
@@ -330,14 +384,20 @@ $fin = min($inicio + $maxVisible - 1, $totalPaginas);
     </li>
 
     <!-- Números de página (solo 10 visibles) -->
-    <?php for ($i = $inicio; $i <= $fin; $i++): ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; for ($i = $inicio; $i <= $fin; $i++): ?>
       <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
         <a class="page-link"
            href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&proveedor=<?= urlencode($proveedor_id) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $i ?>">
           <?= $i ?>
         </a>
       </li>
-    <?php endfor; ?>
+    <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endfor; ?>
 
     <!-- Botón Siguiente -->
     <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
@@ -351,13 +411,22 @@ $fin = min($inicio + $maxVisible - 1, $totalPaginas);
   </ul>
 </nav>
 
-<?php endif; ?>
-      <?php else: ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; else: ?>
         <div class="text-center text-muted py-4">
           <i class="bi bi-inbox" style="font-size: 3rem;"></i>
           <p class="mt-2">No hay <?= strtolower($entidad_config['nombre']) ?> registrados</p>
         </div>
-      <?php endif; ?>
+      <?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; endif; ?>
       </div> <!-- /table-container-wrapper -->
     </div>
     </div>
@@ -824,7 +893,10 @@ function eliminarItem(id) {
 }
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 <script>
@@ -912,6 +984,8 @@ function initAJAX() {
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
-<script src="/assets/scripts/session_timeout.js"></script>
+<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>
 </html>
+
+
