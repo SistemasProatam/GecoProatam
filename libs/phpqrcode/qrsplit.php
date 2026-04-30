@@ -1,5 +1,4 @@
 <?php
-
 /*
  * PHP QR Code encoder
  *
@@ -310,4 +309,3 @@
             return $split->splitString();
         }
     }
-

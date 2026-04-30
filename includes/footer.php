@@ -1,9 +1,7 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 require_once __DIR__ . '/../version.php';
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/footer.css" />
+<link rel="stylesheet" href="/assets/styles/footer.css" />
 
 <footer class="proatam-footer">
   <div class="footer-content">
@@ -15,7 +13,6 @@ require_once __DIR__ . '/../version.php';
       Versión <?= APP_VERSION ?> - Última actualización <?= APP_UPDATE ?>
     </span>
     <span class="separator">|</span>
-    <a href="<?= BASE_URL ?>/politicas_privacidad.php" class="footer-link">Aviso de Privacidad</a>
+    <a href="/politicas_privacidad.php" class="footer-link">Aviso de Privacidad</a>
   </div>
 </footer>
-

@@ -141,12 +141,12 @@ if ($obra_id > 0) {
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/plan_obra.css">
+  <link rel="stylesheet" href="/assets/styles/plan_obra.css">
 </head>
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "" . BASE_URL . "/includes/navbar.php"; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
   <div class="hero-section">
     <div class="container hero-content">

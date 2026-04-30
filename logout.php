@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/config.php';
-
 session_start();
 
 // Determinar el mensaje según la razón del logout
@@ -47,10 +45,8 @@ if (ini_get("session.use_cookies")) {
 <body>
 
 <script>
-const message = "<?php
- echo $message; ?>";
-const icon = "<?php
- echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
+const message = "<?php echo $message; ?>";
+const icon = "<?php echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
 
 Swal.fire({
     title: '¡Sesión cerrada!',
@@ -61,11 +57,10 @@ Swal.fire({
     timerProgressBar: true,
     willClose: () => {
         // Redirigir automáticamente al login al cerrar el modal
-        window.location.href = '<?= BASE_URL ?>/login.php';
+        window.location.href = '/login.php';
     }
 });
 </script>
 
 </body>
 </html>
-

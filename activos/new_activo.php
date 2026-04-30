@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -34,9 +32,9 @@ $result_departamentos = $result;
       rel="stylesheet"
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous" />
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
+    <link rel="stylesheet" href="/assets/styles/new_order.css" />
     <style>
       .section-detalle { display:none; animation:fadeIn .3s ease; }
       .section-detalle.visible { display:block; }
@@ -249,9 +247,7 @@ $result_departamentos = $result;
   </head>
   <body>
 
-    <?php
-require_once __DIR__ . '/config.php';
- include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
     <!-- Toast container global -->
     <div id="toastContainer"></div>
@@ -262,7 +258,7 @@ require_once __DIR__ . '/config.php';
         <div class="breadcrumb-custom">
           <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
           <span>/</span>
-          <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
+          <a href="/activos/list_activos.php">Registro de Activos</a>
           <span>/</span>
           <span>Nuevo Activo</span>
         </div>
@@ -300,8 +296,6 @@ require_once __DIR__ . '/config.php';
                   <select class="form-select" id="tipo_id" name="tipo_id" required onchange="mostrarSeccionDetalle()">
                     <option value="">Seleccionar Tipo</option>
                     <?php
-require_once __DIR__ . '/config.php';
-
                     if ($result_tipos && $result_tipos->num_rows > 0) {
                       while ($row = $result_tipos->fetch_assoc()) {
                         echo '<option value="' . htmlspecialchars($row['id']) . '" '
@@ -366,8 +360,6 @@ require_once __DIR__ . '/config.php';
                   <select class="form-select" name="responsable_id" id="responsable">
                     <option value="">Sin responsable asignado</option>
                     <?php
-require_once __DIR__ . '/config.php';
-
                     if ($result_usuarios && $result_usuarios->num_rows > 0) {
                       while ($row = $result_usuarios->fetch_assoc()) {
                         echo '<option value="' . htmlspecialchars($row['id']) . '"'
@@ -385,8 +377,6 @@ require_once __DIR__ . '/config.php';
                   <select class="form-select" name="departamento_id" id="departamento">
                     <option value="">Sin departamento asignado</option>
                     <?php
-require_once __DIR__ . '/config.php';
-
                     if ($result_departamentos && $result_departamentos->num_rows > 0) {
                       while ($row = $result_departamentos->fetch_assoc()) {
                         echo '<option value="' . htmlspecialchars($row['id']) . '">'
@@ -1301,9 +1291,6 @@ require_once __DIR__ . '/config.php';
     });
     </script>
 
-    <?php
-require_once __DIR__ . '/config.php';
- include __DIR__ . "/../includes/footer.php"; ?>
+    <?php include __DIR__ . "/../includes/footer.php"; ?>
   </body>
 </html>
-

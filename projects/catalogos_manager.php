@@ -56,11 +56,6 @@ function calcularSortPath(mysqli $conn, int $catalogo_id, ?int $parent_id): stri
  * garantiza que existan todos los nodos intermedios y devuelve
  * el ID del nodo hoja.
  *
- * Las claves se separan por punto, por lo que:
- *   - "CIMENTACION"      → 1 nodo nivel 1
- *   - "I.2"              → nodo nivel 1 "I" + nodo nivel 2 "I.2"
- *   - "OBRAS.POZO.EQUIP" → 3 niveles con esas claves
- *
  * @param array $titulos  Mapa [clave_completa => titulo] opcional
  */
 function obtenerOCrearNodo(mysqli $conn, int $catalogo_id, string $clave_completa, array $titulos = []): int {

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
@@ -28,4 +26,3 @@ if (!$proyecto) {
 
 echo json_encode($proyecto);
 ?>
-

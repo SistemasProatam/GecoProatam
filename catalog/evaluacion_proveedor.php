@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -117,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/evaluacion.css" />
+    <link rel="stylesheet" href="/assets/styles/evaluacion.css" />
     <style>
         .rating-options > div {
             padding: 10px;
@@ -148,9 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="<?= BASE_URL ?>/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
+      <a href="/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
       <span>/</span>
       <span>Evaluación de Proveedor</span>
     </div>

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -43,4 +41,3 @@ $obra['fecha_fin'] = date('Y-m-d', strtotime($obra['fecha_fin']));
 
 echo json_encode($obra);
 ?>
-

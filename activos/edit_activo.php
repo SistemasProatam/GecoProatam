@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -80,9 +78,9 @@ function sel($arr, $key, $value) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     crossorigin="anonymous" />
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
+  <link rel="stylesheet" href="/assets/styles/new_order.css" />
   <style>
     .section-detalle { display:none; animation:fadeIn .3s ease; }
     .section-detalle.visible { display:block; }
@@ -233,9 +231,7 @@ function sel($arr, $key, $value) {
 </head>
 <body>
 
-<?php
-require_once __DIR__ . '/config.php';
- include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
 <!-- Toast container global -->
 <div id="toastContainer"></div>
@@ -245,7 +241,7 @@ require_once __DIR__ . '/config.php';
     <div class="breadcrumb-custom">
       <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
+      <a href="/activos/list_activos.php">Registro de Activos</a>
       <span>/</span>
       <a href="details_activo.php?id=<?= $id ?>"><?= htmlspecialchars($activo['codigo']) ?></a>
       <span>/</span>
@@ -278,8 +274,6 @@ require_once __DIR__ . '/config.php';
               <select class="form-select" id="tipo_id" name="tipo_id" disabled>
                 <option value="">Seleccionar Tipo</option>
                 <?php
-require_once __DIR__ . '/config.php';
-
                 if ($result_tipos && $result_tipos->num_rows > 0) {
                     while ($row = $result_tipos->fetch_assoc()) {
                         $selected = ($row['id'] == $activo['tipo_id']) ? 'selected' : '';
@@ -306,9 +300,7 @@ require_once __DIR__ . '/config.php';
         <!-- Foto principal -->
         <div class="col-md-8 doc-item mb-3">
           <label class="form-label">Foto Principal</label>
-          <?php
-require_once __DIR__ . '/config.php';
- if (!empty($activo['img_foto_principal'])): ?>
+          <?php if (!empty($activo['img_foto_principal'])): ?>
             <div class="mb-2 img-preview-wrap">
               <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>" alt="Foto actual" />
               <div><small class="text-muted">Foto actual – suba una nueva para reemplazar</small></div>
@@ -317,9 +309,7 @@ require_once __DIR__ . '/config.php';
                 <label class="form-check-label text-danger" for="chkFotoPrincipal">Eliminar foto actual</label>
               </div>
             </div>
-          <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+          <?php endif; ?>
           <div class="file-drop-zone">
             <input type="file" id="input_img_foto_principal" accept=".jpg,.jpeg,.png,.gif,.webp"
               onchange="handleFile(this,'img_foto_principal','imagen',false)" />
@@ -358,8 +348,6 @@ require_once __DIR__ . '/config.php';
               <select class="form-select" name="responsable_id">
                 <option value="">Sin responsable asignado</option>
                 <?php
-require_once __DIR__ . '/config.php';
-
                 if ($result_usuarios && $result_usuarios->num_rows > 0) {
                     while ($row = $result_usuarios->fetch_assoc()) {
                         $sel = ($row['id'] == $activo['responsable_id']) ? 'selected' : '';
@@ -377,8 +365,6 @@ require_once __DIR__ . '/config.php';
               <select class="form-select" name="departamento_id">
                 <option value="">Sin departamento asignado</option>
                 <?php
-require_once __DIR__ . '/config.php';
-
                 if ($result_departamentos && $result_departamentos->num_rows > 0) {
                     while ($row = $result_departamentos->fetch_assoc()) {
                         $sel = ($row['id'] == $activo['departamento_id']) ? 'selected' : '';
@@ -500,9 +486,7 @@ require_once __DIR__ . '/config.php';
             <div class="col-md-4"><div class="form-group"><label class="form-label">Km / Horómetro</label><input type="number" class="form-control" name="m_kilometraje" value="<?= v($dm,'kilometraje') ?>" min="0" /></div></div>
             <div class="col-md-8"><div class="form-group">
               <label class="form-label">Foto Motor</label>
-              <?php
-require_once __DIR__ . '/config.php';
- if (!empty($dm['foto_motor'])): ?>
+              <?php if (!empty($dm['foto_motor'])): ?>
                 <div class="mb-1 img-preview-wrap">
                   <img src="<?= htmlspecialchars($dm['foto_motor']) ?>" alt="Motor actual" />
                   <div class="form-check mt-1">
@@ -510,9 +494,7 @@ require_once __DIR__ . '/config.php';
                     <label class="form-check-label text-danger" for="chkMotor">Eliminar foto actual</label>
                   </div>
                 </div>
-              <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+              <?php endif; ?>
               <div class="file-drop-zone">
                 <input type="file" id="input_m_foto_motor" accept="image/*"
                   onchange="handleFile(this,'m_foto_motor','imagen',false)" />
@@ -621,14 +603,10 @@ require_once __DIR__ . '/config.php';
         <!-- ======================================================= -->
         <!-- DOCUMENTOS ACTUALES                                      -->
         <!-- ======================================================= -->
-        <?php
-require_once __DIR__ . '/config.php';
- if (!empty($documentos)): ?>
+        <?php if (!empty($documentos)): ?>
         <div class="section-title"><i class="bi bi-folder2-open"></i> Documentos Actuales</div>
         <small class="text-muted d-block mb-3">Marque los documentos que desea eliminar.</small>
-        <?php
-require_once __DIR__ . '/config.php';
- foreach ($documentos as $doc): ?>
+        <?php foreach ($documentos as $doc): ?>
           <div class="doc-existente">
             <i class="bi bi-file-earmark"></i>
             <div class="doc-info">
@@ -643,12 +621,8 @@ require_once __DIR__ . '/config.php';
               <i class="bi bi-eye"></i>
             </a>
           </div>
-        <?php
-require_once __DIR__ . '/config.php';
- endforeach; ?>
-        <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+        <?php endforeach; ?>
+        <?php endif; ?>
 
         <!-- ======================================================= -->
         <!-- NUEVOS DOCUMENTOS                                        -->
@@ -702,14 +676,10 @@ require_once __DIR__ . '/config.php';
         <!-- ======================================================= -->
         <!-- IMÁGENES ACTUALES                                        -->
         <!-- ======================================================= -->
-        <?php
-require_once __DIR__ . '/config.php';
- if (!empty($imagenes)): ?>
+        <?php if (!empty($imagenes)): ?>
         <div class="section-title"><i class="bi bi-card-image"></i> Imágenes Actuales</div>
         <div class="row mb-3">
-          <?php
-require_once __DIR__ . '/config.php';
- foreach ($imagenes as $img): ?>
+          <?php foreach ($imagenes as $img): ?>
             <div class="col-md-3 text-center mb-3">
               <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
                    alt="<?= htmlspecialchars($img['tipo_imagen']) ?>"
@@ -720,13 +690,9 @@ require_once __DIR__ . '/config.php';
                 <label class="form-check-label text-danger" for="img_<?= $img['id'] ?>">Eliminar</label>
               </div>
             </div>
-          <?php
-require_once __DIR__ . '/config.php';
- endforeach; ?>
+          <?php endforeach; ?>
         </div>
-        <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+        <?php endif; ?>
 
         <!-- ======================================================= -->
         <!-- NUEVAS IMÁGENES                                          -->
@@ -1148,9 +1114,6 @@ document.getElementById('activoForm').addEventListener('submit', async function(
 });
 </script>
 
-<?php
-require_once __DIR__ . '/config.php';
- include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 </html>
-

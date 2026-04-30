@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/config.php';
-
 session_start();
 // Si ya está loggeado, redirigir al dashboard
 if (isset($_SESSION['user_id'])) {
@@ -22,8 +20,8 @@ if (empty($email)) {
     <title>Verificar Código</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/styles/change_pass.css">
+    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
     .button-57 i {
@@ -49,9 +47,9 @@ if (empty($email)) {
     <span>Regresar</span>
     </button>
 
-        <a class="navbar-brand" href="<?= BASE_URL ?>/index.php">
+        <a class="navbar-brand" href="/index.php">
         <img
-            src="<?= BASE_URL ?>/assets/img/proatam.png"
+            src="/assets/img/proatam.png"
             alt="Logo PROATAM"
             width="200"
             height="auto"
@@ -59,12 +57,10 @@ if (empty($email)) {
         />
     </a>
         <h2>Verificar Código</h2>
-        <p>Ingresa el código de 6 dígitos que enviamos a:<br><strong><?php
- echo htmlspecialchars($email); ?></strong></p>
+        <p>Ingresa el código de 6 dígitos que enviamos a:<br><strong><?php echo htmlspecialchars($email); ?></strong></p>
 
         <form id="verifyTokenForm">
-            <input type="hidden" name="email" value="<?php
- echo htmlspecialchars($email); ?>">
+            <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
             
             <div class="form-group">
                 <label for="token" class="form-label">Código de Verificación <span class="required">*</span></label>
@@ -150,4 +146,3 @@ if (empty($email)) {
     </script>
 </body>
 </html>
-

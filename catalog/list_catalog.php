@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -147,8 +145,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <title>Catálogo</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/assets/styles/list.css">
+  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .catalog-card {
@@ -183,7 +181,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+        <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="list_project.php"> Cátalogo del sistema</a>
     </div>
@@ -224,8 +222,9 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 <div id="contenido-lista" data-entidad-actual="<?= $entidad_seleccionada ?>">
       
       <!-- Buscador --> 
-      <form class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+      <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
         <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
+        <input type="hidden" name="tipo" value="<?= htmlspecialchars($tipo) ?>">
         <input class="form-control w-100" type="search" name="q" 
                placeholder="Buscar <?= strtolower($entidad_config['nombre']) ?>..." 
                value="<?= htmlspecialchars($busqueda) ?>">
@@ -234,24 +233,25 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         </button>
       </form>
 
+      <div id="table-container-wrapper">
+
       <!-- Filtros Específicos por Entidad -->
       <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
-      <form method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+      <div class="mb-2">
+        <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
+          <i class="bi bi-funnel"></i> Filtros
+        </h5>
+      </div>
+      <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
         <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
         <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
 
         <div style="flex: 0 0 auto; min-width: 150px;">
-          <select name="tipo" class="form-select" onchange="this.form.submit()">
+          <select name="tipo" class="form-select">
             <option value="">-- Todos --</option>
             <option value="producto" <?= $tipo==='producto'?'selected':'' ?>>Productos</option>
             <option value="servicio" <?= $tipo==='servicio'?'selected':'' ?>>Servicios</option>
           </select>
-        </div>
-
-        <div style="flex: 0 0 auto;">
-          <button type="submit" class="btn btn-success">
-            <i class="bi bi-funnel"></i> Filtrar
-          </button>
         </div>
       </form>
       <?php endif; ?>
@@ -358,6 +358,7 @@ $fin = min($inicio + $maxVisible - 1, $totalPaginas);
           <p class="mt-2">No hay <?= strtolower($entidad_config['nombre']) ?> registrados</p>
         </div>
       <?php endif; ?>
+      </div> <!-- /table-container-wrapper -->
     </div>
     </div>
   </div>
@@ -387,7 +388,16 @@ function seleccionarEntidad(entidad) {
     url.searchParams.delete('q');
     url.searchParams.delete('proveedor');
     url.searchParams.delete('tipo');
-    window.location.href = url.toString();
+    
+    // Si estamos en AJAX, podemos actualizar el contenedor
+    if (typeof updateList === 'function') {
+        updateList(url.toString());
+        // Actualizar UI de las cards
+        document.querySelectorAll('.catalog-card').forEach(c => c.classList.remove('active'));
+        document.querySelector(`.catalog-card[data-entidad="${entidad}"]`).classList.add('active');
+    } else {
+        window.location.href = url.toString();
+    }
 }
 
 function mostrarItem(id) {
@@ -816,5 +826,92 @@ function eliminarItem(id) {
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 
+</body>
+<script>
+// Lógica AJAX para list_catalog
+function initAJAX() {
+    const searchForm = document.getElementById('search-form');
+    const filterForm = document.getElementById('filter-form');
+    const container = document.getElementById('table-container-wrapper');
+
+    if (!searchForm || !container) return;
+
+    window.updateList = function(url, pushState = true) {
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('table-container-wrapper');
+                
+                if (newContent) {
+                    container.innerHTML = newContent.innerHTML;
+                }
+
+                const newEntidadContainer = doc.getElementById('contenido-lista');
+                if (newEntidadContainer) {
+                    window.entidadActual = newEntidadContainer.getAttribute('data-entidad-actual');
+                }
+
+                const newSearch = doc.getElementById('search-form');
+                const newFilter = doc.getElementById('filter-form');
+                
+                if (newSearch) syncForm(searchForm, newSearch);
+                if (newFilter && filterForm) syncForm(filterForm, newFilter);
+
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+
+                if (pushState) window.history.pushState({}, '', url);
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+    }
+
+    function syncForm(current, source) {
+        source.querySelectorAll('input, select').forEach(input => {
+            const target = current.querySelector(`[name="${input.name}"]`);
+            if (target) target.value = input.value;
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink) {
+            e.preventDefault();
+            updateList(pageLink.href);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    [searchForm, filterForm].forEach(form => {
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const params = new URLSearchParams(new FormData(filterForm));
+            const searchData = new FormData(searchForm);
+            params.set('q', searchData.get('q') || "");
+            
+            params.set('page', '1');
+            updateList('?' + params.toString());
+        });
+    });
+
+    if (filterForm) {
+        filterForm.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', () => filterForm.requestSubmit());
+        });
+    }
+}
+document.addEventListener('DOMContentLoaded', initAJAX);
+</script>
+
+<script src="/assets/scripts/session_timeout.js"></script>
 </body>
 </html>

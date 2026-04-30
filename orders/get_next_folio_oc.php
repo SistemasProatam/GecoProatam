@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
@@ -107,4 +105,3 @@ echo json_encode([
     'numero' => $next_number
 ]);
 ?>
-

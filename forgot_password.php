@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/config.php';
-
 session_start();
 // Si ya está loggeado, redirigir al index
 if (isset($_SESSION['user_id'])) {
@@ -17,8 +15,8 @@ if (isset($_SESSION['user_id'])) {
     <title>Recuperar Contraseña</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/styles/change_pass.css">
+    <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -30,13 +28,13 @@ if (isset($_SESSION['user_id'])) {
             <div class="custom-carousel">
                 <div class="carousel-track">
                     <div class="carousel-slide active">
-                        <img src="<?= BASE_URL ?>/assets/img/slider4.png" alt="Imagen decorativa 1" class="img-fluid w-100 h-80 object-fit-cover">
+                        <img src="/assets/img/slider4.png" alt="Imagen decorativa 1" class="img-fluid w-100 h-80 object-fit-cover">
                     </div>
                     <div class="carousel-slide">
-                        <img src="<?= BASE_URL ?>/assets/img/slider5.png" alt="Imagen decorativa 2" class="img-fluid w-100 h-80 object-fit-cover">
+                        <img src="/assets/img/slider5.png" alt="Imagen decorativa 2" class="img-fluid w-100 h-80 object-fit-cover">
                     </div>
                     <div class="carousel-slide">
-                        <img src="<?= BASE_URL ?>/assets/img/slider3.png" alt="Imagen decorativa 3" class="img-fluid w-100 h-80 object-fit-cover">
+                        <img src="/assets/img/slider3.png" alt="Imagen decorativa 3" class="img-fluid w-100 h-80 object-fit-cover">
                     </div>
                 </div>
             </div>
@@ -48,7 +46,7 @@ if (isset($_SESSION['user_id'])) {
                 <div class="form-container">
 
                     <a class="navbar-brand">
-                        <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" />
+                        <img src="/assets/img/proatam.png" alt="Logo PROATAM" />
                     </a>
                     <h2>Recuperar Contraseña</h2>
                     <p class="text-muted">Ingresa tu correo corporativo para recibir un código de verificación.</p>
@@ -177,4 +175,3 @@ if (isset($_SESSION['user_id'])) {
 </body>
 
 </html>
-

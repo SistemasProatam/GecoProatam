@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -67,8 +65,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <title>Proyectos</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/assets/styles/list.css">
+  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -99,7 +97,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Página de inicio</a>
+      <a href="/index.php"><i class="bi bi-house-door"></i> Página de inicio</a>
       <span>/</span>
       <span>Registro de Proyectos</span>
     </div>
@@ -121,10 +119,12 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 
     <div class="form-body">
       <!-- Buscador -->
-      <form class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+      <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
         <input class="form-control w-100" type="search" name="q" placeholder="Buscar proyecto..." value="<?= htmlspecialchars($busqueda) ?>">
         <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
       </form>
+
+      <div id="table-container-wrapper">
 
       <!-- Botón de agregar proyecto -->
       <div class="d-flex justify-content-between mb-3">
@@ -203,6 +203,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         <p class="mt-2">No hay proyectos registrados</p>
       </div>
       <?php endif; ?>
+      </div> <!-- /table-container-wrapper -->
     </div>
   </div>
 </div>
@@ -630,8 +631,75 @@ function eliminarProyecto(id) {
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 
-<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+<script>
+// Función para actualizar la lista vía AJAX
+function initAJAX() {
+    const searchForm = document.getElementById('search-form');
+    const container = document.getElementById('table-container-wrapper');
+
+    if (!searchForm || !container) return;
+
+    function updateList(url, pushState = true) {
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('table-container-wrapper');
+                
+                if (newContent) {
+                    container.innerHTML = newContent.innerHTML;
+                }
+
+                const newSearch = doc.getElementById('search-form');
+                if (newSearch) {
+                    const targetInput = searchForm.querySelector('input[name="q"]');
+                    const sourceInput = newSearch.querySelector('input[name="q"]');
+                    if (targetInput && sourceInput) targetInput.value = sourceInput.value;
+                }
+
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+
+                if (pushState) window.history.pushState({}, '', url);
+                
+                // Reinicializar tooltips
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+    }
+
+    document.addEventListener('click', function(e) {
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink) {
+            e.preventDefault();
+            updateList(pageLink.href);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const params = new URLSearchParams(new FormData(searchForm));
+        params.set('page', '1');
+        updateList('?' + params.toString());
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initAJAX);
+</script>
+
+<script src="/assets/scripts/session_timeout.js"></script>
 
 </body>
 </html>
-

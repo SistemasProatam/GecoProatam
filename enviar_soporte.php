@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/config.php';
-
 // Activar todos los errores para debug PERO evitar output no JSON
 error_reporting(E_ALL);
 ini_set('display_errors', 0); 
@@ -163,4 +161,3 @@ try {
 // Asegurar que no hay nada después
 exit;
 ?>
-

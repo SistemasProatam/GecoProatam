@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/config.php';
-
 session_start();
 ?>
 <!DOCTYPE html>
@@ -25,10 +23,10 @@ session_start();
                         <h3>No tiene permisos para acceder a esta página</h3>
                         <p class="text-muted">Contacte al administrador si cree que esto es un error.</p>
                         <div class="mt-4">
-                            <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-primary me-2">
+                            <a href="/dashboard.php" class="btn btn-primary me-2">
                                 <i class="bi bi-house"></i> Ir al Inicio
                             </a>
-                            <a href="<?= BASE_URL ?>/logout.php" class="btn btn-outline-secondary">
+                            <a href="/logout.php" class="btn btn-outline-secondary">
                                 <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                             </a>
                         </div>
@@ -39,4 +37,3 @@ session_start();
     </div>
 </body>
 </html>
-

@@ -1,7 +1,5 @@
 <!-- Archivo para cambiar contraseña temporal -->
 <?php
-require_once __DIR__ . '/config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once "includes/session_manager.php";
 require_once "includes/check_session.php";
@@ -40,9 +38,9 @@ preventCaching();
 
 <div class="form-container">
     <!-- Logo -->
-    <a class="navbar-brand" href="<?= BASE_URL ?>/index.php">
+    <a class="navbar-brand" href="/index.php">
         <img
-            src="<?= BASE_URL ?>/assets/img/proatam.png"
+            src="/assets/img/proatam.png"
             alt="Logo PROATAM"
             width="200"
             height="auto"
@@ -214,4 +212,3 @@ document.getElementById('changePassForm').addEventListener('submit', async funct
 
 </body>
 </html>
-

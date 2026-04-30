@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -69,7 +67,7 @@ if (isset($_SESSION['mensaje_error'])) {
     <title>Historial de Evaluaciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
+    <link rel="stylesheet" href="/assets/styles/list.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .badge-excelente { background-color: #28a745; }
@@ -85,7 +83,7 @@ if (isset($_SESSION['mensaje_error'])) {
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <span>Historial de Proveedor</span>
     </div>

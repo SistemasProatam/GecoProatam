@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/config.php';
-
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
 
@@ -40,6 +39,18 @@ $activos_total = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COALESCE(SUM(valor_factura),0) AS total FROM activos WHERE estatus = 'activo'");
 $activos_valor_total = $r->fetch_assoc()['total'];
 
+// --- NUEVAS MÉTRICAS ---
+$r = $conn->query("SELECT COUNT(*) AS total FROM obras");
+$obras_total = $r->fetch_assoc()['total'];
+
+$r = $conn->query("SELECT COUNT(*) AS total FROM subcontratos");
+$subcontratos_total = $r->fetch_assoc()['total'];
+
+$r = $conn->query("SELECT COUNT(*) AS total FROM requisiciones");
+$req_total = $r->fetch_assoc()['total'];
+$r = $conn->query("SELECT COUNT(*) AS total FROM requisiciones WHERE estado = 'pendiente'");
+$req_pendientes = $r->fetch_assoc()['total'];
+
 $r = $conn->query("
     SELECT t.nombre AS tipo, t.prefijo,
            COUNT(a.id) AS cantidad,
@@ -58,17 +69,22 @@ $r = $conn->query("SELECT COUNT(*) AS total FROM usuarios WHERE activo = 0");
 $usuarios_inactivos = $r->fetch_assoc()['total'];
 
 $r = $conn->query("
-    SELECT DATE_FORMAT(fecha_solicitud, '%b %Y') AS mes,
+    SELECT MONTH(fecha_solicitud) AS mes_n,
+           YEAR(fecha_solicitud) AS anio,
            DATE_FORMAT(fecha_solicitud, '%Y-%m') AS mes_ord,
            COUNT(*) AS total,
            COALESCE(SUM(total),0) AS monto
     FROM ordenes_compra
     WHERE fecha_solicitud >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY mes, mes_ord
+    GROUP BY anio, mes_n, mes_ord
     ORDER BY mes_ord ASC
 ");
+$meses_es = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 $oc_por_mes = [];
-while ($row = $r->fetch_assoc()) $oc_por_mes[] = $row;
+while ($row = $r->fetch_assoc()) {
+    $row['mes'] = $meses_es[$row['mes_n']] . ' ' . $row['anio'];
+    $oc_por_mes[] = $row;
+}
 
 $r = $conn->query("
     SELECT oc.folio, oc.estado, oc.total,
@@ -126,7 +142,7 @@ $tipo_colores = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/dashboard.css">
@@ -155,50 +171,70 @@ $tipo_colores = [
 
     <!-- KPIs PRINCIPALES -->
     <div class="section-label">Resumen general</div>
-    <div class="grid-4 mb-section">
-
-    <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
-        <div class="kpi-card c-green fade-up delay-1">
-            <i class="bi bi-folder2-open kpi-icon"></i>
-            <div class="kpi-label">Proyectos Vigentes</div>
-            <div class="kpi-value"><?= $proyectos_vigentes ?></div>
-            <div class="kpi-sub">
-                de <?= $proyectos_total ?> totales &nbsp;·&nbsp;
-                <span><?= $proyectos_terminados ?> terminados</span>
+    <div class="grid-stats mb-section">
+        <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
+            <div class="kpi-card c-green fade-up delay-1">
+                <i class="bi bi-folder2-open kpi-icon"></i>
+                <div class="kpi-label">Proyectos</div>
+                <div class="kpi-value"><?= $proyectos_vigentes ?></div>
+                <div class="kpi-sub">
+                    <?= $proyectos_total ?> totales &nbsp;·&nbsp;
+                    <span><?= $proyectos_terminados ?> terminados</span>
+                </div>
             </div>
-        </div>
-    </a>
+        </a>
 
-    <a href = "/orders/list_oc.php" class="kpi-card-link">
-        <div class="kpi-card c-sky fade-up delay-2">
-            <i class="bi bi-cart3 kpi-icon"></i>
-            <div class="kpi-label">Órdenes de Compra</div>
-            <div class="kpi-value"><?= $oc_total ?></div>
-            <div class="kpi-sub">Monto acumulado: <?= fmt($oc_monto) ?></div>
-        </div>
-    </a>
-
-    <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
-        <div class="kpi-card c-gold fade-up delay-3">
-            <i class="bi bi-boxes kpi-icon"></i>
-            <div class="kpi-label">Activos Registrados</div>
-            <div class="kpi-value"><?= $activos_activos ?></div>
-            <div class="kpi-sub">
-                Valor total: <?= fmt($activos_valor_total) ?>
-                &nbsp;·&nbsp; <?= $activos_inactivos ?> inactivos
+        <a href="<?= BASE_URL ?>/projects/list_obras.php" class="kpi-card-link">
+            <div class="kpi-card c-gold fade-up delay-2">
+                <i class="bi bi-building kpi-icon"></i>
+                <div class="kpi-label">Obras Registradas</div>
+                <div class="kpi-value"><?= $obras_total ?></div>
+                <div class="kpi-sub">Frentes de trabajo activos</div>
             </div>
-        </div>
-    </a>
+        </a>
 
-    <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
-        <div class="kpi-card c-purple fade-up delay-4">
-            <i class="bi bi-people kpi-icon"></i>
-            <div class="kpi-label">Usuarios Activos</div>
-            <div class="kpi-value"><?= $usuarios_activos ?></div>
-            <div class="kpi-sub"><?= $usuarios_inactivos ?> inactivos en el sistema</div>
-        </div>
-    </a>
+        <a href="<?= BASE_URL ?>/orders/list_oc.php" class="kpi-card-link">
+            <div class="kpi-card c-sky fade-up delay-3">
+                <i class="bi bi-cart3 kpi-icon"></i>
+                <div class="kpi-label">Órdenes de Compra</div>
+                <div class="kpi-value"><?= $oc_total ?></div>
+                <div class="kpi-sub">Monto: <?= fmt($oc_monto) ?></div>
+            </div>
+        </a>
 
+        <a href="<?= BASE_URL ?>/orders/list_requis.php" class="kpi-card-link">
+            <div class="kpi-card c-purple fade-up delay-4">
+                <i class="bi bi-clipboard-check kpi-icon"></i>
+                <div class="kpi-label">Requisiciones</div>
+                <div class="kpi-value"><?= $req_total ?></div>
+                <div class="kpi-sub"><?= $req_pendientes ?> pendientes de revisión</div>
+            </div>
+        </a>
+
+        <div class="kpi-card c-rose fade-up delay-1">
+            <i class="bi bi-person-badge kpi-icon"></i>
+            <div class="kpi-label">Subcontratos</div>
+            <div class="kpi-value"><?= $subcontratos_total ?></div>
+            <div class="kpi-sub">Contratos externos vigentes</div>
+        </div>
+
+        <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
+            <div class="kpi-card c-gold fade-up delay-2">
+                <i class="bi bi-boxes kpi-icon"></i>
+                <div class="kpi-label">Activos</div>
+                <div class="kpi-value"><?= $activos_activos ?></div>
+                <div class="kpi-sub">Valor: <?= fmt($activos_valor_total) ?></div>
+            </div>
+        </a>
+
+        <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
+            <div class="kpi-card c-purple fade-up delay-3">
+                <i class="bi bi-people kpi-icon"></i>
+                <div class="kpi-label">Usuarios</div>
+                <div class="kpi-value"><?= $usuarios_activos ?></div>
+                <div class="kpi-sub">Personal en el sistema</div>
+            </div>
+        </a>
     </div>
 
     <!-- OC ESTADOS -->
@@ -439,7 +475,8 @@ const C = {
     sky    : '#4db8ff',
     purple : '#a78bfa',
     ink2   : '#8fa3b8',
-    grid   : 'rgba(255,255,255,.06)',
+    grid   : 'rgba(0,0,0,.05)',
+    navy   : '#1a2e45'
 };
 
 Chart.defaults.color = C.navy;
@@ -447,28 +484,40 @@ Chart.defaults.font.family = "'DM Sans', sans-serif";
 
 // 1. OC por mes
 const ocData = <?= json_encode($oc_por_mes) ?>;
-new Chart(document.getElementById('chartOC'), {
+const ctxOC = document.getElementById('chartOC').getContext('2d');
+
+const gradientBar = ctxOC.createLinearGradient(0, 0, 0, 400);
+gradientBar.addColorStop(0, 'rgba(77, 184, 255, 0.6)');
+gradientBar.addColorStop(1, 'rgba(77, 184, 255, 0.1)');
+
+const gradientLine = ctxOC.createLinearGradient(0, 0, 0, 400);
+gradientLine.addColorStop(0, 'rgba(0, 201, 167, 0.3)');
+gradientLine.addColorStop(1, 'rgba(0, 201, 167, 0)');
+
+new Chart(ctxOC, {
     type: 'bar',
     data: {
         labels: ocData.map(d => d.mes),
         datasets: [{
             label: 'Cantidad OC',
             data: ocData.map(d => d.total),
-            backgroundColor: 'rgba(77,184,255,.25)',
+            backgroundColor: gradientBar,
             borderColor: C.sky,
             borderWidth: 2,
-            borderRadius: 6,
+            borderRadius: 8,
             yAxisID: 'y',
         },{
             label: 'Monto ($)',
             data: ocData.map(d => parseFloat(d.monto)),
             type: 'line',
             borderColor: C.accent,
-            backgroundColor: 'rgba(0,201,167,.08)',
-            borderWidth: 2.5,
-            pointRadius: 4,
+            backgroundColor: gradientLine,
+            borderWidth: 3,
+            pointRadius: 5,
             pointBackgroundColor: C.accent,
-            tension: .4,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            tension: 0.4,
             fill: true,
             yAxisID: 'y1',
         }]
@@ -477,23 +526,40 @@ new Chart(document.getElementById('chartOC'), {
         responsive: true,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-            legend: { display: true, labels: { boxWidth: 10, padding: 16 } },
+            legend: { 
+                display: true, 
+                position: 'top',
+                labels: { boxWidth: 12, usePointStyle: true, padding: 20 } 
+            },
             tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#1a1a1a',
+                bodyColor: '#666',
+                borderColor: '#e1e1e1',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: true,
                 callbacks: {
                     label: ctx => ctx.datasetIndex === 1
-                        ? ' $' + Number(ctx.raw).toLocaleString()
-                        : ' ' + ctx.raw + ' OC'
+                        ? ' Monto: $' + Number(ctx.raw).toLocaleString()
+                        : ' Cantidad: ' + ctx.raw + ' OC'
                 }
             }
         },
         scales: {
-            x: { grid: { color: C.grid } },
-            y: { grid: { color: C.grid }, beginAtZero: true, ticks: { precision: 0 } },
+            x: { grid: { display: false }, ticks: { font: { weight: '500' } } },
+            y: { 
+                grid: { color: C.grid }, 
+                beginAtZero: true, 
+                ticks: { precision: 0 },
+                title: { display: true, text: 'Cantidad' }
+            },
             y1: {
                 position: 'right',
                 grid: { drawOnChartArea: false },
                 beginAtZero: true,
-                ticks: { callback: v => '$' + Number(v).toLocaleString() }
+                ticks: { callback: v => '$' + Number(v/1000).toLocaleString() + 'k' },
+                title: { display: true, text: 'Monto (MXN)' }
             }
         }
     }
@@ -513,12 +579,23 @@ new Chart(document.getElementById('chartDonut'), {
             ],
             backgroundColor: [C.gold, C.accent, C.rose, C.sky],
             borderWidth: 0,
-            hoverOffset: 6,
+            hoverOffset: 12,
+            borderRadius: 4
         }]
     },
     options: {
-        cutout: '72%',
-        plugins: { legend: { display: false } },
+        cutout: '75%',
+        plugins: { 
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#1a1a1a',
+                bodyColor: '#666',
+                borderWidth: 1,
+                borderColor: '#eee',
+                padding: 10
+            }
+        },
         responsive: true,
     }
 });
@@ -535,22 +612,32 @@ new Chart(document.getElementById('chartCondicion'), {
                 <?= $condicion_activos['malo'] ?>
             ],
             backgroundColor: [
-                'rgba(0,201,167,.7)',
-                'rgba(244,185,66,.7)',
-                'rgba(232,68,90,.7)',
+                'rgba(0,201,167,.8)',
+                'rgba(244,185,66,.8)',
+                'rgba(232,68,90,.8)',
             ],
             borderColor: [C.accent, C.gold, C.rose],
             borderWidth: 2,
-            borderRadius: 8,
+            borderRadius: 10,
+            barThickness: 25
         }]
     },
     options: {
         indexAxis: 'y',
         responsive: true,
-        plugins: { legend: { display: false } },
+        plugins: { 
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#1a1a1a',
+                bodyColor: '#666',
+                borderWidth: 1,
+                borderColor: '#eee'
+            }
+        },
         scales: {
             x: { grid: { color: C.grid }, beginAtZero: true, ticks: { precision: 0 } },
-            y: { grid: { color: 'transparent' } }
+            y: { grid: { display: false }, ticks: { font: { weight: '600' } } }
         }
     }
 });

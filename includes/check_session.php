@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 require_once __DIR__ . '/session_manager.php';
 
 // Generar un ID único para cada pestaña
@@ -40,7 +38,7 @@ function checkSession() {
     // Verificar si el usuario está loggeado
     if (!SessionManager::exists('user_id') || !SessionManager::exists('nombres')) {
         SessionManager::destroy();
-        safeRedirect("" . BASE_URL . "/login.php?error=session_expired");
+        safeRedirect("/login.php?error=session_expired");
     }
     
     // Verificar inactividad general (30 minutos para cierre forzoso)
@@ -50,7 +48,7 @@ function checkSession() {
         
         if (($current_time - SessionManager::get('last_activity')) > $inactive_time) {
             SessionManager::destroy();
-            safeRedirect("" . BASE_URL . "/login.php?error=session_timeout");
+            safeRedirect("/login.php?error=session_timeout");
         }
     }
     
@@ -99,4 +97,3 @@ function cleanupInactiveTabs() {
 // Limpiar pestañas inactivas en cada carga
 cleanupInactiveTabs();
 ?>
-

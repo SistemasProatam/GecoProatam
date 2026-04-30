@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -92,8 +90,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <title>Registro de Obras</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/assets/styles/list.css">
+  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .badge-presupuesto {
@@ -129,7 +127,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="list_project.php">Registro de Proyectos</a>
       <span>/</span>
@@ -150,10 +148,32 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     <div class="form-body">
       
         <!-- Buscador -->
-      <form class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+      <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+        <input type="hidden" name="proyecto_id" value="<?= htmlspecialchars($proyecto_id) ?>">
         <input class="form-control w-100" type="search" name="q" placeholder="Buscar obra..." value="<?= htmlspecialchars($busqueda) ?>">
         <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
       </form>
+
+      <div class="mb-2">
+        <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
+          <i class="bi bi-funnel"></i> Filtros
+        </h5>
+      </div>
+      <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+        <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
+        <div style="flex: 0 0 auto; min-width: 250px;">
+          <select name="proyecto_id" class="form-select">
+            <option value="">-- Todos los proyectos --</option>
+            <?php foreach ($proyectos as $p): ?>
+              <option value="<?= $p['id'] ?>" <?= $proyecto_id == $p['id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($p['nombre_proyecto']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+      </form>
+
+      <div id="table-container-wrapper">
 
       <!-- Botón de agregar obra -->
       <div class="d-flex justify-content-between mb-3">
@@ -220,6 +240,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
           </button>
       </div>
       <?php endif; ?>
+      </div> <!-- /table-container-wrapper -->
     </div>
   </div>
 </div>
@@ -478,8 +499,90 @@ function verObras(proyectoId) {
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 
-<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+<script>
+// Función para actualizar la lista vía AJAX
+function initAJAX() {
+    const searchForm = document.getElementById('search-form');
+    const filterForm = document.getElementById('filter-form');
+    const container = document.getElementById('table-container-wrapper');
+
+    if (!searchForm || !filterForm || !container) return;
+
+    function updateList(url, pushState = true) {
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('table-container-wrapper');
+                
+                if (newContent) {
+                    container.innerHTML = newContent.innerHTML;
+                }
+
+                const newSearch = doc.getElementById('search-form');
+                const newFilter = doc.getElementById('filter-form');
+                if (newSearch) syncForm(searchForm, newSearch);
+                if (newFilter) syncForm(filterForm, newFilter);
+
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+
+                if (pushState) window.history.pushState({}, '', url);
+                
+                // Reinicializar tooltips si es necesario
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+    }
+
+    function syncForm(current, source) {
+        source.querySelectorAll('input, select').forEach(input => {
+            const target = current.querySelector(`[name="${input.name}"]`);
+            if (target) target.value = input.value;
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink) {
+            e.preventDefault();
+            updateList(pageLink.href);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    [searchForm, filterForm].forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const params = new URLSearchParams(new FormData(filterForm));
+            const searchData = new FormData(searchForm);
+            params.set('q', searchData.get('q') || "");
+            
+            params.set('page', '1');
+            updateList('?' + params.toString());
+        });
+    });
+
+    filterForm.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', () => filterForm.requestSubmit());
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initAJAX);
+</script>
+
+<script src="/assets/scripts/session_timeout.js"></script>
 
 </body>
 </html>
-

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -78,4 +76,3 @@ if (!$modoDescarga && in_array($extension, $visualizables)) {
 
 $conn->close();
 ?>
-

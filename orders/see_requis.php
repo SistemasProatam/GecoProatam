@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -270,8 +268,8 @@ function generarTextoUbicacion($requisicion_data)
   <title>Detalles Requisición <?= htmlspecialchars($requisicion['folio']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
+  <link rel="icon" href="/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/assets/styles/new_order.css">
   <style>
     .estado-badge {
       font-size: 1rem;
@@ -345,15 +343,15 @@ function generarTextoUbicacion($requisicion_data)
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
     <div class="container hero-content">
       <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+        <a href="/index.php"><i class="bi bi-house-door"></i> Inicio</a>
         <span>/</span>
-        <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
+        <a href="/orders/list_requis.php">Registro de Requisiciones</a>
         <span>/</span>
         <span>Detalles de Requisición</span>
       </div>
@@ -811,7 +809,7 @@ function generarTextoUbicacion($requisicion_data)
     });
   </script>
 
-  <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+  <script src="/assets/scripts/session_timeout.js"></script>
   <?php include __DIR__ . "/../includes/footer.php"; ?>
 
 

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 /** 
  * Punto de entrada cuando alguien escanea el QR físico de un activo.
  * 
@@ -80,4 +78,3 @@ if (!in_array($departamento_usuario, $departamentos_permitidos)) {
 
 header("Location: " . $url_destino);
 exit;
-

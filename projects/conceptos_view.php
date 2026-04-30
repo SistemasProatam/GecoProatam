@@ -291,8 +291,8 @@ function renderConcepto(array $c, int $indent_px): void {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
+    <link rel="icon" href="/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/styles/details.css">
     <style>
         .item-orden-pagada { border-left: 4px solid #28a745; background: rgba(40,167,69,.05); }
         .nodo-header       { transition: box-shadow .15s; cursor: default; }
@@ -579,7 +579,7 @@ function renderConcepto(array $c, int $indent_px): void {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
+    <script src="/assets/scripts/catalogo-obras.js"></script>
     <script>
     const catalogoId     = <?= $catalogo_id ?>;
     const catalogoNombre = '<?= addslashes($catalogo['nombre_catalogo']) ?>';

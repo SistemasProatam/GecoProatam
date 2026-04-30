@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ob_start();
@@ -463,4 +461,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if (ob_get_length()) ob_end_clean();
-

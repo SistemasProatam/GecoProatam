@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
 include_once __DIR__ . "/../conexion.php";
 
 // Headers para JSON
@@ -122,4 +120,3 @@ if (isset($_GET['id'])) {
 }
 
 $conn->close();
-

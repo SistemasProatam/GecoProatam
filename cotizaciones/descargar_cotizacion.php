@@ -1,5 +1,6 @@
 <?php
 // descargar_cotizacion.php — Lee cotización de BD y genera el PDF
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -8,7 +9,7 @@ preventCaching();
 $dep_id_sesion  = $_SESSION['departamento_id'] ?? null;
 $es_super_admin = ($_SESSION['departamento']   ?? '') === 'SUPER_ADMIN';
 if (!$es_super_admin && !in_array($dep_id_sesion, [1, 2, 10, 16])) {
-    header("Location: /PROATAM/index.php?acceso=denegado"); exit;
+    header("Location: " . BASE_URL . "/index.php?acceso=denegado"); exit;
 }
 
 include_once __DIR__ . '/../conexion.php';
