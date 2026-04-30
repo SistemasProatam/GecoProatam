@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . "/../../config.php";
-require_once __DIR__ . "/../../config.php";
 /*
  * PHP QR Code encoder
  *
@@ -501,8 +499,6 @@ require_once __DIR__ . "/../../config.php";
                     .m { background-color: white; }
                 </style>
                 <?php
-require_once __DIR__ . "/../../config.php";
-require_once __DIR__ . "/../../config.php";
 echo '<pre><tt><br/ ><br/ ><br/ >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                     echo join("<br/ >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", $frame);
                     echo '</tt></pre><br/ ><br/ ><br/ ><br/ ><br/ ><br/ >';
@@ -535,8 +531,6 @@ echo '<pre><tt><br/ ><br/ ><br/ >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
                     .f { background-color: gold; }
                 </style>
                 <?php
-require_once __DIR__ . "/../../config.php";
-require_once __DIR__ . "/../../config.php";
 echo "<pre><tt>";
                 echo join("<br/ >", $frame);
                 echo "</tt></pre>";

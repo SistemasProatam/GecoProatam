@@ -1,24 +1,22 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $obra_id = $_GET['id'] ?? 0;
 
 if ($obra_id <= 0) {
-    echo json_encode(['status' => 'error', 'message' => 'ID de obra inválido']);
+    echo json_encode(['status' => 'error', 'message' => 'ID de obra invÃ¡lido']);
     exit;
 }
 
-// Verificar si la obra existe y obtener información
+// Verificar si la obra existe y obtener informaciÃ³n
 $sql_info = "SELECT o.id, o.proyecto_id, o.nombre_obra,
              (SELECT COUNT(*) FROM ordenes_compra WHERE obra_id = o.id) as ordenes_asociadas
              FROM obras o WHERE o.id = ?";
@@ -32,16 +30,16 @@ if (!$obra_info) {
     exit;
 }
 
-// Verificar si hay órdenes de compra asociadas
+// Verificar si hay Ã³rdenes de compra asociadas
 if ($obra_info['ordenes_asociadas'] > 0) {
     echo json_encode([
         'status' => 'error', 
-        'message' => 'No se puede eliminar la obra porque tiene ' . $obra_info['ordenes_asociadas'] . ' orden(es) de compra asociada(s). Primero elimine o reasigne las órdenes de compra.'
+        'message' => 'No se puede eliminar la obra porque tiene ' . $obra_info['ordenes_asociadas'] . ' orden(es) de compra asociada(s). Primero elimine o reasigne las Ã³rdenes de compra.'
     ]);
     exit;
 }
 
-// Iniciar transacción
+// Iniciar transacciÃ³n
 $conn->begin_transaction();
 
 try {
@@ -78,4 +76,5 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Error al eliminar la obra: ' . $e->getMessage()]);
 }
 ?>
+
 

@@ -1,23 +1,21 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 header('Content-Type: application/json');
 
 $evaluacion_id = $_GET['id'] ?? 0;
 
 if ($evaluacion_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'ID inválido']);
+    echo json_encode(['success' => false, 'message' => 'ID invÃ¡lido']);
     exit();
 }
 
-// Obtener detalles completos de la evaluación
+// Obtener detalles completos de la evaluaciÃ³n
 $sql = "SELECT 
             ep.*,
             u.nombres,
@@ -33,7 +31,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    echo json_encode(['success' => false, 'message' => 'Evaluación no encontrada']);
+    echo json_encode(['success' => false, 'message' => 'EvaluaciÃ³n no encontrada']);
     exit();
 }
 
@@ -69,4 +67,5 @@ $datos_formateados = [
 
 echo json_encode(['success' => true, 'data' => $datos_formateados]);
 ?>
+
 

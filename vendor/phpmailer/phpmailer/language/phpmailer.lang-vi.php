@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../../config.php";
 /**
  * Vietnamese (Tiếng Việt) PHPMailer language file: refer to English translation for definitive list.
  * @package PHPMailer

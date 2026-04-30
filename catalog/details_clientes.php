@@ -1,13 +1,11 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = intval($_GET['id'] ?? 0);
 
@@ -45,14 +43,15 @@ function mostrarValor($valor) {
     </div>
 
     <div class="mb-3">
-        <strong>Dirección:</strong><br>
+        <strong>DirecciÃ³n:</strong><br>
         <?= mostrarValor($cliente['direccion'] ?? '') ?>
     </div>
 
     <div class="mb-3">
-        <strong>Fecha de creación:</strong><br>
+        <strong>Fecha de creaciÃ³n:</strong><br>
         <?= date('d/m/Y H:i', strtotime($cliente['fecha_creacion'])) ?>
     </div>
 </div>
+
 
 

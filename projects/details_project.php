@@ -1,19 +1,15 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $proyecto_id = $_GET['id'] ?? 0;
 
-// Obtener información del proyecto
+// Obtener informaciÃ³n del proyecto
 $sql = "SELECT p.*, c.nombre as cliente_nombre, c.nombre_abreviado,
         (SELECT COUNT(*) FROM obras WHERE proyecto_id = p.id) as total_obras,
         (SELECT COALESCE(SUM(costo_directo_utilizado), 0) FROM presupuesto_control 
@@ -65,8 +61,6 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 
 <body>
   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
@@ -158,13 +152,13 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <!-- INFO PANELS -->
     <div class="info-grid gap-4">
 
-      <!-- Información General -->
+      <!-- InformaciÃ³n General -->
       <div class="info-panel">
         <div class="panel-header">
           <div class="panel-icon">
             <i class="bi bi-info-circle"></i>
           </div>
-          <h4>Información General</h4>
+          <h4>InformaciÃ³n General</h4>
         </div>
 
         <ul class="info-list">
@@ -173,7 +167,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
             <span class="info-value"><?= htmlspecialchars($proyecto['cliente_nombre'] ?? 'No asignado') ?></span>
           </li>
           <li class="info-item">
-            <span class="info-label">Licitación</span>
+            <span class="info-label">LicitaciÃ³n</span>
             <span class="info-value"><?= htmlspecialchars($proyecto['numero_licitacion']) ?></span>
           </li>
           <li class="info-item">
@@ -181,19 +175,19 @@ include __DIR__ . "/../includes/navbar.php"; ?>
             <span class="info-value"><?= htmlspecialchars($proyecto['numero_contrato']) ?></span>
           </li>
           <li class="info-item">
-            <span class="info-label">Descripción</span>
-            <span class="info-value"><?= htmlspecialchars($proyecto['descripcion'] ?? 'Sin descripción') ?></span>
+            <span class="info-label">DescripciÃ³n</span>
+            <span class="info-value"><?= htmlspecialchars($proyecto['descripcion'] ?? 'Sin descripciÃ³n') ?></span>
           </li>
         </ul>
       </div>
 
-      <!-- Información Financiera -->
+      <!-- InformaciÃ³n Financiera -->
       <div class="info-panel">
         <div class="panel-header">
           <div class="panel-icon">
             <i class="bi bi-cash-stack"></i>
           </div>
-          <h4>Información Financiera</h4>
+          <h4>InformaciÃ³n Financiera</h4>
         </div>
         <ul class="info-list">
           <li class="info-item">
@@ -217,8 +211,6 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     </div>
 
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 if ($proyecto['total_obras'] > 0): ?>
       <!-- WORKS SECTION -->
       <div class="works-section">
@@ -241,8 +233,6 @@ if ($proyecto['total_obras'] > 0): ?>
             </thead>
             <tbody>
               <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 while ($obra = $obras->fetch_assoc()):
                 $costo_disponible_obra = $obra['costo_directo'] - $obra['costo_directo_utilizado'];
                 $porcentaje_utilizado_obra = $obra['costo_directo'] > 0 ?
@@ -278,16 +268,12 @@ while ($obra = $obras->fetch_assoc()):
                   </td>
                 </tr>
               <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endwhile; ?>
             </tbody>
           </table>
         </div>
       </div>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endif; ?>
 
   </div>
@@ -341,12 +327,12 @@ endif; ?>
             </div>
 
             <div class="mb-2">
-              <label class="form-label">Número de Licitación</label>
+              <label class="form-label">NÃºmero de LicitaciÃ³n</label>
               <input type="text" name="numero_licitacion" class="form-control" value="${data.numero_licitacion}" required>
             </div>
 
             <div class="mb-2">
-              <label class="form-label">Número de Contrato</label>
+              <label class="form-label">NÃºmero de Contrato</label>
               <input type="text" name="numero_contrato" class="form-control" value="${data.numero_contrato}" required>
             </div>
 
@@ -355,10 +341,10 @@ endif; ?>
               <input type="text" name="nombre_proyecto" class="form-control" value="${data.nombre_proyecto}" required>
             </div>
 
-            <!-- Descripción del Proyecto -->
+            <!-- DescripciÃ³n del Proyecto -->
             <div class="mb-2">
-              <label class="form-label">Descripción del Proyecto</label>
-              <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos, alcance y características principales del proyecto...">${data.descripcion || ''}</textarea>
+              <label class="form-label">DescripciÃ³n del Proyecto</label>
+              <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos, alcance y caracterÃ­sticas principales del proyecto...">${data.descripcion || ''}</textarea>
             </div>
 
             <div class="row">
@@ -390,7 +376,7 @@ endif; ?>
             <div class="mb-2">
               <label class="form-label">Costo Directo</label>
               <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-              <small class="text-muted">Presupuesto disponible para órdenes de compra cuando no hay obras</small>
+              <small class="text-muted">Presupuesto disponible para Ã³rdenes de compra cuando no hay obras</small>
             </div>
           </form>
         `,
@@ -400,7 +386,7 @@ endif; ?>
                 confirmButtonText: "Actualizar",
                 cancelButtonText: "Cancelar",
                 didOpen: () => {
-                  // Seleccionar el cliente actual después de que el modal se abra
+                  // Seleccionar el cliente actual despuÃ©s de que el modal se abra
                   if (data.cliente_id) {
                     document.getElementById('selectCliente').value = data.cliente_id;
                   }
@@ -416,13 +402,13 @@ endif; ?>
                     .then(res => res.json())
                     .then(resp => {
                       if (resp.status === "success") {
-                        Swal.fire("¡Éxito!", "Proyecto actualizado correctamente", "success")
+                        Swal.fire("Â¡Ã‰xito!", "Proyecto actualizado correctamente", "success")
                           .then(() => location.reload());
                       } else {
                         Swal.showValidationMessage(resp.message || "Error al actualizar el proyecto");
                       }
                     })
-                    .catch(() => Swal.showValidationMessage("Error de conexión"));
+                    .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
                 }
               });
             });
@@ -442,9 +428,9 @@ endif; ?>
           <form id="formSubirArchivo" enctype="multipart/form-data">
             <input type="hidden" name="proyecto_id" value="${proyectoId}">
             <div class="mb-2">
-              <label class="form-label">Subir archivo PDF (Máximo 5 archivos)</label>
+              <label class="form-label">Subir archivo PDF (MÃ¡ximo 5 archivos)</label>
               <input type="file" name="archivo" class="form-control" accept=".pdf" required>
-              <small class="text-muted">Tamaño máximo: 10MB</small>
+              <small class="text-muted">TamaÃ±o mÃ¡ximo: 10MB</small>
             </div>
             <button type="button" class="btn btn-primary btn-sm" onclick="subirArchivo()">
               <i class="bi bi-upload"></i> Subir PDF
@@ -482,7 +468,7 @@ endif; ?>
           }
 
           Swal.fire({
-            title: 'Gestión de Archivos PDF',
+            title: 'GestiÃ³n de Archivos PDF',
             html: archivosHtml,
             width: 700,
             showCloseButton: true,
@@ -495,7 +481,7 @@ endif; ?>
       window.location.href = `list_obras.php?proyecto_id=${proyectoId}`;
     }
 
-    // Función para subir archivo 
+    // FunciÃ³n para subir archivo 
     function subirArchivo() {
       const form = document.getElementById('formSubirArchivo');
       const formData = new FormData(form);
@@ -510,7 +496,7 @@ endif; ?>
         })
         .then(data => {
           if (data.status === 'success') {
-            Swal.fire('Éxito', 'Archivo subido correctamente', 'success')
+            Swal.fire('Ã‰xito', 'Archivo subido correctamente', 'success')
               .then(() => gestionarArchivos(formData.get('proyecto_id')));
           } else {
             Swal.fire('Error', data.message, 'error');
@@ -518,18 +504,18 @@ endif; ?>
         })
         .catch(error => {
           console.error('Error:', error);
-          Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
+          Swal.fire('Error', 'Error de conexiÃ³n: ' + error.message, 'error');
         });
     }
 
-    // Función para eliminar archivo
+    // FunciÃ³n para eliminar archivo
     function eliminarArchivo(archivoId, proyectoId) {
       Swal.fire({
-        title: '¿Eliminar archivo?',
-        text: 'Esta acción no se puede deshacer',
+        title: 'Â¿Eliminar archivo?',
+        text: 'Esta acciÃ³n no se puede deshacer',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'SÃ­, eliminar',
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
@@ -540,7 +526,7 @@ endif; ?>
             })
             .then(data => {
               if (data.status === 'success') {
-                Swal.fire('Éxito', 'Archivo eliminado', 'success')
+                Swal.fire('Ã‰xito', 'Archivo eliminado', 'success')
                   .then(() => gestionarArchivos(proyectoId));
               } else {
                 Swal.fire('Error', data.message, 'error');
@@ -548,26 +534,26 @@ endif; ?>
             })
             .catch(error => {
               console.error('Error:', error);
-              Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
+              Swal.fire('Error', 'Error de conexiÃ³n: ' + error.message, 'error');
             });
         }
       });
     }
 
-    // Función para ver PDF
+    // FunciÃ³n para ver PDF
     function verPDF(ruta) {
       if (ruta && ruta.startsWith('uploads/')) {
         window.open(ruta, '_blank');
       } else {
-        console.error('Ruta de archivo no válida:', ruta);
-        Swal.fire('Error', 'Ruta de archivo no válida', 'error');
+        console.error('Ruta de archivo no vÃ¡lida:', ruta);
+        Swal.fire('Error', 'Ruta de archivo no vÃ¡lida', 'error');
       }
     }
-    // --- EXPORTACIÓN A EXCEL POR PROYECTO ---
+    // --- EXPORTACIÃ“N A EXCEL POR PROYECTO ---
     function exportarExcelProyecto() {
       const wb = XLSX.utils.book_new();
 
-      // 1. Hoja: Información General y Financiera
+      // 1. Hoja: InformaciÃ³n General y Financiera
       const genHeader = [
         ["RESUMEN DEL PROYECTO"]
       ];
@@ -576,9 +562,9 @@ endif; ?>
         ["DATOS GENERALES", ""],
         ["Proyecto", <?= json_encode($proyecto['nombre_proyecto']) ?>],
         ["Cliente", <?= json_encode($proyecto['cliente_nombre'] ?? 'No asignado') ?>],
-        ["Licitación", <?= json_encode($proyecto['numero_licitacion']) ?>],
+        ["LicitaciÃ³n", <?= json_encode($proyecto['numero_licitacion']) ?>],
         ["Contrato", <?= json_encode($proyecto['numero_contrato']) ?>],
-        ["Descripción", <?= json_encode($proyecto['descripcion'] ?? '') ?>],
+        ["DescripciÃ³n", <?= json_encode($proyecto['descripcion'] ?? '') ?>],
         ["Fecha Inicio", <?= json_encode($proyecto['fecha_inicio']) ?>],
         ["Fecha Fin", <?= json_encode($proyecto['fecha_fin']) ?>],
         [""],
@@ -600,8 +586,6 @@ endif; ?>
 
       // 2. Preparar datos agrupados por Obra (PHP -> JS)
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 $obras_data = [];
       $stmt_obras_exp = $conn->prepare("SELECT id, nombre_obra, numero_obra, costo_directo FROM obras WHERE proyecto_id = ? ORDER BY numero_obra");
       $stmt_obras_exp->bind_param("i", $proyecto_id);
@@ -611,7 +595,7 @@ $obras_data = [];
       foreach ($obras_list as $obra) {
         $oid = $obra['id'];
 
-        // Conceptos de esta obra (Jerárquicos - Construcción idéntica a la UI)
+        // Conceptos de esta obra (JerÃ¡rquicos - ConstrucciÃ³n idÃ©ntica a la UI)
         $catalogo_id = 0;
         $st_cat = $conn->prepare("SELECT id FROM catalogos WHERE obra_id = ?");
         $st_cat->bind_param("i", $oid);
@@ -650,7 +634,7 @@ $obras_data = [];
             }
           }
 
-          // 3. Construir árbol
+          // 3. Construir Ã¡rbol
           $raices = [];
           foreach ($nodos_por_id as $id => &$nodo) {
             $pid = $nodo['parent_id'] ? (int)$nodo['parent_id'] : null;
@@ -679,7 +663,7 @@ $obras_data = [];
             ];
             // Agregar sus conceptos
             foreach ($nodo['conceptos'] as $c) {
-              $c['nivel'] = $nodo['nivel'] + 1; // Para indentación visual
+              $c['nivel'] = $nodo['nivel'] + 1; // Para indentaciÃ³n visual
               $conceptos_raw[] = $c;
             }
             // Recorrer hijos
@@ -692,7 +676,7 @@ $obras_data = [];
             $flattenTree($raiz);
           }
 
-          // Conceptos huérfanos al final
+          // Conceptos huÃ©rfanos al final
           foreach ($conceptos_sin_nodo as $c) {
             $c['nivel'] = 1;
             $conceptos_raw[] = $c;
@@ -736,16 +720,16 @@ $obras_data = [];
           ["DETALLE INTEGRAL: " + obra.info.nombre_obra.toUpperCase() + " (#" + obra.info.numero_obra + ")"],
           [""],
           ["PRESUPUESTO ASIGNADO", "", "", "", "", "", "", "|", "DETALLE DE COMPRAS VINCULADAS (ORDENES DE COMPRA)"],
-          ["NÚM.", "CLAVE", "DESCRIPCIÓN", "UNIDAD", "CANT.", "P.U.", "IMPORTE", "|", "FOLIO OC", "PROVEEDOR", "ITEM COMPRA", "CANT.", "P.U.", "SUBTOTAL", "ESTADO"]
+          ["NÃšM.", "CLAVE", "DESCRIPCIÃ“N", "UNIDAD", "CANT.", "P.U.", "IMPORTE", "|", "FOLIO OC", "PROVEEDOR", "ITEM COMPRA", "CANT.", "P.U.", "SUBTOTAL", "ESTADO"]
         ];
 
         obra.data.forEach(c => {
           let indent = "";
           if (c.tipo === 'NODO') {
-            // Negritas para nodos (simulado con prefijo visual más fuerte)
+            // Negritas para nodos (simulado con prefijo visual mÃ¡s fuerte)
             indent = " ".repeat((c.nivel - 1) * 2) + " ";
           } else {
-            // Indentación para conceptos basada en el nivel de su nodo padre
+            // IndentaciÃ³n para conceptos basada en el nivel de su nodo padre
             indent = " ".repeat((c.nivel - 1) * 2) + "   ";
           }
 
@@ -778,14 +762,14 @@ $obras_data = [];
               if (idx === 0) {
                 rows.push(baseRow.concat(compraData));
               } else {
-                // Filas adicionales para el mismo concepto (columnas A-G vacías)
+                // Filas adicionales para el mismo concepto (columnas A-G vacÃ­as)
                 const emptyBase = ["", "", "", "", "", "", "", "|"];
                 rows.push(emptyBase.concat(compraData));
               }
             });
           }
 
-          if (c.tipo === 'NODO') rows.push([""]); // Espacio después de categorías
+          if (c.tipo === 'NODO') rows.push([""]); // Espacio despuÃ©s de categorÃ­as
         });
 
         const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -837,11 +821,10 @@ $obras_data = [];
   </script>
 
   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
+
 

@@ -1,16 +1,11 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-// Incluir el gestor de sesiones UNA sola vez
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 if (!isset($_GET['id'])) {
     die("ID no proporcionado");
@@ -59,7 +54,7 @@ if (!$orden_compra) {
     die("Orden de compra no encontrada");
 }
 
-// Verificar permisos: el solicitante si está devuelta, o personal de Sistemas
+// Verificar permisos: el solicitante si estÃ¡ devuelta, o personal de Sistemas
 $es_sistemas = ($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas';
 
 if (!$es_sistemas && ($orden_compra['solicitante_id'] != $_SESSION['user_id'] || $orden_compra['estado'] != 'devuelto')) {
@@ -103,7 +98,7 @@ $obras      = $conn->query("SELECT o.*, p.nombre_proyecto
                             ORDER BY o.nombre_obra");
 $catalogo_id_oc = $orden_compra['catalogo_id'] ?? 0;
 $oc_id = $orden_compra['id'];
-// Solo traer conceptos del catálogo actual o que ya estén en la OC para evitar duplicados masivos de otros catálogos
+// Solo traer conceptos del catÃ¡logo actual o que ya estÃ©n en la OC para evitar duplicados masivos de otros catÃ¡logos
 $conceptos  = $conn->query("SELECT c.id, c.codigo_concepto AS nombre_concepto 
                             FROM conceptos c 
                             LEFT JOIN concepto_nodos n ON c.nodo_id = n.id
@@ -123,7 +118,7 @@ if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
     else                             $iva_porcentaje = 0;
 }
 
-// Procesar el formulario de edición
+// Procesar el formulario de ediciÃ³n
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_oc'])) {
     $entidad_id   = intval($_POST['entidad_id']);
     $categoria_id = intval($_POST['categoria_id']);
@@ -236,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_oc'])) {
             if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
 
             $stmt_insert_arch = $conn->prepare(
-                "INSERT INTO orden_compra_archivos (orden_compra_id, nombre_archivo, ruta_archivo, tipo_mime, tamaño_archivo) VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO orden_compra_archivos (orden_compra_id, nombre_archivo, ruta_archivo, tipo_mime, tamaÃ±o_archivo) VALUES (?, ?, ?, ?, ?)"
             );
 
             foreach ($_FILES['nuevos_archivos']['tmp_name'] as $key => $tmp_name) {
@@ -256,9 +251,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_oc'])) {
         }
 
         // 7. Registrar en historial
-        $accion_hist = ($orden_compra['estado'] == 'devuelto') ? 'Editó orden de compra devuelta' : 'Editó orden de compra';
+        $accion_hist = ($orden_compra['estado'] == 'devuelto') ? 'EditÃ³ orden de compra devuelta' : 'EditÃ³ orden de compra';
         $comentario_hist = ($orden_compra['estado'] == 'devuelto')
-            ? 'Orden de compra editada después de ser devuelta'
+            ? 'Orden de compra editada despuÃ©s de ser devuelta'
             : 'Orden de compra editada por personal de Sistemas/Administrador';
 
         $stmt_historial = $conn->prepare(
@@ -276,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar_oc'])) {
     }
 }
 
-// ── Preparar datos para JS (se pasan como JSON para no mezclar PHP en JS) ──
+// â”€â”€ Preparar datos para JS (se pasan como JSON para no mezclar PHP en JS) â”€â”€
 
 // Recolectar unidades
 $unidades_arr = [];
@@ -292,7 +287,7 @@ while ($c = $conceptos->fetch_assoc()) {
     $conceptos_arr[] = ['id' => $c['id'], 'nombre' => $c['nombre_concepto']];
 }
 
-// Recolectar productos/servicios del catálogo para el modal
+// Recolectar productos/servicios del catÃ¡logo para el modal
 $productos_arr = [];
 $productos->data_seek(0);
 while ($p = $productos->fetch_assoc()) {
@@ -351,7 +346,7 @@ while ($archivo = $archivos->fetch_assoc()) {
             background-color: #113456;
         }
 
-        /* ── Tabla de items ── */
+        /* â”€â”€ Tabla de items â”€â”€ */
         #itemsTable thead th {
             background-color: #113456;
             color: #fff;
@@ -374,7 +369,7 @@ while ($archivo = $archivos->fetch_assoc()) {
             color: #113456;
         }
 
-        /* ── Totales ── */
+        /* â”€â”€ Totales â”€â”€ */
         .totales-box {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -388,7 +383,7 @@ while ($archivo = $archivos->fetch_assoc()) {
             color: #113456;
         }
 
-        /* ── Botón agregar item ── */
+        /* â”€â”€ BotÃ³n agregar item â”€â”€ */
         .btn-add-item {
             background-color: #198754;
             border-color: #198754;
@@ -398,7 +393,7 @@ while ($archivo = $archivos->fetch_assoc()) {
             background-color: #157347;
         }
 
-        /* ── Animación nueva fila ── */
+        /* â”€â”€ AnimaciÃ³n nueva fila â”€â”€ */
         @keyframes rowFadeIn {
             from {
                 opacity: 0;
@@ -415,7 +410,7 @@ while ($archivo = $archivos->fetch_assoc()) {
             animation: rowFadeIn .25s ease forwards;
         }
 
-        /* ── Modal Catálogo ── */
+        /* â”€â”€ Modal CatÃ¡logo â”€â”€ */
         #modalCatalogo .modal-header {
             background-color: #113456;
             color: #fff;
@@ -488,18 +483,15 @@ while ($archivo = $archivos->fetch_assoc()) {
 </head>
 
 <body>
-    <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+    <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
-                <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
-                <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
+                <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Ã“rdenes de Compra</a>
                 <span>/</span>
                 <span>Editar Orden de Compra</span>
             </div>
@@ -516,24 +508,18 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
         <div class="form-container">
             <div class="form-body">
 
-                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
+                <?php if (isset($mensaje_error)): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+                <?php endif; ?>
 
                 <form method="POST" id="formEditarOC" enctype="multipart/form-data">
 
-                    <!-- ── Información General ── -->
+                    <!-- â”€â”€ InformaciÃ³n General â”€â”€ -->
                     <div class="section-title">
-                        <i class="bi bi-info-circle"></i> Información General
+                        <i class="bi bi-info-circle"></i> InformaciÃ³n General
                     </div>
 
                     <div class="row mb-3">
@@ -552,17 +538,11 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                             <label class="form-label">Entidad <span class="text-danger">*</span></label>
                             <select class="form-select" name="entidad_id" required>
                                 <option value="">Seleccionar entidad</option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($entidad = $entidades->fetch_assoc()): ?>
+                                <?php while ($entidad = $entidades->fetch_assoc()): ?>
                                     <option value="<?= $entidad['id'] ?>" <?= $entidad['id'] == $orden_compra['entidad_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($entidad['nombre']) ?>
                                     </option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                <?php endwhile; ?>
                             </select>
                         </div>
 
@@ -575,13 +555,10 @@ require_once __DIR__ . "/../config.php"; endwhile; ?>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                            <label class="form-label">CategorÃ­a <span class="text-danger">*</span></label>
                             <select class="form-select" name="categoria_id" id="categoria_id" required>
-                                <option value="">Seleccionar categoría</option>
+                                <option value="">Seleccionar categorÃ­a</option>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
                                 $categorias->data_seek(0);
                                 while ($categoria = $categorias->fetch_assoc()): ?>
                                     <option value="<?= $categoria['id'] ?>"
@@ -589,10 +566,7 @@ require_once __DIR__ . "/../config.php";
                                         data-es-subcontrato="<?= in_array($categoria['id'], [2, 5]) ? '1' : '0' ?>">
                                         <?= htmlspecialchars($categoria['nombre']) ?>
                                     </option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                <?php endwhile; ?>
                             </select>
                         </div>
 
@@ -600,18 +574,12 @@ require_once __DIR__ . "/../config.php"; endwhile; ?>
                             <label class="form-label">Proveedor <span class="text-danger">*</span></label>
                             <select class="form-select" name="proveedor_id" required>
                                 <option value="">Seleccionar proveedor</option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($proveedor = $proveedores->fetch_assoc()): ?>
+                                <?php while ($proveedor = $proveedores->fetch_assoc()): ?>
                                     <option value="<?= $proveedor['id'] ?>"
                                         <?= $proveedor['id'] == $orden_compra['proveedor_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($proveedor['nombre'] ?: $proveedor['razon_social']) ?>
                                     </option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                <?php endwhile; ?>
                             </select>
                         </div>
                     </div>
@@ -621,37 +589,25 @@ require_once __DIR__ . "/../config.php"; endwhile; ?>
                             <label class="form-label">Proyecto</label>
                             <select class="form-select" name="proyecto_id" id="proyecto_id">
                                 <option value="">Sin proyecto</option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($proyecto = $proyectos->fetch_assoc()): ?>
+                                <?php while ($proyecto = $proyectos->fetch_assoc()): ?>
                                     <option value="<?= $proyecto['id'] ?>"
                                         <?= $proyecto['id'] == $orden_compra['proyecto_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($proyecto['nombre_proyecto']) ?>
                                     </option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                <?php endwhile; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Obra</label>
                             <select class="form-select" name="obra_id" id="obra_id">
                                 <option value="">Sin obra</option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($obra = $obras->fetch_assoc()): ?>
+                                <?php while ($obra = $obras->fetch_assoc()): ?>
                                     <option value="<?= $obra['id'] ?>"
                                         data-proyecto="<?= $obra['proyecto_id'] ?>"
                                         <?= $obra['id'] == $orden_compra['obra_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($obra['nombre_obra']) ?> (<?= htmlspecialchars($obra['nombre_proyecto']) ?>)
                                     </option>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                <?php endwhile; ?>
                             </select>
                         </div>
                     </div>
@@ -660,19 +616,13 @@ require_once __DIR__ . "/../config.php"; endwhile; ?>
                         <label class="form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
                         <select class="form-select" name="subcontrato_id" id="subcontrato_id_edit" <?= !$subcontrato_id ? 'disabled' : '' ?>>
                             <option value="">-- Seleccionar subcontrato --</option>
-                            <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($subcontrato_id): ?>
+                            <?php if ($subcontrato_id): ?>
                                 <option value="<?= $subcontrato_id ?>" selected><?= htmlspecialchars($subcontrato_nombre) ?></option>
-                            <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
 
-                    <!-- ── Items ── -->
+                    <!-- â”€â”€ Items â”€â”€ -->
                     <div class="section-title">
                         <i class="bi bi-list-ul"></i> Items de la Orden de Compra
                     </div>
@@ -681,7 +631,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                         <table class="table table-bordered align-middle" id="itemsTable">
                             <thead>
                                 <tr>
-                                    <th style="width:30%">Descripción</th>
+                                    <th style="width:30%">DescripciÃ³n</th>
                                     <th style="width:10%">Cantidad</th>
                                     <th style="width:12%">Unidad</th>
                                     <th style="width:15%">Concepto</th>
@@ -694,9 +644,6 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                             </thead>
                             <tbody id="itemsTableBody">
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
                                 $item_index = 0;
                                 $items->data_seek(0);
                                 while ($item = $items->fetch_assoc()):
@@ -713,7 +660,7 @@ require_once __DIR__ . "/../config.php";
                                                 class="form-control item-descripcion"
                                                 name="items[<?= $item_index ?>][descripcion]"
                                                 value="<?= htmlspecialchars($item['descripcion']) ?>"
-                                                placeholder="Descripción del artículo"
+                                                placeholder="DescripciÃ³n del artÃ­culo"
                                                 required>
                                         </td>
                                         <td>
@@ -727,11 +674,8 @@ require_once __DIR__ . "/../config.php";
                                         <td>
                                             <select class="form-select item-unidad"
                                                 name="items[<?= $item_index ?>][unidad_id]">
-                                                <option value="">— Unidad —</option>
+                                                <option value="">â€” Unidad â€”</option>
                                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
                                                 $unidades->data_seek(0);
                                                 while ($unidad = $unidades->fetch_assoc()):
                                                 ?>
@@ -740,19 +684,14 @@ require_once __DIR__ . "/../config.php";
                                                         <?= htmlspecialchars($unidad['nombre']) ?>
                                                     </option>
                                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                                endwhile; ?>
                                             </select>
                                         </td>
                                         <td>
                                             <select class="form-select item-concepto"
                                                 name="items[<?= $item_index ?>][concepto_id]">
-                                                <option value="">— Concepto —</option>
+                                                <option value="">â€” Concepto â€”</option>
                                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
                                                 $conceptos->data_seek(0);
                                                 while ($concepto = $conceptos->fetch_assoc()):
                                                 ?>
@@ -761,9 +700,7 @@ require_once __DIR__ . "/../config.php";
                                                         <?= htmlspecialchars($concepto['nombre_concepto']) ?>
                                                     </option>
                                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+                                                endwhile; ?>
                                             </select>
                                         </td>
                                         <td>
@@ -789,9 +726,6 @@ require_once __DIR__ . "/../config.php"; endwhile; ?>
                                         </td>
                                     </tr>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
                                     $item_index++;
                                 endwhile;
                                 ?>
@@ -802,15 +736,15 @@ require_once __DIR__ . "/../config.php";
                     <div class="row mt-3 mb-4">
                         <div class="col-md-12 d-flex gap-2 flex-wrap">
                             <button type="button" class="btn btn-success btn-add-item" id="btnAgregarItem">
-                                <i class="bi bi-plus-circle"></i> Agregar Item Vacío
+                                <i class="bi bi-plus-circle"></i> Agregar Item VacÃ­o
                             </button>
                             <button type="button" class="btn btn-primary" id="btnCatalogo">
-                                <i class="bi bi-grid-3x3-gap"></i> Agregar desde Catálogo
+                                <i class="bi bi-grid-3x3-gap"></i> Agregar desde CatÃ¡logo
                             </button>
                         </div>
                     </div>
 
-                    <!-- ── Totales ── -->
+                    <!-- â”€â”€ Totales â”€â”€ -->
                     <div class="row justify-content-end mt-2 mb-4">
                         <div class="col-md-5">
                             <div class="totales-box">
@@ -846,7 +780,7 @@ require_once __DIR__ . "/../config.php";
                         </div>
                     </div>
 
-                    <!-- ── Archivos Adjuntos ── -->
+                    <!-- â”€â”€ Archivos Adjuntos â”€â”€ -->
                     <div class="section-title">
                         <i class="bi bi-paperclip"></i> Archivos Adjuntos
                     </div>
@@ -861,21 +795,15 @@ require_once __DIR__ . "/../config.php";
                             <!-- Archivos actuales -->
                             <h6 class="mt-3">Archivos actuales:</h6>
                             <div class="list-group" id="lista-archivos">
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (count($archivos_array) > 0): ?>
-                                    <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; foreach ($archivos_array as $archivo): ?>
+                                <?php if (count($archivos_array) > 0): ?>
+                                    <?php foreach ($archivos_array as $archivo): ?>
                                         <div class="list-group-item d-flex justify-content-between align-items-center archivo-item"
                                             data-id="<?= $archivo['id'] ?>">
                                             <div>
                                                 <i class="bi bi-file-earmark-text me-2"></i>
                                                 <span><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
                                                 <small class="file-size ms-2">
-                                                    (<?= number_format($archivo['tamaño_archivo'] / 1024, 2) ?> KB)
+                                                    (<?= number_format($archivo['tamaÃ±o_archivo'] / 1024, 2) ?> KB)
                                                 </small>
                                             </div>
                                             <div class="d-flex gap-2">
@@ -890,22 +818,13 @@ require_once __DIR__ . "/../config.php"; foreach ($archivos_array as $archivo): 
                                                 </button>
                                             </div>
                                         </div>
-                                    <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
                                     <div class="text-center text-muted p-3">
                                         <i class="bi bi-inbox display-4"></i>
                                         <p class="mt-2">No hay archivos adjuntos</p>
                                     </div>
-                                <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+                                <?php endif; ?>
                             </div>
 
                             <!-- Nuevos archivos -->
@@ -924,7 +843,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                                     </button>
                                 </div>
                                 <small class="text-muted">
-                                    Formatos permitidos: PDF, Word, Excel, imágenes. Máximo 5 archivos, 10 MB cada uno.
+                                    Formatos permitidos: PDF, Word, Excel, imÃ¡genes. MÃ¡ximo 5 archivos, 10 MB cada uno.
                                 </small>
                             </div>
 
@@ -939,16 +858,16 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                     <!-- Campo oculto archivos eliminados -->
                     <input type="hidden" name="archivos_eliminados" id="archivos_eliminados" value="[]">
 
-                    <!-- ── Descripción y Observaciones ── -->
+                    <!-- â”€â”€ DescripciÃ³n y Observaciones â”€â”€ -->
                     <div class="section-title">
-                        <i class="bi bi-file-text"></i> Descripción y Observaciones
+                        <i class="bi bi-file-text"></i> DescripciÃ³n y Observaciones
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label class="form-label">Descripción</label>
+                            <label class="form-label">DescripciÃ³n</label>
                             <textarea class="form-control" name="descripcion" rows="3"
-                                placeholder="Descripción general de la orden de compra..."><?= htmlspecialchars($orden_compra['descripcion'] ?? '') ?></textarea>
+                                placeholder="DescripciÃ³n general de la orden de compra..."><?= htmlspecialchars($orden_compra['descripcion'] ?? '') ?></textarea>
                         </div>
                     </div>
 
@@ -963,7 +882,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                     <!-- campo oculto para que PHP detecte el POST -->
                     <input type="hidden" name="actualizar_oc" id="input_actualizar_oc" value="">
 
-                    <!-- ── Botones ── -->
+                    <!-- â”€â”€ Botones â”€â”€ -->
                     <div class="form-actions mt-4">
                         <button type="button" id="btnGuardar" class="btn btn-primary">
                             <i class="bi bi-check-circle"></i> Guardar Cambios y Reenviar
@@ -979,16 +898,16 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         </div><!-- /form-container -->
     </div><!-- /content-wrapper -->
 
-    <!-- ══════════════════════════════════════════════════════════
-     MODAL CATÁLOGO — fuera de todo contenedor para evitar
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     MODAL CATÃLOGO â€” fuera de todo contenedor para evitar
      stacking context que bloquea el backdrop de Bootstrap
-     ══════════════════════════════════════════════════════════ -->
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <div class="modal fade" id="modalCatalogo" tabindex="-1" aria-labelledby="modalCatalogoLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:#113456; color:#fff;">
                     <h5 class="modal-title" id="modalCatalogoLabel">
-                        <i class="bi bi-grid-3x3-gap me-2"></i> Catálogo de Productos y Servicios
+                        <i class="bi bi-grid-3x3-gap me-2"></i> CatÃ¡logo de Productos y Servicios
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Cerrar" style="filter:invert(1);"></button>
@@ -1045,34 +964,34 @@ require_once __DIR__ . "/../config.php"; endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
-        /* ══════════════════════════════════════════════════════════════
-   DATOS DESDE PHP  →  JS  (sin mezclar PHP dentro de funciones)
-   ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   DATOS DESDE PHP  â†’  JS  (sin mezclar PHP dentro de funciones)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         const UNIDADES = <?= json_encode($unidades_arr,   JSON_UNESCAPED_UNICODE) ?>;
         const CONCEPTOS = <?= json_encode($conceptos_arr,  JSON_UNESCAPED_UNICODE) ?>;
         const PRODUCTOS_CATALOGO = <?= json_encode($productos_arr, JSON_UNESCAPED_UNICODE) ?>;
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            ESTADO GLOBAL
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         let itemCount = <?= $item_index ?>; // ya existen N filas
         let archivosEliminados = []; // IDs a borrar
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            HELPERS: construir <options> desde arrays JS
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         function buildOptions(arr, selectedId = '') {
             return arr.map(item =>
                 `<option value="${item.id}" ${String(item.id) === String(selectedId) ? 'selected' : ''}>${item.nombre}</option>`
             ).join('');
         }
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            CREAR FILA NUEVA
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         function buildItemRow(index, descripcion = '', productoId = '', tipo = '') {
-            const unidadOpts = `<option value="">— Unidad —</option>` + buildOptions(UNIDADES);
-            const conceptoOpts = `<option value="">— Concepto —</option>` + buildOptions(CONCEPTOS);
+            const unidadOpts = `<option value="">â€” Unidad â€”</option>` + buildOptions(UNIDADES);
+            const conceptoOpts = `<option value="">â€” Concepto â€”</option>` + buildOptions(CONCEPTOS);
             const descEsc = descripcion.replace(/"/g, '&quot;');
 
             return `
@@ -1084,7 +1003,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                    class="form-control item-descripcion"
                    name="items[${index}][descripcion]"
                    value="${descEsc}"
-                   placeholder="Descripción del artículo"
+                   placeholder="DescripciÃ³n del artÃ­culo"
                    required>
         </td>
         <td>
@@ -1129,9 +1048,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
     </tr>`;
         }
 
-        /* ══════════════════════════════════════════════════════════════
-           AGREGAR ITEM VACÍO
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           AGREGAR ITEM VACÃO
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.getElementById('btnAgregarItem').addEventListener('click', function() {
             insertarFilaVacia();
         });
@@ -1139,7 +1058,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         function insertarFilaVacia(descripcion = '', productoId = '', tipo = '') {
             const tbody = document.getElementById('itemsTableBody');
 
-            // Si había el placeholder "sin items", borrarlo
+            // Si habÃ­a el placeholder "sin items", borrarlo
             const placeholder = tbody.querySelector('td[colspan]');
             if (placeholder) placeholder.closest('tr').remove();
 
@@ -1153,9 +1072,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             return newRow;
         }
 
-        /* ══════════════════════════════════════════════════════════════
-           MODAL CATÁLOGO
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           MODAL CATÃLOGO
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         const modalCatalogo = new bootstrap.Modal(document.getElementById('modalCatalogo'));
 
         document.getElementById('btnCatalogo').addEventListener('click', function() {
@@ -1204,7 +1123,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                     '$' + parseFloat(p.precio).toLocaleString('es-MX', {
                         minimumFractionDigits: 2
                     }) :
-                    '—';
+                    'â€”';
 
                 const col = document.createElement('div');
                 col.className = 'col-md-6';
@@ -1232,8 +1151,8 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             });
         }
 
-        // Click en card del catálogo — delegación desde document para evitar
-        // problemas si el grid se vacía/recrea o el listener se registra antes del DOM
+        // Click en card del catÃ¡logo â€” delegaciÃ³n desde document para evitar
+        // problemas si el grid se vacÃ­a/recrea o el listener se registra antes del DOM
         document.addEventListener('click', function(e) {
             const card = e.target.closest('#catalogoGrid .catalogo-card');
             if (!card) return;
@@ -1241,7 +1160,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             seleccionarProductoCatalogo(card);
         });
 
-        // También con teclado (Enter / Space)
+        // TambiÃ©n con teclado (Enter / Space)
         document.addEventListener('keydown', function(e) {
             if (e.key !== 'Enter' && e.key !== ' ') return;
             const card = e.target.closest('#catalogoGrid .catalogo-card');
@@ -1257,7 +1176,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             const tipo = card.dataset.tipo;
             const precio = parseFloat(card.dataset.precio) || 0;
 
-            // Buscar primera fila vacía (descripción en blanco y precio 0)
+            // Buscar primera fila vacÃ­a (descripciÃ³n en blanco y precio 0)
             let filaDestino = null;
             document.querySelectorAll('#itemsTableBody .item-row').forEach(row => {
                 if (filaDestino) return;
@@ -1267,7 +1186,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             });
 
             if (!filaDestino) {
-                // No hay fila vacía → crear una nueva
+                // No hay fila vacÃ­a â†’ crear una nueva
                 filaDestino = insertarFilaVacia();
             }
 
@@ -1277,25 +1196,25 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             filaDestino.querySelector('input[name$="[producto_id]"]').value = productoId;
             filaDestino.querySelector('input[name$="[tipo]"]').value = tipo;
 
-            // Disparar cálculo de subtotal
+            // Disparar cÃ¡lculo de subtotal
             filaDestino.querySelector('.item-cantidad').dispatchEvent(new Event('input'));
 
-            // Animación de confirmación visual en la fila
+            // AnimaciÃ³n de confirmaciÃ³n visual en la fila
             filaDestino.style.transition = 'background-color .4s';
             filaDestino.style.backgroundColor = '#d1f5d3';
             setTimeout(() => {
                 filaDestino.style.backgroundColor = '';
             }, 800);
 
-            // Toast de confirmación
+            // Toast de confirmaciÃ³n
             showToast(`"${nombre}" agregado a la lista`, 'success');
 
             modalCatalogo.hide();
         }
 
-        /* ══════════════════════════════════════════════════════════════
-           ELIMINAR ITEM  (delegación desde tbody)
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           ELIMINAR ITEM  (delegaciÃ³n desde tbody)
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.getElementById('itemsTableBody').addEventListener('click', function(e) {
             const btn = e.target.closest('.btn-remove-item');
             if (!btn) return;
@@ -1307,7 +1226,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             }
 
             const row = btn.closest('.item-row');
-            showConfirm('¿Eliminar este item de la orden de compra?', '¿Eliminar item?').then(result => {
+            showConfirm('Â¿Eliminar este item de la orden de compra?', 'Â¿Eliminar item?').then(result => {
                 if (result.isConfirmed) {
                     row.remove();
                     recalcularIndices();
@@ -1316,9 +1235,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             });
         });
 
-        /* ══════════════════════════════════════════════════════════════
-           RECALCULAR ÍNDICES (name="items[N][...]") tras eliminación
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           RECALCULAR ÃNDICES (name="items[N][...]") tras eliminaciÃ³n
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         function recalcularIndices() {
             document.querySelectorAll('#itemsTableBody .item-row').forEach((row, idx) => {
                 row.dataset.index = idx;
@@ -1332,9 +1251,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             );
         }
 
-        /* ══════════════════════════════════════════════════════════════
-           EVENT LISTENERS POR FILA (cantidad / precio → subtotal)
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           EVENT LISTENERS POR FILA (cantidad / precio â†’ subtotal)
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         function attachRowListeners(row) {
             const cantidadEl = row.querySelector('.item-cantidad');
             const precioEl = row.querySelector('.item-precio');
@@ -1355,9 +1274,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             precioEl.addEventListener('input', updateSubtotal);
         }
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            CALCULAR TOTALES GLOBALES
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         function calculateTotals() {
             let subtotal = 0;
             document.querySelectorAll('#itemsTableBody .item-row').forEach(row => {
@@ -1383,9 +1302,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
         document.getElementById('iva_porcentaje').addEventListener('change', calculateTotals);
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            ARCHIVOS: MARCAR COMO ELIMINADO
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.getElementById('lista-archivos').addEventListener('click', function(e) {
             const btn = e.target.closest('.btn-eliminar-archivo');
             if (!btn) return;
@@ -1394,7 +1313,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             const archivoItem = btn.closest('.archivo-item');
 
             if (btn.disabled) {
-                // Deshacer eliminación
+                // Deshacer eliminaciÃ³n
                 archivosEliminados = archivosEliminados.filter(id => id !== archivoId);
                 archivoItem.classList.remove('marcado-eliminar');
                 btn.disabled = false;
@@ -1414,9 +1333,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             document.getElementById('archivos_eliminados').value = JSON.stringify(archivosEliminados);
         });
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            ARCHIVOS: VISTA PREVIA NUEVOS
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.getElementById('nuevosArchivos').addEventListener('change', function() {
             const files = this.files;
             const preview = document.getElementById('preview-nuevos-archivos');
@@ -1450,9 +1369,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             document.getElementById('lista-nuevos-archivos').innerHTML = '';
         }
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            FILTRAR OBRAS POR PROYECTO
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.getElementById('proyecto_id').addEventListener('change', function() {
             const pid = this.value;
             const obraSelect = document.getElementById('obra_id');
@@ -1469,9 +1388,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             }
         });
 
-        /* ══════════════════════════════════════════════════════════════
-           VALIDACIÓN + CONFIRMACIÓN AL ENVIAR
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           VALIDACIÃ“N + CONFIRMACIÃ“N AL ENVIAR
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.getElementById('btnGuardar').addEventListener('click', function() {
 
             // 1. Al menos un item
@@ -1480,14 +1399,14 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 return;
             }
 
-            // 2. Máximo 5 archivos nuevos
+            // 2. MÃ¡ximo 5 archivos nuevos
             const nuevos = document.getElementById('nuevosArchivos').files;
             if (nuevos.length > 5) {
-                showAlert('Solo puede agregar máximo 5 archivos nuevos.', 'warning');
+                showAlert('Solo puede agregar mÃ¡ximo 5 archivos nuevos.', 'warning');
                 return;
             }
 
-            // 3. Tamaño máximo 10 MB por archivo
+            // 3. TamaÃ±o mÃ¡ximo 10 MB por archivo
             for (const file of nuevos) {
                 if (file.size > 10 * 1024 * 1024) {
                     showAlert(`El archivo "${file.name}" supera los 10 MB permitidos.`, 'danger');
@@ -1495,10 +1414,10 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 }
             }
 
-            // 4. Confirmación con SweetAlert
+            // 4. ConfirmaciÃ³n con SweetAlert
             showConfirm(
-                'La orden de compra será enviada nuevamente para revisión.',
-                '¿Guardar cambios y reenviar?'
+                'La orden de compra serÃ¡ enviada nuevamente para revisiÃ³n.',
+                'Â¿Guardar cambios y reenviar?'
             ).then(result => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -1515,9 +1434,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             });
         });
 
-        /* ══════════════════════════════════════════════════════════════
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
            ALERTAS CON SWEETALERT2
-           ══════════════════════════════════════════════════════════════ */
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -1544,13 +1463,13 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         function showAlert(msg, type = 'info') {
             return Swal.fire({
                 icon: type === 'danger' ? 'error' : type,
-                title: type === 'warning' ? 'Atención' : type === 'danger' ? 'Error' : 'Información',
+                title: type === 'warning' ? 'AtenciÃ³n' : type === 'danger' ? 'Error' : 'InformaciÃ³n',
                 text: msg,
                 confirmButtonColor: '#113456'
             });
         }
 
-        function showConfirm(msg, title = '¿Confirmar acción?') {
+        function showConfirm(msg, title = 'Â¿Confirmar acciÃ³n?') {
             return Swal.fire({
                 title: title,
                 text: msg,
@@ -1558,14 +1477,14 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 showCancelButton: true,
                 confirmButtonColor: '#113456',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, continuar',
+                confirmButtonText: 'SÃ­, continuar',
                 cancelButtonText: 'Cancelar'
             });
         }
 
-        /* ══════════════════════════════════════════════════════════════
-           INICIALIZACIÓN
-           ══════════════════════════════════════════════════════════════ */
+        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+           INICIALIZACIÃ“N
+           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         document.addEventListener('DOMContentLoaded', function() {
             // Adjuntar listeners a filas ya cargadas desde la BD
             document.querySelectorAll('#itemsTableBody .item-row').forEach(attachRowListeners);
@@ -1573,23 +1492,18 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             // Calcular totales iniciales
             calculateTotals();
 
-            // Buscador del catálogo
+            // Buscador del catÃ¡logo
             document.getElementById('catalogoBuscador').addEventListener('input', filtrarCatalogo);
 
-            // Filtros de tipo del catálogo
+            // Filtros de tipo del catÃ¡logo
             document.querySelectorAll('input[name="filtroCatTipo"]').forEach(r => {
                 r.addEventListener('change', filtrarCatalogo);
             });
         });
     </script>
 
-    <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+    <?php include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
-
-

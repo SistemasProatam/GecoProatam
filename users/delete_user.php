@@ -1,7 +1,5 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-include_once __DIR__ . "/../conexion.php";
+﻿<?php
+require_once __DIR__ . "/../conexion.php";
 
 // Headers para JSON
 header('Content-Type: application/json');
@@ -23,11 +21,11 @@ if (isset($_GET['id'])) {
         $stmt_requisiciones->execute();
         $result_requisiciones = $stmt_requisiciones->get_result()->fetch_assoc();
         if ($result_requisiciones['count'] > 0) {
-            $dependencias[] = "tiene " . $result_requisiciones['count'] . " requisición(es) pendiente(s)";
+            $dependencias[] = "tiene " . $result_requisiciones['count'] . " requisiciÃ³n(es) pendiente(s)";
         }
         $stmt_requisiciones->close();
 
-        // 2. Verificar si tiene órdenes de compra en estado pendiente
+        // 2. Verificar si tiene Ã³rdenes de compra en estado pendiente
         $sql_check_columns = "SHOW COLUMNS FROM ordenes_compra";
         $result_columns = $conn->query($sql_check_columns);
         $columnas_ordenes = [];
@@ -36,7 +34,7 @@ if (isset($_GET['id'])) {
         }
 
         $sql_ordenes = "";
-        // Construir la consulta según las columnas que existan
+        // Construir la consulta segÃºn las columnas que existan
         if (in_array('solicitante_id', $columnas_ordenes)) {
             $sql_ordenes = "SELECT COUNT(*) as count FROM ordenes_compra WHERE solicitante_id = ? AND estado = 'Pendiente'";
         } elseif (in_array('usuario_id', $columnas_ordenes)) {
@@ -67,16 +65,16 @@ if (isset($_GET['id'])) {
             exit;
         }
 
-        // Si no hay dependencias, proceder con la eliminación
+        // Si no hay dependencias, proceder con la eliminaciÃ³n
         try {
-            // Iniciar transacción para asegurar integridad
+            // Iniciar transacciÃ³n para asegurar integridad
             $conn->begin_transaction();
 
             // 1. Eliminar contratos asociados al usuario
             $sql_delete_contratos = "DELETE FROM contratos_usuario WHERE usuario_id = ?";
             $stmt_delete_contratos = $conn->prepare($sql_delete_contratos);
             if (!$stmt_delete_contratos) {
-                throw new Exception("Error preparando consulta de eliminación de contratos: " . $conn->error);
+                throw new Exception("Error preparando consulta de eliminaciÃ³n de contratos: " . $conn->error);
             }
             $stmt_delete_contratos->bind_param("i", $id);
             if (!$stmt_delete_contratos->execute()) {
@@ -88,7 +86,7 @@ if (isset($_GET['id'])) {
             $sql_delete_usuario = "DELETE FROM usuarios WHERE id = ?";
             $stmt_delete_usuario = $conn->prepare($sql_delete_usuario);
             if (!$stmt_delete_usuario) {
-                throw new Exception("Error preparando consulta de eliminación de usuario: " . $conn->error);
+                throw new Exception("Error preparando consulta de eliminaciÃ³n de usuario: " . $conn->error);
             }
             $stmt_delete_usuario->bind_param("i", $id);
             if (!$stmt_delete_usuario->execute()) {
@@ -96,7 +94,7 @@ if (isset($_GET['id'])) {
             }
             $stmt_delete_usuario->close();
 
-            // Confirmar transacción
+            // Confirmar transacciÃ³n
             $conn->commit();
 
             echo json_encode([
@@ -104,7 +102,7 @@ if (isset($_GET['id'])) {
                 'message' => 'Usuario eliminado correctamente'
             ]);
         } catch (Exception $e) {
-            // Revertir transacción en caso de error
+            // Revertir transacciÃ³n en caso de error
             $conn->rollback();
             throw $e;
         }
@@ -122,5 +120,6 @@ if (isset($_GET['id'])) {
 }
 
 $conn->close();
+
 
 

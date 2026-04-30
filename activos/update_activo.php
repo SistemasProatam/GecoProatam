@@ -1,20 +1,18 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
-// ─── CONSTANTES ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ CONSTANTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 define('MAX_DOCUMENTO_MB', 10);           // 10 MB por documento normal
-define('MAX_CATALOGO_MB', 1024);          // 1 GB para catálogo de refacciones
-define('MAX_IMAGEN_MB', 10);              // 10 MB para imágenes
+define('MAX_CATALOGO_MB', 1024);          // 1 GB para catÃ¡logo de refacciones
+define('MAX_IMAGEN_MB', 10);              // 10 MB para imÃ¡genes
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function sanitize($val) {
     return isset($val) ? trim($val) : null;
@@ -38,8 +36,8 @@ function subirArchivo($inputName, $carpetaDestino, $maxMB = MAX_DOCUMENTO_MB) {
     $maxBytes = $maxMB * 1024 * 1024;
     if ($maxMB > 0 && $file['size'] > $maxBytes) {
         $sizeMB = round($file['size'] / 1024 / 1024, 2);
-        error_log("Archivo {$inputName} supera {$maxMB} MB. Tamaño: {$sizeMB} MB");
-        $_SESSION['upload_errors'][] = "El archivo '" . $file['name'] . "' excede el límite de {$maxMB} MB";
+        error_log("Archivo {$inputName} supera {$maxMB} MB. TamaÃ±o: {$sizeMB} MB");
+        $_SESSION['upload_errors'][] = "El archivo '" . $file['name'] . "' excede el lÃ­mite de {$maxMB} MB";
         return null;
     }
     
@@ -62,12 +60,12 @@ function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = MAX_IMAGEN_M
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES[$inputName]['error'][$i] !== UPLOAD_ERR_OK) continue;
         if ($maxMB > 0 && $_FILES[$inputName]['size'][$i] > $maxMB * 1024 * 1024) {
-            error_log("Archivo múltiple supera {$maxMB} MB: " . $_FILES[$inputName]['name'][$i]);
+            error_log("Archivo mÃºltiple supera {$maxMB} MB: " . $_FILES[$inputName]['name'][$i]);
             continue;
         }
         $ext    = strtolower(pathinfo($_FILES[$inputName]['name'][$i], PATHINFO_EXTENSION));
         $nombre = uniqid('', true) . '.' . $ext;
-        $dir    = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $carpetaDestino . '/';
+        $dir    = __DIR__ . '/../uploads/' . $carpetaDestino . '/';
         if (!is_dir($dir)) mkdir($dir, 0775, true);
         $dest = $dir . $nombre;
         if (move_uploaded_file($_FILES[$inputName]['tmp_name'][$i], $dest)) {
@@ -79,11 +77,11 @@ function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = MAX_IMAGEN_M
 
 function eliminarArchivoFisico($ruta) {
     if (!$ruta) return;
-    $path = $_SERVER['DOCUMENT_ROOT'] . $ruta;
+    $path = __DIR__ . '/..' . $ruta;
     if (file_exists($path)) unlink($path);
 }
 
-// ─── Validar ID ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Validar ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $activo_id = (int)($_POST['activo_id'] ?? 0);
 if (!$activo_id) {
@@ -91,7 +89,7 @@ if (!$activo_id) {
     exit;
 }
 
-// ─── Verificar que el activo existe ─────────────────────────────────────────
+// â”€â”€â”€ Verificar que el activo existe â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $stmt_check = $conn->prepare("SELECT id, tipo_id, img_foto_principal FROM activos WHERE id = ?");
 $stmt_check->bind_param("i", $activo_id);
@@ -103,7 +101,7 @@ if (!$activo_actual) {
     exit;
 }
 
-// ─── Recoger POST ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Recoger POST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $tipo_id         = (int)($_POST['tipo_id'] ?? $activo_actual['tipo_id']);
 $nombre          = sanitize($_POST['nombre'] ?? '');
@@ -122,7 +120,7 @@ if ($nombre === '') {
     exit;
 }
 
-// ─── Foto principal ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Foto principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $img_principal = $activo_actual['img_foto_principal'];
 
@@ -137,7 +135,7 @@ if ($nueva_foto) {
     $img_principal = $nueva_foto;
 }
 
-// ─── Actualizar activo principal ─────────────────────────────────────────────
+// â”€â”€â”€ Actualizar activo principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $sql = "UPDATE activos SET
           tipo_id=?, nombre=?, condicion=?, responsable_id=?, departamento_id=?,
@@ -159,7 +157,7 @@ if (!$stmt->execute()) {
     exit;
 }
 
-// ─── Tipo ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Tipo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $stmt_tipo = $conn->prepare("SELECT nombre FROM activo_tipos WHERE id = ?");
 $stmt_tipo->bind_param("i", $tipo_id);
@@ -167,7 +165,7 @@ $stmt_tipo->execute();
 $tipo_row   = $stmt_tipo->get_result()->fetch_assoc();
 $tipo_norm  = iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($tipo_row['nombre'] ?? ''));
 
-// ─── Función: upsert detalle ─────────────────────────────────────────────────
+// â”€â”€â”€ FunciÃ³n: upsert detalle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function upsertDetalle($conn, $tabla, $activo_id, $campos_vals, $tipos) {
     $stmt_chk = $conn->prepare("SELECT id FROM {$tabla} WHERE activo_id = ?");
@@ -193,7 +191,7 @@ function upsertDetalle($conn, $tabla, $activo_id, $campos_vals, $tipos) {
     $stmt->execute();
 }
 
-// ─── Vehículo ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ VehÃ­culo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (str_contains($tipo_norm, 'vehiculo')) {
     upsertDetalle($conn, 'vehiculos_detalle', $activo_id, [
@@ -218,7 +216,7 @@ if (str_contains($tipo_norm, 'vehiculo')) {
     ], 'ssisssssssssssssss');
 }
 
-// ─── Maquinaria ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Maquinaria â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (str_contains($tipo_norm, 'maquinaria')) {
     $stmt_maq = $conn->prepare("SELECT foto_motor FROM maquinaria_detalle WHERE activo_id = ?");
@@ -246,7 +244,7 @@ if (str_contains($tipo_norm, 'maquinaria')) {
     ], 'sssis');
 }
 
-// ─── Mobiliario ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Mobiliario â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (str_contains($tipo_norm, 'mobiliario')) {
     upsertDetalle($conn, 'mobiliario_detalle', $activo_id, [
@@ -261,7 +259,7 @@ if (str_contains($tipo_norm, 'mobiliario')) {
     ], 'ssisssss');
 }
 
-// ─── Inmuebles ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Inmuebles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (str_contains($tipo_norm, 'inmueble')) {
     upsertDetalle($conn, 'inmuebles_detalle', $activo_id, [
@@ -281,7 +279,7 @@ if (str_contains($tipo_norm, 'inmueble')) {
     ], 'sssssddiissss');
 }
 
-// ─── Herramientas ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Herramientas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (str_contains($tipo_norm, 'herramienta')) {
     upsertDetalle($conn, 'herramientas_detalle', $activo_id, [
@@ -294,7 +292,7 @@ if (str_contains($tipo_norm, 'herramienta')) {
     ], 'ssssss');
 }
 
-// ─── TICs ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ TICs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (str_contains($tipo_norm, 'tic')) {
     upsertDetalle($conn, 'tics_detalle', $activo_id, [
@@ -313,7 +311,7 @@ if (str_contains($tipo_norm, 'tic')) {
     ], 'ssssssssssss');
 }
 
-// ─── Eliminar documentos marcados ────────────────────────────────────────────
+// â”€â”€â”€ Eliminar documentos marcados â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (!empty($_POST['eliminar_doc']) && is_array($_POST['eliminar_doc'])) {
     foreach ($_POST['eliminar_doc'] as $doc_id) {
@@ -331,7 +329,7 @@ if (!empty($_POST['eliminar_doc']) && is_array($_POST['eliminar_doc'])) {
     }
 }
 
-// ─── Nuevos documentos ───────────────────────────────────────────────────────
+// â”€â”€â”€ Nuevos documentos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $docs = [
     'doc_factura'              => ['carpeta'=>'documentos','maxMB'=>MAX_DOCUMENTO_MB, 'tipo'=>'factura'],
@@ -359,7 +357,7 @@ foreach ($docs as $inputName => $cfg) {
     }
 }
 
-// ─── Eliminar imágenes marcadas ──────────────────────────────────────────────
+// â”€â”€â”€ Eliminar imÃ¡genes marcadas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (!empty($_POST['eliminar_img']) && is_array($_POST['eliminar_img'])) {
     foreach ($_POST['eliminar_img'] as $img_id) {
@@ -377,7 +375,7 @@ if (!empty($_POST['eliminar_img']) && is_array($_POST['eliminar_img'])) {
     }
 }
 
-// ─── Nuevas imágenes ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Nuevas imÃ¡genes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $stmt_img = $conn->prepare(
     "INSERT INTO activos_imagenes (activo_id, tipo_imagen, ruta_archivo, fecha_subida)
@@ -405,7 +403,7 @@ if ($foto_serie) {
     $stmt_img->execute();
 }
 
-// ─── Documentos extra (fiscal + extra) ───────────────────────────────────────
+// â”€â”€â”€ Documentos extra (fiscal + extra) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
     $total = count($_FILES['documentos']['name']);
@@ -427,7 +425,7 @@ if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
         
         $ext  = strtolower(pathinfo($_FILES['documentos']['name'][$i], PATHINFO_EXTENSION));
         $nom  = uniqid('', true) . '.' . $ext;
-        $dir  = $_SERVER['DOCUMENT_ROOT'] . '/uploads/documentos/';
+        $dir  = __DIR__ . '/../uploads/documentos/';
         if (!is_dir($dir)) mkdir($dir, 0775, true);
         $dest = $dir . $nom;
         if (move_uploaded_file($_FILES['documentos']['tmp_name'][$i], $dest)) {
@@ -441,8 +439,9 @@ if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
     }
 }
 
-// ─── Redirigir ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Redirigir â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 header("Location: details_activo.php?id={$activo_id}&success=updated");
 exit;
+
 

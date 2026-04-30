@@ -1,21 +1,18 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-// ─── CONTROL DE ACCESO POR DEPARTAMENTO ─────────────────────
+// â”€â”€â”€ CONTROL DE ACCESO POR DEPARTAMENTO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 $departamento_usuario = $_SESSION['departamento'] ?? '';
 
 $departamentos_permitidos = [
     'Director General',
     'Subdirector General',
-    'Coordinador de Control de Documentos y Facturación',
+    'Coordinador de Control de Documentos y FacturaciÃ³n',
     'Gerente de Seguridad Salud y Medio Ambiente',
     'Tecnico de Sistemas'
 ];
@@ -25,7 +22,7 @@ if (!in_array($departamento_usuario, $departamentos_permitidos)) {
     exit;
 }
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 require_once __DIR__ . "/qr_generator.php";
 
 $id = (int)($_GET['id'] ?? 0);
@@ -34,7 +31,7 @@ if (!$id) {
     exit;
 }
 
-// ─── Activo principal ────────────────────────────────────────────────────────
+// â”€â”€â”€ Activo principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt = $conn->prepare(
     "SELECT a.*, at.nombre AS tipo_nombre, at.prefijo,
             u.nombres AS resp_nombres, u.apellidos AS resp_apellidos,
@@ -56,7 +53,7 @@ if (!$activo) {
 
 $tipo_norm = iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($activo['tipo_nombre'] ?? ''));
 
-// ─── Detalles específicos ────────────────────────────────────────────────────
+// â”€â”€â”€ Detalles especÃ­ficos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fetchRow($conn, $sql, $id) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
@@ -90,21 +87,21 @@ if (str_contains($tipo_norm, 'tic')) {
     $detalle_tic = fetchRow($conn, "SELECT * FROM tics_detalle WHERE activo_id = ?", $id);
 }
 
-// ─── Documentos ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Documentos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt_docs = $conn->prepare("SELECT * FROM activos_documentos WHERE activo_id = ? ORDER BY fecha_subida ASC");
 $stmt_docs->bind_param("i", $id);
 $stmt_docs->execute();
 $documentos = $stmt_docs->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// ─── Imágenes ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ ImÃ¡genes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt_imgs = $conn->prepare("SELECT * FROM activos_imagenes WHERE activo_id = ? ORDER BY fecha_subida ASC");
 $stmt_imgs->bind_param("i", $id);
 $stmt_imgs->execute();
 $imagenes = $stmt_imgs->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function campo($label, $valor, $cols = 4) {
-    $v = $valor ?? '—';
+    $v = $valor ?? 'â€”';
     echo '<div class="col-md-' . $cols . ' detail-field">'
        . '<span class="detail-label">' . htmlspecialchars($label) . '</span>'
        . '<span class="detail-value">' . htmlspecialchars($v) . '</span>'
@@ -124,11 +121,11 @@ function labelTipoDoc($tipo) {
     $map = [
         'factura'             => 'Factura / Comprobante',
         'pedimento'           => 'Pedimento',
-        'poliza_seguro_mx'    => 'Póliza de Seguro (MX)',
-        'poliza_seguro_usa'   => 'Póliza de Seguro (USA)',
+        'poliza_seguro_mx'    => 'PÃ³liza de Seguro (MX)',
+        'poliza_seguro_usa'   => 'PÃ³liza de Seguro (USA)',
         'manual_usuario'      => 'Manual de Usuario',
         'manual_mantenimiento'=> 'Manual de Mantenimiento',
-        'catalogo_refacciones'=> 'Catálogo de Refacciones',
+        'catalogo_refacciones'=> 'CatÃ¡logo de Refacciones',
         'contrato'            => 'Contrato / Escritura',
         'expediente_predial'   => 'Expediente / Predial',
         'extra'               => 'Documento Extra',
@@ -151,7 +148,7 @@ $estatus_badges = [
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Activo – <?= htmlspecialchars($activo['codigo']) ?></title>
+  <title>Activo â€“ <?= htmlspecialchars($activo['codigo']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     crossorigin="anonymous" />
@@ -160,7 +157,7 @@ $estatus_badges = [
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_mobile.css" />
   <style>
-    /* ── Hero image ── */
+    /* â”€â”€ Hero image â”€â”€ */
     .hero-img-wrap {
       width: 100%;
       max-height: 380px;
@@ -191,7 +188,7 @@ $estatus_badges = [
     }
     .hero-img-placeholder i { font-size: 4rem; }
 
-    /* ── Secciones ── */
+    /* â”€â”€ Secciones â”€â”€ */
     .detail-section {
       background: #fff;
       border: 1px solid #e2e8f0;
@@ -225,7 +222,7 @@ $estatus_badges = [
       color: #212529;
     }
 
-    /* ── Galería ── */
+    /* â”€â”€ GalerÃ­a â”€â”€ */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -243,7 +240,7 @@ $estatus_badges = [
     .gallery-item img:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(0,0,0,.18); }
     .gallery-item small { font-size: .72rem; color: #6c757d; display: block; text-align: center; margin-top: 4px; }
 
-    /* ── Docs ── */
+    /* â”€â”€ Docs â”€â”€ */
     .doc-item-row {
       display: flex;
       align-items: center;
@@ -259,7 +256,7 @@ $estatus_badges = [
     .doc-item-row .doc-label { font-size: .75rem; color: #6c757d; }
     .doc-item-row .doc-name  { font-size: .9rem;  color: #212529; font-weight: 500; }
 
-    /* ── Código badge ── */
+    /* â”€â”€ CÃ³digo badge â”€â”€ */
     .codigo-badge {
       font-family: monospace;
       font-size: 1.1rem;
@@ -271,7 +268,7 @@ $estatus_badges = [
       letter-spacing: 1px;
     }
 
-    /* ── Acciones ── */
+    /* â”€â”€ Acciones â”€â”€ */
     .action-bar {
       display: flex;
       gap: 10px;
@@ -283,15 +280,13 @@ $estatus_badges = [
 <body>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO -->
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
       <span>/</span>
@@ -317,37 +312,28 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
     <div class="form-body">
 
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (isset($_GET['success'])): ?>
+if (isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <i class="bi bi-check-circle-fill"></i> Activo registrado exitosamente.
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($activo['qr_token'])): ?>
-      <!-- ══ QR DEL ACTIVO ═════════════════════════════════════════════════ -->
+if (!empty($activo['qr_token'])): ?>
+      <!-- â•â• QR DEL ACTIVO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="detail-section">
   <div class="row align-items-center g-4">
 
     <!-- QR -->
     <div class="col-auto">
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-        $qrRutaActual = array_key_exists('qr_ruta_imagen', $activo)
+$qrRutaActual = array_key_exists('qr_ruta_imagen', $activo)
             ? $activo['qr_ruta_imagen']
             : null;
 
-        if (!$qrRutaActual || !file_exists($_SERVER['DOCUMENT_ROOT'] . $qrRutaActual)) {
+        if (!$qrRutaActual || !file_exists(__DIR__ . '/..' . $qrRutaActual)) {
             $nuevaRuta = QRGenerator::generarYGuardar($activo['qr_token']);
 
             if ($nuevaRuta) {
@@ -375,12 +361,12 @@ require_once __DIR__ . "/../config.php";
     <div class="col">
 
       <div class="section-title mb-2" style="border:none;padding:0;">
-        <i class="bi bi-qr-code"></i> Código QR del Activo
+        <i class="bi bi-qr-code"></i> CÃ³digo QR del Activo
       </div>
 
       <p class="text-muted mb-3" style="font-size:.88rem;">
-        Escanea este código para acceder rápidamente a la información del activo
-        desde cualquier dispositivo móvil.
+        Escanea este cÃ³digo para acceder rÃ¡pidamente a la informaciÃ³n del activo
+        desde cualquier dispositivo mÃ³vil.
       </p>
 
       <div class="d-flex flex-wrap gap-2">
@@ -396,490 +382,296 @@ require_once __DIR__ . "/../config.php";
   </div>
 </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ IMAGEN PRINCIPAL ══════════════════════════════════════════════ -->
+      <!-- â•â• IMAGEN PRINCIPAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="hero-img-wrap">
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($activo['img_foto_principal'])): ?>
+if (!empty($activo['img_foto_principal'])): ?>
           <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
                alt="Foto principal de <?= htmlspecialchars($activo['nombre']) ?>"
                data-bs-toggle="modal" data-bs-target="#modalImgPrincipal"
                title="Clic para ampliar" />
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
           <div class="hero-img-placeholder">
             <i class="bi bi-image"></i>
             <p class="mt-2 mb-0">Sin foto principal</p>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       </div>
 
-      <!-- ══ INFORMACIÓN GENERAL ═══════════════════════════════════════════ -->
+      <!-- â•â• INFORMACIÃ“N GENERAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="detail-section">
-        <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
+        <div class="section-title"><i class="bi bi-info-circle"></i> InformaciÃ³n General</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Tipo de Activo',       $activo['tipo_nombre']);     ?>
+campo('Tipo de Activo',       $activo['tipo_nombre']);     ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Nombre',               $activo['nombre']);          ?>
+campo('Nombre',               $activo['nombre']);          ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Condición',            ucfirst($activo['condicion'] ?? ''));  ?>
+campo('CondiciÃ³n',            ucfirst($activo['condicion'] ?? ''));  ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Responsable',          trim(($activo['resp_nombres'] ?? '') . ' ' . ($activo['resp_apellidos'] ?? '')) ?: null); ?>
+campo('Responsable',          trim(($activo['resp_nombres'] ?? '') . ' ' . ($activo['resp_apellidos'] ?? '')) ?: null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Departamento',         $activo['depto_nombre']);    ?>
+campo('Departamento',         $activo['depto_nombre']);    ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Fecha de Adquisición', $activo['fecha_adquisicion'] ? date('d/m/Y', strtotime($activo['fecha_adquisicion'])) : null); ?>
+campo('Fecha de AdquisiciÃ³n', $activo['fecha_adquisicion'] ? date('d/m/Y', strtotime($activo['fecha_adquisicion'])) : null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Valor Factura (MXN)',  $activo['valor_factura'] ? '$' . number_format($activo['valor_factura'], 2) : null); ?>
+campo('Valor Factura (MXN)',  $activo['valor_factura'] ? '$' . number_format($activo['valor_factura'], 2) : null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Vida Útil',            $activo['vida_util'] ? $activo['vida_util'] . ' año(s)' : null); ?>
+campo('Vida Ãštil',            $activo['vida_util'] ? $activo['vida_util'] . ' aÃ±o(s)' : null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Ubicación',            $activo['ubicacion'],  4); ?>
+campo('UbicaciÃ³n',            $activo['ubicacion'],  4); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Fecha de Registro',    $activo['fecha_creacion'] ? date('d/m/Y H:i', strtotime($activo['fecha_creacion'])) : null); ?>
+campo('Fecha de Registro',    $activo['fecha_creacion'] ? date('d/m/Y H:i', strtotime($activo['fecha_creacion'])) : null); ?>
         </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($activo['notas'])): ?>
+if (!empty($activo['notas'])): ?>
           <div class="mt-2">
             <span class="detail-label">Notas Generales</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($activo['notas'])) ?></span>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       </div>
 
-      <!-- ══ DETALLES VEHÍCULO ══════════════════════════════════════════════ -->
+      <!-- â•â• DETALLES VEHÃCULO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($detalle_vehiculo): ?>
+if ($detalle_vehiculo): ?>
       <div class="detail-section">
-        <div class="section-title"><i class="bi bi-truck"></i> Detalles del Vehículo</div>
+        <div class="section-title"><i class="bi bi-truck"></i> Detalles del VehÃ­culo</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Marca',             $detalle_vehiculo['marca']);           ?>
+campo('Marca',             $detalle_vehiculo['marca']);           ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Modelo',            $detalle_vehiculo['modelo']);          ?>
+campo('Modelo',            $detalle_vehiculo['modelo']);          ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Año',               $detalle_vehiculo['anio']);            ?>
+campo('AÃ±o',               $detalle_vehiculo['anio']);            ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Color',             $detalle_vehiculo['color']);           ?>
+campo('Color',             $detalle_vehiculo['color']);           ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Placa',             $detalle_vehiculo['placa']);           ?>
+campo('Placa',             $detalle_vehiculo['placa']);           ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('VIN / N° Serie',    $detalle_vehiculo['vin']);             ?>
+campo('VIN / NÂ° Serie',    $detalle_vehiculo['vin']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('N° Motor',          $detalle_vehiculo['numero_motor']);    ?>
+campo('NÂ° Motor',          $detalle_vehiculo['numero_motor']);    ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Entidad Federativa',$detalle_vehiculo['entidad_federativa']); ?>
+campo('Entidad Federativa',$detalle_vehiculo['entidad_federativa']); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('N° Pedimento',      $detalle_vehiculo['numero_pedimento']); ?>
+campo('NÂ° Pedimento',      $detalle_vehiculo['numero_pedimento']); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Origen',            ucfirst($detalle_vehiculo['origen'] ?? '')); ?>
+campo('Origen',            ucfirst($detalle_vehiculo['origen'] ?? '')); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Gravamen',          ucfirst($detalle_vehiculo['gravamen'] ?? '')); ?>
+campo('Gravamen',          ucfirst($detalle_vehiculo['gravamen'] ?? '')); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Propietario',       $detalle_vehiculo['nombre_propietario'], 8); ?>
+campo('Propietario',       $detalle_vehiculo['nombre_propietario'], 8); ?>
         </div>
 
         <div class="row mt-3">
-          <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO MÉXICO</strong></div>
+          <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO MÃ‰XICO</strong></div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Aseguradora (MX)',   $detalle_vehiculo['nombre_aseguradora_mx']);    ?>
+campo('Aseguradora (MX)',   $detalle_vehiculo['nombre_aseguradora_mx']);    ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Teléfono (MX)',      $detalle_vehiculo['telefono_aseguradora_mx']);  ?>
+campo('TelÃ©fono (MX)',      $detalle_vehiculo['telefono_aseguradora_mx']);  ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Vto. Seguro (MX)',   $detalle_vehiculo['fecha_venc_seguro_mx'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_mx'])) : null); ?>
+campo('Vto. Seguro (MX)',   $detalle_vehiculo['fecha_venc_seguro_mx'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_mx'])) : null); ?>
         </div>
         <div class="row mt-2">
           <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO USA</strong></div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Aseguradora (USA)',  $detalle_vehiculo['nombre_aseguradora_usa']);   ?>
+campo('Aseguradora (USA)',  $detalle_vehiculo['nombre_aseguradora_usa']);   ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Teléfono (USA)',     $detalle_vehiculo['telefono_aseguradora_usa']); ?>
+campo('TelÃ©fono (USA)',     $detalle_vehiculo['telefono_aseguradora_usa']); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Vto. Seguro (USA)',  $detalle_vehiculo['fecha_venc_seguro_usa'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_usa'])) : null); ?>
+campo('Vto. Seguro (USA)',  $detalle_vehiculo['fecha_venc_seguro_usa'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_usa'])) : null); ?>
         </div>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ DETALLES MAQUINARIA ════════════════════════════════════════════ -->
+      <!-- â•â• DETALLES MAQUINARIA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($detalle_maquinaria): ?>
+if ($detalle_maquinaria): ?>
       <div class="detail-section">
         <div class="section-title"><i class="bi bi-gear-wide-connected"></i> Detalles de Maquinaria</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Marca',             $detalle_maquinaria['marca']);        ?>
+campo('Marca',             $detalle_maquinaria['marca']);        ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Modelo',            $detalle_maquinaria['modelo']);       ?>
+campo('Modelo',            $detalle_maquinaria['modelo']);       ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('N° Serie',          $detalle_maquinaria['numero_serie']); ?>
+campo('NÂ° Serie',          $detalle_maquinaria['numero_serie']); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Km / Horómetro',    $detalle_maquinaria['kilometraje'] ? number_format($detalle_maquinaria['kilometraje']) : null); ?>
+campo('Km / HorÃ³metro',    $detalle_maquinaria['kilometraje'] ? number_format($detalle_maquinaria['kilometraje']) : null); ?>
         </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($detalle_maquinaria['foto_motor'])): ?>
+if (!empty($detalle_maquinaria['foto_motor'])): ?>
           <div class="mt-3">
             <span class="detail-label">Foto Motor</span>
             <img src="<?= htmlspecialchars($detalle_maquinaria['foto_motor']) ?>"
                  alt="Foto motor" class="img-thumbnail mt-1" style="max-height:200px;" />
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ DETALLES MOBILIARIO ════════════════════════════════════════════ -->
+      <!-- â•â• DETALLES MOBILIARIO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($detalle_mobiliario): ?>
+if ($detalle_mobiliario): ?>
       <div class="detail-section">
         <div class="section-title"><i class="bi bi-archive"></i> Detalles de Mobiliario</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Marca',            $detalle_mobiliario['marca']);             ?>
+campo('Marca',            $detalle_mobiliario['marca']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Modelo',           $detalle_mobiliario['modelo']);            ?>
+campo('Modelo',           $detalle_mobiliario['modelo']);            ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('N° de Items',      $detalle_mobiliario['numero_items']);      ?>
+campo('NÂ° de Items',      $detalle_mobiliario['numero_items']);      ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Medida Aprox.',    $detalle_mobiliario['medida_aprox']);      ?>
+campo('Medida Aprox.',    $detalle_mobiliario['medida_aprox']);      ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Edificio',         $detalle_mobiliario['edificio']);          ?>
+campo('Edificio',         $detalle_mobiliario['edificio']);          ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Área / Depto.',    $detalle_mobiliario['area_departamento']); ?>
+campo('Ãrea / Depto.',    $detalle_mobiliario['area_departamento']); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Dirección',        $detalle_mobiliario['direccion'], 8);      ?>
+campo('DirecciÃ³n',        $detalle_mobiliario['direccion'], 8);      ?>
         </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($detalle_mobiliario['descripcion'])): ?>
+if (!empty($detalle_mobiliario['descripcion'])): ?>
           <div class="mt-2">
-            <span class="detail-label">Descripción</span>
+            <span class="detail-label">DescripciÃ³n</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_mobiliario['descripcion'])) ?></span>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ DETALLES INMUEBLE ══════════════════════════════════════════════ -->
+      <!-- â•â• DETALLES INMUEBLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($detalle_inmueble): ?>
+if ($detalle_inmueble): ?>
       <div class="detail-section">
         <div class="section-title"><i class="bi bi-building"></i> Detalles del Inmueble</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Tipo de Inmueble',         $detalle_inmueble['tipo_inmueble']);             ?>
+campo('Tipo de Inmueble',         $detalle_inmueble['tipo_inmueble']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Tipo de Posesión',         $detalle_inmueble['tipo_posesion']);             ?>
+campo('Tipo de PosesiÃ³n',         $detalle_inmueble['tipo_posesion']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Uso',                      $detalle_inmueble['uso']);                       ?>
+campo('Uso',                      $detalle_inmueble['uso']);                       ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Dirección',                $detalle_inmueble['direccion'], 6);              ?>
+campo('DirecciÃ³n',                $detalle_inmueble['direccion'], 6);              ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Coordenadas GPS',          $detalle_inmueble['coordenadas'], 6);            ?>
+campo('Coordenadas GPS',          $detalle_inmueble['coordenadas'], 6);            ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Sup. Terreno (m²)',        $detalle_inmueble['superficie_terreno'] ? number_format($detalle_inmueble['superficie_terreno'], 2) : null); ?>
+campo('Sup. Terreno (mÂ²)',        $detalle_inmueble['superficie_terreno'] ? number_format($detalle_inmueble['superficie_terreno'], 2) : null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Sup. Construida (m²)',     $detalle_inmueble['superficie_construida'] ? number_format($detalle_inmueble['superficie_construida'], 2) : null); ?>
+campo('Sup. Construida (mÂ²)',     $detalle_inmueble['superficie_construida'] ? number_format($detalle_inmueble['superficie_construida'], 2) : null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Niveles',                  $detalle_inmueble['niveles']);                   ?>
+campo('Niveles',                  $detalle_inmueble['niveles']);                   ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Valor Terreno',            $detalle_inmueble['valor_terreno'] ? '$' . number_format($detalle_inmueble['valor_terreno'], 2) : null); ?>
+campo('Valor Terreno',            $detalle_inmueble['valor_terreno'] ? '$' . number_format($detalle_inmueble['valor_terreno'], 2) : null); ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Folio RPP',                $detalle_inmueble['folio_rpp']);                 ?>
+campo('Folio RPP',                $detalle_inmueble['folio_rpp']);                 ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Predial',                  $detalle_inmueble['predial']);                   ?>
+campo('Predial',                  $detalle_inmueble['predial']);                   ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Estatus Legal',            $detalle_inmueble['estatus_legal']);             ?>
+campo('Estatus Legal',            $detalle_inmueble['estatus_legal']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Resp. Administrativo',     $detalle_inmueble['responsable_administrativo'], 8); ?>
+campo('Resp. Administrativo',     $detalle_inmueble['responsable_administrativo'], 8); ?>
         </div>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ DETALLES HERRAMIENTA ═══════════════════════════════════════════ -->
+      <!-- â•â• DETALLES HERRAMIENTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($detalle_herramienta): ?>
+if ($detalle_herramienta): ?>
       <div class="detail-section">
         <div class="section-title"><i class="bi bi-tools"></i> Detalles de Herramienta</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Marca',         $detalle_herramienta['marca']);            ?>
+campo('Marca',         $detalle_herramienta['marca']);            ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Modelo',        $detalle_herramienta['modelo']);           ?>
+campo('Modelo',        $detalle_herramienta['modelo']);           ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('N° Serie',      $detalle_herramienta['numero_serie']);     ?>
+campo('NÂ° Serie',      $detalle_herramienta['numero_serie']);     ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Asignación',    $detalle_herramienta['asignacion']);       ?>
+campo('AsignaciÃ³n',    $detalle_herramienta['asignacion']);       ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Ubicación',     $detalle_herramienta['ubicacion_fisica']); ?>
+campo('UbicaciÃ³n',     $detalle_herramienta['ubicacion_fisica']); ?>
         </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($detalle_herramienta['descripcion'])): ?>
+if (!empty($detalle_herramienta['descripcion'])): ?>
           <div class="mt-2">
-            <span class="detail-label">Descripción</span>
+            <span class="detail-label">DescripciÃ³n</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_herramienta['descripcion'])) ?></span>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ DETALLES TICs ══════════════════════════════════════════════════ -->
+      <!-- â•â• DETALLES TICs â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($detalle_tic): ?>
+if ($detalle_tic): ?>
       <div class="detail-section">
         <div class="section-title"><i class="bi bi-laptop"></i> Detalles de TICs</div>
         <div class="row">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Marca',            $detalle_tic['marca']);              ?>
+campo('Marca',            $detalle_tic['marca']);              ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Modelo',           $detalle_tic['modelo']);             ?>
+campo('Modelo',           $detalle_tic['modelo']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('N° Serie',         $detalle_tic['numero_serie']);       ?>
+campo('NÂ° Serie',         $detalle_tic['numero_serie']);       ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Sistema Operativo',$detalle_tic['sistema_operativo']);  ?>
+campo('Sistema Operativo',$detalle_tic['sistema_operativo']);  ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Procesador',       $detalle_tic['procesador']);         ?>
+campo('Procesador',       $detalle_tic['procesador']);         ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('RAM',              $detalle_tic['ram']);                ?>
+campo('RAM',              $detalle_tic['ram']);                ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Almacenamiento',   $detalle_tic['almacenamiento']);     ?>
+campo('Almacenamiento',   $detalle_tic['almacenamiento']);     ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Office / Suite',   $detalle_tic['office']);             ?>
+campo('Office / Suite',   $detalle_tic['office']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Correo Asignado',  $detalle_tic['correo']);             ?>
+campo('Correo Asignado',  $detalle_tic['correo']);             ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; campo('Ubicación Física', $detalle_tic['ubicacion_fisica']);   ?>
+campo('UbicaciÃ³n FÃ­sica', $detalle_tic['ubicacion_fisica']);   ?>
         </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($detalle_tic['programas_instalados'])): ?>
+if (!empty($detalle_tic['programas_instalados'])): ?>
           <div class="mt-2">
             <span class="detail-label">Programas Instalados</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_tic['programas_instalados'])) ?></span>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($detalle_tic['complementos'])): ?>
+if (!empty($detalle_tic['complementos'])): ?>
           <div class="mt-2">
             <span class="detail-label">Complementos / Accesorios</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_tic['complementos'])) ?></span>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ DOCUMENTOS ════════════════════════════════════════════════════ -->
+      <!-- â•â• DOCUMENTOS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($documentos)): ?>
+if (!empty($documentos)): ?>
       <div class="detail-section">
         <div class="section-title"><i class="bi bi-paperclip"></i> Documentos</div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; foreach ($documentos as $doc): ?>
+foreach ($documentos as $doc): ?>
           <div class="doc-item-row">
             <i class="bi <?= iconoDoc($doc['nombre_original'] ?? $doc['ruta_archivo']) ?>"></i>
             <div class="doc-info">
@@ -892,36 +684,25 @@ require_once __DIR__ . "/../config.php"; foreach ($documentos as $doc): ?>
             </a>
           </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
+endforeach; ?>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-      <!-- ══ GALERÍA DE IMÁGENES ════════════════════════════════════════════ -->
+      <!-- â•â• GALERÃA DE IMÃGENES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-      $imgs_galeria = array_filter($imagenes, fn($im) => $im['tipo_imagen'] !== 'foto_principal');
+$imgs_galeria = array_filter($imagenes, fn($im) => $im['tipo_imagen'] !== 'foto_principal');
       $foto_placa   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_placa');
       $foto_serie   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_numero_serie');
       $fotos_gen    = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_general');
       ?>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($imgs_galeria)): ?>
+if (!empty($imgs_galeria)): ?>
       <div class="detail-section">
-        <div class="section-title"><i class="bi bi-card-image"></i> Imágenes</div>
+        <div class="section-title"><i class="bi bi-card-image"></i> ImÃ¡genes</div>
         <div class="gallery-grid">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; foreach ($fotos_gen as $img): ?>
+foreach ($fotos_gen as $img): ?>
             <div class="gallery-item">
               <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
                    alt="Foto general"
@@ -931,13 +712,9 @@ require_once __DIR__ . "/../config.php"; foreach ($fotos_gen as $img): ?>
               <small>Foto general</small>
             </div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
+endforeach; ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; foreach ($foto_placa as $img): ?>
+foreach ($foto_placa as $img): ?>
             <div class="gallery-item">
               <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
                    alt="Foto placa"
@@ -946,30 +723,22 @@ require_once __DIR__ . "/../config.php"; foreach ($foto_placa as $img): ?>
               <small>Placa</small>
             </div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
+endforeach; ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; foreach ($foto_serie as $img): ?>
+foreach ($foto_serie as $img): ?>
             <div class="gallery-item">
               <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                   alt="N° Serie"
+                   alt="NÂ° Serie"
                    data-bs-toggle="modal" data-bs-target="#modalGaleria"
                    onclick="abrirImagen(this)" />
-              <small>N° Serie</small>
+              <small>NÂ° Serie</small>
             </div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
+endforeach; ?>
         </div>
       </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
     </div><!-- /form-body -->
   </div><!-- /form-container -->
@@ -977,9 +746,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
 <!-- Modal imagen principal -->
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($activo['img_foto_principal'])): ?>
+if (!empty($activo['img_foto_principal'])): ?>
 <div class="modal fade" id="modalImgPrincipal" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content bg-dark border-0">
@@ -994,11 +761,9 @@ require_once __DIR__ . "/../config.php"; if (!empty($activo['img_foto_principal'
   </div>
 </div>
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
-<!-- Modal galería -->
+<!-- Modal galerÃ­a -->
 <div class="modal fade" id="modalGaleria" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content bg-dark border-0">
@@ -1012,7 +777,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
   </div>
 </div>
 
-<!-- Botón volver -->
+<!-- BotÃ³n volver -->
 <div class="fab-container-backbtn">
   <a onclick="history.back()" class="fab-button-backbtn gray">
     <i class="bi bi-arrow-left"></i>
@@ -1040,10 +805,9 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 </html>
+
 
 

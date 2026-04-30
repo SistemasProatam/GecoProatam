@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -36,7 +34,7 @@ $folioInicial  = generarFolio($entidadSel);
 $emisorNombre  = trim(($_SESSION['nombres'] ?? '') . ' ' . ($_SESSION['apellidos'] ?? ''));
 $emisorDepto   = $_SESSION['departamento'] ?? '';
 
-include_once __DIR__ . '/../conexion.php';
+require_once __DIR__ . "/../conexion.php";
 $unidades = [];
 $resU = $conn->query("SELECT id, nombre FROM unidades WHERE activo = 1 ORDER BY nombre ASC");
 if ($resU) while ($rowU = $resU->fetch_assoc()) $unidades[] = $rowU;
@@ -51,7 +49,7 @@ $result_entidades = $conn->query($sql_entidades);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nueva Cotización — <?= htmlspecialchars($folioInicial) ?></title>
+  <title>Nueva CotizaciÃ³n â€” <?= htmlspecialchars($folioInicial) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
@@ -61,8 +59,6 @@ $result_entidades = $conn->query($sql_entidades);
 
 <body>
   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
@@ -76,7 +72,7 @@ require_once __DIR__ . "/../includes/navbar.php"; ?>
       </div>
       <div class="row align-items-center">
         <div class="col-lg-8">
-          <h1 class="hero-title">Generar Cotización</h1>
+          <h1 class="hero-title">Generar CotizaciÃ³n</h1>
           <p class="mt-2 text-white-50">Folio actual: <strong class="text-white" id="folioDisplay"><?= htmlspecialchars($folioInicial) ?></strong></p>
         </div>
         <div class="col-lg-4 text-lg-end d-none d-lg-block">
@@ -102,15 +98,11 @@ require_once __DIR__ . "/../includes/navbar.php"; ?>
                 <label class="form-label">Empresa emisora <span class="text-danger">*</span></label>
                 <select name="entidad" id="entidadSelect" class="form-select" onchange="actualizarFolio()">
                   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 while ($row = $result_entidades->fetch_assoc()): ?>
                     <option value="<?= htmlspecialchars($row['id']) ?>" <?= $row['id'] === $entidadSel ? 'selected' : '' ?>>
                       <?= htmlspecialchars($row['nombre']) ?>
                     </option>
                   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endwhile; ?>
                 </select>
               </div>
@@ -124,14 +116,14 @@ endwhile; ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label class="form-label">Atención a <span class="text-danger">*</span></label>
+                <label class="form-label">AtenciÃ³n a <span class="text-danger">*</span></label>
                 <input type="text" name="atencion" class="form-control" placeholder="Nombre del contacto" required>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label class="form-label">Compañía / Empresa</label>
-                <input type="text" name="compania" class="form-control" placeholder="Razón social o nombre">
+                <label class="form-label">CompaÃ±Ã­a / Empresa</label>
+                <input type="text" name="compania" class="form-control" placeholder="RazÃ³n social o nombre">
               </div>
             </div>
             <div class="col-md-6">
@@ -157,7 +149,7 @@ endwhile; ?>
               <thead>
                 <tr>
                   <th style="width: 5%">#</th>
-                  <th style="width: 40%">Descripción</th>
+                  <th style="width: 40%">DescripciÃ³n</th>
                   <th style="width: 10%">Unidad</th>
                   <th style="width: 10%">Cant.</th>
                   <th style="width: 15%">P. Unitario</th>
@@ -213,17 +205,15 @@ endwhile; ?>
           </div>
           <div class="checks-grid">
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 $alcancesOpc = [
-              'ejecucion'   => 'Ejecución de trabajos',
+              'ejecucion'   => 'EjecuciÃ³n de trabajos',
               'materiales'  => 'Materiales y mano de obra',
-              'supervision' => 'Supervisión técnica',
+              'supervision' => 'SupervisiÃ³n tÃ©cnica',
               'limpieza'    => 'Limpieza final',
-              'garantia'    => 'Garantía de calidad',
+              'garantia'    => 'GarantÃ­a de calidad',
               'herramienta' => 'Herramienta y equipo',
               'seguridad'   => 'Seguridad e higiene',
-              'entrega'     => 'Memoria fotográfica',
+              'entrega'     => 'Memoria fotogrÃ¡fica',
             ];
             foreach ($alcancesOpc as $key => $label): ?>
               <label class="check-item">
@@ -231,8 +221,6 @@ $alcancesOpc = [
                 <span><?= htmlspecialchars($label) ?></span>
               </label>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endforeach; ?>
           </div>
           <div class="form-group mt-3">
@@ -247,8 +235,8 @@ endforeach; ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label class="form-label">Tiempo de ejecución</label>
-                <input type="text" name="tiempo" class="form-control" placeholder="Ej: 15 días">
+                <label class="form-label">Tiempo de ejecuciÃ³n</label>
+                <input type="text" name="tiempo" class="form-control" placeholder="Ej: 15 dÃ­as">
               </div>
             </div>
             <div class="col-md-6">
@@ -261,15 +249,15 @@ endforeach; ?>
               <div class="form-group">
                 <label class="form-label">Moneda</label>
                 <select name="moneda" class="form-select">
-                  <option value="MXN">MXN — Pesos Mexicanos</option>
-                  <option value="USD">USD — Dólares Americanos</option>
+                  <option value="MXN">MXN â€” Pesos Mexicanos</option>
+                  <option value="USD">USD â€” DÃ³lares Americanos</option>
                 </select>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label class="form-label">Vigencia</label>
-                <input type="text" name="vigencia" class="form-control" value="30 días naturales">
+                <input type="text" name="vigencia" class="form-control" value="30 dÃ­as naturales">
               </div>
             </div>
             <div class="col-12">
@@ -298,8 +286,6 @@ endforeach; ?>
   <script>
     const BASE_URL = '<?= BASE_URL ?>';
     const opcionesUnidad = `<option value="">-- Unidad --</option><?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 foreach ($unidades as $u)
                                                                     echo '<option value="' . htmlspecialchars($u['nombre'], ENT_QUOTES) . '">' . htmlspecialchars($u['nombre']) . '</option>';
                                                                   ?>`;
@@ -319,7 +305,7 @@ foreach ($unidades as $u)
       tr.dataset.idx = filaCount;
       tr.innerHTML = `
     <td class="text-muted fw-bold">${filaCount}</td>
-    <td><textarea name="desc[]" class="form-control" rows="2" placeholder="Descripción del concepto..."></textarea></td>
+    <td><textarea name="desc[]" class="form-control" rows="2" placeholder="DescripciÃ³n del concepto..."></textarea></td>
     <td><select name="unidad[]" class="form-select">${opcionesUnidad}</select></td>
     <td><input type="number" name="cantidad[]" class="form-control text-center" min="0" step="any" value="1" oninput="recalcular()"></td>
     <td><input type="number" name="precio[]" class="form-control text-end" min="0" step="any" value="0" oninput="recalcular()"></td>
@@ -371,7 +357,7 @@ foreach ($unidades as $u)
         Swal.fire({
           icon: 'warning',
           title: 'Campo obligatorio',
-          text: 'Debes especificar a quién va dirigida la cotización.'
+          text: 'Debes especificar a quiÃ©n va dirigida la cotizaciÃ³n.'
         });
         return false;
       }
@@ -383,7 +369,7 @@ foreach ($unidades as $u)
         Swal.fire({
           icon: 'warning',
           title: 'Conceptos requeridos',
-          text: 'Agrega al menos un concepto con descripción.'
+          text: 'Agrega al menos un concepto con descripciÃ³n.'
         });
         return false;
       }
@@ -395,7 +381,7 @@ foreach ($unidades as $u)
 
       // Mostrar loading
       Swal.fire({
-        title: 'Guardando cotización...',
+        title: 'Guardando cotizaciÃ³n...',
         text: 'Por favor espera',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading()
@@ -455,11 +441,10 @@ foreach ($unidades as $u)
   </script>
 
   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 include __DIR__ . "/../includes/footer.php"; ?>
   <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>
 
 </html>
+
 

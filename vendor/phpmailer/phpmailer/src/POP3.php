@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../../config.php";
 /**
  * PHPMailer POP-Before-SMTP Authentication Class.
  * PHP Version 5.5.

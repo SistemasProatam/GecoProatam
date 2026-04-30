@@ -1770,7 +1770,7 @@ function setupEntidadChange() {
     const numeroOrdenInput = document.getElementById('numeroOrden');
     numeroOrdenInput.value = 'Generando...';
 
-    fetch('/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
+    fetch(window.BASE_URL + '/orders/get_next_folio_oc.php?entidad_id=' + entidadId)
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta del servidor');

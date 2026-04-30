@@ -1,13 +1,10 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // Obtener departamentos para el select
 $departamentos = $conn->query("SELECT id, nombre FROM departamentos ORDER BY nombre ASC");
@@ -43,9 +40,7 @@ $conn->close();
 
 <body>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -72,9 +67,9 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
             <div class="form-body">
                 <form id="formAgregarUsuario" method="POST" action="insert_user.php" enctype="multipart/form-data">
 
-                    <!-- Información Básica -->
+                    <!-- InformaciÃ³n BÃ¡sica -->
                     <div class="section-title">
-                        <h4><i class="bi bi-person"></i> Información Básica</h4>
+                        <h4><i class="bi bi-person"></i> InformaciÃ³n BÃ¡sica</h4>
                     </div>
 
                     <div class="row">
@@ -111,7 +106,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Número de Celular Particular</label>
+                                <label class="form-label">NÃºmero de Celular Particular</label>
                                 <input type="text" name="telefono_personal" class="form-control">
                             </div>
                         </div>
@@ -139,7 +134,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                     <div class="mb-3">
                         <label class="form-label">Lista de Funciones y Actividades a Cargo</label>
                         <textarea name="funciones_actividades" class="form-control" rows="4"
-                            placeholder="Describa las funciones y actividades que tendrá a cargo el usuario..."></textarea>
+                            placeholder="Describa las funciones y actividades que tendrÃ¡ a cargo el usuario..."></textarea>
                     </div>
 
                     <!-- Contacto de Emergencia -->
@@ -162,7 +157,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Número de Celular</label>
+                                <label class="form-label">NÃºmero de Celular</label>
                                 <input type="text" name="contacto_emergencia_telefono" class="form-control">
                             </div>
                         </div>
@@ -183,7 +178,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Identificación Oficial</label>
+                                    <label class="form-label">IdentificaciÃ³n Oficial</label>
                                     <input type="file" name="identificacion_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -201,7 +196,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Constancia de Situación Fiscal</label>
+                                    <label class="form-label">Constancia de SituaciÃ³n Fiscal</label>
                                     <input type="file" name="situacion_fiscal_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -209,7 +204,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Número de Seguro Social</label>
+                                    <label class="form-label">NÃºmero de Seguro Social</label>
                                     <input type="file" name="nss_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -227,7 +222,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Último Comprobante de Estudios</label>
+                                    <label class="form-label">Ãšltimo Comprobante de Estudios</label>
                                     <input type="file" name="comprobante_estudios_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -271,7 +266,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                                 <button type="button" class="btn btn-sm btn-secondary mt-2" id="agregar-contrato">
                                     <i class="bi bi-plus"></i> Agregar otro contrato
                                 </button>
-                                <small class="text-muted">Puedes subir múltiples contratos</small>
+                                <small class="text-muted">Puedes subir mÃºltiples contratos</small>
                             </div>
                         </div>
                     </div>
@@ -279,7 +274,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                     <!-- Guardar -->
                     <div class="form-actions mt-3">
 
-                        <!-- Botones de acción -->
+                        <!-- Botones de acciÃ³n -->
                         <div class="d-flex justify-content-between mt-4">
                             <button type="submit" class="button-57">
                                 <i class="bi bi-floppy"></i> Guardar Usuario
@@ -296,18 +291,16 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesando… por favor espere</div>
+            <div class="mt-3">Procesandoâ€¦ por favor espere</div>
         </div>
     </div>
 
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Manejar el envío del formulario - Versión consolidada
+        // Manejar el envÃ­o del formulario - VersiÃ³n consolidada
         document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -327,7 +320,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
                     if (data.status === 'success') {
                         Swal.fire({
                             icon: 'success',
-                            title: '¡Éxito!',
+                            title: 'Â¡Ã‰xito!',
                             html: data.message,
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
@@ -351,7 +344,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
                     if (overlay) overlay.style.display = 'none';
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexiÃ³n',
                         text: 'No se pudo conectar con el servidor',
                         confirmButtonText: 'Aceptar'
                     });
@@ -361,7 +354,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
         });
     </script>
     <script>
-        // Manejar contratos múltiples
+        // Manejar contratos mÃºltiples
         document.getElementById('agregar-contrato').addEventListener('click', function() {
             const container = document.getElementById('contratos-container');
             const newItem = document.createElement('div');
@@ -384,7 +377,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
         `;
             container.appendChild(newItem);
 
-            // Habilitar botón de eliminar en todos menos el primero
+            // Habilitar botÃ³n de eliminar en todos menos el primero
             const removeBtns = document.querySelectorAll('.btn-remove-contrato');
             removeBtns[0].disabled = removeBtns.length <= 1;
         });
@@ -395,7 +388,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
                 const item = e.target.closest('.contrato-item');
                 item.remove();
 
-                // Si solo queda uno, deshabilitar su botón de eliminar
+                // Si solo queda uno, deshabilitar su botÃ³n de eliminar
                 const removeBtns = document.querySelectorAll('.btn-remove-contrato');
                 if (removeBtns.length === 1) {
                     removeBtns[0].disabled = true;
@@ -406,5 +399,6 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
 </body>
 
 </html>
+
 
 

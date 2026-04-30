@@ -1,16 +1,13 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // Obtener ID del proveedor desde la URL
 $proveedor_id = $_GET['id'] ?? 0;
@@ -21,7 +18,7 @@ if ($proveedor_id <= 0) {
     exit();
 }
 
-// Obtener información del proveedor
+// Obtener informaciÃ³n del proveedor
 $sql_proveedor = "SELECT id, razon_social, rfc, nombre, telefono, email, direccion, contacto 
                   FROM proveedores 
                   WHERE id = ? AND activo = 1";
@@ -37,10 +34,10 @@ if ($result_proveedor->num_rows === 0) {
 
 $proveedor = $result_proveedor->fetch_assoc();
 
-// Obtener información del usuario actual
+// Obtener informaciÃ³n del usuario actual
 $usuario_id = $_SESSION['user_id'] ?? 0;
 
-// Procesar el formulario si se envió
+// Procesar el formulario si se enviÃ³
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $razon_social = $proveedor['razon_social'];
     $rfc = $_POST['supplierRFC'] ?? '';
@@ -102,9 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
     
     if ($stmt_insert->execute()) {
-        $mensaje_exito = "Evaluación guardada correctamente";
+        $mensaje_exito = "EvaluaciÃ³n guardada correctamente";
     } else {
-        $mensaje_error = "Error al guardar la evaluación: " . $conn->error;
+        $mensaje_error = "Error al guardar la evaluaciÃ³n: " . $conn->error;
     }
 }
 ?>
@@ -114,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación de Proveedores - PROATAM</title>
+    <title>EvaluaciÃ³n de Proveedores - PROATAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -144,9 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -156,12 +151,12 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
       <span>/</span>
       <a href="<?= BASE_URL ?>/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
       <span>/</span>
-      <span>Evaluación de Proveedor</span>
+      <span>EvaluaciÃ³n de Proveedor</span>
     </div>
     
     <div class="row align-items-end">
       <div class="col-lg-8">
-        <h1 class="hero-title">Evaluación de Proveedor</h1>
+        <h1 class="hero-title">EvaluaciÃ³n de Proveedor</h1>
       </div>
       <div class="col-lg-4 text-end">
         <div class="btn-group">
@@ -181,42 +176,34 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
     <div class="form-body">
       
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (isset($mensaje_exito)): ?>
+if (isset($mensaje_exito)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <?= $mensaje_exito ?>
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
+if (isset($mensaje_error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
           <?= $mensaje_error ?>
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
       
       <form method="POST" id="evaluationForm">
         <div class="section-title">
           <i class="bi bi-info-circle"></i>
-          Información General
+          InformaciÃ³n General
         </div>
         
-        <!-- Nombre o razón social del proveedor -->
+        <!-- Nombre o razÃ³n social del proveedor -->
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label">Nombre o Razón Social del Proveedor:</label>
+                    <label class="form-label">Nombre o RazÃ³n Social del Proveedor:</label>
                     <input type="text" class="form-control" 
                      value="<?= htmlspecialchars($proveedor['razon_social']) ?>" 
                      readonly />
@@ -235,7 +222,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label">Lugar y Fecha de Elaboración:</label>
+                    <label class="form-label">Lugar y Fecha de ElaboraciÃ³n:</label>
                     <input type="text" class="form-control" name="evaluationDate" 
                            value="PROATAM S.A. DE C.V. - <?= date('d/m/Y') ?>" required>
                 </div>
@@ -250,7 +237,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
         <div class="section-title">
           <i class="bi bi-speedometer2"></i>
-          Escala de Calificación:
+          Escala de CalificaciÃ³n:
         </div>
         <div class="row text-center rating-options">
             <div class="col" data-value="1">
@@ -272,23 +259,23 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
         <div class="section-title">
           <i class="bi bi-star"></i>
-          Evaluación del Proveedor
+          EvaluaciÃ³n del Proveedor
         </div>
         <div class="table-container">
           <table class="table table-bordered">
             <thead>
               <tr>
                 <th>Criterio</th>
-                <th>Descripción</th>
-                <th>Ponderación</th>
-                <th>Calificación</th>
+                <th>DescripciÃ³n</th>
+                <th>PonderaciÃ³n</th>
+                <th>CalificaciÃ³n</th>
                 <th>Resultado</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>Calidad</td>
-                <td>Cumplimiento con especificaciones técnicas, ausencia de defectos.</td>
+                <td>Cumplimiento con especificaciones tÃ©cnicas, ausencia de defectos.</td>
                 <td>30%</td>
                 <td>
                   <select class="form-select rating-select" name="qualityRating" data-weight="30" id="qualityRating" required>
@@ -320,7 +307,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
               </tr>
               <tr>
                 <td>Precio y Condiciones Comerciales</td>
-                <td>Competitividad de precios, claridad en pagos y facturación.</td>
+                <td>Competitividad de precios, claridad en pagos y facturaciÃ³n.</td>
                 <td>20%</td>
                 <td>
                   <select class="form-select rating-select" name="priceRating" data-weight="20" id="priceRating" required>
@@ -336,7 +323,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
               </tr>
               <tr>
                 <td>Cumplimiento Legal y Normativo</td>
-                <td>Documentación vigente (fiscal, laboral, seguridad, ambiental).</td>
+                <td>DocumentaciÃ³n vigente (fiscal, laboral, seguridad, ambiental).</td>
                 <td>15%</td>
                 <td>
                   <select class="form-select rating-select" name="legalRating" data-weight="15" id="legalRating" required>
@@ -351,8 +338,8 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 <td id="legalResult">0</td>
               </tr>
               <tr>
-                <td>Atención y Servicio Postventa</td>
-                <td>Respuesta a incidencias, comunicación y soporte.</td>
+                <td>AtenciÃ³n y Servicio Postventa</td>
+                <td>Respuesta a incidencias, comunicaciÃ³n y soporte.</td>
                 <td>10%</td>
                 <td>
                   <select class="form-select rating-select" name="serviceRating" data-weight="10" id="serviceRating" required>
@@ -391,15 +378,15 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 </thead>
                 <tbody>
                   <tr class="excellent">
-                    <td>450 – 500</td>
+                    <td>450 â€“ 500</td>
                     <td>Excelente</td>
                   </tr>
                   <tr class="good">
-                    <td>400 – 449</td>
+                    <td>400 â€“ 449</td>
                     <td>Bueno</td>
                   </tr>
                   <tr class="conditional">
-                    <td>350 – 399</td>
+                    <td>350 â€“ 399</td>
                     <td>Regular (Requiere seguimiento)</td>
                   </tr>
                   <tr class="not-approved">
@@ -411,7 +398,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             </div>
             <div class="col-md-6">
               <div class="text-center p-4">
-                <h4 id="finalScore">Puntuación: 0</h4>
+                <h4 id="finalScore">PuntuaciÃ³n: 0</h4>
                 <div id="finalResult" class="mt-3 p-3 rounded">
                   <h5 id="resultText">-</h5>
                 </div>
@@ -432,18 +419,16 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         </div>
         <input type="text" class="form-control" name="responsibles" 
                value="<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
                 readonly />
 
         <!-- Guardar -->
         <div class="form-actions mt-3">
           <div class="send-otxt">
-            Esta evaluación se guardará automáticamente en el registro de evaluaciones de este proveedor.
+            Esta evaluaciÃ³n se guardarÃ¡ automÃ¡ticamente en el registro de evaluaciones de este proveedor.
           </div>
           <button type="submit" class="button-56">
-            <i class="bi bi-floppy"></i> Guardar Evaluación
+            <i class="bi bi-floppy"></i> Guardar EvaluaciÃ³n
           </button>
         </div>
       </form>
@@ -454,7 +439,7 @@ require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombre
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Manejar selección de calificaciones
+    // Manejar selecciÃ³n de calificaciones
     const ratingSelects = document.querySelectorAll('.rating-select');
     ratingSelects.forEach(select => {
       select.addEventListener('change', calculateResults);
@@ -485,7 +470,7 @@ require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombre
     
     // Actualizar total
     document.getElementById('totalResult').textContent = totalScore.toFixed(1);
-    document.getElementById('finalScore').textContent = `Puntuación: ${totalScore.toFixed(1)}`;
+    document.getElementById('finalScore').textContent = `PuntuaciÃ³n: ${totalScore.toFixed(1)}`;
     
     // Determinar resultado final
     const resultElement = document.getElementById('finalResult');
@@ -512,11 +497,10 @@ require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombre
 </script>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 </html>
+
 
 

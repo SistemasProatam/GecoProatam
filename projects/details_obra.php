@@ -1,7 +1,4 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // details_obra.php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -10,7 +7,7 @@ $emailHandler = new EmailHandler();
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $obra_id = $_GET['id'] ?? 0;
 
@@ -19,7 +16,7 @@ if ($obra_id <= 0) {
   exit;
 }
 
-// Obtener información completa de la obra
+// Obtener informaciÃ³n completa de la obra
 $sql_obra = "SELECT o.*, p.nombre_proyecto, p.numero_licitacion, p.numero_contrato,
              (SELECT COALESCE(SUM(costo_directo_utilizado), 0) FROM presupuesto_control 
               WHERE obra_id = o.id) as costo_directo_utilizado,
@@ -45,7 +42,7 @@ $costo_disponible = $obra['costo_directo'] - $obra['costo_directo_utilizado'];
 $porcentaje_utilizado = $obra['costo_directo'] > 0 ?
   ($obra['costo_directo_utilizado'] / $obra['costo_directo']) * 100 : 0;
 
-// Obtener catálogos de la obra
+// Obtener catÃ¡logos de la obra
 $sql_catalogos = "SELECT * FROM catalogos WHERE obra_id = ? ORDER BY fecha_creacion DESC";
 $stmt_catalogos = $conn->prepare($sql_catalogos);
 $stmt_catalogos->bind_param("i", $obra_id);
@@ -240,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           break;
         }
 
-        // Nombre del usuario en sesión (ajusta según tu sistema de sesiones)
+        // Nombre del usuario en sesiÃ³n (ajusta segÃºn tu sistema de sesiones)
         $usuarioNombre = $_SESSION['nombre_completo']
           ?? ($_SESSION['nombres'] ?? 'Usuario del sistema');
 
@@ -276,9 +273,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               );
             }
             $enviado = true;
-            error_log("Alerta de exceso enviada a Subdirección - Obra ID: {$oid}");
+            error_log("Alerta de exceso enviada a SubdirecciÃ³n - Obra ID: {$oid}");
           } else {
-            error_log("No se encontró Subdirector activo con correo - Obra ID: {$oid}");
+            error_log("No se encontrÃ³ Subdirector activo con correo - Obra ID: {$oid}");
           }
         } catch (Exception $e) {
           error_log("Error al enviar alerta de exceso: " . $e->getMessage());
@@ -288,8 +285,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           'success' => true,
           'enviado' => $enviado,
           'message' => $enviado
-            ? 'Notificación enviada a Subdirección'
-            : 'Subcontrato guardado. No se encontró Subdirector con correo registrado.'
+            ? 'NotificaciÃ³n enviada a SubdirecciÃ³n'
+            : 'Subcontrato guardado. No se encontrÃ³ Subdirector con correo registrado.'
         ]);
         break;
 
@@ -1249,9 +1246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -1309,7 +1304,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
         </div>
       </div>
 
-      <!-- Estadísticas de Presupuesto -->
+      <!-- EstadÃ­sticas de Presupuesto -->
       <div class="budget-stats">
         <div class="budget-stat">
           <div class="budget-stat-label">Costo Directo</div>
@@ -1332,18 +1327,18 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
       <!-- INFO PANELS -->
       <div class="info-grid gap-4">
 
-        <!-- Información General -->
+        <!-- InformaciÃ³n General -->
         <div class="info-panel">
           <div class="panel-header">
             <div class="panel-icon">
               <i class="bi bi-info-circle"></i>
             </div>
-            <h4>Información General</h4>
+            <h4>InformaciÃ³n General</h4>
           </div>
 
           <ul class="info-list">
             <li class="info-item">
-              <span class="info-label">Número de Obra</span>
+              <span class="info-label">NÃºmero de Obra</span>
               <span class="info-value"><?= htmlspecialchars($obra['numero_obra']) ?></span>
             </li>
             <li class="info-item">
@@ -1351,7 +1346,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
               <span class="info-value"><?= htmlspecialchars($obra['nombre_proyecto']) ?></span>
             </li>
             <li class="info-item">
-              <span class="info-label">Licitación</span>
+              <span class="info-label">LicitaciÃ³n</span>
               <span class="info-value"><?= htmlspecialchars($obra['numero_licitacion']) ?></span>
             </li>
             <li class="info-item">
@@ -1363,19 +1358,19 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
               <span class="info-value"><?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?></span>
             </li>
             <li class="info-item">
-              <span class="info-label">Descripción</span>
+              <span class="info-label">DescripciÃ³n</span>
               <span class="info-value"><?= htmlspecialchars($obra['descripcion']) ?></span>
             </li>
           </ul>
         </div>
 
-        <!-- Información Financiera -->
+        <!-- InformaciÃ³n Financiera -->
         <div class="info-panel">
           <div class="panel-header">
             <div class="panel-icon">
               <i class="bi bi-cash-stack"></i>
             </div>
-            <h4>Información Financiera</h4>
+            <h4>InformaciÃ³n Financiera</h4>
           </div>
 
           <ul class="info-list">
@@ -1391,38 +1386,30 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
         </div>
       </div>
 
-      <!-- Catálogos -->
+      <!-- CatÃ¡logos -->
       <div class="works-section">
 
         <div class="section-header">
           <div class="section-title-group">
-            <h4>Catálogo</h4>
+            <h4>CatÃ¡logo</h4>
           </div>
         </div>
 
         <div class="card-body">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($catalogos->num_rows > 0): ?>
+if ($catalogos->num_rows > 0): ?>
             <div class="list-group">
               <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($catalogo = $catalogos->fetch_assoc()): ?>
+while ($catalogo = $catalogos->fetch_assoc()): ?>
                 <div class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1">
                       <strong><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></strong>
                       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($catalogo['descripcion']): ?>
+if ($catalogo['descripcion']): ?>
                         <br><small class="text-muted"><?= htmlspecialchars($catalogo['descripcion']) ?></small>
                       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                       <br><small class="text-muted">Creado: <?= date('d/m/Y', strtotime($catalogo['fecha_creacion'])) ?></small>
                     </div>
                     <div class="btn-group" style="gap:5px;">
@@ -1433,38 +1420,32 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                       </a>
                       <button class="btn-ed"
                         onclick="editarCatalogo(<?= $catalogo['id'] ?>)"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Catálogo">
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar CatÃ¡logo">
                         <i class="bi bi-pencil"></i>
                       </button>
                       <button class="btn-del"
                         onclick="eliminarCatalogo(<?= $catalogo['id'] ?>, <?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Catálogo">
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar CatÃ¡logo">
                         <i class="bi bi-trash3"></i>
                       </button>
                     </div>
                   </div>
                 </div>
               <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+endwhile; ?>
             </div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
             <div class="text-center text-muted py-4">
               <i class="bi bi-folder" style="font-size: 3rem;"></i>
-              <p class="mt-2">No hay catálogos registrados</p>
+              <p class="mt-2">No hay catÃ¡logos registrados</p>
               <button class="btn btn-success"
                 onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')">
-                <i class="bi bi-plus-circle"></i> Crear Primer Catálogo
+                <i class="bi bi-plus-circle"></i> Crear Primer CatÃ¡logo
               </button>
             </div>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
         </div>
       </div>
 
@@ -1638,7 +1619,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
       <div style="font-size:.85rem;color:#475569;margin-bottom:14px;" id="sc-exceso-detalle"></div>
       <div style="background:rgba(232,68,90,.06);border:1px solid rgba(232,68,90,.2);border-radius:8px;padding:12px 14px;font-size:.82rem;color:#c0392b;margin-bottom:16px;">
         <i class="bi bi-envelope me-1"></i>
-        Se notificará a <strong>Subdirección</strong> por correo electrónico sobre este aumento en el valor de los subcontratos.
+        Se notificarÃ¡ a <strong>SubdirecciÃ³n</strong> por correo electrÃ³nico sobre este aumento en el valor de los subcontratos.
       </div>
       <div class="sc-fa">
         <button class="btn-sc-s" onclick="scCancelarExceso()">Cancelar</button>
@@ -1657,7 +1638,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
       scExcesoCallback = callback;
       var exceso = nuevaSuma - costoDirecto;
       scEl('sc-exceso-detalle').innerHTML =
-        '<p>La suma total de subcontratos (<strong>' + scFmt(nuevaSuma) + '</strong>) superará el costo directo de la obra (<strong>' + scFmt(costoDirecto) + '</strong>).</p>' +
+        '<p>La suma total de subcontratos (<strong>' + scFmt(nuevaSuma) + '</strong>) superarÃ¡ el costo directo de la obra (<strong>' + scFmt(costoDirecto) + '</strong>).</p>' +
         '<p>Exceso: <strong style="color:#c0392b">' + scFmt(exceso) + '</strong></p>';
       scEl('sc-modal-exceso').classList.add('open');
     }
@@ -1669,13 +1650,13 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
     function scConfirmarExceso() {
       scEl('sc-modal-exceso').classList.remove('open');
-      // Enviar notificación por correo
+      // Enviar notificaciÃ³n por correo
       scAjax({
         action: 'notificar_exceso_subcontratos',
         obra_id: SC_OBRA_ID
       }, function(e, r) {
-        if (!r.success) scToast('Aviso: no se pudo enviar el correo a subdirección', 'error');
-        else scToast('Notificación enviada a subdirección', 'info');
+        if (!r.success) scToast('Aviso: no se pudo enviar el correo a subdirecciÃ³n', 'error');
+        else scToast('NotificaciÃ³n enviada a subdirecciÃ³n', 'info');
       });
       // Ejecutar el guardado
       if (scExcesoCallback) scExcesoCallback();
@@ -1692,7 +1673,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
       });
     });
 
-    // Función para editar obra
+    // FunciÃ³n para editar obra
     function editarObra(id) {
       fetch(`edit_obra.php?id=${id}`)
         .then(res => {
@@ -1719,7 +1700,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                     </div>
 
                     <div class="mb-2">
-                      <label class="form-label">Número de Obra</label>
+                      <label class="form-label">NÃºmero de Obra</label>
                       <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
                     </div>
 
@@ -1729,8 +1710,8 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                     </div>
 
                     <div class="mb-2">
-                      <label class="form-label">Descripción</label>
-                      <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos y características de la obra...">${data.descripcion || ''}</textarea>
+                      <label class="form-label">DescripciÃ³n</label>
+                      <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos y caracterÃ­sticas de la obra...">${data.descripcion || ''}</textarea>
                     </div>
 
                     <div class="row">
@@ -1772,13 +1753,13 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 .then(res => res.json())
                 .then(resp => {
                   if (resp.status === "success") {
-                    Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
+                    Swal.fire("Â¡Ã‰xito!", "Obra actualizada correctamente", "success")
                       .then(() => location.reload());
                   } else {
                     Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
                   }
                 })
-                .catch(() => Swal.showValidationMessage("Error de conexión"));
+                .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
             }
           });
         })
@@ -1788,7 +1769,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         });
     }
 
-    // Función para gestionar archivos de obra
+    // FunciÃ³n para gestionar archivos de obra
     function gestionarArchivos(obraId) {
       fetch(`get_archivos_obra.php?obra_id=${obraId}`)
         .then(res => res.json())
@@ -1798,9 +1779,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                   <form id="formSubirArchivo" enctype="multipart/form-data">
                     <input type="hidden" name="obra_id" value="${obraId}">
                     <div class="mb-2">
-                      <label class="form-label">Subir archivo PDF (Máximo 5 archivos)</label>
+                      <label class="form-label">Subir archivo PDF (MÃ¡ximo 5 archivos)</label>
                       <input type="file" name="archivo" class="form-control" accept=".pdf" required>
-                      <small class="text-muted">Tamaño máximo: 10MB</small>
+                      <small class="text-muted">TamaÃ±o mÃ¡ximo: 10MB</small>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm" onclick="subirArchivoObra()">
                       <i class="bi bi-upload"></i> Subir PDF
@@ -1838,7 +1819,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
           }
 
           Swal.fire({
-            title: 'Gestión de Archivos PDF',
+            title: 'GestiÃ³n de Archivos PDF',
             html: archivosHtml,
             width: 700,
             showCloseButton: true,
@@ -1851,7 +1832,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         });
     }
 
-    // Función para subir archivo de obra
+    // FunciÃ³n para subir archivo de obra
     function subirArchivoObra() {
       const form = document.getElementById('formSubirArchivo');
       const formData = new FormData(form);
@@ -1863,7 +1844,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         .then(res => res.json())
         .then(data => {
           if (data.status === 'success') {
-            Swal.fire('¡Éxito!', data.message, 'success')
+            Swal.fire('Â¡Ã‰xito!', data.message, 'success')
               .then(() => {
                 const obraId = formData.get('obra_id');
                 gestionarArchivos(obraId);
@@ -1878,14 +1859,14 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         });
     }
 
-    // Función para eliminar archivo de obra
+    // FunciÃ³n para eliminar archivo de obra
     function eliminarArchivoObra(archivoId, obraId) {
       Swal.fire({
-        title: '¿Eliminar archivo?',
-        text: 'Esta acción no se puede deshacer',
+        title: 'Â¿Eliminar archivo?',
+        text: 'Esta acciÃ³n no se puede deshacer',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'SÃ­, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#dc3545'
       }).then((result) => {
@@ -1902,7 +1883,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             .then(res => res.json())
             .then(data => {
               if (data.status === 'success') {
-                Swal.fire('¡Eliminado!', data.message, 'success')
+                Swal.fire('Â¡Eliminado!', data.message, 'success')
                   .then(() => gestionarArchivos(obraId));
               } else {
                 Swal.fire('Error', data.message, 'error');
@@ -1916,25 +1897,25 @@ require_once __DIR__ . "/../config.php"; endif; ?>
       });
     }
 
-    // Función para ver PDF
+    // FunciÃ³n para ver PDF
     function verPDF(rutaArchivo) {
       window.open(rutaArchivo, '_blank');
     }
 
-    // Función para gestionar catálogos (necesaria para el botón)
+    // FunciÃ³n para gestionar catÃ¡logos (necesaria para el botÃ³n)
     function gestionarCatalogos(obraId, obraNombre) {
-      // Esta función debe estar definida en catalogo-obras.js
+      // Esta funciÃ³n debe estar definida en catalogo-obras.js
       if (typeof gestionarCatalogos === 'function') {
         gestionarCatalogos(obraId, obraNombre);
       } else {
-        console.error('Función gestionarCatalogos no disponible');
-        // Recargar la página como fallback
+        console.error('FunciÃ³n gestionarCatalogos no disponible');
+        // Recargar la pÃ¡gina como fallback
         location.reload();
       }
     }
   </script>
 
-  <!-- Cargar subcontratos al cargar la página -->
+  <!-- Cargar subcontratos al cargar la pÃ¡gina -->
   <script>
     var SC_OBRA_ID = <?= (int)$obra_id ?>;
     var scLista = [],
@@ -2220,7 +2201,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
       // Calcular suma total de subcontratos existentes (excluyendo el que se edita)
       var sumaActual = scLista.reduce(function(s, x) {
-        if (id && x.id == id) return s; // excluir el que se está editando
+        if (id && x.id == id) return s; // excluir el que se estÃ¡ editando
         return s + parseFloat(x.total_estimado || 0) + parseFloat(x.total_extraordinarios || 0);
       }, 0);
 
@@ -2228,9 +2209,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
       var costoDirecto = <?= (float)$obra['costo_directo'] ?>;
 
       if (nuevaSuma > costoDirecto) {
-        // Mostrar modal de notificación antes de guardar
+        // Mostrar modal de notificaciÃ³n antes de guardar
         scMostrarModalExceso(nuevaSuma, costoDirecto, function() {
-          // El usuario confirmó, continuar guardando
+          // El usuario confirmÃ³, continuar guardando
           scEjecutarGuardar(id, proveedor_id, total, pct, desc);
         });
       } else {
@@ -2585,12 +2566,11 @@ require_once __DIR__ . "/../config.php"; endif; ?>
   <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
 
   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
+
 
 

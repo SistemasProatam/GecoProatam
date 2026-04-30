@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 /**
  * QR Generator – PROATAM
  * Genera códigos QR utilizando phpqrcode y fallback con GD.
@@ -37,7 +36,7 @@ class QRGenerator
 
     public static function generarYGuardar(string $token): ?string
     {
-        $dir = $_SERVER['DOCUMENT_ROOT'] . self::QR_DIR;
+        $dir = __DIR__ . '/..' . self::QR_DIR;
 
         $nombre = 'qr_' . $token . '.png';
 
@@ -101,7 +100,7 @@ class QRGenerator
 
         // 1. Si existe archivo guardado
 
-        if ($saved && file_exists($_SERVER['DOCUMENT_ROOT'] . $saved)) {
+        if ($saved && file_exists(__DIR__ . '/..' . $saved)) {
             return $saved;
         }
 
@@ -109,7 +108,7 @@ class QRGenerator
 
         $nuevo = self::generarYGuardar($token);
 
-        if ($nuevo && file_exists($_SERVER['DOCUMENT_ROOT'] . $nuevo)) {
+        if ($nuevo && file_exists(__DIR__ . '/..' . $nuevo)) {
             return $nuevo;
         }
 
@@ -155,7 +154,7 @@ class QRGenerator
 
     public static function eliminar(string $token): void
     {
-        $ruta = $_SERVER['DOCUMENT_ROOT'] . self::QR_DIR . 'qr_' . $token . '.png';
+        $ruta = __DIR__ . '/..' . self::QR_DIR . 'qr_' . $token . '.png';
 
         if (file_exists($ruta)) {
             unlink($ruta);

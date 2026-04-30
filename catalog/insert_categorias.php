@@ -1,18 +1,16 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
     exit;
 }
 
@@ -37,7 +35,7 @@ try {
     if ($stmt->execute()) {
         echo json_encode([
             'status' => 'success',
-            'message' => 'Categoría creada exitosamente',
+            'message' => 'CategorÃ­a creada exitosamente',
             'id' => $conn->insert_id
         ]);
     } else {
@@ -47,9 +45,10 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'Error al crear la categoría: ' . $e->getMessage()
+        'message' => 'Error al crear la categorÃ­a: ' . $e->getMessage()
     ]);
 }
 ?>
+
 
 

@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cliente_id = $_POST['cliente_id'] ?? null;
@@ -24,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $monto_con_iva = floatval($_POST['monto_con_iva']);
     $costo_directo = floatval($_POST['costo_directo']);
 
-    // Validaciones básicas
+    // Validaciones bÃ¡sicas
     if (empty($numero_licitacion) || empty($numero_contrato) || empty($nombre_proyecto) || 
         empty($fecha_inicio) || empty($fecha_fin)) {
         echo json_encode(['status' => 'error', 'message' => 'Todos los campos obligatorios deben ser completados']);
@@ -41,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Verificar si ya existe un proyecto con el mismo número de contrato
+    // Verificar si ya existe un proyecto con el mismo nÃºmero de contrato
     $sql_check = "SELECT id FROM proyectos WHERE numero_contrato = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param("s", $numero_contrato);
@@ -49,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result_check = $stmt_check->get_result();
 
     if ($result_check->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Ya existe un proyecto con este número de contrato']);
+        echo json_encode(['status' => 'error', 'message' => 'Ya existe un proyecto con este nÃºmero de contrato']);
         exit;
     }
 
@@ -88,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
 }
 ?>
+
 

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../config.php";
-require_once __DIR__ . "/../../../config.php";
 $type = 'Core';
 $name = 'Helvetica-Oblique';
 $up = -100;

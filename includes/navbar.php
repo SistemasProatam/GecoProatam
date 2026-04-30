@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . '/../config.php';
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -29,7 +27,9 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/navbar.css" />
-
+  <script>
+    window.BASE_URL = '<?= BASE_URL ?>';
+  </script>
 </head>
 
 <body>
@@ -79,15 +79,11 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
 
         <!-- DEPARTAMENTO EN SESIÓN -->
         <p class="dept-label"><?php
-                              require_once __DIR__ . "/../config.php";
-                              require_once __DIR__ . "/../config.php";
                               echo htmlspecialchars($departamento_sesion); ?></p>
         <div class="separator"></div>
 
         <!-- ACTIVOS - Elemento simple -->
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         $ver_activos = in_array($departamento_sesion, [
           'Director General',
           'Subdirector General',
@@ -99,8 +95,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         ]);
         ?>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         if ($ver_activos): ?>
           <a href="<?= BASE_URL ?>/activos/list_activos.php" class="text-decoration-none">
             <li class="simple-menu-item">
@@ -109,14 +103,10 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </li>
           </a>
         <?php
-          require_once __DIR__ . "/../config.php";
-          require_once __DIR__ . "/../config.php";
         endif; ?>
 
         <!-- CATÁLOGO - Elemento simple -->
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         $ver_catalogo = in_array($departamento_sesion, [
           'Director General',
           'Subdirector General',
@@ -127,8 +117,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         ]);
         ?>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         if ($ver_catalogo): ?>
           <a href="<?= BASE_URL ?>/catalog/list_catalog.php" class="text-decoration-none">
             <li class="simple-menu-item">
@@ -137,14 +125,10 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </li>
           </a>
         <?php
-          require_once __DIR__ . "/../config.php";
-          require_once __DIR__ . "/../config.php";
         endif; ?>
 
         <!-- PROYECTOS - Con submenu -->
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         $ver_proyectos = in_array($departamento_sesion, [
           'Director General',
           'Subdirector General',
@@ -155,8 +139,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         ]);
         ?>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         if ($ver_proyectos): ?>
           <li class="menu-item" id="ProyectosMenu">
             <button class="menu-header" onclick="toggleSubmenu('ProyectosMenu')">
@@ -166,8 +148,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </button>
             <div class="submenu">
               <?php
-              require_once __DIR__ . "/../config.php";
-              require_once __DIR__ . "/../config.php";
               $ver_plan_obra = in_array($departamento_sesion, [
                 'Director General',
                 'Subdirector General',
@@ -177,15 +157,11 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
               ]);
               ?>
               <?php
-              require_once __DIR__ . "/../config.php";
-              require_once __DIR__ . "/../config.php";
               if ($ver_plan_obra): ?>
                 <a href="<?= BASE_URL ?>/projects/plan_obra.php" class="submenu-item">
                   <i class="bi bi-calendar4-range"></i> Plan de Obra
                 </a>
               <?php
-                require_once __DIR__ . "/../config.php";
-                require_once __DIR__ . "/../config.php";
               endif; ?>
               <a href="<?= BASE_URL ?>/projects/list_project.php" class="submenu-item">
                 <i class="bi bi-building"></i> Ver Proyectos
@@ -193,8 +169,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </div>
           </li>
         <?php
-          require_once __DIR__ . "/../config.php";
-          require_once __DIR__ . "/../config.php";
         endif; ?>
 
         <!-- COTIZACIONES - Con submenu  PENDIENTE -->
@@ -202,8 +176,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
 
         <!-- ÓRDENES DE COMPRA - Con submenu -->
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         $ver_ordenes = in_array($departamento_sesion, [
           'Director General',
           'Subdirector General',
@@ -215,8 +187,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         ]);
         ?>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         if ($ver_ordenes): ?>
           <li class="menu-item" id="ordenesMenu">
             <button class="menu-header" onclick="toggleSubmenu('ordenesMenu')">
@@ -226,8 +196,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </button>
             <div class="submenu">
               <?php
-              require_once __DIR__ . "/../config.php";
-              require_once __DIR__ . "/../config.php";
               $crear_orden = in_array($departamento_sesion, [
                 'Director General',
                 'Subdirector General',
@@ -238,15 +206,11 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
               ]);
               ?>
               <?php
-              require_once __DIR__ . "/../config.php";
-              require_once __DIR__ . "/../config.php";
               if ($crear_orden): ?>
                 <a href="<?= BASE_URL ?>/orders/new_order.php" class="submenu-item">
                   <i class="bi bi-plus-circle"></i> Crear Nueva Orden
                 </a>
               <?php
-                require_once __DIR__ . "/../config.php";
-                require_once __DIR__ . "/../config.php";
               endif; ?>
               <a href="<?= BASE_URL ?>/orders/list_oc.php" class="submenu-item">
                 <i class="bi bi-list-ul"></i> Ver Registros
@@ -254,14 +218,10 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </div>
           </li>
         <?php
-          require_once __DIR__ . "/../config.php";
-          require_once __DIR__ . "/../config.php";
         endif; ?>
 
         <!-- REQUISICIONES - Con submenu -->
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         $ver_requisiciones = in_array($departamento_sesion, [
           'Director General',
           'Subdirector General',
@@ -277,8 +237,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         ]);
         ?>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         if ($ver_requisiciones): ?>
           <li class="menu-item" id="requisMenu">
             <button class="menu-header" onclick="toggleSubmenu('requisMenu')">
@@ -288,8 +246,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </button>
             <div class="submenu">
               <?php
-              require_once __DIR__ . "/../config.php";
-              require_once __DIR__ . "/../config.php";
               $crear_requisicion = in_array($departamento_sesion, [
                 'Director General',
                 'Subdirector General',
@@ -305,15 +261,11 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
               ]);
               ?>
               <?php
-              require_once __DIR__ . "/../config.php";
-              require_once __DIR__ . "/../config.php";
               if ($crear_requisicion): ?>
                 <a href="<?= BASE_URL ?>/orders/new_requis.php" class="submenu-item">
                   <i class="bi bi-plus-circle"></i> Crear Requisición
                 </a>
               <?php
-                require_once __DIR__ . "/../config.php";
-                require_once __DIR__ . "/../config.php";
               endif; ?>
               <a href="<?= BASE_URL ?>/orders/list_requis.php" class="submenu-item">
                 <i class="bi bi-list-ul"></i> Ver Registros
@@ -321,8 +273,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </div>
           </li>
         <?php
-          require_once __DIR__ . "/../config.php";
-          require_once __DIR__ . "/../config.php";
         endif; ?>
       </ul>
 
@@ -330,8 +280,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
 
       <!-- ADMINISTRACIÓN DE USUARIOS - Solo para autorizados -->
       <?php
-      require_once __DIR__ . "/../config.php";
-      require_once __DIR__ . "/../config.php";
       $ver_admin_usuarios = in_array($departamento_sesion, [
         'Director General',
         'Subdirector General',
@@ -340,8 +288,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
       ]);
       ?>
       <?php
-      require_once __DIR__ . "/../config.php";
-      require_once __DIR__ . "/../config.php";
       if ($ver_admin_usuarios): ?>
         <ul class="menu-list">
           <a href="<?= BASE_URL ?>/users/list_users.php" class="text-decoration-none">
@@ -351,8 +297,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </li>
           </a>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
       endif; ?>
 
         <!-- Solicitud de mantenimiento - Elemento simple -->
@@ -365,8 +309,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
 
         <!-- Dashboard -->
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         $ver_dash = in_array($departamento_sesion, [
           'Director General',
           'Subdirector General',
@@ -375,8 +317,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         ]);
         ?>
         <?php
-        require_once __DIR__ . "/../config.php";
-        require_once __DIR__ . "/../config.php";
         if ($ver_dash): ?>
           <a href="<?= BASE_URL ?>/dashboard.php" class="text-decoration-none">
             <li class="simple-menu-item">
@@ -385,8 +325,6 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
             </li>
           </a>
         <?php
-          require_once __DIR__ . "/../config.php";
-          require_once __DIR__ . "/../config.php";
         endif; ?>
         </ul>
 

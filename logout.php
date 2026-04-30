@@ -48,11 +48,9 @@ if (ini_get("session.use_cookies")) {
 
 <script>
 const message = "<?php
-require_once "config.php";
 
 echo $message; ?>";
 const icon = "<?php
-require_once "config.php";
 
 echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
 
@@ -65,7 +63,7 @@ Swal.fire({
     timerProgressBar: true,
     willClose: () => {
         // Redirigir automáticamente al login al cerrar el modal
-        window.location.href = '/login.php';
+        window.location.href = '<?= BASE_URL ?>/login.php';
     }
 });
 </script>

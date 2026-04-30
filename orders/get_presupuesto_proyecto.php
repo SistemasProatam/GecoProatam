@@ -1,22 +1,20 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 header('Content-Type: application/json');
 
 $proyecto_id = (int)($_GET['proyecto_id'] ?? 0);
 
 if ($proyecto_id <= 0) {
-    echo json_encode(['error' => 'ID de proyecto inválido']);
+    echo json_encode(['error' => 'ID de proyecto invÃ¡lido']);
     exit;
 }
 
-// Información básica del proyecto
+// InformaciÃ³n bÃ¡sica del proyecto
 $stmt_proyecto = $conn->prepare(
     "SELECT id, nombre_proyecto, costo_directo AS total_proyecto
      FROM proyectos WHERE id = ?"
@@ -70,4 +68,5 @@ echo json_encode([
     'obras' => $obras,
 ]);
 ?>
+
 

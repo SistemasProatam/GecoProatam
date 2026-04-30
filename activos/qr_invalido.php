@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 $razon = $_GET['razon'] ?? 'departamento';
 $mensajes = [
     'token'        => 'El código QR no tiene un formato válido.',
@@ -32,7 +30,7 @@ $mensaje = $mensajes[$razon] ?? $mensajes['desconocido'];
     <h2 class="fw-bold mb-2">Acceso restringido</h2>
     <p>No tienes permisos para visualizar la información de este activo.</p>
     <p class="text-muted mb-4"><?= htmlspecialchars($mensaje) ?></p>
-    <a href="index.php" class="btn btn-primary" style="background:#113456; border-color:#113456;">
+    <a href="<?= BASE_URL ?>/index.php" class="btn btn-primary" style="background:#113456; border-color:#113456;">
       <i class="bi bi-house-door"></i> Ir al inicio
     </a>
   </div>

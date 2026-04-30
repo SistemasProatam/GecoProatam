@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 // ============================================================
 // generar_pdf.php — Solo genera y envía el PDF (VERSIÓN CORREGIDA)
 // Cambios: Tabla estilo amarillo, totales compactos, firma en primera hoja

@@ -1,11 +1,9 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-include(__DIR__ . "/../conexion.php");
+﻿<?php
+require_once __DIR__ . "/../conexion.php";
 
 $requisicion_id = $_GET['requisicion_id'] ?? null;
 if (!$requisicion_id) {
-    echo json_encode(["error" => "Falta ID de requisición"]);
+    echo json_encode(["error" => "Falta ID de requisiciÃ³n"]);
     exit;
 }
 
@@ -26,5 +24,6 @@ while ($row = $result->fetch_assoc()) {
 }
 
 echo json_encode($items);
+
 
 

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../config.php";
-require_once __DIR__ . "/../../../config.php";
 require('../fpdf.php');
 
 class PDF extends FPDF
@@ -11,7 +9,7 @@ function Header()
 
 	// Arial bold 15
 	$this->SetFont('Arial','B',15);
-	// Calculamos ancho y posición del título.
+	// Calculamos ancho y posiciï¿½n del tï¿½tulo.
 	$w = $this->GetStringWidth($title)+6;
 	$this->SetX((210-$w)/2);
 	// Colores de los bordes, fondo y texto
@@ -20,22 +18,22 @@ function Header()
 	$this->SetTextColor(220,50,50);
 	// Ancho del borde (1 mm)
 	$this->SetLineWidth(1);
-	// Título
+	// Tï¿½tulo
 	$this->Cell($w,9,$title,1,1,'C',true);
-	// Salto de línea
+	// Salto de lï¿½nea
 	$this->Ln(10);
 }
 
 function Footer()
 {
-	// Posición a 1,5 cm del final
+	// Posiciï¿½n a 1,5 cm del final
 	$this->SetY(-15);
-	// Arial itálica 8
+	// Arial itï¿½lica 8
 	$this->SetFont('Arial','I',8);
 	// Color del texto en gris
 	$this->SetTextColor(128);
-	// Número de página
-	$this->Cell(0,10,'Página '.$this->PageNo(),0,0,'C');
+	// Nï¿½mero de pï¿½gina
+	$this->Cell(0,10,'Pï¿½gina '.$this->PageNo(),0,0,'C');
 }
 
 function ChapterTitle($num, $label)
@@ -44,9 +42,9 @@ function ChapterTitle($num, $label)
 	$this->SetFont('Arial','',12);
 	// Color de fondo
 	$this->SetFillColor(200,220,255);
-	// Título
-	$this->Cell(0,6,"Capítulo $num : $label",0,1,'L',true);
-	// Salto de línea
+	// Tï¿½tulo
+	$this->Cell(0,6,"Capï¿½tulo $num : $label",0,1,'L',true);
+	// Salto de lï¿½nea
 	$this->Ln(4);
 }
 
@@ -58,9 +56,9 @@ function ChapterBody($file)
 	$this->SetFont('Times','',12);
 	// Imprimimos el texto justificado
 	$this->MultiCell(0,5,$txt);
-	// Salto de línea
+	// Salto de lï¿½nea
 	$this->Ln();
-	// Cita en itálica
+	// Cita en itï¿½lica
 	$this->SetFont('','I');
 	$this->Cell(0,5,'(fin del extracto)');
 }

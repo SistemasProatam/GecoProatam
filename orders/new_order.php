@@ -1,18 +1,15 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; 
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
-// Requisición relacionada 
+// RequisiciÃ³n relacionada 
 $requisicion_id = $_GET['requisicion_id'] ?? '';
 $requisicion = null;
 $archivos_requisicion = [];
@@ -39,8 +36,8 @@ if (!empty($requisicion_id)) {
         $descripcion_requisicion = $requisicion['descripcion'] ?? '';
         $observaciones_requisicion = $requisicion['observaciones'] ?? '';
 
-        // Obtener archivos de la requisición
-        $sql_archivos = "SELECT id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime 
+        // Obtener archivos de la requisiciÃ³n
+        $sql_archivos = "SELECT id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime 
                          FROM requisicion_archivos 
                          WHERE requisicion_id = ?";
         $stmt_archivos = $conn->prepare($sql_archivos);
@@ -93,7 +90,7 @@ if ($result_productos && $result_productos->num_rows > 0) {
     $result_productos->data_seek(0);
 }
 
-// Obtener items de la requisición si existe
+// Obtener items de la requisiciÃ³n si existe
 $requisicion_items = [];
 if (!empty($requisicion_id)) {
     $sql_items = "SELECT ri.*, ri.concepto_id, ps.nombre as producto_nombre, ps.tipo as producto_tipo, u.nombre as unidad_nombre 
@@ -110,8 +107,8 @@ if (!empty($requisicion_id)) {
         $requisicion_items[] = $item;
     }
     
-    // DEBUG: Registrar en consola qué se está obteniendo
-    error_log("DEBUG - Items de requisición para ID $requisicion_id: " . count($requisicion_items));
+    // DEBUG: Registrar en consola quÃ© se estÃ¡ obteniendo
+    error_log("DEBUG - Items de requisiciÃ³n para ID $requisicion_id: " . count($requisicion_items));
     foreach($requisicion_items as $index => $item) {
         error_log("DEBUG - Item $index: " . 
                  "ID: {$item['id']}, " .
@@ -201,9 +198,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
   <body>
 
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -211,7 +206,7 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
     <div class="breadcrumb-custom">
       <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
+      <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Ã“rdenes de Compra</a>
       <span>/</span>
       <span>Nueva Orden de Compra</span>
     </div>
@@ -235,29 +230,29 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
         <div class="form-body">
 
           <form id="ordenCompraForm" method="POST" action="save_orden.php" enctype="multipart/form-data">
-            <!-- Información General -->
+            <!-- InformaciÃ³n General -->
             <div>
               <p>
                 Este formulario debe ser completado por el personal autorizado
                 para solicitar la compra de bienes o servicios, o para requerir
                 el pago de facturas y compromisos adquiridos por la
-                organización. <br />
-                <b>Importante:</b> El envío de este formulario no garantiza la
-                aprobación automática del pago o compra. Asegúrese de cumplir
+                organizaciÃ³n. <br />
+                <b>Importante:</b> El envÃ­o de este formulario no garantiza la
+                aprobaciÃ³n automÃ¡tica del pago o compra. AsegÃºrese de cumplir
                 con los procedimientos y tiempos establecidos por la
-                organización.
+                organizaciÃ³n.
               </p>
             </div>
             <div class="section-title">
               <i class="bi bi-info-circle"></i>
-              Información General
+              InformaciÃ³n General
             </div>
 
-            <!-- Requisición Relacionada -->
+            <!-- RequisiciÃ³n Relacionada -->
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label">Requisición Relacionada</label>
+                  <label class="form-label">RequisiciÃ³n Relacionada</label>
                   <input type="text" class="form-control" value="<?= htmlspecialchars($folio_requisicion) ?>" readonly />
                   <input type="hidden" name="requisicion_id" value="<?= $requisicion_id ?>">
                 </div>
@@ -267,7 +262,7 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
                 <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-label"
-                    >Número de Orden <span class="required">*</span></label
+                    >NÃºmero de Orden <span class="required">*</span></label
                   >
                   <input
                     type="text"
@@ -309,9 +304,7 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
                 placeholder="Nombre de quien realiza la orden de compra"
                 required
                 value="<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
                 readonly
                 />
                 <input type="hidden" name="solicitante_id" value="<?= $_SESSION['user_id'] ?>">
@@ -332,10 +325,7 @@ require_once __DIR__ . "/../config.php"; echo htmlspecialchars($_SESSION['nombre
                 <option value="">Seleccionar Entidad</option>
 
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                if ($result_entidades && $result_entidades->num_rows > 0) {
+if ($result_entidades && $result_entidades->num_rows > 0) {
                   while ($row = $result_entidades->fetch_assoc()) {
 
                     $selected = ($requisicion && $requisicion['entidad_id'] == $row['id']) ? "selected" : "";
@@ -366,10 +356,7 @@ require_once __DIR__ . "/../config.php";
                 <option value="">Seleccionar Proyecto</option>
 
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                if ($result_proyectos && $result_proyectos->num_rows > 0) {
+if ($result_proyectos && $result_proyectos->num_rows > 0) {
 
                   while ($row = $result_proyectos->fetch_assoc()) {
 
@@ -394,7 +381,7 @@ require_once __DIR__ . "/../config.php";
 
         </div>
 
-        <!-- Obra / Catálogo -->
+        <!-- Obra / CatÃ¡logo -->
         <div class="row">
 
           <div class="col-md-6">
@@ -406,47 +393,44 @@ require_once __DIR__ . "/../config.php";
                       name="obra"
                       onchange="cargarCatalogos()">
 
-                <option value="">-- Sin obra específica --</option>
+                <option value="">-- Sin obra especÃ­fica --</option>
               </select>
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label">Catálogo</label>
+              <label class="form-label">CatÃ¡logo</label>
 
               <select class="form-select"
                       id="catalogo"
                       name="catalogo"
                       onchange="cargarConceptosEnItems()">
 
-                <option value="">-- Sin catálogo específico --</option>
+                <option value="">-- Sin catÃ¡logo especÃ­fico --</option>
               </select>
             </div>
           </div>
 
         </div>
 
-        <!-- Categoría / Proveedor -->
+        <!-- CategorÃ­a / Proveedor -->
         <div class="row">
 
           <div class="col-md-6">
             <div class="form-group">
 
               <label class="form-label">
-                Categoría <span class="required">*</span>
+                CategorÃ­a <span class="required">*</span>
               </label>
               <select class="form-select"
                       id="categoria"
                       name="categoria"
                       required
                       onchange="handleCategoriaChange()">
-                <option value="">Seleccionar Categoría</option>
+                <option value="">Seleccionar CategorÃ­a</option>
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                if ($result_categorias && $result_categorias->num_rows > 0) {
+if ($result_categorias && $result_categorias->num_rows > 0) {
                   while ($row = $result_categorias->fetch_assoc()) {
                     $selected = ($requisicion && $requisicion['categoria_id'] == $row['id']) ? "selected" : "";
                     echo '<option value="' . htmlspecialchars($row['id']) . '" ' . $selected . '>'
@@ -466,10 +450,7 @@ require_once __DIR__ . "/../config.php";
             <select class="form-select" id="proveedor" name="proveedor" required>
               <option value="">Seleccionar proveedor</option>
               <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-              if ($result_proveedores && $result_proveedores->num_rows > 0) {
+if ($result_proveedores && $result_proveedores->num_rows > 0) {
                 while ($row = $result_proveedores->fetch_assoc()) {
                   echo '<option value="' . htmlspecialchars($row['id']) . '">'
                     . htmlspecialchars($row['razon_social']) .
@@ -480,7 +461,7 @@ require_once __DIR__ . "/../config.php";
             </select>
             <small class="text-muted d-block mt-1">
               <i class="bi bi-info-circle"></i>
-              En caso de seleccionar un subcontrato, este valor se seleccionará automáticamente.  
+              En caso de seleccionar un subcontrato, este valor se seleccionarÃ¡ automÃ¡ticamente.  
             </small>
           </div>
         </div>
@@ -499,7 +480,7 @@ require_once __DIR__ . "/../config.php";
                 </select>
                 <small class="text-muted d-block mt-1">
                     <i class="bi bi-info-circle"></i>
-                    Seleccione el subcontrato que se utilizará para esta orden de compra.
+                    Seleccione el subcontrato que se utilizarÃ¡ para esta orden de compra.
                 </small>
             </div>
         </div>
@@ -583,17 +564,17 @@ require_once __DIR__ . "/../config.php";
                 <thead>
                   <tr>
                     <th style="width: 5%">#</th>
-                    <th style="width: 30%">Descripción</th>
+                    <th style="width: 30%">DescripciÃ³n</th>
                     <th style="width: 10%">Cantidad</th>
                     <th style="width: 12%">Unidad</th>
                     <th style="width: 15%">Concepto</th>
                     <th style="width: 14%">Precio Unit.</th>
                     <th style="width: 15%">Subtotal</th>
-                    <th style="width: 10%">Acción</th>
+                    <th style="width: 10%">AcciÃ³n</th>
                   </tr>
                 </thead>
                 <tbody>
-                   <!-- Las filas se agregarán dinámicamente desde el catálogo -->
+                   <!-- Las filas se agregarÃ¡n dinÃ¡micamente desde el catÃ¡logo -->
                 </tbody>
               </table>
             </div>
@@ -626,28 +607,28 @@ require_once __DIR__ . "/../config.php";
               </div>
             </div>
 
-             <!-- Información del Presupuesto -->
+             <!-- InformaciÃ³n del Presupuesto -->
             <div id="alertPresupuesto" class="presupuesto-alert" style="display: none;"></div>
 
-            <!-- Descripción -->
+            <!-- DescripciÃ³n -->
             <div class="section-title">
               <i class="bi bi-chat-text"></i>
-              Descripción
+              DescripciÃ³n
             </div>
 
             <div class="form-group">
               <label class="form-label"
                 >Describa de forma general y clara el bien o servicio que se
                 requiere, indicando su uso o finalidad, la cantidad aproximada y
-                cualquier detalle relevante que facilite su identificación o
-                cotización.</label
+                cualquier detalle relevante que facilite su identificaciÃ³n o
+                cotizaciÃ³n.</label
               >
               <textarea
                 class="form-control"
                 id="descripcion"
                 name="descripcion_general"
                 rows="3"
-                placeholder="Ingrese descripción general del bien o servicio..."
+                placeholder="Ingrese descripciÃ³n general del bien o servicio..."
               ><?= htmlspecialchars($descripcion_requisicion) ?></textarea>
             </div>
 
@@ -661,7 +642,7 @@ require_once __DIR__ . "/../config.php";
               <label class="form-label"
                 >Utilice este espacio para anotar detalles importantes, como
                 requisitos de empaque, condiciones de pago acordadas, contacto
-                para entrega o cualquier otra observación que deba tenerse en
+                para entrega o cualquier otra observaciÃ³n que deba tenerse en
                 cuenta para procesar esta orden.</label
               >
               <textarea
@@ -679,8 +660,8 @@ require_once __DIR__ . "/../config.php";
 <div class="form-group">
   <small class="text-muted d-block mt-2 mb-4">
     <i class="bi bi-info-circle"></i>
-    Cargue hasta 5 archivos seleccionándolos de uno en uno. 
-    Formatos permitidos: PDF, Word, Excel, imágenes. Tamaño máximo por archivo: 10 MB.  
+    Cargue hasta 5 archivos seleccionÃ¡ndolos de uno en uno. 
+    Formatos permitidos: PDF, Word, Excel, imÃ¡genes. TamaÃ±o mÃ¡ximo por archivo: 10 MB.  
   </small>
   
   <!-- Input visible para seleccionar archivos de uno en uno -->
@@ -708,16 +689,14 @@ require_once __DIR__ . "/../config.php";
   </ul>
 </div>
 
-<!-- Archivos heredados de la requisición (si existe) -->
+<!-- Archivos heredados de la requisiciÃ³n (si existe) -->
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if(!empty($archivos_requisicion)): ?>
+if(!empty($archivos_requisicion)): ?>
 <div class="mt-4">
-  <div class="section-title"><i class="bi bi-files"></i> Archivos de la Requisición</div>
+  <div class="section-title"><i class="bi bi-files"></i> Archivos de la RequisiciÃ³n</div>
   
   <div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> Los siguientes archivos provienen de la requisición. 
+    <i class="bi bi-info-circle"></i> Los siguientes archivos provienen de la requisiciÃ³n. 
     Puede eliminar los que no necesite para esta orden de compra.
   </div>
   
@@ -726,23 +705,21 @@ require_once __DIR__ . "/../config.php"; if(!empty($archivos_requisicion)): ?>
       <tr>
         <th style="width: 5%">#</th>
         <th style="width: 40%">Nombre</th>
-        <th style="width: 15%">Tamaño</th>
+        <th style="width: 15%">TamaÃ±o</th>
         <th style="width: 20%">Tipo</th>
-        <th style="width: 20%">Acción</th>
+        <th style="width: 20%">AcciÃ³n</th>
       </tr>
     </thead>
     <tbody id="tablaArchivos">
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; $i=1; foreach($archivos_requisicion as $archivo): ?>
+$i=1; foreach($archivos_requisicion as $archivo): ?>
         <tr data-archivo-id="<?= $archivo['id'] ?>">
           <td><?= $i++ ?></td>
           <td>
             <i class="bi bi-file-earmark-text"></i> 
             <?= htmlspecialchars($archivo['nombre_archivo']) ?>
           </td>
-          <td><?= round($archivo['tamaño_archivo']/1024, 2) ?> KB</td>
+          <td><?= round($archivo['tamaÃ±o_archivo']/1024, 2) ?> KB</td>
           <td><?= htmlspecialchars($archivo['tipo_mime']) ?></td>
           <td>
             <button type="button" 
@@ -758,16 +735,12 @@ require_once __DIR__ . "/../config.php"; $i=1; foreach($archivos_requisicion as 
           </td>
         </tr>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
+endforeach; ?>
     </tbody>
   </table>
 </div>
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
             <!-- Guardar -->
             <div class="form-actions mt-3">
@@ -775,7 +748,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             <!-- Contenedor de alertas -->
             <div id="alertContainer" class="mt-2"></div>
             
-              <div class="send-otxt">Esta orden de compra será evaluada y pagada por el Subdirector General y Gerente de Recursos Humanos.</div>
+              <div class="send-otxt">Esta orden de compra serÃ¡ evaluada y pagada por el Subdirector General y Gerente de Recursos Humanos.</div>
              <div class="container overflow-hidden text-center">
               <div class="row gx-5">
                 <div class="col">
@@ -792,12 +765,12 @@ require_once __DIR__ . "/../config.php"; endif; ?>
       </div>
     </div>
 
-    <!-- Modal para catálogo de productos -->
+    <!-- Modal para catÃ¡logo de productos -->
     <div class="modal fade" id="modalCatalogo" tabindex="-1">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
+            <h5 class="modal-title">CatÃ¡logo de Productos y Servicios</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
@@ -809,20 +782,16 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 <thead>
                   <tr>
                     <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>DescripciÃ³n</th>
                     <th>Tipo</th>
-                    <th>Acción</th>
+                    <th>AcciÃ³n</th>
                   </tr>
                 </thead>
                 <tbody id="tbodyCatalogo">
                   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($result_productos && $result_productos->num_rows > 0): ?>
+if ($result_productos && $result_productos->num_rows > 0): ?>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($producto = $result_productos->fetch_assoc()): ?>
+while ($producto = $result_productos->fetch_assoc()): ?>
                       <tr>
                         <td><?= htmlspecialchars($producto['nombre']) ?></td>
                         <td><?= htmlspecialchars($producto['descripcion'] ?? '') ?></td>
@@ -839,22 +808,16 @@ require_once __DIR__ . "/../config.php"; while ($producto = $result_productos->f
                         </td>
                       </tr>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+endwhile; ?>
                   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
                     <tr>
                       <td colspan="4" class="text-center text-muted">
                         No hay productos o servicios registrados
                       </td>
                     </tr>
                   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                 </tbody>
               </table>
             </div>
@@ -880,9 +843,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
     <!-- JavaScript Externo -->
     <script src="<?= BASE_URL ?>/assets/scripts/new_order.js"></script>
     
-    <!-- Configuración e Inicialización -->
+    <!-- ConfiguraciÃ³n e InicializaciÃ³n -->
     <script>
-      // Configuración desde PHP
+      // ConfiguraciÃ³n desde PHP
       const config = {
         productosCatalogo: <?= json_encode($productos_array) ?>,
         unidadOptions: '<?= $unidad_options ?>',
@@ -896,7 +859,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
         ]) : 'null' ?>
       };
 
-      // Inicializar cuando el DOM esté listo
+      // Inicializar cuando el DOM estÃ© listo
       document.addEventListener('DOMContentLoaded', function() {
         initNewOrder(config);
       });
@@ -909,18 +872,17 @@ require_once __DIR__ . "/../config.php"; endif; ?>
     if(tiposVisualizables.includes(tipoMime)) {
         window.open('/orders/view_archivo.php?id=' + archivoId, '_blank');
     } else {
-        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
+        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargarÃ¡ automÃ¡ticamente.');
         window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
     }
 }
     </script>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 
   </body>
 </html>
+
 
 

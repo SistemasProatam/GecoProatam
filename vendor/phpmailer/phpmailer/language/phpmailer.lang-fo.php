@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../../config.php";
 /**
  * Faroese PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer

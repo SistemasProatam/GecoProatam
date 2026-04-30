@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../config.php";
-require_once __DIR__ . "/../../../config.php";
 /*******************************************************************************
 * Utility to generate font definition files                                    *
 *                                                                              *
@@ -353,8 +351,6 @@ function SaveToFile($file, $s, $mode)
 function MakeDefinitionFile($file, $type, $enc, $embed, $subset, $map, $info)
 {
 	$s = "<?php
-require_once __DIR__ . "/../../../config.php";
-require_once __DIR__ . "/../../../config.php";\n";
 	$s .= '$type = \''.$type."';\n";
 	$s .= '$name = \''.$info['FontName']."';\n";
 	$s .= '$desc = '.MakeFontDescriptor($info).";\n";

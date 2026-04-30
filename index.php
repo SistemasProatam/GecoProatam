@@ -31,20 +31,17 @@ preventCaching();
   </head>
   <body>
         <?php
-require_once "config.php";
 
 include 'includes/navbar.php'; ?>
         
     <div class="content-wrapper">
         <div class="welcome-content">
           <?php
-require_once "config.php";
 
 $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? '';
           $primerApellido = explode(' ', trim($_SESSION['apellidos']))[0] ?? '';
           ?>
           <h1><strong>Bienvenido <?php
-require_once "config.php";
 
 echo htmlspecialchars($primerNombre . ' ' . $primerApellido); ?></strong></h1>
           <p class="welcome-title"><strong> Sistema de Gestión</strong></p>
@@ -52,7 +49,6 @@ echo htmlspecialchars($primerNombre . ' ' . $primerApellido); ?></strong></h1>
         </div>
     </div>
           <?php
-require_once "config.php";
 
 include 'includes/footer.php'; ?>
 

@@ -1,13 +1,10 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = intval($_GET['id']);
 
@@ -87,9 +84,7 @@ while ($dep = $departamentos->fetch_assoc()) {
 
 <body>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -124,9 +119,9 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                 <form id="formEditarUsuario" method="POST" action="update_user.php" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $user['id'] ?>">
 
-                    <!-- Información Básica -->
+                    <!-- InformaciÃ³n BÃ¡sica -->
                     <div class="section-title">
-                        <h4><i class="bi bi-person"></i> Información Básica</h4>
+                        <h4><i class="bi bi-person"></i> InformaciÃ³n BÃ¡sica</h4>
                     </div>
 
                     <div class="row">
@@ -167,7 +162,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Número de Celular Particular</label>
+                                <label class="form-label">NÃºmero de Celular Particular</label>
                                 <input type="text" name="telefono_personal" class="form-control"
                                     value="<?= htmlspecialchars($user['telefono_personal'] ?? '') ?>">
                             </div>
@@ -221,7 +216,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Número de Celular</label>
+                                <label class="form-label">NÃºmero de Celular</label>
                                 <input type="text" name="contacto_emergencia_telefono" class="form-control"
                                     value="<?= htmlspecialchars($user['contacto_emergencia_telefono'] ?? '') ?>">
                             </div>
@@ -238,65 +233,41 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
                         <div class="row">
                             <div class="col-md-6">
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
+mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('identificacion_pdf', 'Identificación Oficial', $user); ?>
+mostrarCampoArchivo('identificacion_pdf', 'IdentificaciÃ³n Oficial', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
+mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
+mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de Situación Fiscal', $user); ?>
+mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de SituaciÃ³n Fiscal', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
+mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('nss_pdf', 'Número de Seguro Social', $user); ?>
+mostrarCampoArchivo('nss_pdf', 'NÃºmero de Seguro Social', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
+mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
+mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('comprobante_estudios_pdf', 'Último Comprobante de Estudios', $user); ?>
+mostrarCampoArchivo('comprobante_estudios_pdf', 'Ãšltimo Comprobante de Estudios', $user); ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
+mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; mostrarSeccionContratos($id, $conn); ?>
+mostrarSeccionContratos($id, $conn); ?>
                             </div>
 
                         </div>
                     </div>
 
-                    <!-- Botones de acción -->
+                    <!-- Botones de acciÃ³n -->
                     <div class="d-flex justify-content-between mt-4">
                         <a href="details_user.php?id=<?= $user['id'] ?>" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Cancelar
@@ -311,20 +282,18 @@ require_once __DIR__ . "/../config.php"; mostrarSeccionContratos($id, $conn); ?>
     </div>
 
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesando… por favor espere</div>
+            <div class="mt-3">Procesandoâ€¦ por favor espere</div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Manejar el envío del formulario - Versión consolidada
+        // Manejar el envÃ­o del formulario - VersiÃ³n consolidada
         document.getElementById('formEditarUsuario').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -344,7 +313,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
                     if (data.status === 'success') {
                         Swal.fire({
                             icon: 'success',
-                            title: '¡Éxito!',
+                            title: 'Â¡Ã‰xito!',
                             html: data.message,
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
@@ -368,7 +337,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
                     if (overlay) overlay.style.display = 'none';
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexiÃ³n',
                         text: 'No se pudo conectar con el servidor',
                         confirmButtonText: 'Aceptar'
                     });
@@ -415,7 +384,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
                 if (contratoId) {
                     const input = item.querySelector('input[name="contrato_id[]"]');
                     if (input) {
-                        // Crear campo hidden para marcar eliminación
+                        // Crear campo hidden para marcar eliminaciÃ³n
                         const eliminarInput = document.createElement('input');
                         eliminarInput.type = 'hidden';
                         eliminarInput.name = 'eliminar_contrato[]';
@@ -440,10 +409,7 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.
 </html>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-// Función para mostrar campos de archivo
+// FunciÃ³n para mostrar campos de archivo
 function mostrarCampoArchivo($campo, $label, $user)
 {
     $archivo = $user[$campo] ?? '';
@@ -453,9 +419,7 @@ function mostrarCampoArchivo($campo, $label, $user)
         <label class="form-label"><?= $label ?></label>
         <input type="file" name="<?= $campo ?>" class="form-control" accept="<?= $accept ?>">
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($archivo): ?>
+if ($archivo): ?>
             <div class="current-file">
                 <i class="bi bi-file-earmark"></i> Archivo actual:
                 <a href="../uploads/usuarios/<?= htmlspecialchars($archivo) ?>" target="_blank">
@@ -463,29 +427,19 @@ require_once __DIR__ . "/../config.php"; if ($archivo): ?>
                 </a>
             </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
             <div class="current-file text-muted">
                 <i class="bi bi-file-earmark"></i> No hay archivo subido
             </div>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
     </div>
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 }
 ?>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-// Función para mostrar la sección de contratos
+// FunciÃ³n para mostrar la secciÃ³n de contratos
 function mostrarSeccionContratos($id, $conn)
 {
 ?>
@@ -493,10 +447,7 @@ function mostrarSeccionContratos($id, $conn)
         <label class="form-label">Contratos (PDF)</label>
         <div id="contratos-container">
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-            // Mostrar contratos existentes
+// Mostrar contratos existentes
             $sql_contratos = "SELECT * FROM contratos_usuario WHERE usuario_id = ? ORDER BY tipo_contrato DESC";
             $stmt_contratos = $conn->prepare($sql_contratos);
             $stmt_contratos->bind_param("i", $id);
@@ -511,9 +462,7 @@ require_once __DIR__ . "/../config.php";
                         <input type="hidden" name="contrato_id[]" value="<?= $contrato['id'] ?>">
 
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($contrato['nombre_archivo'])): ?>
+if (!empty($contrato['nombre_archivo'])): ?>
                             <div class="current-file mt-1">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="flex-grow-1">
@@ -541,33 +490,22 @@ require_once __DIR__ . "/../config.php"; if (!empty($contrato['nombre_archivo'])
                                 </div>
                             </div>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
                             <div class="current-file text-muted mt-1">
                                 <i class="bi bi-file-earmark"></i> No hay archivo subido
                             </div>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                     </div>
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                endwhile;
+endwhile;
             else:
                 ?>
                 <p class="text-muted">No hay contratos registrados.</p>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; $stmt_contratos->close(); ?>
+$stmt_contratos->close(); ?>
 
             <!-- Nuevos contratos -->
             <div id="nuevos-contratos"></div>
@@ -576,13 +514,11 @@ require_once __DIR__ . "/../config.php"; $stmt_contratos->close(); ?>
         <button type="button" class="btn btn-sm btn-secondary mt-2" id="agregar-contrato">
             <i class="bi bi-plus"></i> Agregar nuevo contrato
         </button>
-        <small class="text-muted d-block mt-1">Puedes agregar múltiples contratos</small>
+        <small class="text-muted d-block mt-1">Puedes agregar mÃºltiples contratos</small>
     </div>
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 }
 ?>
+
 
 

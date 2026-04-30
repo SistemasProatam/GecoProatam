@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -37,8 +35,6 @@ foreach ($entidades as $entidad) {
 </head>
 <body>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
@@ -69,8 +65,6 @@ require_once __DIR__ . "/../includes/navbar.php"; ?>
                 
                 <div class="row g-3">
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 foreach ($resultados as $res): ?>
                         <div class="col-md-6">
                             <div class="p-3 bg-light border rounded-3 d-flex align-items-center gap-3">
@@ -79,8 +73,6 @@ foreach ($resultados as $res): ?>
                             </div>
                         </div>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endforeach; ?>
                 </div>
 
@@ -110,8 +102,6 @@ endforeach; ?>
     </div>
 
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 include __DIR__ . "/../includes/footer.php"; ?>
     <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>

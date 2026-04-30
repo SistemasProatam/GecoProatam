@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 require_once __DIR__ . '/session_manager.php';
 
 header('Content-Type: application/json');

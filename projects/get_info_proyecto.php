@@ -1,20 +1,18 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $proyecto_id = $_GET['id'] ?? 0;
 
 if ($proyecto_id <= 0) {
-    echo json_encode(['error' => 'ID de proyecto inválido']);
+    echo json_encode(['error' => 'ID de proyecto invÃ¡lido']);
     exit;
 }
 
@@ -33,4 +31,5 @@ if (!$proyecto) {
 
 echo json_encode($proyecto);
 ?>
+
 

@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -9,14 +7,14 @@ preventCaching();
 
 header('Content-Type: application/json');
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = intval($_GET['id'] ?? 0);
 
 if ($id <= 0) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'ID inválido'
+        'message' => 'ID invÃ¡lido'
     ]);
     exit;
 }
@@ -38,5 +36,6 @@ if ($producto = $result->fetch_assoc()) {
         'message' => 'Producto o servicio no encontrado'
     ]);
 }
+
 
 

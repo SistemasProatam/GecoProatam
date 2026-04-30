@@ -1,24 +1,22 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $proyecto_id = $_GET['id'] ?? 0;
 
 if ($proyecto_id <= 0) {
-    echo json_encode(['status' => 'error', 'message' => 'ID de proyecto inválido']);
+    echo json_encode(['status' => 'error', 'message' => 'ID de proyecto invÃ¡lido']);
     exit;
 }
 
-// Verificar si el proyecto existe y obtener información
+// Verificar si el proyecto existe y obtener informaciÃ³n
 $sql_info = "SELECT p.id, p.nombre_proyecto,
              (SELECT COUNT(*) FROM obras WHERE proyecto_id = p.id) as total_obras,
              (SELECT COUNT(*) FROM ordenes_compra WHERE proyecto_id = p.id) as ordenes_asociadas
@@ -33,16 +31,16 @@ if (!$proyecto_info) {
     exit;
 }
 
-// Verificar si hay órdenes de compra asociadas
+// Verificar si hay Ã³rdenes de compra asociadas
 if ($proyecto_info['ordenes_asociadas'] > 0) {
     echo json_encode([
         'status' => 'error', 
-        'message' => 'No se puede eliminar el proyecto porque tiene ' . $proyecto_info['ordenes_asociadas'] . ' orden(es) de compra asociada(s). Primero elimine o reasigne las órdenes de compra.'
+        'message' => 'No se puede eliminar el proyecto porque tiene ' . $proyecto_info['ordenes_asociadas'] . ' orden(es) de compra asociada(s). Primero elimine o reasigne las Ã³rdenes de compra.'
     ]);
     exit;
 }
 
-// Iniciar transacción
+// Iniciar transacciÃ³n
 $conn->begin_transaction();
 
 try {
@@ -105,4 +103,5 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Error al eliminar el proyecto: ' . $e->getMessage()]);
 }
 ?>
+
 

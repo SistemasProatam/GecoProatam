@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 require_once __DIR__ . "/../conexion.php";
@@ -11,7 +9,7 @@ header('Content-Type: application/json');
 $obra_id = $_GET['obra_id'] ?? 0;
 
 if ($obra_id <= 0) {
-    echo json_encode(['error' => 'ID de obra inválido']);
+    echo json_encode(['error' => 'ID de obra invÃ¡lido']);
     exit;
 }
 
@@ -29,4 +27,5 @@ while ($row = $result->fetch_assoc()) {
 echo json_encode($catalogos);
 $conn->close();
 ?>
+
 

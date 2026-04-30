@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 /**
  * API para obtener items de un concepto desde orden_compra_items
  * Items mostrados son aquellos cuya orden tiene estado 'pagado'
@@ -11,7 +9,7 @@ require_once __DIR__ . "/../includes/check_session.php";
 
 header('Content-Type: application/json');
 
-// Verificar sesión
+// Verificar sesiÃ³n
 try {
     checkSession();
 } catch (Exception $e) {
@@ -20,12 +18,12 @@ try {
     exit;
 }
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $concepto_id = isset($_GET['concepto_id']) ? (int)$_GET['concepto_id'] : 0;
 
 if ($concepto_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Concepto ID inválido', 'items' => []]);
+    echo json_encode(['success' => false, 'message' => 'Concepto ID invÃ¡lido', 'items' => []]);
     exit;
 }
 
@@ -34,7 +32,7 @@ $sql_check_orden_items = "SHOW TABLES LIKE 'orden_compra_items'";
 $result_check = $conn->query($sql_check_orden_items);
 
 if (!$result_check || $result_check->num_rows === 0) {
-    // Si no existe la tabla, retornar items vacíos
+    // Si no existe la tabla, retornar items vacÃ­os
     echo json_encode(['success' => true, 'message' => 'Tabla orden_compra_items no existe', 'items' => []]);
     exit;
 }
@@ -96,5 +94,6 @@ $conn->close();
 
 echo json_encode(['success' => true, 'items' => $items]);
 ?>
+
 
 

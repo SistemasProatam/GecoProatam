@@ -1,15 +1,12 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
-// ===== Mensajes de sesión =====
+// ===== Mensajes de sesiÃ³n =====
 $msg_success = $_SESSION['success'] ?? '';
 $msg_error   = $_SESSION['error']   ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
@@ -114,7 +111,7 @@ function urlFiltros(array $extras = []): string {
         /* Badge estatus */
         .badge-activo   { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-inactivo { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        /* Badge condición */
+        /* Badge condiciÃ³n */
         .badge-bueno    { background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-regular  { background:#fef9c3; color:#92400e; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-malo     { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
@@ -124,15 +121,13 @@ function urlFiltros(array $extras = []): string {
 <body>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
     <div class="container hero-content">
         <div class="breadcrumb-custom">
-            <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
+            <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
             <span>/</span>
             <span>Registro de Activos</span>
         </div>
@@ -148,38 +143,30 @@ require_once __DIR__ . "/../config.php"; include $_SERVER['DOCUMENT_ROOT'] . "/i
     <div class="form-container">
         <div class="form-body">
 
-            <!-- ===== Alertas de sesión ===== -->
+            <!-- ===== Alertas de sesiÃ³n ===== -->
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($msg_success): ?>
+if ($msg_success): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle"></i> <?= $msg_success ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($msg_error): ?>
+if ($msg_error): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="bi bi-exclamation-triangle"></i> <?= $msg_error ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
             <!-- ===== Buscador ===== -->
             <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
                 <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo_id) ?>">
                 <input type="hidden" name="estatus" value="<?= htmlspecialchars($estatus) ?>">
                 <input class="form-control w-100" type="search" name="q"
-                       placeholder="Buscar por código o nombre..."
+                       placeholder="Buscar por cÃ³digo o nombre..."
                        value="<?= htmlspecialchars($busqueda) ?>" />
                 <button class="btn btn-outline-success" type="submit">
                     <i class="bi bi-search"></i>
@@ -199,16 +186,12 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                     <select name="tipo" class="form-select">
                         <option value="">-- Tipo --</option>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($t = $tipos->fetch_assoc()): ?>
+while ($t = $tipos->fetch_assoc()): ?>
                             <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($t['nombre']) ?>
                             </option>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+endwhile; ?>
                     </select>
                 </div>
 
@@ -221,21 +204,17 @@ require_once __DIR__ . "/../config.php"; endwhile; ?>
                 </div>
 
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($busqueda || $tipo_id || $estatus): ?>
+if ($busqueda || $tipo_id || $estatus): ?>
                 <a href="list_activos.php" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle"></i> Limpiar
                 </a>
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
             </form>
 
             <div id="table-container-wrapper">
 
-            <!-- ===== Contador + Botón agregar ===== -->
+            <!-- ===== Contador + BotÃ³n agregar ===== -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="badge-num"><?= $totalRegistros ?> activo<?= $totalRegistros != 1 ? 's' : '' ?></span>
                 <button class="button-56" type="button" onclick="window.location.href='new_activo.php'">
@@ -245,14 +224,10 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
             <!-- ===== Lista ===== -->
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($result && $result->num_rows > 0): ?>
+if ($result && $result->num_rows > 0): ?>
             <ul class="list-group">
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while ($row = $result->fetch_assoc()): ?>
+while ($row = $result->fetch_assoc()): ?>
                 <li class="list-group-item d-flex justify-content-between align-items-center gap-2 py-3">
 
                     <div style="min-width:0; flex:1;">
@@ -266,14 +241,10 @@ require_once __DIR__ . "/../config.php"; while ($row = $result->fetch_assoc()): 
                         <small class="text-muted">
                             <i class="bi bi-tag"></i> <?= htmlspecialchars($row['tipo']) ?>
                             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($row['ubicacion']): ?>
+if ($row['ubicacion']): ?>
                                 &nbsp;|&nbsp;<i class="bi bi-geo-alt"></i> <?= htmlspecialchars($row['ubicacion']) ?>
                             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?> |
+endif; ?> |
                             <span <?= $row['condicion'] ?>>
                                 <?= ucfirst($row['condicion']) ?>
                             </span>
@@ -296,16 +267,12 @@ require_once __DIR__ . "/../config.php"; endif; ?> |
 
                 </li>
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+endwhile; ?>
             </ul>
 
-            <!-- ===== Paginación ===== -->
+            <!-- ===== PaginaciÃ³n ===== -->
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($totalPaginas > 1): ?>
+if ($totalPaginas > 1): ?>
             <nav class="mt-4">
                 <ul class="pagination justify-content-center flex-wrap">
 
@@ -317,10 +284,7 @@ require_once __DIR__ . "/../config.php"; if ($totalPaginas > 1): ?>
                     </li>
 
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                    // Mostrar máximo 5 páginas alrededor de la actual
+// Mostrar mÃ¡ximo 5 pÃ¡ginas alrededor de la actual
                     $inicio = max(1, $pagina - 2);
                     $fin    = min($totalPaginas, $pagina + 2);
 
@@ -329,51 +293,33 @@ require_once __DIR__ . "/../config.php";
                             <a class="page-link" href="<?= urlFiltros(['page' => 1]) ?>">1</a>
                         </li>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($inicio > 2): ?>
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
+if ($inicio > 2): ?>
+                            <li class="page-item disabled"><span class="page-link">â€¦</span></li>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; for ($p = $inicio; $p <= $fin; $p++): ?>
+for ($p = $inicio; $p <= $fin; $p++): ?>
                         <li class="page-item <?= $p === $pagina ? 'active' : '' ?>">
                             <a class="page-link" href="<?= urlFiltros(['page' => $p]) ?>"><?= $p ?></a>
                         </li>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endfor; ?>
+endfor; ?>
 
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($fin < $totalPaginas): ?>
+if ($fin < $totalPaginas): ?>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($fin < $totalPaginas - 1): ?>
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
+if ($fin < $totalPaginas - 1): ?>
+                            <li class="page-item disabled"><span class="page-link">â€¦</span></li>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                         <li class="page-item">
                             <a class="page-link" href="<?= urlFiltros(['page' => $totalPaginas]) ?>"><?= $totalPaginas ?></a>
                         </li>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
                     <!-- Siguiente -->
                     <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
@@ -385,33 +331,23 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 </ul>
             </nav>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
             <div class="text-center text-muted py-5">
                 <i class="bi bi-inbox" style="font-size:3rem;"></i>
                 <p class="mt-2">No hay activos registrados<?= ($busqueda || $tipo_id || $estatus) ? ' con esos filtros' : '' ?></p>
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($busqueda || $tipo_id || $estatus): ?>
+if ($busqueda || $tipo_id || $estatus): ?>
                     <a href="list_activos.php" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-x-circle"></i> Limpiar filtros
                     </a>
                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
             </div>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
             </div> <!-- /table-container-wrapper -->
 
         </div><!-- /form-body -->
@@ -434,12 +370,10 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
-// Función para actualizar la lista vía AJAX
+// FunciÃ³n para actualizar la lista vÃ­a AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
     const filterForm = document.getElementById('filter-form');
@@ -523,5 +457,6 @@ document.addEventListener('DOMContentLoaded', initAJAX);
 
 </body>
 </html>
+
 
 

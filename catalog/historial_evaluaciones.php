@@ -1,40 +1,37 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $proveedor_id = $_GET['proveedor_id'] ?? 0;
 
-// Procesar eliminación si se envió
+// Procesar eliminaciÃ³n si se enviÃ³
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_evaluacion'])) {
     $evaluacion_id = $_POST['evaluacion_id'] ?? 0;
     
     if ($evaluacion_id > 0) {
-        // Usar eliminación suave (cambiar activo a 0) o eliminación permanente
+        // Usar eliminaciÃ³n suave (cambiar activo a 0) o eliminaciÃ³n permanente
         $sql_eliminar = "DELETE FROM evaluaciones_proveedores WHERE id = ? AND proveedor_id = ?";
         $stmt_eliminar = $conn->prepare($sql_eliminar);
         $stmt_eliminar->bind_param("ii", $evaluacion_id, $proveedor_id);
         
         if ($stmt_eliminar->execute()) {
-            $_SESSION['mensaje_exito'] = "Evaluación eliminada correctamente";
+            $_SESSION['mensaje_exito'] = "EvaluaciÃ³n eliminada correctamente";
         } else {
-            $_SESSION['mensaje_error'] = "Error al eliminar la evaluación";
+            $_SESSION['mensaje_error'] = "Error al eliminar la evaluaciÃ³n";
         }
         
-        // Redirigir para evitar reenvío del formulario
+        // Redirigir para evitar reenvÃ­o del formulario
         header("Location: historial_evaluaciones.php?proveedor_id=" . $proveedor_id);
         exit();
     }
 }
 
-// Obtener información del proveedor
+// Obtener informaciÃ³n del proveedor
 $sql_proveedor = "SELECT razon_social FROM proveedores WHERE id = ?";
 $stmt_proveedor = $conn->prepare($sql_proveedor);
 $stmt_proveedor->bind_param("i", $proveedor_id);
@@ -52,7 +49,7 @@ $stmt_evaluaciones->bind_param("i", $proveedor_id);
 $stmt_evaluaciones->execute();
 $evaluaciones = $stmt_evaluaciones->get_result();
 
-// Verificar mensajes de sesión
+// Verificar mensajes de sesiÃ³n
 if (isset($_SESSION['mensaje_exito'])) {
     $mensaje_exito = $_SESSION['mensaje_exito'];
     unset($_SESSION['mensaje_exito']);
@@ -81,9 +78,7 @@ if (isset($_SESSION['mensaje_error'])) {
 </head>
 <body>
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -110,30 +105,22 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
     <div class="form-body">
     
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (isset($mensaje_exito)): ?>
+if (isset($mensaje_exito)): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle"></i> <?= $mensaje_exito ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
     
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (isset($mensaje_error)): ?>
+if (isset($mensaje_error)): ?>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <i class="bi bi-exclamation-circle"></i> <?= $mensaje_error ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
 
     <!-- Lista de evaluaciones con scroll horizontal -->
     <div class="table-container">
@@ -143,20 +130,16 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             <th>Fecha</th>
             <th>Evaluador</th>
             <th>Contrato</th>
-            <th>Puntuación</th>
+            <th>PuntuaciÃ³n</th>
             <th>Resultado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if($evaluaciones->num_rows > 0): ?>
+if($evaluaciones->num_rows > 0): ?>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; while($eval = $evaluaciones->fetch_assoc()): ?>
+while($eval = $evaluaciones->fetch_assoc()): ?>
               <tr>
                 <td><?= date('d/m/Y H:i', strtotime($eval['fecha_creacion'])) ?></td>
                 <td><?= htmlspecialchars($eval['nombres'] . ' ' . $eval['apellidos']) ?></td>
@@ -164,10 +147,7 @@ require_once __DIR__ . "/../config.php"; while($eval = $evaluaciones->fetch_asso
                 <td><strong><?= number_format($eval['total_puntuacion'], 1) ?></strong></td>
                 <td>
                   <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; 
-                    $badge_classes = [
+$badge_classes = [
                       'excelente' => 'badge-excelente',
                       'bueno' => 'badge-bueno', 
                       'regular' => 'badge-regular',
@@ -188,7 +168,7 @@ require_once __DIR__ . "/../config.php";
                 <td>
                   <div class="btn-group" style="gap:5px;">
                     <button class="btn-inf" onclick="verDetalle(<?= $eval['id'] ?>)" 
-                            title="Ver detalles de evaluación">
+                            title="Ver detalles de evaluaciÃ³n">
                       <i class="bi bi-eye"></i>
                     </button>
                     
@@ -197,7 +177,7 @@ require_once __DIR__ . "/../config.php";
                       <input type="hidden" name="evaluacion_id" value="<?= $eval['id'] ?>">
                       <input type="hidden" name="eliminar_evaluacion" value="1">
                       <button type="submit" class="btn-del" 
-                              title="Eliminar evaluación">
+                              title="Eliminar evaluaciÃ³n">
                         <i class="bi bi-trash"></i>
                       </button>
                     </form>
@@ -205,26 +185,20 @@ require_once __DIR__ . "/../config.php";
                 </td>
               </tr>
             <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile; ?>
+endwhile; ?>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
             <tr>
               <td colspan="6" class="text-center text-muted py-4">
                 <i class="bi bi-inbox" style="font-size: 3rem;"></i>
                 <p class="mt-2">No hay evaluaciones registradas</p>
                 <a href="evaluacion_proveedor.php?id=<?= $proveedor_id ?>" class="btn btn-primary mt-2">
-                  <i class="bi bi-plus-circle"></i> Crear primera evaluación
+                  <i class="bi bi-plus-circle"></i> Crear primera evaluaciÃ³n
                 </a>
               </td>
             </tr>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
         </tbody>
       </table>
     </div>
@@ -234,9 +208,9 @@ require_once __DIR__ . "/../config.php"; endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Función para ver detalle con SweetAlert
+// FunciÃ³n para ver detalle con SweetAlert
 function verDetalle(evaluacionId) {
-    // Hacer petición AJAX para obtener los detalles
+    // Hacer peticiÃ³n AJAX para obtener los detalles
     fetch(`obtener_detalle_evaluacion.php?id=${evaluacionId}`)
         .then(response => response.json())
         .then(data => {
@@ -267,27 +241,27 @@ function verDetalle(evaluacionId) {
                         <h6 class="mt-3">Calificaciones Detalladas:</h6>
                         <div class="row mb-1">
                             <div class="col-8">Calidad (30%):</div>
-                            <div class="col-4">${eval.calidad_calificacion} → ${eval.calidad_resultado} pts</div>
+                            <div class="col-4">${eval.calidad_calificacion} â†’ ${eval.calidad_resultado} pts</div>
                         </div>
                         <div class="row mb-1">
                             <div class="col-8">Cumplimiento entregas (25%):</div>
-                            <div class="col-4">${eval.cumplimiento_entregas_calificacion} → ${eval.cumplimiento_entregas_resultado} pts</div>
+                            <div class="col-4">${eval.cumplimiento_entregas_calificacion} â†’ ${eval.cumplimiento_entregas_resultado} pts</div>
                         </div>
                         <div class="row mb-1">
                             <div class="col-8">Precio y condiciones (20%):</div>
-                            <div class="col-4">${eval.precio_condiciones_calificacion} → ${eval.precio_condiciones_resultado} pts</div>
+                            <div class="col-4">${eval.precio_condiciones_calificacion} â†’ ${eval.precio_condiciones_resultado} pts</div>
                         </div>
                         <div class="row mb-1">
                             <div class="col-8">Cumplimiento legal (15%):</div>
-                            <div class="col-4">${eval.cumplimiento_legal_calificacion} → ${eval.cumplimiento_legal_resultado} pts</div>
+                            <div class="col-4">${eval.cumplimiento_legal_calificacion} â†’ ${eval.cumplimiento_legal_resultado} pts</div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-8">Atención y servicio (10%):</div>
-                            <div class="col-4">${eval.atencion_servicio_calificacion} → ${eval.atencion_servicio_resultado} pts</div>
+                            <div class="col-8">AtenciÃ³n y servicio (10%):</div>
+                            <div class="col-4">${eval.atencion_servicio_calificacion} â†’ ${eval.atencion_servicio_resultado} pts</div>
                         </div>
                         
                         <div class="row mb-2 bg-light py-2 rounded">
-                            <div class="col-6"><strong>TOTAL PUNTUACIÓN:</strong></div>
+                            <div class="col-6"><strong>TOTAL PUNTUACIÃ“N:</strong></div>
                             <div class="col-6"><strong>${eval.total_puntuacion} pts</strong></div>
                         </div>
                         
@@ -316,7 +290,7 @@ function verDetalle(evaluacionId) {
                 `;
                 
                 Swal.fire({
-                    title: 'Detalle de Evaluación',
+                    title: 'Detalle de EvaluaciÃ³n',
                     html: contenido,
                     width: 600,
                     padding: '1.5rem',
@@ -327,7 +301,7 @@ function verDetalle(evaluacionId) {
                     }
                 });
             } else {
-                Swal.fire('Error', 'No se pudo cargar la información de la evaluación', 'error');
+                Swal.fire('Error', 'No se pudo cargar la informaciÃ³n de la evaluaciÃ³n', 'error');
             }
         })
         .catch(error => {
@@ -336,7 +310,7 @@ function verDetalle(evaluacionId) {
         });
 }
 
-// Función para obtener clase del badge según resultado
+// FunciÃ³n para obtener clase del badge segÃºn resultado
 function getBadgeClass(resultado) {
     const clases = {
         'excelente': 'bg-success',
@@ -347,16 +321,16 @@ function getBadgeClass(resultado) {
     return clases[resultado] || 'bg-secondary';
 }
 
-// Función para confirmar eliminación
+// FunciÃ³n para confirmar eliminaciÃ³n
 function confirmarEliminacion(form) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Esta acción no se puede deshacer",
+        title: 'Â¿EstÃ¡s seguro?',
+        text: "Esta acciÃ³n no se puede deshacer",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'SÃ­, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -376,5 +350,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 
 

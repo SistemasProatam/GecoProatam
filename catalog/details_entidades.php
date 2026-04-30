@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = $_GET['id'] ?? 0;
 
@@ -31,18 +29,17 @@ if (!$entidad) {
     </div>
 
     <div class="mb-3">
-        <strong>Descripción:</strong><br>
+        <strong>DescripciÃ³n:</strong><br>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 $desc = trim($entidad['descripcion'] ?? '');
-            echo $desc !== '' ? nl2br(htmlspecialchars($desc)) : '<em>Sin descripción</em>';
+            echo $desc !== '' ? nl2br(htmlspecialchars($desc)) : '<em>Sin descripciÃ³n</em>';
         ?>
     </div>
     
     <div class="mb-3">
-        <strong>Fecha de creación:</strong><br>
+        <strong>Fecha de creaciÃ³n:</strong><br>
         <?= date('d/m/Y H:i', strtotime($entidad['fecha_creacion'])) ?>
     </div>
 </div>
+
 

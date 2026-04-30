@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../../config.php";
 /**
  * Dutch PHPMailer language file: refer to PHPMailer.php for definitive list.
  * @package PHPMailer

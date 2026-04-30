@@ -1,20 +1,18 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
     exit;
 }
 
@@ -27,7 +25,7 @@ $direccion = $_POST['direccion'] ?? '';
 $contacto = $_POST['contacto'] ?? '';
 
 if (empty($razon_social)) {
-    echo json_encode(['status' => 'error', 'message' => 'La razón social es obligatoria']);
+    echo json_encode(['status' => 'error', 'message' => 'La razÃ³n social es obligatoria']);
     exit;
 }
 
@@ -59,4 +57,5 @@ try {
     ]);
 }
 ?>
+
 

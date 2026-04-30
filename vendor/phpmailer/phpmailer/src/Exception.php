@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../../config.php";
 /**
  * PHPMailer Exception class.
  * PHP Version 5.5.

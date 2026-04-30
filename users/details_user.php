@@ -1,13 +1,10 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include("../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = intval($_GET['id']);
 
@@ -222,9 +219,7 @@ if (!$user) {
 
 <body>
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -253,23 +248,17 @@ require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/navbar.
             <div class="user-profile-header">
                 <div class="user-avatar">
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($user['foto_jpg']): ?>
+if ($user['foto_jpg']): ?>
                         <img src="../uploads/usuarios/<?= htmlspecialchars($user['foto_jpg']) ?>"
                             alt="Foto de <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?>"
                             class="rounded-circle">
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
                         <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center avatar-placeholder">
                             <i class="bi bi-person" style="font-size: 3rem; color: #6c757d;"></i>
                         </div>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                 </div>
                 <div class="user-info">
                     <h1><?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
@@ -279,13 +268,13 @@ require_once __DIR__ . "/../config.php"; endif; ?>
             <!-- INFO GRID -->
             <div class="info-grid">
 
-                <!-- Información Personal -->
+                <!-- InformaciÃ³n Personal -->
                 <div class="info-panel mx-1">
                     <div class="panel-header">
                         <div class="panel-icon">
                             <i class="bi bi-person-vcard"></i>
                         </div>
-                        <h4>Información Personal</h4>
+                        <h4>InformaciÃ³n Personal</h4>
                     </div>
                     <ul class="info-list">
                         <li class="info-item">
@@ -305,7 +294,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                             <span><?= htmlspecialchars($user['correo_personal'] ?? '-') ?></span>
                         </li>
                         <li class="info-item">
-                            <strong>Teléfono Personal:</strong>
+                            <strong>TelÃ©fono Personal:</strong>
                             <span><?= htmlspecialchars($user['telefono_personal'] ?? '-') ?></span>
                         </li>
                         <li class="info-item">
@@ -337,7 +326,7 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                             <span><?= htmlspecialchars($user['contacto_emergencia_parentesco'] ?? '-') ?></span>
                         </li>
                         <li class="info-item">
-                            <strong>Número de Celular:</strong>
+                            <strong>NÃºmero de Celular:</strong>
                             <span><?= htmlspecialchars($user['contacto_emergencia_telefono'] ?? '-') ?></span>
                         </li>
                     </ul>
@@ -355,19 +344,13 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 </div>
                 <div class="functions-content">
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if (!empty($user['funciones_actividades'])): ?>
+if (!empty($user['funciones_actividades'])): ?>
                         <p><?= nl2br(htmlspecialchars($user['funciones_actividades'])) ?></p>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
                         <p class="text-muted">No se han especificado funciones y actividades.</p>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                 </div>
             </div>
 
@@ -381,19 +364,16 @@ require_once __DIR__ . "/../config.php"; endif; ?>
                 </div>
                 <div class="documents-grid">
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                    $documentos = [
+$documentos = [
                         'curriculum_pdf' => ['icon' => 'bi-file-earmark-person', 'title' => 'Curriculum Vitae'],
-                        'identificacion_pdf' => ['icon' => 'bi-card-checklist', 'title' => 'Identificación Oficial'],
+                        'identificacion_pdf' => ['icon' => 'bi-card-checklist', 'title' => 'IdentificaciÃ³n Oficial'],
                         'acta_nacimiento_pdf' => ['icon' => 'bi-file-earmark-text', 'title' => 'Acta de Nacimiento'],
                         'curp_pdf' => ['icon' => 'bi-file-earmark-richtext', 'title' => 'CURP'],
-                        'situacion_fiscal_pdf' => ['icon' => 'bi-cash-coin', 'title' => 'Constancia de Situación Fiscal'],
-                        'nss_pdf' => ['icon' => 'bi-shield-check', 'title' => 'Número de Seguro Social'],
+                        'situacion_fiscal_pdf' => ['icon' => 'bi-cash-coin', 'title' => 'Constancia de SituaciÃ³n Fiscal'],
+                        'nss_pdf' => ['icon' => 'bi-shield-check', 'title' => 'NÃºmero de Seguro Social'],
                         'comprobante_domicilio_pdf' => ['icon' => 'bi-house', 'title' => 'Comprobante de Domicilio'],
                         'foto_jpg' => ['icon' => 'bi-camera', 'title' => 'Foto'],
-                        'comprobante_estudios_pdf' => ['icon' => 'bi-mortarboard', 'title' => 'Último Comprobante de Estudios'],
+                        'comprobante_estudios_pdf' => ['icon' => 'bi-mortarboard', 'title' => 'Ãšltimo Comprobante de Estudios'],
                         'credencial_pdf' => ['icon' => 'bi-person-badge', 'title' => 'Credencial Corporativa'],
                         'acuerdo_confidencialidad_pdf' => ['icon' => 'bi-file-lock', 'title' => 'Acuerdo de Confidencialidad']
                     ];
@@ -406,44 +386,30 @@ require_once __DIR__ . "/../config.php";
                             <h6><?= $info['title'] ?></h6>
                             <div class="document-actions">
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($archivo): ?>
+if ($archivo): ?>
                                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; if ($campo === 'foto_jpg'): ?>
+if ($campo === 'foto_jpg'): ?>
                                         <a href="../uploads/usuarios/<?= htmlspecialchars($archivo) ?>"
                                             target="_blank" class="btn btn-sm btn-view">
                                             <i class="bi bi-eye"></i> Ver
                                         </a>
                                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
                                         <a href="../uploads/usuarios/<?= htmlspecialchars($archivo) ?>"
                                             target="_blank" class="btn btn-sm btn-download">
                                             <i class="bi bi-download"></i> Descargar
                                         </a>
                                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; else: ?>
+else: ?>
                                     <span class="badge bg-secondary no-document">No subido</span>
                                 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                             </div>
                         </div>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endforeach; ?>
+endforeach; ?>
                 </div>
             </div>
 
@@ -457,10 +423,7 @@ require_once __DIR__ . "/../config.php"; endforeach; ?>
                 </div>
                 <div class="documents-grid">
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-                    // Obtener contratos del usuario
+// Obtener contratos del usuario
                     $sql_contratos = "SELECT * FROM contratos_usuario WHERE usuario_id = ? ORDER BY tipo_contrato DESC";
                     $stmt_contratos = $conn->prepare($sql_contratos);
                     $stmt_contratos->bind_param("i", $id);
@@ -481,21 +444,15 @@ require_once __DIR__ . "/../config.php";
                                 </div>
                             </div>
                         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endwhile;
+endwhile;
                     else: ?>
                         <div class="col-12">
                             <p class="text-muted">No hay contratos registrados.</p>
                         </div>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; endif; ?>
+endif; ?>
                     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; $stmt_contratos->close(); ?>
+$stmt_contratos->close(); ?>
                 </div>
             </div>
 
@@ -510,11 +467,10 @@ require_once __DIR__ . "/../config.php"; $stmt_contratos->close(); ?>
     </div>
 
     <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php"; include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 
 </html>
+
 
 

@@ -118,7 +118,7 @@ class SessionManager {
 
     extendSession() {
         // Hacer una petición al servidor para extender la sesión
-        fetch('/includes/extend_session.php', {
+        fetch(window.BASE_URL + '/includes/extend_session.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ class SessionManager {
             timerProgressBar: true,
             willClose: () => {
                 // Redirigir al logout con razón de timeout
-                window.location.href = '/logout.php?reason=timeout';
+                window.location.href = window.BASE_URL + '/logout.php?reason=timeout';
             }
         });
     }

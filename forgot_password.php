@@ -1,7 +1,6 @@
 <?php
 require_once "config.php";
 
-require_once config.php;
 session_start();
 // Si ya está loggeado, redirigir al index
 if (isset($_SESSION['user_id'])) {
@@ -178,5 +177,3 @@ if (isset($_SESSION['user_id'])) {
 </body>
 
 </html>
-
-

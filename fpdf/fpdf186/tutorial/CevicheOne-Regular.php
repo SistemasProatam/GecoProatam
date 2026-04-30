@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . "/../../../config.php";
-require_once __DIR__ . "/../../../config.php";
 $type = 'TrueType';
 $name = 'CevicheOne-Regular';
 $desc = array('Ascent'=>806,'Descent'=>-237,'CapHeight'=>425,'Flags'=>32,'FontBBox'=>'[-42 -237 1427 806]','ItalicAngle'=>0,'StemV'=>70,'MissingWidth'=>294);

@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 header('Content-Type: application/json');
 
@@ -22,7 +20,7 @@ if (empty($id)) {
 }
 
 try {
-    // Verificar si el proveedor está en uso
+    // Verificar si el proveedor estÃ¡ en uso
     $sql_check = "SELECT COUNT(*) as total FROM productos_servicios WHERE proveedor_id = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param("i", $id);
@@ -33,7 +31,7 @@ try {
     if ($in_use > 0) {
         echo json_encode([
             'status' => 'error', 
-            'message' => 'No se puede eliminar el proveedor porque está siendo utilizado en productos/servicios'
+            'message' => 'No se puede eliminar el proveedor porque estÃ¡ siendo utilizado en productos/servicios'
         ]);
         exit;
     }
@@ -60,4 +58,5 @@ try {
     ]);
 }
 ?>
+
 

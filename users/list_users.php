@@ -1,17 +1,13 @@
-<?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // ==== Filtros ====
 $busqueda = $_GET['q'] ?? '';
@@ -73,7 +69,7 @@ while($dep = $departamentos->fetch_assoc()){
     $departamentosOptions .= "<option value='{$dep['id']}' $selected>{$dep['nombre']}</option>";
 }
 
-// Total páginas
+// Total pÃ¡ginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
@@ -90,8 +86,6 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 </head>
 <body>
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
@@ -100,7 +94,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <div class="breadcrumb-custom">
         <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="list_project.php"> Registro de Usuarios</a>
+      <a href="<?= BASE_URL ?>/projects/list_project.php"> Registro de Usuarios</a>
     </div>
     
     <div class="row align-items-end">
@@ -143,7 +137,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div id="table-container-wrapper">
 
-  <!-- Botón de agregar usuario -->
+  <!-- BotÃ³n de agregar usuario -->
   <div class="d-flex justify-content-between mb-3">
         <span class="badge-num"><?= $totalRegistros ?> usuarios</span>
         <a href="add_user.php" class="button-56" style="text-decoration: none;">
@@ -153,13 +147,9 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
       <!-- Lista -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 if($result && $result->num_rows>0): ?>
       <ul class="list-group">
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 while($row = $result->fetch_assoc()): ?>
         <li class="list-group-item d-flex justify-content-between align-items-center text-nowrap">
           <div>
@@ -185,21 +175,15 @@ while($row = $result->fetch_assoc()): ?>
 
         </li>
         <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endwhile; ?>
       </ul>
 
-      <!-- Paginación -->
+      <!-- PaginaciÃ³n -->
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 if($totalPaginas>1): ?>
-      <nav aria-label="Paginación">
+      <nav aria-label="PaginaciÃ³n">
         <ul class="pagination justify-content-center mt-3">
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 for($i=1;$i<=$totalPaginas;$i++): ?>
           <li class="page-item <?= $i==$pagina?'active':'' ?>">
             <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&departamento=<?= urlencode($departamento_id) ?>&page=<?= $i ?>">
@@ -207,18 +191,12 @@ for($i=1;$i<=$totalPaginas;$i++): ?>
             </a>
           </li>
           <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endfor; ?>
         </ul>
       </nav>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endif; ?>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 else: ?>
        <tr>
           <td colspan="9" class="text-center text-muted py-4">
@@ -227,8 +205,6 @@ else: ?>
           </td>
         </tr>
       <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 endif; ?>
       </div> <!-- /table-container-wrapper -->
     </div>
@@ -237,20 +213,18 @@ endif; ?>
       </div>
 
 <?php
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../config.php";
 include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 function eliminarUsuario(id) {
   Swal.fire({
-    title: '¿Seguro que deseas eliminar este usuario?',
-    text: "Esta acción no se puede deshacer",
+    title: 'Â¿Seguro que deseas eliminar este usuario?',
+    text: "Esta acciÃ³n no se puede deshacer",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#525252',
-    confirmButtonText: 'Sí, eliminar',
+    confirmButtonText: 'SÃ­, eliminar',
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if(result.isConfirmed){
@@ -265,7 +239,7 @@ function eliminarUsuario(id) {
           if(data.status === 'success'){
             Swal.fire({
               icon: 'success',
-              title: '¡Eliminado!',
+              title: 'Â¡Eliminado!',
               text: data.message,
               confirmButtonText: 'Aceptar'
             }).then(() => {
@@ -280,7 +254,7 @@ function eliminarUsuario(id) {
               icon: 'error',
               title: 'No se puede eliminar',
               html: `<div style="text-align: left;">
-                       <p><strong>Razón:</strong> ${data.message}</p>
+                       <p><strong>RazÃ³n:</strong> ${data.message}</p>
                        <hr>
                        <small class="text-muted">
                          <i class="bi bi-info-circle"></i> 
@@ -295,7 +269,7 @@ function eliminarUsuario(id) {
           console.error('Error:', error);
           Swal.fire({
             icon: 'error',
-            title: 'Error de conexión',
+            title: 'Error de conexiÃ³n',
             html: `No se pudo conectar con el servidor.<br>
                    <small>Detalle: ${error.message}</small>`,
             confirmButtonText: 'Entendido'
@@ -305,7 +279,7 @@ function eliminarUsuario(id) {
   });
 }
 
-// Función para actualizar la lista vía AJAX
+// FunciÃ³n para actualizar la lista vÃ­a AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
     const filterForm = document.getElementById('filter-form');
@@ -391,5 +365,6 @@ document.addEventListener('DOMContentLoaded', initAJAX);
 
 </body>
 </html>
+
 
 
