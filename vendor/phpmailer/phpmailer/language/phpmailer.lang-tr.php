@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Turkish PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -36,3 +35,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP connect() fonksiyonu başarısı
 $PHPMAILER_LANG['smtp_detail']          = 'SMTP SMTP Detayı: ';
 $PHPMAILER_LANG['smtp_error']           = 'SMTP sunucu hatası: ';
 $PHPMAILER_LANG['variable_set']         = 'Değişken ayarlanamadı ya da sıfırlanamadı: ';
+

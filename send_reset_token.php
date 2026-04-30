@@ -1,9 +1,7 @@
-<?php
-require_once __DIR__ . '/config.php';
-
+﻿<?php
 session_start();
 header('Content-Type: application/json');
-include(__DIR__ . "/conexion.php");
+require_once __DIR__ . "/conexion.php";
 
 // Incluir PHPMailer
 require_once __DIR__ . '/vendor/autoload.php';
@@ -15,13 +13,13 @@ try {
     $email = $_POST['email'] ?? '';
 
     if (empty($email)) {
-        echo json_encode(['status' => 'error', 'message' => 'El correo electrónico es requerido.']);
+        echo json_encode(['status' => 'error', 'message' => 'El correo electrÃ³nico es requerido.']);
         exit;
     }
 
     // Validar formato de email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['status' => 'error', 'message' => 'El formato del correo no es válido.']);
+        echo json_encode(['status' => 'error', 'message' => 'El formato del correo no es vÃ¡lido.']);
         exit;
     }
 
@@ -32,7 +30,7 @@ try {
     $result = $stmt->get_result();
     
     if ($result->num_rows === 0) {
-        echo json_encode(['status' => 'error', 'message' => 'El correo electrónico no está registrado en nuestro sistema.']);
+        echo json_encode(['status' => 'error', 'message' => 'El correo electrÃ³nico no estÃ¡ registrado en nuestro sistema.']);
         exit;
     }
 
@@ -41,13 +39,13 @@ try {
     $nombres = $user['nombres'];
     $apellidos = $user['apellidos'];
 
-    // Generar token único (6 dígitos)
+    // Generar token Ãºnico (6 dÃ­gitos)
     $token = sprintf("%06d", mt_rand(1, 999999));
     
     // Hash del token para almacenar en BD
     $token_hash = password_hash($token, PASSWORD_DEFAULT);
     
-    // Fecha de expiración (15 minutos desde ahora)
+    // Fecha de expiraciÃ³n (15 minutos desde ahora)
     $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
     // Eliminar tokens previos del usuario
@@ -69,10 +67,10 @@ try {
     if ($mail_sent) {
         echo json_encode([
             'status' => 'success', 
-            'message' => 'Se ha enviado un código de verificación a tu correo electrónico. El código expira en 15 minutos.'
+            'message' => 'Se ha enviado un cÃ³digo de verificaciÃ³n a tu correo electrÃ³nico. El cÃ³digo expira en 15 minutos.'
         ]);
     } else {
-        throw new Exception("No se pudo enviar el correo electrónico. Intenta nuevamente.");
+        throw new Exception("No se pudo enviar el correo electrÃ³nico. Intenta nuevamente.");
     }
 
 } catch (Exception $e) {
@@ -84,7 +82,7 @@ function sendResetTokenEmail($email, $nombres, $apellidos, $token) {
     try {
         $mail = new PHPMailer(true);
         
-        // Configuración SMTP (usando la misma de tu sistema)
+        // ConfiguraciÃ³n SMTP (usando la misma de tu sistema)
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com'; 
         $mail->SMTPAuth = true;
@@ -100,14 +98,14 @@ function sendResetTokenEmail($email, $nombres, $apellidos, $token) {
             )
         );
 
-        // Configuración del correo
+        // ConfiguraciÃ³n del correo
         $mail->setFrom('sistemas@proatam.com', 'Sistemas Proatam');
         $mail->addAddress($email, $nombres . ' ' . $apellidos);
         $mail->isHTML(true);
         $mail->CharSet = 'UTF-8';
         
         // Asunto
-        $mail->Subject = 'Código de Recuperación - PROATAM';
+        $mail->Subject = 'CÃ³digo de RecuperaciÃ³n - PROATAM';
         
         // Cuerpo del mensaje HTML
         $mail->Body = "
@@ -176,25 +174,25 @@ function sendResetTokenEmail($email, $nombres, $apellidos, $token) {
             <div class='container'>
                 <div class='header'>
                     <h1>PROATAM</h1>
-                    <h2>Recuperación de Contraseña</h2>
+                    <h2>RecuperaciÃ³n de ContraseÃ±a</h2>
                 </div>
                 
                 <div class='content'>
                     <p>Hola <strong>$nombres $apellidos</strong>,</p>
-                    <p>Has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación:</p>
+                    <p>Has solicitado restablecer tu contraseÃ±a. Utiliza el siguiente cÃ³digo de verificaciÃ³n:</p>
                     
                     <div class='token-box'>
-                        <h3 style='color: #007bff; margin-top: 0;'>Código de Verificación</h3>
+                        <h3 style='color: #007bff; margin-top: 0;'>CÃ³digo de VerificaciÃ³n</h3>
                         <div class='token'>$token</div>
-                        <p style='margin-bottom: 0; margin-top: 10px;'><small>Este código expira en 15 minutos</small></p>
+                        <p style='margin-bottom: 0; margin-top: 10px;'><small>Este cÃ³digo expira en 15 minutos</small></p>
                     </div>
                     
                     <div class='warning'>
-                        <p><strong>⚠️ Importante:</strong></p>
+                        <p><strong>âš ï¸ Importante:</strong></p>
                         <ul style='margin-bottom: 0;'>
-                            <li>No compartas este código con nadie</li>
-                            <li>Si no solicitaste este código, ignora este mensaje</li>
-                            <li>El código es válido por 15 minutos</li>
+                            <li>No compartas este cÃ³digo con nadie</li>
+                            <li>Si no solicitaste este cÃ³digo, ignora este mensaje</li>
+                            <li>El cÃ³digo es vÃ¡lido por 15 minutos</li>
                         </ul>
                     </div>
                     
@@ -202,7 +200,7 @@ function sendResetTokenEmail($email, $nombres, $apellidos, $token) {
                 </div>
                 
                 <div class='footer'>
-                    <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+                    <p>Este es un correo automÃ¡tico, por favor no respondas a este mensaje.</p>
                     <p>&copy; " . date('Y') . " PROATAM S.A. DE C.V. Todos los derechos reservados.</p>
                 </div>
             </div>
@@ -210,22 +208,23 @@ function sendResetTokenEmail($email, $nombres, $apellidos, $token) {
         </html>
         ";
         
-        // Versión texto plano
-        $mail->AltBody = "Recuperación de Contraseña - PROATAM\n\n" .
+        // VersiÃ³n texto plano
+        $mail->AltBody = "RecuperaciÃ³n de ContraseÃ±a - PROATAM\n\n" .
                         "Hola $nombres $apellidos,\n\n" .
-                        "Has solicitado restablecer tu contraseña.\n\n" .
-                        "Tu código de verificación es: $token\n\n" .
-                        "Este código expira en 15 minutos.\n\n" .
-                        "Si no solicitaste este código, ignora este mensaje.\n\n" .
-                        "Este es un correo automático, no respondas.";
+                        "Has solicitado restablecer tu contraseÃ±a.\n\n" .
+                        "Tu cÃ³digo de verificaciÃ³n es: $token\n\n" .
+                        "Este cÃ³digo expira en 15 minutos.\n\n" .
+                        "Si no solicitaste este cÃ³digo, ignora este mensaje.\n\n" .
+                        "Este es un correo automÃ¡tico, no respondas.";
 
         // Enviar correo
         return $mail->send();
         
     } catch (Exception $e) {
-        error_log("Error enviando correo de recuperación: " . $mail->ErrorInfo);
+        error_log("Error enviando correo de recuperaciÃ³n: " . $mail->ErrorInfo);
         return false;
     }
 }
 ?>
+
 

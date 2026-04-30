@@ -1,5 +1,4 @@
-<?php
-require_once __DIR__ . '/../config.php';
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 require_once __DIR__ . "/../conexion.php";
@@ -11,17 +10,17 @@ header('Content-Type: application/json');
 $action = $_POST['action'] ?? '';
 
 // ================================================================
-// HELPERS DE ÁRBOL
+// HELPERS DE ÃRBOL
 // ================================================================
 
 /**
  * Calcula el sort_path para un nodo nuevo dentro de su padre.
- * Usa el número de hermanos existentes + 1 como posición ordinal.
- * Funciona con cualquier tipo de clave: texto libre, romano, numérico.
+ * Usa el nÃºmero de hermanos existentes + 1 como posiciÃ³n ordinal.
+ * Funciona con cualquier tipo de clave: texto libre, romano, numÃ©rico.
  */
 function calcularSortPath(mysqli $conn, int $catalogo_id, ?int $parent_id): string {
     if ($parent_id === null) {
-        // Contar raíces existentes en este catálogo
+        // Contar raÃ­ces existentes en este catÃ¡logo
         $st = $conn->prepare("SELECT COUNT(*) FROM concepto_nodos WHERE catalogo_id = ? AND parent_id IS NULL");
         $st->bind_param("i", $catalogo_id);
     } else {
@@ -34,7 +33,7 @@ function calcularSortPath(mysqli $conn, int $catalogo_id, ?int $parent_id): stri
     $st->fetch();
     $st->close();
 
-    $posicion = $count + 1; // siguiente posición disponible
+    $posicion = $count + 1; // siguiente posiciÃ³n disponible
 
     if ($parent_id === null) {
         return str_pad($posicion, 4, '0', STR_PAD_LEFT);
@@ -55,11 +54,6 @@ function calcularSortPath(mysqli $conn, int $catalogo_id, ?int $parent_id): stri
  * Dado un catalogo_id y una clave como "CIMENTACION" o "I.2.1",
  * garantiza que existan todos los nodos intermedios y devuelve
  * el ID del nodo hoja.
- *
- * Las claves se separan por punto, por lo que:
- *   - "CIMENTACION"      → 1 nodo nivel 1
- *   - "I.2"              → nodo nivel 1 "I" + nodo nivel 2 "I.2"
- *   - "OBRAS.POZO.EQUIP" → 3 niveles con esas claves
  *
  * @param array $titulos  Mapa [clave_completa => titulo] opcional
  */
@@ -170,7 +164,7 @@ try {
 
             $conn->begin_transaction();
             try {
-                // Orden: conceptos → nodos → catálogo (respetar FKs)
+                // Orden: conceptos â†’ nodos â†’ catÃ¡logo (respetar FKs)
                 $s1 = $conn->prepare("DELETE FROM conceptos      WHERE catalogo_id = ?"); $s1->bind_param("i", $catalogo_id); $s1->execute();
                 $s2 = $conn->prepare("DELETE FROM concepto_nodos WHERE catalogo_id = ?"); $s2->bind_param("i", $catalogo_id); $s2->execute();
                 $s3 = $conn->prepare("DELETE FROM catalogos       WHERE id = ?");          $s3->bind_param("i", $catalogo_id); $s3->execute();
@@ -226,7 +220,7 @@ try {
 
         // --------------------------------------------------------
         case 'eliminar_nodo':
-            // ON DELETE CASCADE en FK elimina hijos automáticamente.
+            // ON DELETE CASCADE en FK elimina hijos automÃ¡ticamente.
             // Los conceptos quedan con nodo_id = NULL (ON DELETE SET NULL).
             $nodo_id = (int)($_POST['nodo_id'] ?? 0);
             if ($nodo_id <= 0) { echo json_encode(['success' => false, 'error' => 'ID invalido']); exit; }
@@ -329,7 +323,7 @@ try {
 
 
 
-            // nodo_id puede ser null — se usa tipo 's' para que MySQLi acepte null
+            // nodo_id puede ser null â€” se usa tipo 's' para que MySQLi acepte null
             $nodo_id_str = $nodo_id !== null ? (string)(int)$nodo_id : null;
 
             $ins = $conn->prepare(
@@ -340,7 +334,7 @@ try {
                   fecha_inicio, fecha_fin, fecha_creacion)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
             );
-            // 12 parámetros: i s s s s s s d d d s s
+            // 12 parÃ¡metros: i s s s s s s d d d s s
             $ins->bind_param("issssssdddss",
                 $catalogo_id,
                 $codigo_concepto, $nombre_concepto, $descripcion,
@@ -381,7 +375,7 @@ try {
             if (!$row_c) { echo json_encode(['success' => false, 'error' => 'Concepto no encontrado']); exit; }
             $catalogo_id = (int)$row_c['catalogo_id'];
 
-            // Resolver nodo_id antes de la validación
+            // Resolver nodo_id antes de la validaciÃ³n
             $nodo_id = $nodo_id_direct > 0
                 ? $nodo_id_direct
                 : ($nodo_clave !== '' ? obtenerOCrearNodo($conn, $catalogo_id, $nodo_clave) : null);
@@ -390,7 +384,7 @@ try {
 
 
 
-            // nodo_id puede ser null — tipo 's' para que MySQLi lo acepte
+            // nodo_id puede ser null â€” tipo 's' para que MySQLi lo acepte
             $nodo_id_str = $nodo_id !== null ? (string)(int)$nodo_id : null;
 
             $upd = $conn->prepare(
@@ -442,11 +436,11 @@ try {
 
             $importados = 0;
             $errores    = [];
-            $nodo_cache = []; // evitar queries repetidos para el mismo nodo en la misma importación
+            $nodo_cache = []; // evitar queries repetidos para el mismo nodo en la misma importaciÃ³n
 
             $conn->begin_transaction();
             try {
-                // PRIMERA PASADA: Recolectar títulos de nodos
+                // PRIMERA PASADA: Recolectar tÃ­tulos de nodos
                 $titulos_nodos = [];
                 foreach ($datos_excel as $row) {
                     if (isset($row['es_nodo']) && $row['es_nodo'] && !empty($row['nodo_clave'])) {
@@ -455,7 +449,7 @@ try {
                 }
 
                 foreach ($datos_excel as $idx => $row) {
-                    // Si es una fila de definición de nodo, ya procesamos su título, saltar inserción
+                    // Si es una fila de definiciÃ³n de nodo, ya procesamos su tÃ­tulo, saltar inserciÃ³n
                     if (isset($row['es_nodo']) && $row['es_nodo']) {
                         continue;
                     }
@@ -477,7 +471,7 @@ try {
                         continue;
                     }
 
-                    // Resolver nodo con caché para no repetir queries
+                    // Resolver nodo con cachÃ© para no repetir queries
                     $nodo_id = null;
                     if ($nodo_clave !== '') {
                         if (!array_key_exists($nodo_clave, $nodo_cache)) {
@@ -486,7 +480,7 @@ try {
                         $nodo_id = $nodo_cache[$nodo_clave] ?: null;
                     }
 
-                    // nodo_id puede ser null — tipo 's' para que MySQLi lo acepte
+                    // nodo_id puede ser null â€” tipo 's' para que MySQLi lo acepte
                     $nodo_id_str = $nodo_id !== null ? (string)(int)$nodo_id : null;
 
                     $ins = $conn->prepare(
@@ -591,3 +585,5 @@ try {
 
 $conn->close();
 ?>
+
+

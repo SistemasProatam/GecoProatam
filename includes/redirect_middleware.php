@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
-
+require_once __DIR__ . "/../config.php";
 session_start();
 
 // Prevenir acceso directo a páginas sin sesión
@@ -24,3 +23,4 @@ function preventDirectAccess() {
 // Ejecutar la verificación
 preventDirectAccess();
 ?>
+

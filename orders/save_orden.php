@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ob_start();
@@ -10,10 +8,10 @@ require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 require_once __DIR__ . '/../EmailHandler.php';
 
-// Función para limpiar valores monetarios
+// FunciÃ³n para limpiar valores monetarios
 function limpiarValorMonetario($valor) {
     $valor = str_replace(',', '.', $valor);
     $valor = preg_replace('/[^\d.]/', '', $valor);
@@ -22,7 +20,7 @@ function limpiarValorMonetario($valor) {
     return round($valor, 2);
 }
 
-// Función para enviar respuestas JSON
+// FunciÃ³n para enviar respuestas JSON
 function sendJsonResponse($success, $message, $redirect = null)
 {
     if (ob_get_length()) ob_clean();
@@ -35,7 +33,7 @@ function sendJsonResponse($success, $message, $redirect = null)
     exit;
 }
 
-// Función para generar nuevo folio cuando hay duplicado
+// FunciÃ³n para generar nuevo folio cuando hay duplicado
 function generarNuevoFolio($conn, $entidad_id, $folio_original)
 {
     $sql_entidad = "SELECT prefijo FROM entidades WHERE id = ?";
@@ -119,23 +117,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ================================
     $campos_faltantes = [];
 
-    if (!$folio) $campos_faltantes[] = 'folio (número de orden)';
+    if (!$folio) $campos_faltantes[] = 'folio (nÃºmero de orden)';
     if (!$entidad_id) $campos_faltantes[] = 'entidad';
     if (!$proveedor_id) $campos_faltantes[] = 'proveedor';
     if (!$proyecto_id) $campos_faltantes[] = 'proyecto';
-    if (!$categoria_id) $campos_faltantes[] = 'categoría';
+    if (!$categoria_id) $campos_faltantes[] = 'categorÃ­a';
 
-    // Si la categoría es Destajo o Subcontrato, validar que tenga subcontrato
+    // Si la categorÃ­a es Destajo o Subcontrato, validar que tenga subcontrato
         $esCategoriaSubcontrato = ($categoria_id == '2' || $categoria_id == '5');
     if ($esCategoriaSubcontrato && !$subcontrato_id) {
-        $campos_faltantes[] = 'subcontrato (obligatorio para categoría Destajo/Subcontrato)';
+        $campos_faltantes[] = 'subcontrato (obligatorio para categorÃ­a Destajo/Subcontrato)';
     }
 
     if (!empty($campos_faltantes)) {
         sendJsonResponse(false, "Faltan datos obligatorios: " . implode(', ', $campos_faltantes));
     }
 
-    // Validar que la requisición existe si se proporciona
+    // Validar que la requisiciÃ³n existe si se proporciona
     if ($requisicion_id && !empty($requisicion_id)) {
         $sql_check_requisicion = "SELECT id FROM requisiciones WHERE id = ?";
         $stmt_check = $conn->prepare($sql_check_requisicion);
@@ -165,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_check_folio->close();
 
     // ================================
-    // INICIAR TRANSACCIÓN
+    // INICIAR TRANSACCIÃ“N
     // ================================
     $conn->begin_transaction();
 
@@ -180,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
-            throw new Exception("Error en la preparación: " . $conn->error);
+            throw new Exception("Error en la preparaciÃ³n: " . $conn->error);
         }
 
         // Asegurar valores nulos para campos opcionales
@@ -225,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt_item = $conn->prepare($sql_item);
             if (!$stmt_item) {
-                throw new Exception("Error preparación items: " . $conn->error);
+                throw new Exception("Error preparaciÃ³n items: " . $conn->error);
             }
 
             for ($i = 0; $i < count($descripciones); $i++) {
@@ -236,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cantidad = limpiarValorMonetario($cantidades[$i] ?? 1);
                     $unidad_id = !empty($unidades_ids[$i]) ? $unidades_ids[$i] : null;
 
-                    // Obtener concepto_id para este item específico
+                    // Obtener concepto_id para este item especÃ­fico
                     $concepto_item_id = !empty($conceptos_ids[$i]) ? $conceptos_ids[$i] : null;
 
                     $precio_unitario = limpiarValorMonetario($precios_unit[$i] ?? 0);
@@ -267,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ACTUALIZAR PRESUPUESTO DEL SUBCONTRATO (si aplica)
         // ================================
         if ($esCategoriaSubcontrato && $subcontrato_id) {
-            // Recalcular el monto real del subcontrato basado en las órdenes pagadas
+            // Recalcular el monto real del subcontrato basado en las Ã³rdenes pagadas
             $sql_recalcular = "CALL sp_recalcular_monto_real(?, ?)";
             $stmt_recalc = $conn->prepare($sql_recalcular);
             $stmt_recalc->bind_param("ii", $obra_id_sp, $subcontrato_id);
@@ -279,9 +277,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // MANEJO DE ARCHIVOS
         // ================================
 
-        // 1. Copiar archivos de la requisición (excepto los eliminados)
+        // 1. Copiar archivos de la requisiciÃ³n (excepto los eliminados)
         if ($requisicion_id) {
-            $sql_archivos_requisicion = "SELECT id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime 
+            $sql_archivos_requisicion = "SELECT id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime 
                                         FROM requisicion_archivos 
                                         WHERE requisicion_id = ?";
 
@@ -305,7 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($archivos->num_rows > 0) {
                 $sql_insert_archivo = "INSERT INTO orden_compra_archivos 
-                                          (orden_compra_id, requisicion_archivo_id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime)
+                                          (orden_compra_id, requisicion_archivo_id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime)
                                        VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt_insert = $conn->prepare($sql_insert_archivo);
 
@@ -316,11 +314,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $archivo['id'],
                         $archivo['nombre_archivo'],
                         $archivo['ruta_archivo'],
-                        $archivo['tamaño_archivo'],
+                        $archivo['tamaÃ±o_archivo'],
                         $archivo['tipo_mime']
                     );
                     if (!$stmt_insert->execute()) {
-                        error_log("Error copiando archivo de requisición: " . $stmt_insert->error);
+                        error_log("Error copiando archivo de requisiciÃ³n: " . $stmt_insert->error);
                     }
                 }
                 $stmt_insert->close();
@@ -338,7 +336,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($_FILES['archivos_nuevos']['name'] as $key => $nombre) {
                 if ($_FILES['archivos_nuevos']['error'][$key] === UPLOAD_ERR_OK && !empty($nombre)) {
                     $tmpName = $_FILES['archivos_nuevos']['tmp_name'][$key];
-                    $tamaño = $_FILES['archivos_nuevos']['size'][$key];
+                    $tamaÃ±o = $_FILES['archivos_nuevos']['size'][$key];
                     $tipo = $_FILES['archivos_nuevos']['type'][$key];
 
                     $nombreArchivo = basename($nombre);
@@ -350,10 +348,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if (move_uploaded_file($tmpName, $rutaArchivo)) {
                         $sql_file = "INSERT INTO orden_compra_archivos 
-                                        (orden_compra_id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime)
+                                        (orden_compra_id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime)
                                      VALUES (?, ?, ?, ?, ?)";
                         $stmt_file = $conn->prepare($sql_file);
-                        $stmt_file->bind_param("issis", $orden_compra_id, $nombreArchivo, $rutaArchivo, $tamaño, $tipo);
+                        $stmt_file->bind_param("issis", $orden_compra_id, $nombreArchivo, $rutaArchivo, $tamaÃ±o, $tipo);
                         if (!$stmt_file->execute()) {
                             error_log("Error guardando archivo nuevo: " . $stmt_file->error);
                         }
@@ -364,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // ================================
-        // CONFIRMAR TRANSACCIÓN
+        // CONFIRMAR TRANSACCIÃ“N
         // ================================
         $conn->commit();
 
@@ -372,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // NOTIFICACIONES POR CORREO 
         // ================================
         try {
-            // Obtener datos completos de la orden de compra recién creada
+            // Obtener datos completos de la orden de compra reciÃ©n creada
             $sql_oc_datos = "SELECT oc.*, 
                             u.correo_corporativo as solicitante_correo,
                             CONCAT(u.nombres, ' ', u.apellidos) as solicitante_nombre,
@@ -403,10 +401,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $oc_data = $stmt_oc_datos->get_result()->fetch_assoc();
 
             if ($oc_data) {
-                // Preparar datos para notificación
+                // Preparar datos para notificaciÃ³n
                 $datosOrdenCompra = [
                     'folio' => $oc_data['folio'],
-                    'estado' => 'Pendiente de Aprobación',
+                    'estado' => 'Pendiente de AprobaciÃ³n',
                     'solicitante' => $oc_data['solicitante_nombre'],
                     'entidad' => $oc_data['entidad_nombre'] ?? 'Sin especificar',
                     'categoria' => $oc_data['categoria_nombre'] ?? 'Sin especificar',
@@ -414,7 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'proyecto' => $oc_data['nombre_proyecto'] ?? 'Sin especificar',
                     'obra' => $oc_data['nombre_obra'] ?? 'N/A',
                     'catalogo' => $oc_data['nombre_catalogo'] ?? 'N/A',
-                    'subcontrato' => $subcontrato_id ? 'Sí' : 'No',
+                    'subcontrato' => $subcontrato_id ? 'SÃ­' : 'No',
                     'concepto' => ($oc_data['codigo_concepto'] ?? '') . ' - ' . ($oc_data['nombre_concepto'] ?? 'N/A'),
                     'total' => '$' . number_format($oc_data['total'], 2),
                     'fecha_solicitud' => date('d/m/Y H:i', strtotime($oc_data['fecha_solicitud'])),
@@ -431,7 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        AND correo_corporativo IS NOT NULL";
                 $result_subdirector = $conn->query($sql_subdirector);
 
-                // Enviar notificación a Subdirector General usando EmailHandler
+                // Enviar notificaciÃ³n a Subdirector General usando EmailHandler
                 if ($result_subdirector && $result_subdirector->num_rows > 0) {
                     $emailHandler = new EmailHandler();
 
@@ -443,12 +441,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         );
                     }
 
-                    error_log("Notificación enviada a Subdirector General para orden de compra " . $datosOrdenCompra['folio']);
+                    error_log("NotificaciÃ³n enviada a Subdirector General para orden de compra " . $datosOrdenCompra['folio']);
                 }
             }
         } catch (Exception $e) {
-            // Si falla el envío de correo, no interrumpir el flujo
-            error_log("Error en notificación por correo: " . $e->getMessage());
+            // Si falla el envÃ­o de correo, no interrumpir el flujo
+            error_log("Error en notificaciÃ³n por correo: " . $e->getMessage());
         }
 
         sendJsonResponse(true, "Orden de compra guardada exitosamente", "list_oc.php?msg=success&folio=" . urlencode($folio));
@@ -463,4 +461,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if (ob_get_length()) ob_end_clean();
+
 

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once "config.php";
 
 session_start();
 $page_title = "Aviso de Privacidad";
@@ -10,203 +10,201 @@ $page_title = "Aviso de Privacidad";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?> - PROATAM</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
+        <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
 
 
-    <style>
-        :root {
-            --primary-green: #3f7555;
-            --light-green: #5a9770;
-            --bg-light: #f8f9fa;
-            --border-color: #e0e0e0;
-        }
+        <style>
+            :root {
+                --primary-green: #3f7555;
+                --light-green: #5a9770;
+                --bg-light: #f8f9fa;
+                --border-color: #e0e0e0;
+            }
 
-        .form-body {
-            padding: 0 2.5rem 2rem;
-            font-family: "Montserrat", sans-serif;
-        }
-
-        /* Tarjetas de sección */
-        .privacy-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .privacy-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .section-title {
-            color: var(--primary-green);
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .policy-icon {
-            font-size: 1.5rem;
-            color: var(--primary-green);
-            margin-right: 12px;
-            background: rgba(63, 117, 85, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        /* Items de contenido */
-        .content-item {
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-            background: var(--bg-light);
-            border-radius: 8px;
-            border-left: 3px solid var(--primary-green);
-        }
-
-        .content-item strong {
-            color: var(--primary-green);
-            display: block;
-            margin-bottom: 0.3rem;
-        }
-
-        /* Listas */
-        .info-list {
-            background: var(--bg-light);
-            border-radius: 8px;
-            padding: 1.2rem;
-        }
-
-        .info-list h6 {
-            color: var(--primary-green);
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-
-        .info-list ul {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 0;
-        }
-
-        .info-list li {
-            padding: 0.4rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .info-list li:before {
-            content: "•";
-            position: absolute;
-            left: 0.5rem;
-            color: var(--primary-green);
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        /* Derechos ARCO */
-        .arco-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .arco-card {
-            background: var(--bg-light);
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1.2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .arco-card:hover {
-            border-color: var(--primary-green);
-            background: white;
-            box-shadow: 0 4px 12px rgba(63, 117, 85, 0.15);
-        }
-
-        .arco-icon {
-            font-size: 2rem;
-            color: var(--primary-green);
-            margin-bottom: 0.8rem;
-        }
-
-        .arco-title {
-            font-weight: 600;
-            color: var(--primary-green);
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-
-        /* Contacto */
-        .contact-box {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .contact-box i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .contact-box a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .contact-box a:hover {
-            border-bottom-color: white;
-        }
-
-        /* Badge de actualización */
-        .update-badge {
-            padding: 0.4rem 1rem;
-            color: white;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        /* Responsivo */
-        @media (max-width: 768px) {
             .form-body {
-                padding: 0 1rem 1rem;
+                padding: 0 2.5rem 2rem;
+                font-family: "Montserrat", sans-serif;
+            }
+
+            /* Tarjetas de sección */
+            .privacy-card {
+                background: white;
+                border-radius: 12px;
+                padding: 2rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+            }
+
+            .privacy-card:hover {
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
             }
 
             .section-title {
-                font-size: 1.1rem;
+                color: var(--primary-green);
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin-bottom: 1.2rem;
+                display: flex;
+                align-items: center;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid var(--border-color);
             }
 
-            .privacy-card {
-                padding: 1.5rem;
+            .policy-icon {
+                font-size: 1.5rem;
+                color: var(--primary-green);
+                margin-right: 12px;
+                background: rgba(63, 117, 85, 0.1);
+                padding: 10px;
+                border-radius: 10px;
             }
-        }
-    </style>
+
+            /* Items de contenido */
+            .content-item {
+                padding: 1rem;
+                margin-bottom: 0.8rem;
+                background: var(--bg-light);
+                border-radius: 8px;
+                border-left: 3px solid var(--primary-green);
+            }
+
+            .content-item strong {
+                color: var(--primary-green);
+                display: block;
+                margin-bottom: 0.3rem;
+            }
+
+            /* Listas */
+            .info-list {
+                background: var(--bg-light);
+                border-radius: 8px;
+                padding: 1.2rem;
+            }
+
+            .info-list h6 {
+                color: var(--primary-green);
+                font-weight: 600;
+                margin-bottom: 0.8rem;
+            }
+
+            .info-list ul {
+                list-style: none;
+                padding-left: 0;
+                margin-bottom: 0;
+            }
+
+            .info-list li {
+                padding: 0.4rem 0;
+                padding-left: 1.5rem;
+                position: relative;
+            }
+
+            .info-list li:before {
+                content: "•";
+                position: absolute;
+                left: 0.5rem;
+                color: var(--primary-green);
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
+
+            /* Derechos ARCO */
+            .arco-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .arco-card {
+                background: var(--bg-light);
+                border: 2px solid var(--border-color);
+                border-radius: 10px;
+                padding: 1.2rem;
+                text-align: center;
+                transition: all 0.3s ease;
+            }
+
+            .arco-card:hover {
+                border-color: var(--primary-green);
+                background: white;
+                box-shadow: 0 4px 12px rgba(63, 117, 85, 0.15);
+            }
+
+            .arco-icon {
+                font-size: 2rem;
+                color: var(--primary-green);
+                margin-bottom: 0.8rem;
+            }
+
+            .arco-title {
+                font-weight: 600;
+                color: var(--primary-green);
+                margin-bottom: 0.5rem;
+                font-size: 1rem;
+            }
+
+            /* Contacto */
+            .contact-box {
+                background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+                color: white;
+                border-radius: 12px;
+                padding: 2rem;
+                text-align: center;
+                margin-top: 2rem;
+            }
+
+            .contact-box i {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .contact-box a {
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.1rem;
+                border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+                transition: all 0.3s ease;
+            }
+
+            .contact-box a:hover {
+                border-bottom-color: white;
+            }
+
+            /* Badge de actualización */
+            .update-badge {
+                padding: 0.4rem 1rem;
+                color: white;
+                border-radius: 20px;
+                display: inline-block;
+                margin-top: 0.5rem;
+                font-size: 0.95rem;
+            }
+
+            /* Responsivo */
+            @media (max-width: 768px) {
+                .form-body {
+                    padding: 0 1rem 1rem;
+                }
+
+                .section-title {
+                    font-size: 1.1rem;
+                }
+
+                .privacy-card {
+                    padding: 1.5rem;
+                }
+            }
+        </style>
 </head>
 
 <body>
-
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -454,12 +452,9 @@ $page_title = "Aviso de Privacidad";
         </div>
     </div>
 
-    <?php include __DIR__ . "/includes/footer.php"; ?>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
 </body>
 
 </html>
-

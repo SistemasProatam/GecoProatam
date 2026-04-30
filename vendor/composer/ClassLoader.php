@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Composer.
  *
@@ -577,3 +576,4 @@ class ClassLoader
         }, null, null);
     }
 }
+

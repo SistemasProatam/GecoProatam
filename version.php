@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once "config.php";
 
 //control de versiones automatico
-define('APP_VERSION', '1.4.13');
-define('APP_UPDATE', '09/04/2026');
+define('APP_VERSION', '1.4.48');
+define('APP_UPDATE', '30/04/2026');
 

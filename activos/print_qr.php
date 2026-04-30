@@ -1,13 +1,11 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 require_once __DIR__ . "/qr_generator.php";
 
 $id = (int)($_GET['id'] ?? 0);
@@ -42,8 +40,8 @@ try {
     $qrRutaActual = $row_ruta['qr_ruta_imagen'] ?? null;
 } catch (Throwable $e) { }
 
-// Regenerar el PNG si no está en disco
-if (!$qrRutaActual || !file_exists($_SERVER['DOCUMENT_ROOT'] . $qrRutaActual)) {
+// Regenerar el PNG si no estÃ¡ en disco
+if (!$qrRutaActual || !file_exists(__DIR__ . '/..' . $qrRutaActual)) {
     $nuevaRuta = QRGenerator::generarYGuardar($activo['qr_token']);
     if ($nuevaRuta) {
         try {
@@ -65,10 +63,10 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Imprimir QR – <?= htmlspecialchars($activo['codigo']) ?></title>
+  <title>Imprimir QR â€“ <?= htmlspecialchars($activo['codigo']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
@@ -124,7 +122,7 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
     }
     .qr-card .scan-hint { font-size: .7rem; color: #adb5bd; margin-top: 8px; }
 
-    /* Estado de carga del botón PNG */
+    /* Estado de carga del botÃ³n PNG */
     .btn-png-loading { opacity: .7; pointer-events: none; }
 
     @media print {
@@ -151,35 +149,27 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
   </div>
 
   <?php
-require_once __DIR__ . '/config.php';
- $cantidad = max(1, min(8, (int)($_GET['cantidad'] ?? 1))); ?>
+$cantidad = max(1, min(8, (int)($_GET['cantidad'] ?? 1))); ?>
   <?php
-require_once __DIR__ . '/config.php';
- if ($cantidad > 1): ?><div class="multi-print"><?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+if ($cantidad > 1): ?><div class="multi-print"><?php
+endif; ?>
 
   <?php
-require_once __DIR__ . '/config.php';
- for ($c = 0; $c < $cantidad; $c++): ?>
+for ($c = 0; $c < $cantidad; $c++): ?>
   <div class="qr-card-wrap">
     <div class="qr-card" id="qr-card-<?= $c ?>">
 
       <div class="logo-wrap">
         <?php
-require_once __DIR__ . '/config.php';
- $logo_path = $_SERVER['DOCUMENT_ROOT'] . '/assets/img/logo.png'; ?>
+$logo_path = __DIR__ . '/../assets/img/logo.png'; ?>
         <?php
-require_once __DIR__ . '/config.php';
- if (file_exists($logo_path)): ?>
+if (file_exists($logo_path)): ?>
           <img src="<?= BASE_URL ?>/assets/img/logo.png" alt="Logo PROATAM" />
         <?php
-require_once __DIR__ . '/config.php';
- else: ?>
+else: ?>
           <div class="logo-texto">PROATAM</div>
         <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+endif; ?>
       </div>
 
       <hr class="divider" />
@@ -197,20 +187,17 @@ require_once __DIR__ . '/config.php';
 
       <div class="scan-hint">
         <i class="bi bi-qr-code-scan"></i>
-        Escanea para ver información del activo
+        Escanea para ver informaciÃ³n del activo
       </div>
 
     </div>
   </div>
   <?php
-require_once __DIR__ . '/config.php';
- endfor; ?>
+endfor; ?>
 
   <?php
-require_once __DIR__ . '/config.php';
- if ($cantidad > 1): ?></div><?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+if ($cantidad > 1): ?></div><?php
+endif; ?>
 
   <script>
     function descargarPNG(btn) {
@@ -223,8 +210,8 @@ require_once __DIR__ . '/config.php';
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Generando...';
 
       html2canvas(card, {
-        scale: 3,          // Alta resolución (3× = ~1020px de ancho → nítido en Word)
-        useCORS: true,     // Necesario para imágenes cross-origin
+        scale: 3,          // Alta resoluciÃ³n (3Ã— = ~1020px de ancho â†’ nÃ­tido en Word)
+        useCORS: true,     // Necesario para imÃ¡genes cross-origin
         backgroundColor: '#ffffff',
         logging: false
       }).then(function(canvas) {
@@ -246,4 +233,6 @@ require_once __DIR__ . '/config.php';
 
 </body>
 </html>
+
+
 

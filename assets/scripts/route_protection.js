@@ -104,14 +104,14 @@ class RouteProtection {
   // Redirigir al login
   redirectToLogin(reason = "") {
     sessionStorage.setItem("redirect_reason", reason);
-    window.location.href = "/login.php";
+    window.location.href = window.BASE_URL + '/login.php";
   }
 
   // Verificar estado de sesión periódicamente
   checkSessionStatus() {
     setInterval(() => {
       // Hacer una petición al servidor para verificar sesión
-      fetch("/includes/check_session_status.php")
+      fetch(window.BASE_URL + '/includes/check_session_status.php")
         .then((response) => response.json())
         .then((data) => {
           if (!data.valid) {

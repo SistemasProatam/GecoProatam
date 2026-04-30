@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PHPMailer POP-Before-SMTP Authentication Class.
  * PHP Version 5.5.
@@ -467,3 +466,4 @@ class POP3
         );
     }
 }
+

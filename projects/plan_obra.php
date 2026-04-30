@@ -1,10 +1,9 @@
-<?php
-require_once __DIR__ . '/../config.php';
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   header('Content-Type: application/json');
@@ -146,12 +145,13 @@ if ($obra_id > 0) {
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "" . BASE_URL . "/includes/navbar.php"; ?>
+  <?php
+include __DIR__ . "/../includes/navbar.php"; ?>
 
   <div class="hero-section">
     <div class="container hero-content">
       <h1 class="hero-title">Plan de Obra</h1>
-      <p class="hero-sub"><?= htmlspecialchars($obra_nombre ?? '') ?: 'Control de avances y programación' ?></p>
+      <p class="hero-sub"><?= htmlspecialchars($obra_nombre ?? '') ?: 'Control de avances y programaciÃ³n' ?></p>
     </div>
   </div>
 
@@ -160,7 +160,7 @@ if ($obra_id > 0) {
       <div class="row g-3">
         <div class="col-md-3"><label class="lbl">Proyecto</label><select id="sel-pro" class="inp" onchange="getObras()"></select></div>
         <div class="col-md-3"><label class="lbl">Obra</label><select id="sel-obra" class="inp" disabled onchange="getCats()"></select></div>
-        <div class="col-md-4"><label class="lbl">Catálogo</label><select id="sel-cat" class="inp" disabled></select></div>
+        <div class="col-md-4"><label class="lbl">CatÃ¡logo</label><select id="sel-cat" class="inp" disabled></select></div>
         <div class="col-md-2 d-flex align-items-end"><button class="btn-p w-100" onclick="cargarPlan()">Cargar Plan</button></div>
       </div>
       <div class="mt-3 d-flex gap-4">
@@ -295,7 +295,7 @@ if ($obra_id > 0) {
       list.forEach(c => {
         const p = c.proveedor_nombre || 'Sin Proveedor';
         const ct = (c.cat_clave && c.cat_titulo) ? (c.cat_clave + ' ' + c.cat_titulo) : 'General';
-        const sub = (c.nodo_clave && c.nodo_titulo) ? (c.nodo_clave + ' ' + c.nodo_titulo) : 'Sin Subcategoría';
+        const sub = (c.nodo_clave && c.nodo_titulo) ? (c.nodo_clave + ' ' + c.nodo_titulo) : 'Sin SubcategorÃ­a';
 
         if (!tree[p]) tree[p] = {};
         if (!tree[p][ct]) tree[p][ct] = {};
@@ -308,7 +308,7 @@ if ($obra_id > 0) {
         h += `<div class="prov-sec">
                 <div class="prov-hdr" onclick="this.nextElementSibling.classList.toggle('d-none')">
                     <div class="prov-name"><i class="bi bi-box-seam me-2"></i>${p}</div>
-                    <span class="badge bg-light text-dark border">${Object.keys(tree[p]).length} categorías</span>
+                    <span class="badge bg-light text-dark border">${Object.keys(tree[p]).length} categorÃ­as</span>
                 </div>
                 <div class="prov-body">`;
         for (let ct in tree[p]) {
@@ -316,7 +316,7 @@ if ($obra_id > 0) {
           for (let sub in tree[p][ct]) {
             h += `<div class="sub-hdr ms-3"><span><i class="bi bi-arrow-return-right me-2 opacity-50"></i>${sub}</span></div>
                   <table class="table table-hover mb-3">
-                    <thead><tr><th width="40">Ref</th><th>Código</th><th>Descripción</th><th width="120" class="text-end">Importe</th><th>Programación</th><th width="40">OK</th><th width="80">Dif.</th><th></th></tr></thead>
+                    <thead><tr><th width="40">Ref</th><th>CÃ³digo</th><th>DescripciÃ³n</th><th width="120" class="text-end">Importe</th><th>ProgramaciÃ³n</th><th width="40">OK</th><th width="80">Dif.</th><th></th></tr></thead>
                     <tbody>`;
             tree[p][ct][sub].forEach(c => {
               h += `<tr class="${+c.terminado?'is-done':''} ${+c.es_referencia?'is-ref':''}">
@@ -458,3 +458,6 @@ if ($obra_id > 0) {
 </body>
 
 </html>
+
+
+

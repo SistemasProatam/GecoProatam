@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Vietnamese (Tiếng Việt) PHPMailer language file: refer to English translation for definitive list.
  * @package PHPMailer
@@ -25,3 +24,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'Lỗi kết nối với SMTP';
 $PHPMAILER_LANG['smtp_error']           = 'Lỗi máy chủ smtp ';
 $PHPMAILER_LANG['variable_set']         = 'Không thể thiết lập hoặc thiết lập lại biến: ';
 //$PHPMAILER_LANG['extension_missing']    = 'Extension missing: ';
+

@@ -1,6 +1,5 @@
 <?php
-// reset_folios.php — Reinicia los contadores de folio para cada entidad
-// SOLO PARA SUPER_ADMIN
+require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -19,50 +18,92 @@ $resultados = [];
 foreach ($entidades as $entidad) {
     $file = "$dir/folio_{$entidad}.txt";
     file_put_contents($file, '1');
-    $resultados[] = "✓ Folio para {$entidad} reiniciado a 1";
+    $resultados[] = "Folio para {$entidad} reiniciado a 1";
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reiniciar Folios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reiniciar Folios - PROATAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/PROATAM/assets/styles/navbar.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/navbar.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/cotizaciones.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-<?php require_once __DIR__ . "/../includes/navbar.php"; ?>
+    <?php
+require_once __DIR__ . "/../includes/navbar.php"; ?>
 
-<div class="container mt-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-            <h4><i class="bi bi-arrow-repeat"></i> Reiniciar Folios por Entidad</h4>
-        </div>
-        <div class="card-body">
-            <h5>Resultados:</h5>
-            <ul>
-                <?php foreach ($resultados as $res): ?>
-                    <li><?= htmlspecialchars($res) ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <div class="alert alert-info mt-3">
-                <i class="bi bi-info-circle"></i> 
-                <strong>¿Cómo funciona?</strong><br>
-                Cada entidad tiene un archivo de texto en la carpeta <code>cotizaciones/data/</code> que guarda el siguiente número de folio a usar.<br>
-                Al reiniciar, ese número vuelve a <strong>1</strong>, por lo que la próxima cotización generará el folio <strong>-0001</strong>.
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        <div class="container hero-content">
+            <div class="breadcrumb-custom">
+                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <span>/</span>
+                <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php">Cotizaciones</a>
+                <span>/</span><span>Reiniciar Folios</span>
             </div>
-            <a href="/PROATAM/cotizaciones/cotizacion.php" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Crear nueva cotización
-            </a>
-            <a href="/PROATAM/cotizaciones/list_cotizaciones.php" class="btn btn-secondary">
-                <i class="bi bi-list"></i> Ver cotizaciones
-            </a>
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="hero-title">Gestión de Folios</h1>
+                    <p class="mt-2 text-white-50">Administración técnica de contadores de venta</p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+    <!-- MAIN CONTENT -->
+    <div class="content-wrapper">
+        <div class="form-container">
+            <div class="form-body">
+                <div class="section-title">
+                    <i class="bi bi-arrow-repeat"></i> Resultados de la Operación
+                </div>
+                
+                <div class="row g-3">
+                    <?php
+foreach ($resultados as $res): ?>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light border rounded-3 d-flex align-items-center gap-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                <span class="fw-bold"><?= htmlspecialchars($res) ?></span>
+                            </div>
+                        </div>
+                    <?php
+endforeach; ?>
+                </div>
+
+                <div class="alert alert-warning mt-5 border-0 shadow-sm rounded-3 p-4">
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                        <div>
+                            <h5 class="fw-bold">Información Importante</h5>
+                            <p class="mb-0">
+                                Al reiniciar los folios, el sistema comenzará a numerar desde el <strong>0001</strong> para cada entidad. 
+                                Asegúrese de que este es el comportamiento deseado antes de continuar con la operación.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-5">
+                    <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php" class="button-cancel">
+                        <i class="bi bi-list-ul"></i> Ver Registros
+                    </a>
+                    <a href="<?= BASE_URL ?>/cotizaciones/cotizacion.php" class="button-57">
+                        <i class="bi bi-plus-lg"></i> Nueva Cotización
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php
+include __DIR__ . "/../includes/footer.php"; ?>
+    <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 </body>
 </html>
+

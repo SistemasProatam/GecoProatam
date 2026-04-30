@@ -1,12 +1,10 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = intval($_GET['id']);
 
@@ -46,7 +44,7 @@ while ($dep = $departamentos->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <style>
         .form-container-custom {
             background: white;
@@ -85,7 +83,8 @@ while ($dep = $departamentos->fetch_assoc()) {
 </head>
 
 <body>
-    <?php include __DIR__ . "/../includes/navbar.php"; ?>
+    <?php
+include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -120,9 +119,9 @@ while ($dep = $departamentos->fetch_assoc()) {
                 <form id="formEditarUsuario" method="POST" action="update_user.php" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $user['id'] ?>">
 
-                    <!-- Información Básica -->
+                    <!-- InformaciÃ³n BÃ¡sica -->
                     <div class="section-title">
-                        <h4><i class="bi bi-person"></i> Información Básica</h4>
+                        <h4><i class="bi bi-person"></i> InformaciÃ³n BÃ¡sica</h4>
                     </div>
 
                     <div class="row">
@@ -163,7 +162,7 @@ while ($dep = $departamentos->fetch_assoc()) {
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Número de Celular Particular</label>
+                                <label class="form-label">NÃºmero de Celular Particular</label>
                                 <input type="text" name="telefono_personal" class="form-control"
                                     value="<?= htmlspecialchars($user['telefono_personal'] ?? '') ?>">
                             </div>
@@ -217,7 +216,7 @@ while ($dep = $departamentos->fetch_assoc()) {
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Número de Celular</label>
+                                <label class="form-label">NÃºmero de Celular</label>
                                 <input type="text" name="contacto_emergencia_telefono" class="form-control"
                                     value="<?= htmlspecialchars($user['contacto_emergencia_telefono'] ?? '') ?>">
                             </div>
@@ -233,30 +232,42 @@ while ($dep = $departamentos->fetch_assoc()) {
                     <div class="document-section">
                         <div class="row">
                             <div class="col-md-6">
-                                <?php mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
-                                <?php mostrarCampoArchivo('identificacion_pdf', 'Identificación Oficial', $user); ?>
-                                <?php mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
-                                <?php mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
-                                <?php mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de Situación Fiscal', $user); ?>
-                                <?php mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
+                                <?php
+mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
+                                <?php
+mostrarCampoArchivo('identificacion_pdf', 'IdentificaciÃ³n Oficial', $user); ?>
+                                <?php
+mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
+                                <?php
+mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
+                                <?php
+mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de SituaciÃ³n Fiscal', $user); ?>
+                                <?php
+mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
-                                <?php mostrarCampoArchivo('nss_pdf', 'Número de Seguro Social', $user); ?>
-                                <?php mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
-                                <?php mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
-                                <?php mostrarCampoArchivo('comprobante_estudios_pdf', 'Último Comprobante de Estudios', $user); ?>
-                                <?php mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
+                                <?php
+mostrarCampoArchivo('nss_pdf', 'NÃºmero de Seguro Social', $user); ?>
+                                <?php
+mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
+                                <?php
+mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
+                                <?php
+mostrarCampoArchivo('comprobante_estudios_pdf', 'Ãšltimo Comprobante de Estudios', $user); ?>
+                                <?php
+mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
-                                <?php mostrarSeccionContratos($id, $conn); ?>
+                                <?php
+mostrarSeccionContratos($id, $conn); ?>
                             </div>
 
                         </div>
                     </div>
 
-                    <!-- Botones de acción -->
+                    <!-- Botones de acciÃ³n -->
                     <div class="d-flex justify-content-between mt-4">
                         <a href="details_user.php?id=<?= $user['id'] ?>" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Cancelar
@@ -270,18 +281,19 @@ while ($dep = $departamentos->fetch_assoc()) {
         </div>
     </div>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+include __DIR__ . "/../includes/footer.php"; ?>
 
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesando… por favor espere</div>
+            <div class="mt-3">Procesandoâ€¦ por favor espere</div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Manejar el envío del formulario - Versión consolidada
+        // Manejar el envÃ­o del formulario - VersiÃ³n consolidada
         document.getElementById('formEditarUsuario').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -301,7 +313,7 @@ while ($dep = $departamentos->fetch_assoc()) {
                     if (data.status === 'success') {
                         Swal.fire({
                             icon: 'success',
-                            title: '¡Éxito!',
+                            title: 'Â¡Ã‰xito!',
                             html: data.message,
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
@@ -325,7 +337,7 @@ while ($dep = $departamentos->fetch_assoc()) {
                     if (overlay) overlay.style.display = 'none';
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexiÃ³n',
                         text: 'No se pudo conectar con el servidor',
                         confirmButtonText: 'Aceptar'
                     });
@@ -372,7 +384,7 @@ while ($dep = $departamentos->fetch_assoc()) {
                 if (contratoId) {
                     const input = item.querySelector('input[name="contrato_id[]"]');
                     if (input) {
-                        // Crear campo hidden para marcar eliminación
+                        // Crear campo hidden para marcar eliminaciÃ³n
                         const eliminarInput = document.createElement('input');
                         eliminarInput.type = 'hidden';
                         eliminarInput.name = 'eliminar_contrato[]';
@@ -397,7 +409,7 @@ while ($dep = $departamentos->fetch_assoc()) {
 </html>
 
 <?php
-// Función para mostrar campos de archivo
+// FunciÃ³n para mostrar campos de archivo
 function mostrarCampoArchivo($campo, $label, $user)
 {
     $archivo = $user[$campo] ?? '';
@@ -406,25 +418,28 @@ function mostrarCampoArchivo($campo, $label, $user)
     <div class="mb-3">
         <label class="form-label"><?= $label ?></label>
         <input type="file" name="<?= $campo ?>" class="form-control" accept="<?= $accept ?>">
-        <?php if ($archivo): ?>
+        <?php
+if ($archivo): ?>
             <div class="current-file">
                 <i class="bi bi-file-earmark"></i> Archivo actual:
                 <a href="../uploads/usuarios/<?= htmlspecialchars($archivo) ?>" target="_blank">
                     <?= htmlspecialchars($archivo) ?>
                 </a>
             </div>
-        <?php else: ?>
+        <?php
+else: ?>
             <div class="current-file text-muted">
                 <i class="bi bi-file-earmark"></i> No hay archivo subido
             </div>
-        <?php endif; ?>
+        <?php
+endif; ?>
     </div>
 <?php
 }
 ?>
 
 <?php
-// Función para mostrar la sección de contratos
+// FunciÃ³n para mostrar la secciÃ³n de contratos
 function mostrarSeccionContratos($id, $conn)
 {
 ?>
@@ -432,7 +447,7 @@ function mostrarSeccionContratos($id, $conn)
         <label class="form-label">Contratos (PDF)</label>
         <div id="contratos-container">
             <?php
-            // Mostrar contratos existentes
+// Mostrar contratos existentes
             $sql_contratos = "SELECT * FROM contratos_usuario WHERE usuario_id = ? ORDER BY tipo_contrato DESC";
             $stmt_contratos = $conn->prepare($sql_contratos);
             $stmt_contratos->bind_param("i", $id);
@@ -446,7 +461,8 @@ function mostrarSeccionContratos($id, $conn)
                         <!-- Campo hidden para ID del contrato -->
                         <input type="hidden" name="contrato_id[]" value="<?= $contrato['id'] ?>">
 
-                        <?php if (!empty($contrato['nombre_archivo'])): ?>
+                        <?php
+if (!empty($contrato['nombre_archivo'])): ?>
                             <div class="current-file mt-1">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="flex-grow-1">
@@ -473,19 +489,23 @@ function mostrarSeccionContratos($id, $conn)
                                     </div>
                                 </div>
                             </div>
-                        <?php else: ?>
+                        <?php
+else: ?>
                             <div class="current-file text-muted mt-1">
                                 <i class="bi bi-file-earmark"></i> No hay archivo subido
                             </div>
-                        <?php endif; ?>
+                        <?php
+endif; ?>
                     </div>
                 <?php
-                endwhile;
+endwhile;
             else:
                 ?>
                 <p class="text-muted">No hay contratos registrados.</p>
-            <?php endif; ?>
-            <?php $stmt_contratos->close(); ?>
+            <?php
+endif; ?>
+            <?php
+$stmt_contratos->close(); ?>
 
             <!-- Nuevos contratos -->
             <div id="nuevos-contratos"></div>
@@ -494,8 +514,11 @@ function mostrarSeccionContratos($id, $conn)
         <button type="button" class="btn btn-sm btn-secondary mt-2" id="agregar-contrato">
             <i class="bi bi-plus"></i> Agregar nuevo contrato
         </button>
-        <small class="text-muted d-block mt-1">Puedes agregar múltiples contratos</small>
+        <small class="text-muted d-block mt-1">Puedes agregar mÃºltiples contratos</small>
     </div>
 <?php
 }
 ?>
+
+
+

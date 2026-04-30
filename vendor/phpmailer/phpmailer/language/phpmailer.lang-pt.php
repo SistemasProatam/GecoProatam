@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Portuguese (European) PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -32,3 +31,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'Falha na função SMTP connect().';
 $PHPMAILER_LANG['smtp_detail']          = 'Detalhes: ';
 $PHPMAILER_LANG['smtp_error']           = 'Erro do servidor SMTP: ';
 $PHPMAILER_LANG['variable_set']         = 'Não foi possível definir ou redefinir a variável: ';
+

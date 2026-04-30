@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Norwegian Bokmål PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -31,3 +30,4 @@
  $PHPMAILER_LANG['smtp_detail']          = 'Detaljer: ';
  $PHPMAILER_LANG['smtp_error']           = 'SMTP-serverfeil: ';
  $PHPMAILER_LANG['variable_set']         = 'Kan ikke angi eller tilbakestille variabel: ';
+

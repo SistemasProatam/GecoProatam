@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // Mostrar mensajes de estado
 if (isset($_GET['msg'])) {
@@ -21,7 +19,7 @@ if (isset($_GET['msg'])) {
         case 'estado_actualizado_con_email':
             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="bi bi-check-circle"></i>
-                    <strong>¡Éxito!</strong> Estado actualizado correctamente y notificación enviada por correo para la requisición <strong>' . $folio . '</strong>.
+                    <strong>Â¡Ã‰xito!</strong> Estado actualizado correctamente y notificaciÃ³n enviada por correo para la requisiciÃ³n <strong>' . $folio . '</strong>.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
             break;
@@ -29,7 +27,7 @@ if (isset($_GET['msg'])) {
         case 'estado_actualizado_sin_email':
             echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <i class="bi bi-exclamation-triangle"></i>
-                    <strong>Atención:</strong> Estado actualizado para la requisición <strong>' . $folio . '</strong>, pero no se pudo enviar la notificación por correo.
+                    <strong>AtenciÃ³n:</strong> Estado actualizado para la requisiciÃ³n <strong>' . $folio . '</strong>, pero no se pudo enviar la notificaciÃ³n por correo.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
             break;
@@ -37,7 +35,7 @@ if (isset($_GET['msg'])) {
         case 'estado_actualizado_error_email':
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="bi bi-x-circle"></i>
-                    <strong>Error:</strong> El estado se actualizó para <strong>' . $folio . '</strong>, pero ocurrió un error al enviar la notificación.
+                    <strong>Error:</strong> El estado se actualizÃ³ para <strong>' . $folio . '</strong>, pero ocurriÃ³ un error al enviar la notificaciÃ³n.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
             break;
@@ -46,11 +44,11 @@ if (isset($_GET['msg'])) {
     echo '</div>';
 }
 
-// Obtener datos de sesión
+// Obtener datos de sesiÃ³n
 $departamento_id = $_SESSION['departamento_id'] ?? 0;
 $departamento_sesion = $_SESSION['departamento'] ?? '';
 
-// Departamentos autorizados para crear órdenes de compra
+// Departamentos autorizados para crear Ã³rdenes de compra
 $departamentos_crear_oc = [
     'Director General',
     'Subdirector General',
@@ -61,7 +59,7 @@ $departamentos_crear_oc = [
 
 $puede_crear_oc = in_array($departamento_sesion, $departamentos_crear_oc);
 
-// Parámetros de búsqueda y paginación
+// ParÃ¡metros de bÃºsqueda y paginaciÃ³n
 $busqueda = $_GET['q'] ?? '';
 $pagina = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $por_pagina = 10;
@@ -71,7 +69,7 @@ $offset = ($pagina - 1) * $por_pagina;
 $estado_filtro = $_GET['estado'] ?? '';
 $entidad_filtro = $_GET['entidad'] ?? '';
 
-// Construir WHERE dinámico
+// Construir WHERE dinÃ¡mico
 $where = [];
 $params = [];
 $types = '';
@@ -143,7 +141,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
     <title>Registro de Requisiciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
     <style>
         /* CONTENEDOR CON SCROLL HORIZONTAL */
@@ -156,7 +154,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
             margin-bottom: 1rem;
         }
 
-        /* Asegurar que la tabla tenga un ancho mínimo */
+        /* Asegurar que la tabla tenga un ancho mÃ­nimo */
         .table {
             min-width: 700px;
             margin: 0;
@@ -248,7 +246,8 @@ while ($ent = $entidadesRes->fetch_assoc()) {
 </head>
 
 <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
+    <?php
+include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -275,7 +274,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
         <div class="form-container">
             <div class="form-body">
                 <!-- Buscador -->
-                <form class="form-search d-flex justify-content-center w-100 mb-5" method="GET">
+                <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-5" method="GET">
                     <input type="hidden" name="estado" value="<?= htmlspecialchars($estado_filtro) ?>">
                     <input type="hidden" name="entidad" value="<?= htmlspecialchars($entidad_filtro) ?>">
                     <input class="form-control w-100" type="search" name="q"
@@ -286,8 +285,13 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                     </button>
                 </form>
 
+                <div class="mb-2">
+                    <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
+                        <i class="bi bi-funnel"></i> Filtros
+                    </h5>
+                </div>
                 <!-- Filtros -->
-                <form method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+                <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
                     <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
 
                     <div style="flex: 0 0 auto; min-width: 150px;">
@@ -305,15 +309,11 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                             <?= $entidadesOptions ?>
                         </select>
                     </div>
-
-                    <div style="flex: 0 0 auto;">
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-funnel"></i> Filtrar
-                        </button>
-                    </div>
                 </form>
 
-                <!-- Botón de agregar requisicion -->
+                <div id="table-container-wrapper">
+
+                <!-- BotÃ³n de agregar requisicion -->
                 <div class="d-flex justify-content-between mb-3">
                     <span class="badge-num"><?= $totalRegistros ?> requisiciones</span>
                     <button class="button-56" type="button" onclick="window.location.href='new_requis.php'">
@@ -330,18 +330,20 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                 <th>Entidad</th>
                                 <th>Estado</th>
                                 <th>Fecha de Solicitud</th>
-                                <th>Descripción</th>
+                                <th>DescripciÃ³n</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if ($result && $result->num_rows > 0): ?>
-                                <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php
+if ($result && $result->num_rows > 0): ?>
+                                <?php
+while ($row = $result->fetch_assoc()): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($row['folio']) ?></td>
                                         <td><?= htmlspecialchars($row['entidad']) ?></td>
                                         <td>
                                             <?php
-                                            switch ($row['estado']) {
+switch ($row['estado']) {
                                                 case 'pendiente':
                                                     echo '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente</span>';
                                                     break;
@@ -367,44 +369,54 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                                     <i class="bi bi-info-circle"></i>
                                                 </button>
 
-                                                <!-- SOLO mostrar botón de orden de compra si está APROBADO y el departamento tiene permiso -->
-                                                <?php if ($row['estado'] === 'aprobado' && $puede_crear_oc): ?>
+                                                <!-- SOLO mostrar botÃ³n de orden de compra si estÃ¡ APROBADO y el departamento tiene permiso -->
+                                                <?php
+if ($row['estado'] === 'aprobado' && $puede_crear_oc): ?>
                                                     <button class="btn-add-oc" onclick="window.location.href='new_order.php?requisicion_id=<?= $row['id'] ?>'" title="Crear orden de compra"
                                                         data-bs-toggle="tooltip" data-bs-placement="top">
                                                         <i class="bi bi-file-earmark-plus"></i>
                                                     </button>
-                                                <?php endif; ?>
+                                                <?php
+endif; ?>
                                             </div>
                                         </td>
                                     </tr>
-                                <?php endwhile; ?>
-                            <?php else: ?>
+                                <?php
+endwhile; ?>
+                            <?php
+else: ?>
                                 <tr>
                                     <td colspan="5" class="text-center text-muted py-4">
                                         <i class="bi bi-inbox" style="font-size: 3rem;"></i>
                                         <p class="mt-2">No hay requisiciones registradas</p>
                                     </td>
                                 </tr>
-                            <?php endif; ?>
+                            <?php
+endif; ?>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Paginación estilo catálogo -->
-                <?php if ($totalPaginas > 1): ?>
-                    <nav aria-label="Paginación">
+                <!-- PaginaciÃ³n estilo catÃ¡logo -->
+                <?php
+if ($totalPaginas > 1): ?>
+                    <nav aria-label="PaginaciÃ³n">
                         <ul class="pagination justify-content-center mt-3">
-                            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                            <?php
+for ($i = 1; $i <= $totalPaginas; $i++): ?>
                                 <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
                                     <a class="page-link"
                                         href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
                                         <?= $i ?>
                                     </a>
                                 </li>
-                            <?php endfor; ?>
+                            <?php
+endfor; ?>
                         </ul>
                     </nav>
-                <?php endif; ?>
+                <?php
+endif; ?>
+                </div> <!-- /table-container-wrapper -->
             </div>
         </div>
     </div>
@@ -421,9 +433,95 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+    <?php
+include __DIR__ . "/../includes/footer.php"; ?>
+
+    <script>
+        // FunciÃ³n para actualizar la lista vÃ­a AJAX
+        function initAJAX() {
+            const searchForm = document.getElementById('search-form');
+            const filterForm = document.getElementById('filter-form');
+            const container = document.getElementById('table-container-wrapper');
+
+            if (!searchForm || !filterForm || !container) return;
+
+            function updateList(url, pushState = true) {
+                container.style.opacity = '0.5';
+                container.style.pointerEvents = 'none';
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newContent = doc.getElementById('table-container-wrapper');
+                        
+                        if (newContent) {
+                            container.innerHTML = newContent.innerHTML;
+                        }
+
+                        const newSearch = doc.getElementById('search-form');
+                        const newFilter = doc.getElementById('filter-form');
+                        if (newSearch) syncForm(searchForm, newSearch);
+                        if (newFilter) syncForm(filterForm, newFilter);
+
+                        container.style.opacity = '1';
+                        container.style.pointerEvents = 'auto';
+
+                        if (pushState) window.history.pushState({}, '', url);
+                        
+                        // Reinicializar tooltips
+                        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                        tooltipTriggerList.map(function(tooltipTriggerEl) {
+                            return new bootstrap.Tooltip(tooltipTriggerEl);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        container.style.opacity = '1';
+                        container.style.pointerEvents = 'auto';
+                    });
+            }
+
+            function syncForm(current, source) {
+                source.querySelectorAll('input, select').forEach(input => {
+                    const target = current.querySelector(`[name="${input.name}"]`);
+                    if (target) target.value = input.value;
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                const pageLink = e.target.closest('.page-link');
+                if (pageLink) {
+                    e.preventDefault();
+                    updateList(pageLink.href);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+
+            [searchForm, filterForm].forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const params = new URLSearchParams(new FormData(filterForm));
+                    const searchData = new FormData(searchForm);
+                    params.set('q', searchData.get('q') || "");
+                    
+                    params.set('page', '1');
+                    updateList('?' + params.toString());
+                });
+            });
+
+            filterForm.querySelectorAll('select').forEach(select => {
+                select.addEventListener('change', () => filterForm.requestSubmit());
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initAJAX);
+    </script>
 
 </body>
 
 </html>
+
+
 

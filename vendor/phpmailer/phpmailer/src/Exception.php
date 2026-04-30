@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PHPMailer Exception class.
  * PHP Version 5.5.
@@ -38,3 +37,4 @@ class Exception extends \Exception
         return '<strong>' . htmlspecialchars($this->getMessage(), ENT_COMPAT | ENT_HTML401) . "</strong><br />\n";
     }
 }
+

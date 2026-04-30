@@ -1,5 +1,5 @@
-<?php
-// update_cotizacion.php — Actualiza una cotización existente (con cambio de folio si cambia entidad)
+﻿<?php
+// update_cotizacion.php â€” Actualiza una cotizaciÃ³n existente (con cambio de folio si cambia entidad)
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -7,7 +7,7 @@ checkSession();
 header('Content-Type: application/json; charset=UTF-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
     exit;
 }
 
@@ -34,9 +34,9 @@ if (!$id || !$atencion) {
     exit;
 }
 
-include_once __DIR__ . '/../conexion.php';
+require_once __DIR__ . "/../conexion.php";
 
-// Obtener la cotización actual para verificar si cambió la entidad
+// Obtener la cotizaciÃ³n actual para verificar si cambiÃ³ la entidad
 $stmtOld = $conn->prepare("SELECT entidades_id, folio FROM cotizaciones WHERE id = ?");
 $stmtOld->bind_param("i", $id);
 $stmtOld->execute();
@@ -55,7 +55,7 @@ if ($rowEnt = $stmtEnt->get_result()->fetch_assoc()) {
 }
 $stmtEnt->close();
 
-// Función para generar nuevo folio (INCREMENTA el contador)
+// FunciÃ³n para generar nuevo folio (INCREMENTA el contador)
 function generarNuevoFolio(string $entidad): string {
     $prefijos = [
         'PROATAM'     => 'CO-PRO',
@@ -69,7 +69,7 @@ function generarNuevoFolio(string $entidad): string {
     if (!is_dir($dir)) mkdir($dir, 0755, true);
     if (!file_exists($folioFile)) file_put_contents($folioFile, '1');
     
-    // Leer el número actual y luego incrementar para la siguiente vez
+    // Leer el nÃºmero actual y luego incrementar para la siguiente vez
     $num = (int)file_get_contents($folioFile);
     $nuevoNum = $num + 1;
     file_put_contents($folioFile, (string)$nuevoNum);
@@ -80,7 +80,7 @@ function generarNuevoFolio(string $entidad): string {
 $nuevoFolio = null;
 $folioActualizado = false;
 
-// Si cambió la entidad, generar nuevo folio
+// Si cambiÃ³ la entidad, generar nuevo folio
 if ($oldEntidadId != $entidades_id) {
     $nuevoFolio = generarNuevoFolio($entidadNombre);
     $folioActualizado = true;
@@ -139,11 +139,11 @@ if ($folioActualizado) {
 }
 
 if ($stmt->execute()) {
-    $response = ['status' => 'success', 'message' => 'Cotización actualizada correctamente.'];
+    $response = ['status' => 'success', 'message' => 'CotizaciÃ³n actualizada correctamente.'];
     if ($folioActualizado) {
         $response['folio_actualizado'] = true;
         $response['nuevo_folio'] = $nuevoFolio;
-        $response['message'] = 'Cotización actualizada. El folio cambió a: ' . $nuevoFolio;
+        $response['message'] = 'CotizaciÃ³n actualizada. El folio cambiÃ³ a: ' . $nuevoFolio;
     }
     echo json_encode($response);
 } else {
@@ -152,3 +152,5 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+
+

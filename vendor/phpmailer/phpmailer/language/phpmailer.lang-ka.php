@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Georgian PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -25,3 +24,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'შეცდომა SMTP სერ�
 $PHPMAILER_LANG['smtp_error']           = 'SMTP სერვერის შეცდომა: ';
 $PHPMAILER_LANG['variable_set']         = 'შეუძლებელია შემდეგი ცვლადის შექმნა ან შეცვლა: ';
 $PHPMAILER_LANG['extension_missing']    = 'ბიბლიოთეკა არ არსებობს: ';
+

@@ -1,13 +1,11 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) {
@@ -15,7 +13,7 @@ if (!$id) {
     exit;
 }
 
-// ─── Activo principal ────────────────────────────────────────────────────────
+// â”€â”€â”€ Activo principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt = $conn->prepare("SELECT * FROM activos WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -26,14 +24,14 @@ if (!$activo) {
     exit;
 }
 
-// ─── Tipo ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Tipo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt_tipo = $conn->prepare("SELECT nombre, prefijo FROM activo_tipos WHERE id = ?");
 $stmt_tipo->bind_param("i", $activo['tipo_id']);
 $stmt_tipo->execute();
 $tipo_row  = $stmt_tipo->get_result()->fetch_assoc();
 $tipo_norm = iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($tipo_row['nombre'] ?? ''));
 
-// ─── Detalles específicos ────────────────────────────────────────────────────
+// â”€â”€â”€ Detalles especÃ­ficos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fetchRow($conn, $sql, $id) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
@@ -48,12 +46,12 @@ $di  = str_contains($tipo_norm, 'inmueble')   ? fetchRow($conn, "SELECT * FROM i
 $dh  = str_contains($tipo_norm, 'herramienta')? fetchRow($conn, "SELECT * FROM herramientas_detalle WHERE activo_id=?", $id) : [];
 $dt  = str_contains($tipo_norm, 'tic')        ? fetchRow($conn, "SELECT * FROM tics_detalle          WHERE activo_id=?", $id) : [];
 
-// ─── Catálogos ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ CatÃ¡logos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $result_tipos         = $conn->query("SELECT id, nombre, prefijo FROM activo_tipos WHERE activo=1 ORDER BY nombre ASC");
 $result_usuarios      = $conn->query("SELECT id, nombres, apellidos FROM usuarios WHERE activo=1 ORDER BY nombres ASC");
 $result_departamentos = $conn->query("SELECT id, nombre FROM departamentos ORDER BY nombre ASC");
 
-// ─── Documentos e imágenes actuales ─────────────────────────────────────────
+// â”€â”€â”€ Documentos e imÃ¡genes actuales â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt_docs = $conn->prepare("SELECT * FROM activos_documentos WHERE activo_id=? ORDER BY fecha_subida ASC");
 $stmt_docs->bind_param("i", $id);
 $stmt_docs->execute();
@@ -76,11 +74,11 @@ function sel($arr, $key, $value) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Editar Activo – <?= htmlspecialchars($activo['codigo']) ?></title>
+  <title>Editar Activo â€“ <?= htmlspecialchars($activo['codigo']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     crossorigin="anonymous" />
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
   <style>
@@ -104,9 +102,9 @@ function sel($arr, $key, $value) {
     .doc-existente i { font-size:1.3rem; color:#113456; }
     .doc-existente .doc-info { flex:1; font-size:.85rem; }
 
-    /* ══════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        SISTEMA DE ARCHIVOS CON ESTADO VISUAL
-    ══════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     .file-drop-zone {
       border: 2px dashed #cbd5e1; border-radius: 10px;
       padding: 14px 16px; cursor: pointer; transition: all .2s;
@@ -157,9 +155,9 @@ function sel($arr, $key, $value) {
     .adj-meta { font-size:.75rem; color:#64748b; }
     .adj-item.error .adj-meta { color:#dc2626; font-weight:600; }
 
-    /* ══════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        TOASTS
-    ══════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     #toastContainer {
       position:fixed; top:76px; right:20px; z-index:9999;
       display:flex; flex-direction:column; gap:9px; pointer-events:none;
@@ -199,9 +197,9 @@ function sel($arr, $key, $value) {
     @keyframes tOut { from{opacity:1;transform:translateX(0) scale(1);max-height:120px;}to{opacity:0;transform:translateX(36px) scale(.95);max-height:0;} }
     @keyframes tProgress { from{width:100%;}to{width:0;} }
 
-    /* ══════════════════════════════════════════
-       MODAL CONFIRMACIÓN
-    ══════════════════════════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       MODAL CONFIRMACIÃ“N
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     .confirm-overlay {
       position:fixed; inset:0; background:rgba(8,12,24,.5); backdrop-filter:blur(4px);
       z-index:10000; display:flex; align-items:center; justify-content:center;
@@ -234,8 +232,7 @@ function sel($arr, $key, $value) {
 <body>
 
 <?php
-require_once __DIR__ . '/config.php';
- include $_SERVER['DOCUMENT_ROOT'] . "/includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- Toast container global -->
 <div id="toastContainer"></div>
@@ -243,7 +240,7 @@ require_once __DIR__ . '/config.php';
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
       <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
       <span>/</span>
@@ -268,8 +265,8 @@ require_once __DIR__ . '/config.php';
 
         <p>Modifique los datos del activo. Los campos de archivo solo son necesarios si desea reemplazar un archivo existente.</p>
 
-        <!-- ===== INFORMACIÓN GENERAL ===== -->
-        <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
+        <!-- ===== INFORMACIÃ“N GENERAL ===== -->
+        <div class="section-title"><i class="bi bi-info-circle"></i> InformaciÃ³n General</div>
 
         <div class="row">
           <div class="col-md-6">
@@ -278,9 +275,7 @@ require_once __DIR__ . '/config.php';
               <select class="form-select" id="tipo_id" name="tipo_id" disabled>
                 <option value="">Seleccionar Tipo</option>
                 <?php
-require_once __DIR__ . '/config.php';
-
-                if ($result_tipos && $result_tipos->num_rows > 0) {
+if ($result_tipos && $result_tipos->num_rows > 0) {
                     while ($row = $result_tipos->fetch_assoc()) {
                         $selected = ($row['id'] == $activo['tipo_id']) ? 'selected' : '';
                         echo '<option value="' . htmlspecialchars($row['id']) . '" '
@@ -295,7 +290,7 @@ require_once __DIR__ . '/config.php';
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label">Código de Activo</label>
+              <label class="form-label">CÃ³digo de Activo</label>
               <div class="codigo-preview" id="codigoPreview">
                 <i class="bi bi-upc-scan"></i> <?= htmlspecialchars($activo['codigo']) ?>
               </div>
@@ -307,25 +302,23 @@ require_once __DIR__ . '/config.php';
         <div class="col-md-8 doc-item mb-3">
           <label class="form-label">Foto Principal</label>
           <?php
-require_once __DIR__ . '/config.php';
- if (!empty($activo['img_foto_principal'])): ?>
+if (!empty($activo['img_foto_principal'])): ?>
             <div class="mb-2 img-preview-wrap">
               <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>" alt="Foto actual" />
-              <div><small class="text-muted">Foto actual – suba una nueva para reemplazar</small></div>
+              <div><small class="text-muted">Foto actual â€“ suba una nueva para reemplazar</small></div>
               <div class="form-check mt-1">
                 <input class="form-check-input" type="checkbox" name="eliminar_foto_principal" value="1" id="chkFotoPrincipal">
                 <label class="form-check-label text-danger" for="chkFotoPrincipal">Eliminar foto actual</label>
               </div>
             </div>
           <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+endif; ?>
           <div class="file-drop-zone">
             <input type="file" id="input_img_foto_principal" accept=".jpg,.jpeg,.png,.gif,.webp"
               onchange="handleFile(this,'img_foto_principal','imagen',false)" />
             <div class="file-drop-label">
               <i class="bi bi-cloud-arrow-up"></i>
-              <span>Seleccionar imagen (máx. 10 MB)</span>
+              <span>Seleccionar imagen (mÃ¡x. 10 MB)</span>
             </div>
           </div>
           <div class="file-chips" id="chips_img_foto_principal"></div>
@@ -340,7 +333,7 @@ require_once __DIR__ . '/config.php';
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label class="form-label">Condición <span class="required">*</span></label>
+              <label class="form-label">CondiciÃ³n <span class="required">*</span></label>
               <select class="form-select" name="condicion" required>
                 <option value="">Seleccionar</option>
                 <option value="bueno"   <?= sel($activo,'condicion','bueno')   ?>>Bueno</option>
@@ -358,9 +351,7 @@ require_once __DIR__ . '/config.php';
               <select class="form-select" name="responsable_id">
                 <option value="">Sin responsable asignado</option>
                 <?php
-require_once __DIR__ . '/config.php';
-
-                if ($result_usuarios && $result_usuarios->num_rows > 0) {
+if ($result_usuarios && $result_usuarios->num_rows > 0) {
                     while ($row = $result_usuarios->fetch_assoc()) {
                         $sel = ($row['id'] == $activo['responsable_id']) ? 'selected' : '';
                         echo '<option value="' . htmlspecialchars($row['id']) . '" ' . $sel . '>'
@@ -377,9 +368,7 @@ require_once __DIR__ . '/config.php';
               <select class="form-select" name="departamento_id">
                 <option value="">Sin departamento asignado</option>
                 <?php
-require_once __DIR__ . '/config.php';
-
-                if ($result_departamentos && $result_departamentos->num_rows > 0) {
+if ($result_departamentos && $result_departamentos->num_rows > 0) {
                     while ($row = $result_departamentos->fetch_assoc()) {
                         $sel = ($row['id'] == $activo['departamento_id']) ? 'selected' : '';
                         echo '<option value="' . htmlspecialchars($row['id']) . '" ' . $sel . '>'
@@ -395,7 +384,7 @@ require_once __DIR__ . '/config.php';
         <div class="row">
           <div class="col-md-4">
             <div class="form-group">
-              <label class="form-label">Fecha de Adquisición</label>
+              <label class="form-label">Fecha de AdquisiciÃ³n</label>
               <input type="date" class="form-control" name="fecha_adquisicion" value="<?= v($activo,'fecha_adquisicion') ?>" />
             </div>
           </div>
@@ -407,7 +396,7 @@ require_once __DIR__ . '/config.php';
           </div>
           <div class="col-md-2">
             <div class="form-group">
-              <label class="form-label">Vida Útil <span class="comentario">(años)</span></label>
+              <label class="form-label">Vida Ãštil <span class="comentario">(aÃ±os)</span></label>
               <input type="number" class="form-control" name="vida_util" value="<?= v($activo,'vida_util') ?>" min="0" />
             </div>
           </div>
@@ -416,7 +405,7 @@ require_once __DIR__ . '/config.php';
         <div class="row">
           <div class="col-md-8">
             <div class="form-group">
-              <label class="form-label">Ubicación</label>
+              <label class="form-label">UbicaciÃ³n</label>
               <input type="text" class="form-control" name="ubicacion" value="<?= v($activo,'ubicacion') ?>" />
             </div>
           </div>
@@ -437,24 +426,24 @@ require_once __DIR__ . '/config.php';
         </div>
 
         <!-- ======================================================= -->
-        <!-- VEHÍCULOS                                                -->
+        <!-- VEHÃCULOS                                                -->
         <!-- ======================================================= -->
         <div id="seccion-vehiculos" class="section-detalle">
-          <div class="section-title"><i class="bi bi-truck"></i> Detalles del Vehículo</div>
+          <div class="section-title"><i class="bi bi-truck"></i> Detalles del VehÃ­culo</div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Marca</label><input type="text" class="form-control" name="v_marca" value="<?= v($dv,'marca') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Modelo</label><input type="text" class="form-control" name="v_modelo" value="<?= v($dv,'modelo') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Año</label><input type="number" class="form-control" name="v_anio" value="<?= v($dv,'anio') ?>" min="1900" max="2099" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">AÃ±o</label><input type="number" class="form-control" name="v_anio" value="<?= v($dv,'anio') ?>" min="1900" max="2099" /></div></div>
           </div>
           <div class="row">
             <div class="col-md-3"><div class="form-group"><label class="form-label">Color</label><input type="text" class="form-control" name="v_color" value="<?= v($dv,'color') ?>" /></div></div>
             <div class="col-md-3"><div class="form-group"><label class="form-label">Placa</label><input type="text" class="form-control" name="v_placa" value="<?= v($dv,'placa') ?>" /></div></div>
-            <div class="col-md-3"><div class="form-group"><label class="form-label">VIN / N° Serie</label><input type="text" class="form-control" name="v_vin" value="<?= v($dv,'vin') ?>" /></div></div>
-            <div class="col-md-3"><div class="form-group"><label class="form-label">N° Motor</label><input type="text" class="form-control" name="v_numero_motor" value="<?= v($dv,'numero_motor') ?>" /></div></div>
+            <div class="col-md-3"><div class="form-group"><label class="form-label">VIN / NÂ° Serie</label><input type="text" class="form-control" name="v_vin" value="<?= v($dv,'vin') ?>" /></div></div>
+            <div class="col-md-3"><div class="form-group"><label class="form-label">NÂ° Motor</label><input type="text" class="form-control" name="v_numero_motor" value="<?= v($dv,'numero_motor') ?>" /></div></div>
           </div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Entidad Federativa</label><input type="text" class="form-control" name="v_entidad_federativa" value="<?= v($dv,'entidad_federativa') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">N° Pedimento</label><input type="text" class="form-control" name="v_numero_pedimento" value="<?= v($dv,'numero_pedimento') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">NÂ° Pedimento</label><input type="text" class="form-control" name="v_numero_pedimento" value="<?= v($dv,'numero_pedimento') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Origen</label>
               <select class="form-select" name="v_origen">
                 <option value="">Seleccionar</option>
@@ -476,12 +465,12 @@ require_once __DIR__ . '/config.php';
           </div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Aseguradora <span class="comentario">(MX)</span></label><input type="text" class="form-control" name="v_nombre_aseguradora_mx" value="<?= v($dv,'nombre_aseguradora_mx') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Teléfono Aseguradora <span class="comentario">(MX)</span></label><input type="text" class="form-control" name="v_telefono_aseguradora_mx" value="<?= v($dv,'telefono_aseguradora_mx') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">TelÃ©fono Aseguradora <span class="comentario">(MX)</span></label><input type="text" class="form-control" name="v_telefono_aseguradora_mx" value="<?= v($dv,'telefono_aseguradora_mx') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Vto. Seguro <span class="comentario">(MX)</span></label><input type="date" class="form-control" name="v_fecha_vencimiento_seguro_mx" value="<?= v($dv,'fecha_venc_seguro_mx') ?>" /></div></div>
           </div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Aseguradora <span class="comentario">(USA)</span></label><input type="text" class="form-control" name="v_nombre_aseguradora_usa" value="<?= v($dv,'nombre_aseguradora_usa') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Teléfono Aseguradora <span class="comentario">(USA)</span></label><input type="text" class="form-control" name="v_telefono_aseguradora_usa" value="<?= v($dv,'telefono_aseguradora_usa') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">TelÃ©fono Aseguradora <span class="comentario">(USA)</span></label><input type="text" class="form-control" name="v_telefono_aseguradora_usa" value="<?= v($dv,'telefono_aseguradora_usa') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Vto. Seguro <span class="comentario">(USA)</span></label><input type="date" class="form-control" name="v_fecha_vencimiento_seguro_usa" value="<?= v($dv,'fecha_venc_seguro_usa') ?>" /></div></div>
           </div>
         </div>
@@ -494,15 +483,14 @@ require_once __DIR__ . '/config.php';
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Marca</label><input type="text" class="form-control" name="m_marca" value="<?= v($dm,'marca') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Modelo</label><input type="text" class="form-control" name="m_modelo" value="<?= v($dm,'modelo') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">N° Serie</label><input type="text" class="form-control" name="m_numero_serie" value="<?= v($dm,'numero_serie') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">NÂ° Serie</label><input type="text" class="form-control" name="m_numero_serie" value="<?= v($dm,'numero_serie') ?>" /></div></div>
           </div>
           <div class="row">
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Km / Horómetro</label><input type="number" class="form-control" name="m_kilometraje" value="<?= v($dm,'kilometraje') ?>" min="0" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">Km / HorÃ³metro</label><input type="number" class="form-control" name="m_kilometraje" value="<?= v($dm,'kilometraje') ?>" min="0" /></div></div>
             <div class="col-md-8"><div class="form-group">
               <label class="form-label">Foto Motor</label>
               <?php
-require_once __DIR__ . '/config.php';
- if (!empty($dm['foto_motor'])): ?>
+if (!empty($dm['foto_motor'])): ?>
                 <div class="mb-1 img-preview-wrap">
                   <img src="<?= htmlspecialchars($dm['foto_motor']) ?>" alt="Motor actual" />
                   <div class="form-check mt-1">
@@ -511,12 +499,11 @@ require_once __DIR__ . '/config.php';
                   </div>
                 </div>
               <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+endif; ?>
               <div class="file-drop-zone">
                 <input type="file" id="input_m_foto_motor" accept="image/*"
                   onchange="handleFile(this,'m_foto_motor','imagen',false)" />
-                <div class="file-drop-label"><i class="bi bi-camera"></i><span>Imagen del motor (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-camera"></i><span>Imagen del motor (mÃ¡x. 10 MB)</span></div>
               </div>
               <div class="file-chips" id="chips_m_foto_motor"></div>
             </div></div>
@@ -531,16 +518,16 @@ require_once __DIR__ . '/config.php';
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Marca</label><input type="text" class="form-control" name="mob_marca" value="<?= v($dmb,'marca') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Modelo</label><input type="text" class="form-control" name="mob_modelo" value="<?= v($dmb,'modelo') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">N° de Items</label><input type="number" class="form-control" name="mob_numero_items" value="<?= v($dmb,'numero_items','1') ?>" min="1" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">NÂ° de Items</label><input type="number" class="form-control" name="mob_numero_items" value="<?= v($dmb,'numero_items','1') ?>" min="1" /></div></div>
           </div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Medida Aprox.</label><input type="text" class="form-control" name="mob_medida_aprox" value="<?= v($dmb,'medida_aprox') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Edificio</label><input type="text" class="form-control" name="mob_edificio" value="<?= v($dmb,'edificio') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Área / Depto.</label><input type="text" class="form-control" name="mob_area_departamento" value="<?= v($dmb,'area_departamento') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">Ãrea / Depto.</label><input type="text" class="form-control" name="mob_area_departamento" value="<?= v($dmb,'area_departamento') ?>" /></div></div>
           </div>
           <div class="row">
-            <div class="col-md-6"><div class="form-group"><label class="form-label">Dirección</label><input type="text" class="form-control" name="mob_direccion" value="<?= v($dmb,'direccion') ?>" /></div></div>
-            <div class="col-md-6"><div class="form-group"><label class="form-label">Descripción</label><textarea class="form-control" name="mob_descripcion" rows="2"><?= v($dmb,'descripcion') ?></textarea></div></div>
+            <div class="col-md-6"><div class="form-group"><label class="form-label">DirecciÃ³n</label><input type="text" class="form-control" name="mob_direccion" value="<?= v($dmb,'direccion') ?>" /></div></div>
+            <div class="col-md-6"><div class="form-group"><label class="form-label">DescripciÃ³n</label><textarea class="form-control" name="mob_descripcion" rows="2"><?= v($dmb,'descripcion') ?></textarea></div></div>
           </div>
         </div>
 
@@ -551,16 +538,16 @@ require_once __DIR__ . '/config.php';
           <div class="section-title"><i class="bi bi-building"></i> Detalles del Inmueble</div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Tipo de Inmueble</label><input type="text" class="form-control" name="inm_tipo" value="<?= v($di,'tipo_inmueble') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Tipo de Posesión</label><input type="text" class="form-control" name="inm_tipo_posesion" value="<?= v($di,'tipo_posesion') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">Tipo de PosesiÃ³n</label><input type="text" class="form-control" name="inm_tipo_posesion" value="<?= v($di,'tipo_posesion') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Uso</label><input type="text" class="form-control" name="inm_uso" value="<?= v($di,'uso') ?>" /></div></div>
           </div>
           <div class="row">
-            <div class="col-md-6"><div class="form-group"><label class="form-label">Dirección</label><input type="text" class="form-control" name="inm_direccion" value="<?= v($di,'direccion') ?>" /></div></div>
+            <div class="col-md-6"><div class="form-group"><label class="form-label">DirecciÃ³n</label><input type="text" class="form-control" name="inm_direccion" value="<?= v($di,'direccion') ?>" /></div></div>
             <div class="col-md-6"><div class="form-group"><label class="form-label">Coordenadas GPS</label><input type="text" class="form-control" name="inm_coordenadas" value="<?= v($di,'coordenadas') ?>" /></div></div>
           </div>
           <div class="row">
-            <div class="col-md-3"><div class="form-group"><label class="form-label">Sup. Terreno (m²)</label><input type="number" class="form-control" name="inm_superficie_terreno" value="<?= v($di,'superficie_terreno') ?>" step="0.01" min="0" /></div></div>
-            <div class="col-md-3"><div class="form-group"><label class="form-label">Sup. Construida (m²)</label><input type="number" class="form-control" name="inm_superficie_construida" value="<?= v($di,'superficie_construida') ?>" step="0.01" min="0" /></div></div>
+            <div class="col-md-3"><div class="form-group"><label class="form-label">Sup. Terreno (mÂ²)</label><input type="number" class="form-control" name="inm_superficie_terreno" value="<?= v($di,'superficie_terreno') ?>" step="0.01" min="0" /></div></div>
+            <div class="col-md-3"><div class="form-group"><label class="form-label">Sup. Construida (mÂ²)</label><input type="number" class="form-control" name="inm_superficie_construida" value="<?= v($di,'superficie_construida') ?>" step="0.01" min="0" /></div></div>
             <div class="col-md-2"><div class="form-group"><label class="form-label">Niveles</label><input type="number" class="form-control" name="inm_niveles" value="<?= v($di,'niveles') ?>" min="0" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Valor Terreno</label><input type="number" class="form-control" name="inm_valor_terreno" value="<?= v($di,'valor_terreno') ?>" step="0.01" min="0" /></div></div>
           </div>
@@ -582,13 +569,13 @@ require_once __DIR__ . '/config.php';
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Marca</label><input type="text" class="form-control" name="h_marca" value="<?= v($dh,'marca') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Modelo</label><input type="text" class="form-control" name="h_modelo" value="<?= v($dh,'modelo') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">N° Serie</label><input type="text" class="form-control" name="h_numero_serie" value="<?= v($dh,'numero_serie') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">NÂ° Serie</label><input type="text" class="form-control" name="h_numero_serie" value="<?= v($dh,'numero_serie') ?>" /></div></div>
           </div>
           <div class="row">
-            <div class="col-md-6"><div class="form-group"><label class="form-label">Asignación</label><input type="text" class="form-control" name="h_asignacion" value="<?= v($dh,'asignacion') ?>" /></div></div>
-            <div class="col-md-6"><div class="form-group"><label class="form-label">Ubicación Física</label><input type="text" class="form-control" name="h_ubicacion_fisica" value="<?= v($dh,'ubicacion_fisica') ?>" /></div></div>
+            <div class="col-md-6"><div class="form-group"><label class="form-label">AsignaciÃ³n</label><input type="text" class="form-control" name="h_asignacion" value="<?= v($dh,'asignacion') ?>" /></div></div>
+            <div class="col-md-6"><div class="form-group"><label class="form-label">UbicaciÃ³n FÃ­sica</label><input type="text" class="form-control" name="h_ubicacion_fisica" value="<?= v($dh,'ubicacion_fisica') ?>" /></div></div>
           </div>
-          <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-control" name="h_descripcion" rows="2"><?= v($dh,'descripcion') ?></textarea></div>
+          <div class="form-group"><label class="form-label">DescripciÃ³n</label><textarea class="form-control" name="h_descripcion" rows="2"><?= v($dh,'descripcion') ?></textarea></div>
         </div>
 
         <!-- ======================================================= -->
@@ -599,7 +586,7 @@ require_once __DIR__ . '/config.php';
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Marca</label><input type="text" class="form-control" name="t_marca" value="<?= v($dt,'marca') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Modelo</label><input type="text" class="form-control" name="t_modelo" value="<?= v($dt,'modelo') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">N° Serie</label><input type="text" class="form-control" name="t_numero_serie" value="<?= v($dt,'numero_serie') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">NÂ° Serie</label><input type="text" class="form-control" name="t_numero_serie" value="<?= v($dt,'numero_serie') ?>" /></div></div>
           </div>
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Sistema Operativo</label><input type="text" class="form-control" name="t_sistema_operativo" value="<?= v($dt,'sistema_operativo') ?>" /></div></div>
@@ -610,7 +597,7 @@ require_once __DIR__ . '/config.php';
           <div class="row">
             <div class="col-md-4"><div class="form-group"><label class="form-label">Office / Suite</label><input type="text" class="form-control" name="t_office" value="<?= v($dt,'office') ?>" /></div></div>
             <div class="col-md-4"><div class="form-group"><label class="form-label">Correo Asignado</label><input type="email" class="form-control" name="t_correo" value="<?= v($dt,'correo') ?>" /></div></div>
-            <div class="col-md-4"><div class="form-group"><label class="form-label">Ubicación Física</label><input type="text" class="form-control" name="t_ubicacion_fisica" value="<?= v($dt,'ubicacion_fisica') ?>" /></div></div>
+            <div class="col-md-4"><div class="form-group"><label class="form-label">UbicaciÃ³n FÃ­sica</label><input type="text" class="form-control" name="t_ubicacion_fisica" value="<?= v($dt,'ubicacion_fisica') ?>" /></div></div>
           </div>
           <div class="row">
             <div class="col-md-6"><div class="form-group"><label class="form-label">Programas Instalados</label><textarea class="form-control" name="t_programas_instalados" rows="2"><?= v($dt,'programas_instalados') ?></textarea></div></div>
@@ -622,13 +609,11 @@ require_once __DIR__ . '/config.php';
         <!-- DOCUMENTOS ACTUALES                                      -->
         <!-- ======================================================= -->
         <?php
-require_once __DIR__ . '/config.php';
- if (!empty($documentos)): ?>
+if (!empty($documentos)): ?>
         <div class="section-title"><i class="bi bi-folder2-open"></i> Documentos Actuales</div>
         <small class="text-muted d-block mb-3">Marque los documentos que desea eliminar.</small>
         <?php
-require_once __DIR__ . '/config.php';
- foreach ($documentos as $doc): ?>
+foreach ($documentos as $doc): ?>
           <div class="doc-existente">
             <i class="bi bi-file-earmark"></i>
             <div class="doc-info">
@@ -644,72 +629,68 @@ require_once __DIR__ . '/config.php';
             </a>
           </div>
         <?php
-require_once __DIR__ . '/config.php';
- endforeach; ?>
+endforeach; ?>
         <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+endif; ?>
 
         <!-- ======================================================= -->
         <!-- NUEVOS DOCUMENTOS                                        -->
         <!-- ======================================================= -->
         <div class="section-title mt-3"><i class="bi bi-paperclip"></i> Documentos</div>
-        <small class="text-muted d-block mb-4"><i class="bi bi-info-circle"></i> Máximo 10 MB por archivo. Catálogo de refacciones hasta 1 GB.</small>
+        <small class="text-muted d-block mb-4"><i class="bi bi-info-circle"></i> MÃ¡ximo 10 MB por archivo. CatÃ¡logo de refacciones hasta 1 GB.</small>
 
         <div class="row">
           <div class="col-md-6 doc-item mb-3">
             <label class="form-label">Factura / Comprobante de Compra</label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div></div>
+            <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_factura"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
             <label class="form-label">Pedimento</label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
+            <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_pedimento"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
-            <label class="form-label">Póliza de Seguro <span class="comentario">(MX)</span></label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div></div>
+            <label class="form-label">PÃ³liza de Seguro <span class="comentario">(MX)</span></label>
+            <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_poliza_seguro"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
-            <label class="form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div></div>
+            <label class="form-label">PÃ³liza de Seguro <span class="comentario">(USA)</span></label>
+            <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_poliza_seguro_usa"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
-            <label class="form-label">Manual de Usuario / Operación</label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
+            <label class="form-label">Manual de Usuario / OperaciÃ³n</label>
+            <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_manual"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
             <label class="form-label">Manual de Mantenimiento</label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
+            <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_manual_mantenimiento"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
-            <label class="form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 1 GB)</span></div></div>
+            <label class="form-label">CatÃ¡logo de Refacciones <span class="comentario">(mÃ¡x. 1 GB)</span></label>
+            <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 1 GB)</span></div></div>
             <div class="file-chips" id="chips_doc_catalogo_refacciones"></div>
           </div>
           <div class="col-md-6 doc-item mb-3">
             <label class="form-label">Contrato / Escritura</label>
-            <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
+            <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_doc_contrato"></div>
           </div>
         </div>
 
         <!-- ======================================================= -->
-        <!-- IMÁGENES ACTUALES                                        -->
+        <!-- IMÃGENES ACTUALES                                        -->
         <!-- ======================================================= -->
         <?php
-require_once __DIR__ . '/config.php';
- if (!empty($imagenes)): ?>
-        <div class="section-title"><i class="bi bi-card-image"></i> Imágenes Actuales</div>
+if (!empty($imagenes)): ?>
+        <div class="section-title"><i class="bi bi-card-image"></i> ImÃ¡genes Actuales</div>
         <div class="row mb-3">
           <?php
-require_once __DIR__ . '/config.php';
- foreach ($imagenes as $img): ?>
+foreach ($imagenes as $img): ?>
             <div class="col-md-3 text-center mb-3">
               <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
                    alt="<?= htmlspecialchars($img['tipo_imagen']) ?>"
@@ -721,31 +702,29 @@ require_once __DIR__ . '/config.php';
               </div>
             </div>
           <?php
-require_once __DIR__ . '/config.php';
- endforeach; ?>
+endforeach; ?>
         </div>
         <?php
-require_once __DIR__ . '/config.php';
- endif; ?>
+endif; ?>
 
         <!-- ======================================================= -->
-        <!-- NUEVAS IMÁGENES                                          -->
+        <!-- NUEVAS IMÃGENES                                          -->
         <!-- ======================================================= -->
-        <div class="section-title"><i class="bi bi-card-image"></i> Agregar Imágenes</div>
+        <div class="section-title"><i class="bi bi-card-image"></i> Agregar ImÃ¡genes</div>
         <div class="row">
           <div class="col-md-4 doc-item mb-3">
             <label class="form-label">Fotos Generales</label>
-            <div class="file-drop-zone"><input type="file" id="input_img_foto_general" accept=".jpg,.jpeg,.png,.gif,.webp" multiple onchange="handleFile(this,'img_foto_general','imagen',true)" /><div class="file-drop-label"><i class="bi bi-images"></i><span>Varias imágenes (máx. 10 MB c/u)</span></div></div>
+            <div class="file-drop-zone"><input type="file" id="input_img_foto_general" accept=".jpg,.jpeg,.png,.gif,.webp" multiple onchange="handleFile(this,'img_foto_general','imagen',true)" /><div class="file-drop-label"><i class="bi bi-images"></i><span>Varias imÃ¡genes (mÃ¡x. 10 MB c/u)</span></div></div>
             <div class="file-chips" id="chips_img_foto_general"></div>
           </div>
           <div class="col-md-4 doc-item mb-3">
             <label class="form-label">Foto de Placa</label>
-            <div class="file-drop-zone"><input type="file" id="input_img_foto_placa" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_placa','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (máx. 10 MB)</span></div></div>
+            <div class="file-drop-zone"><input type="file" id="input_img_foto_placa" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_placa','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_img_foto_placa"></div>
           </div>
           <div class="col-md-4 doc-item mb-3">
-            <label class="form-label">Foto de Número de Serie</label>
-            <div class="file-drop-zone"><input type="file" id="input_img_foto_numero_serie" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_numero_serie','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (máx. 10 MB)</span></div></div>
+            <label class="form-label">Foto de NÃºmero de Serie</label>
+            <div class="file-drop-zone"><input type="file" id="input_img_foto_numero_serie" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_numero_serie','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (mÃ¡x. 10 MB)</span></div></div>
             <div class="file-chips" id="chips_img_foto_numero_serie"></div>
           </div>
         </div>
@@ -755,7 +734,7 @@ require_once __DIR__ . '/config.php';
         <!-- ======================================================= -->
         <div class="section-title"><i class="bi bi-paperclip"></i> Expediente de Control Fiscal y Tenencia / Predial</div>
         <div class="form-group">
-          <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> Máx. 10 archivos, 10 MB c/u.</small>
+          <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> MÃ¡x. 10 archivos, 10 MB c/u.</small>
           <div class="input-group">
             <input type="file" class="form-control" id="singleFileInputFiscal"
                    accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
@@ -772,11 +751,11 @@ require_once __DIR__ . '/config.php';
         </div>
 
         <!-- ======================================================= -->
-        <!-- DOCUMENTACIÓN EXTRA                                      -->
+        <!-- DOCUMENTACIÃ“N EXTRA                                      -->
         <!-- ======================================================= -->
-        <div class="section-title"><i class="bi bi-paperclip"></i> Documentación Extra</div>
+        <div class="section-title"><i class="bi bi-paperclip"></i> DocumentaciÃ³n Extra</div>
         <div class="form-group">
-          <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> Máx. 10 archivos, 10 MB c/u.</small>
+          <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> MÃ¡x. 10 archivos, 10 MB c/u.</small>
           <div class="input-group">
             <input type="file" class="form-control" id="singleFileInputExtra"
                    accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
@@ -796,7 +775,7 @@ require_once __DIR__ . '/config.php';
         <!-- GUARDAR                                                  -->
         <!-- ======================================================= -->
         <div class="form-actions mt-3">
-          <div class="send-otxt">Verifique que toda la información sea correcta antes de guardar.</div>
+          <div class="send-otxt">Verifique que toda la informaciÃ³n sea correcta antes de guardar.</div>
           <div class="container overflow-hidden text-center">
             <div class="row gx-5">
               <div class="col">
@@ -827,24 +806,24 @@ require_once __DIR__ . '/config.php';
   crossorigin="anonymous"></script>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// LÍMITES POR TIPO
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// LÃMITES POR TIPO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const LIMITES_MB = { normal: 10, imagen: 10, catalogo: 1024, adjunto: 10 };
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // STORE DE ARCHIVOS  { campo: [{ file, ok }] }
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const fileStore = {};
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TOASTS
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const TCFG = {
   danger:  { title: 'Error',       icon: 'bi-x-circle-fill' },
   success: { title: 'Listo',       icon: 'bi-check-circle-fill' },
   warning: { title: 'Aviso',       icon: 'bi-exclamation-triangle-fill' },
-  info:    { title: 'Información', icon: 'bi-info-circle-fill' },
+  info:    { title: 'InformaciÃ³n', icon: 'bi-info-circle-fill' },
 };
 
 function mostrarAlerta(msg, tipo = 'danger') {
@@ -875,9 +854,9 @@ function cerrarAlerta(id) {
   setTimeout(() => el?.remove(), 290);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// MODAL DE CONFIRMACIÓN
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// MODAL DE CONFIRMACIÃ“N
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function mostrarConfirmacion({ archivos, totalMB }) {
   return new Promise(resolve => {
     const ov = document.createElement('div');
@@ -885,8 +864,8 @@ function mostrarConfirmacion({ archivos, totalMB }) {
     ov.innerHTML = `
       <div class="confirm-modal">
         <div class="m-icon"><i class="bi bi-cloud-arrow-up" style="font-size:1.4rem;"></i></div>
-        <h5>¿Confirmar subida?</h5>
-        <p>Se guardarán los cambios y se subirán los archivos adjuntos.</p>
+        <h5>Â¿Confirmar subida?</h5>
+        <p>Se guardarÃ¡n los cambios y se subirÃ¡n los archivos adjuntos.</p>
         <div class="m-stats">
           <div class="m-stat"><div class="val">${archivos}</div><div class="lbl">Archivo${archivos !== 1 ? 's' : ''}</div></div>
           <div class="m-stat m-sep"><div class="val">${totalMB}</div><div class="lbl">MB total</div></div>
@@ -903,9 +882,9 @@ function mostrarConfirmacion({ archivos, totalMB }) {
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // MANEJO DE ARCHIVOS CON CHIPS
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function handleFile(input, campo, tipo, multiple) {
   if (!fileStore[campo]) fileStore[campo] = [];
   const limiteMB = LIMITES_MB[tipo] || 10;
@@ -920,7 +899,7 @@ function handleFile(input, campo, tipo, multiple) {
     if (ok) {
       mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) listo para subir.`, 'success');
     } else {
-      mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera el límite de ${limiteMB} MB. Retíralo antes de guardar.`, 'danger');
+      mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera el lÃ­mite de ${limiteMB} MB. RetÃ­ralo antes de guardar.`, 'danger');
     }
   });
 
@@ -978,9 +957,9 @@ function contarArchivosValidos() {
   return { count, totalMB: (totalBytes / 1024 / 1024).toFixed(2) };
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ADJUNTOS DINÁMICOS (fiscal / extra)
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADJUNTOS DINÃMICOS (fiscal / extra)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const pools = { fiscal: [], extra: [] };
 
 function agregarAdjunto(tipo) {
@@ -988,7 +967,7 @@ function agregarAdjunto(tipo) {
   const input = document.getElementById(inputId);
   if (!input.files.length) { mostrarAlerta('Seleccione un archivo primero.', 'warning'); return; }
   const file = input.files[0];
-  if (pools[tipo].length >= 10) { mostrarAlerta('Máximo 10 archivos por sección.', 'warning'); return; }
+  if (pools[tipo].length >= 10) { mostrarAlerta('MÃ¡ximo 10 archivos por secciÃ³n.', 'warning'); return; }
 
   const sizeMB = file.size / 1024 / 1024;
   const ok = sizeMB <= LIMITES_MB.adjunto;
@@ -997,7 +976,7 @@ function agregarAdjunto(tipo) {
   if (ok) {
     mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) agregado.`, 'success');
   } else {
-    mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera 10 MB. Retíralo antes de guardar.`, 'danger');
+    mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera 10 MB. RetÃ­ralo antes de guardar.`, 'danger');
   }
 
   renderListaAdj(tipo);
@@ -1025,7 +1004,7 @@ function renderListaAdj(tipo) {
     const sizeMB = (e.file.size / 1024 / 1024).toFixed(2);
     const cls  = e.ok ? 'ok'                   : 'error';
     const icon = e.ok ? 'bi-file-earmark-check' : 'bi-file-earmark-x';
-    const meta = e.ok ? `${sizeMB} MB`          : `${sizeMB} MB — excede el límite de 10 MB`;
+    const meta = e.ok ? `${sizeMB} MB`          : `${sizeMB} MB â€” excede el lÃ­mite de 10 MB`;
     return `
       <div class="adj-item ${cls}">
         <i class="bi ${icon} adj-icon"></i>
@@ -1040,11 +1019,11 @@ function renderListaAdj(tipo) {
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════
-// SECCIONES DINÁMICAS
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// SECCIONES DINÃMICAS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const secciones = {
-  'vehiculos': 'seccion-vehiculos', 'vehículos': 'seccion-vehiculos',
+  'vehiculos': 'seccion-vehiculos', 'vehÃ­culos': 'seccion-vehiculos',
   'maquinaria': 'seccion-maquinaria', 'mobiliario': 'seccion-mobiliario',
   'inmuebles': 'seccion-inmuebles', 'herramientas': 'seccion-herramientas',
   'tics': 'seccion-tics', 'tic': 'seccion-tics',
@@ -1071,17 +1050,17 @@ function mostrarSeccionDetalle() {
 
 document.addEventListener('DOMContentLoaded', mostrarSeccionDetalle);
 
-// ═══════════════════════════════════════════════════════════════
-// ENVÍO DEL FORMULARIO
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ENVÃO DEL FORMULARIO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 document.getElementById('activoForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  // 1. Bloquear si hay archivos inválidos
+  // 1. Bloquear si hay archivos invÃ¡lidos
   if (hayArchivosInvalidos()) {
     mostrarAlerta(
-      'No se pudieron guardar los archivos. Hay archivos que superan el límite permitido. ' +
-      'Retira los archivos marcados en rojo e inténtalo de nuevo.',
+      'No se pudieron guardar los archivos. Hay archivos que superan el lÃ­mite permitido. ' +
+      'Retira los archivos marcados en rojo e intÃ©ntalo de nuevo.',
       'danger'
     );
     const primerError = document.querySelector('.file-chip.error, .adj-item.error');
@@ -1089,14 +1068,14 @@ document.getElementById('activoForm').addEventListener('submit', async function(
     return;
   }
 
-  // 2. Modal de confirmación si hay archivos
+  // 2. Modal de confirmaciÃ³n si hay archivos
   const { count, totalMB } = contarArchivosValidos();
   if (count > 0) {
     const confirmar = await mostrarConfirmacion({ archivos: count, totalMB });
     if (!confirmar) return;
   }
 
-  // 3. Deshabilitar botón
+  // 3. Deshabilitar botÃ³n
   const btn = document.getElementById('btnGuardar');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando cambios...';
@@ -1132,7 +1111,7 @@ document.getElementById('activoForm').addEventListener('submit', async function(
       if (res.redirected) { window.location.href = res.url; return; }
       return res.text().then(() => {
         if (res.status >= 400) {
-          mostrarAlerta('Ocurrió un error al guardar. Revisa el log del servidor.', 'danger');
+          mostrarAlerta('OcurriÃ³ un error al guardar. Revisa el log del servidor.', 'danger');
           btn.disabled = false;
           btn.innerHTML = '<i class="bi bi-floppy"></i> Guardar Cambios';
         } else {
@@ -1149,8 +1128,9 @@ document.getElementById('activoForm').addEventListener('submit', async function(
 </script>
 
 <?php
-require_once __DIR__ . '/config.php';
- include __DIR__ . "/../includes/footer.php"; ?>
+include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 </html>
+
+
 

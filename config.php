@@ -1,5 +1,5 @@
 <?php
-// Copia este archivo como config.php y ajusta tus credenciales locales (NO LO LLAMES CONFIG.EXAMPLE.PHP)
+// Copia este archivo como config.php y ajusta tus credenciales locales
 // NUNCA subas config.php a GitHub
 
 $host = "localhost";

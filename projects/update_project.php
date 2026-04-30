@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $proyecto_id = intval($_POST['id']);
@@ -54,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Verificar si el número de contrato ya existe en otro proyecto
+    // Verificar si el nÃºmero de contrato ya existe en otro proyecto
     $sql_check_contrato = "SELECT id FROM proyectos WHERE numero_contrato = ? AND id != ?";
     $stmt_check_contrato = $conn->prepare($sql_check_contrato);
     $stmt_check_contrato->bind_param("si", $numero_contrato, $proyecto_id);
@@ -62,11 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result_check_contrato = $stmt_check_contrato->get_result();
 
     if ($result_check_contrato->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Ya existe otro proyecto con este número de contrato']);
+        echo json_encode(['status' => 'error', 'message' => 'Ya existe otro proyecto con este nÃºmero de contrato']);
         exit;
     }
 
-    // Iniciar transacción
+    // Iniciar transacciÃ³n
     $conn->begin_transaction();
 
     try {
@@ -138,7 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
 }
 ?>
+
 

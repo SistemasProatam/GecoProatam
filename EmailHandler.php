@@ -1,11 +1,11 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once "config.php";
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;   
+use PHPMailer\PHPMailer\SMTP;
 
 class EmailHandler
 {
@@ -14,7 +14,7 @@ class EmailHandler
     private $soporteNombre = 'Soporte Técnico Proatam';
     private $soporteEmail_activos = ['edgaror@proatam.com', 'negrete@proatam.com'];
     private $soporteNombre_activos = ['Edgar Ochoa', 'Jose Negrete'];
-    private $baseUrl = "localhost/PROATAMSGI/"; // Cambia esto a tu URL base real
+    private $baseUrl = "https://proatamgoc.duckdns.org/";
 
 
     public function __construct()
@@ -147,7 +147,7 @@ class EmailHandler
                 </p>
                 
                 <p style='text-align: center; margin-top: 10px;'>
-                    <a href='#' 
+                    <a href='https://proatamgoc.duckdns.org/orders/list_oc.php' 
                        style='color: white; text-decoration: none; font-size: 0.9em;'>
                         Ver todas las órdenes de compra
                     </a>

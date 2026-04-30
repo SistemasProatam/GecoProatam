@@ -1,5 +1,4 @@
 <?php
-
 /*
  * PHP QR Code encoder
  *
@@ -68,3 +67,4 @@
     file_put_contents($outputFile, $outputContents);
     
     
+

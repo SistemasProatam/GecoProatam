@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once "config.php";
 
 session_start();
 
@@ -48,9 +48,11 @@ if (ini_get("session.use_cookies")) {
 
 <script>
 const message = "<?php
- echo $message; ?>";
+
+echo $message; ?>";
 const icon = "<?php
- echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
+
+echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
 
 Swal.fire({
     title: '¡Sesión cerrada!',

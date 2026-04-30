@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once "config.php";
 
 // Activar todos los errores para debug PERO evitar output no JSON
 error_reporting(E_ALL);

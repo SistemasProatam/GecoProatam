@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Finnish PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -25,3 +24,4 @@ $PHPMAILER_LANG['recipients_failed']    = 'SMTP-virhe: seuraava vastaanottaja os
 //$PHPMAILER_LANG['smtp_error']           = 'SMTP server error: ';
 //$PHPMAILER_LANG['variable_set']         = 'Cannot set or reset variable: ';
 //$PHPMAILER_LANG['extension_missing']    = 'Extension missing: ';
+

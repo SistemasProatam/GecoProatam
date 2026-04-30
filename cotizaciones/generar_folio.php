@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../config.php";
 // generar_folio.php — Devuelve el folio actual para una entidad (sin incrementar)
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -28,3 +29,4 @@ $num   = (int)file_get_contents($folioFile);
 $folio = $prefijo . '-' . str_pad($num, 4, '0', STR_PAD_LEFT);
 
 echo json_encode(['folio' => $folio, 'numero' => $num]);
+

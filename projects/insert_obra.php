@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $proyecto_id = intval($_POST['proyecto_id']);
@@ -49,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Verificar si ya existe una obra con el mismo número en este proyecto
+    // Verificar si ya existe una obra con el mismo nÃºmero en este proyecto
     $sql_check_obra = "SELECT id FROM obras WHERE proyecto_id = ? AND numero_obra = ?";
     $stmt_check_obra = $conn->prepare($sql_check_obra);
     $stmt_check_obra->bind_param("is", $proyecto_id, $numero_obra);
@@ -57,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result_check = $stmt_check_obra->get_result();
 
     if ($result_check->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Ya existe una obra con este número en el proyecto']);
+        echo json_encode(['status' => 'error', 'message' => 'Ya existe una obra con este nÃºmero en el proyecto']);
         exit;
     }
 
@@ -95,7 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
 }
 ?>
+
 

@@ -1,11 +1,9 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 if (!isset($_GET['id'])) {
     die("ID no proporcionado");
@@ -26,12 +24,12 @@ if (!$archivo) {
     die("Archivo no encontrado");
 }
 
-// Verificar que el archivo existe físicamente
+// Verificar que el archivo existe fÃ­sicamente
 if (!file_exists($archivo['ruta_archivo'])) {
-    die("El archivo físico no existe");
+    die("El archivo fÃ­sico no existe");
 }
 
-// Headers para visualización en el navegador
+// Headers para visualizaciÃ³n en el navegador
 header('Content-Type: ' . $archivo['tipo_mime']);
 header('Content-Disposition: inline; filename="' . $archivo['nombre_archivo'] . '"');
 header('Cache-Control: must-revalidate');
@@ -40,4 +38,5 @@ header('Pragma: public');
 readfile($archivo['ruta_archivo']);
 exit;
 ?>
+
 

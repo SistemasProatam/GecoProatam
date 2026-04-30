@@ -1,13 +1,11 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
-// Verificar que se proporcionó un ID
+// Verificar que se proporcionÃ³ un ID
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("ID de orden de compra no proporcionado");
 }
@@ -60,9 +58,9 @@ $items = $stmt_items->get_result();
 // Incluir FPDF
 require_once(__DIR__ . '/../fpdf/fpdf186/fpdf.php');
 
-// ─── Configuración de entidades ───────────────────────────────────────────────
-// Para agregar una nueva entidad: añade un elemento al array con su nombre exacto
-// (en mayúsculas), colores primario y secundario en RGB, y el nombre del logo.
+// â”€â”€â”€ ConfiguraciÃ³n de entidades â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Para agregar una nueva entidad: aÃ±ade un elemento al array con su nombre exacto
+// (en mayÃºsculas), colores primario y secundario en RGB, y el nombre del logo.
 function getEntityConfig(string $entidad): array
 {
     $entidades = [
@@ -95,9 +93,9 @@ function getEntityConfig(string $entidad): array
 }
 
 $entityConfig = getEntityConfig($orden_compra['entidad']);
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// Clase personalizada con diseño profesional y soporte UTF-8
+// Clase personalizada con diseÃ±o profesional y soporte UTF-8
 class PDF extends FPDF
 {
     private $primaryColor;
@@ -114,7 +112,7 @@ class PDF extends FPDF
         $this->logoPath       = $assetsDir . '/' . $config['logo'];
     }
     
-    // Función para codificar texto a ISO-8859-1 (compatible con FPDF)
+    // FunciÃ³n para codificar texto a ISO-8859-1 (compatible con FPDF)
     function encodeText($text)
     {
         // Normalizar (quitar acentos) y convertir de UTF-8 a ISO-8859-1 para FPDF
@@ -132,18 +130,18 @@ class PDF extends FPDF
     {
         if (empty($str)) return $str;
         $unwanted_array = array(
-            'Á' => 'A', 'À' => 'A', 'Â' => 'A', 'Ä' => 'A', 'Ã' => 'A', 'Å' => 'A',
-            'á' => 'a', 'à' => 'a', 'â' => 'a', 'ä' => 'a', 'ã' => 'a', 'å' => 'a',
-            'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E',
-            'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
-            'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I',
-            'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
-            'Ó' => 'O', 'Ò' => 'O', 'Ô' => 'O', 'Ö' => 'O', 'Õ' => 'O',
-            'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'ö' => 'o', 'õ' => 'o',
-            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U',
-            'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
-            'Ñ' => 'N', 'ñ' => 'n',
-            'Ç' => 'C', 'ç' => 'c'
+            'Ã' => 'A', 'Ã€' => 'A', 'Ã‚' => 'A', 'Ã„' => 'A', 'Ãƒ' => 'A', 'Ã…' => 'A',
+            'Ã¡' => 'a', 'Ã ' => 'a', 'Ã¢' => 'a', 'Ã¤' => 'a', 'Ã£' => 'a', 'Ã¥' => 'a',
+            'Ã‰' => 'E', 'Ãˆ' => 'E', 'ÃŠ' => 'E', 'Ã‹' => 'E',
+            'Ã©' => 'e', 'Ã¨' => 'e', 'Ãª' => 'e', 'Ã«' => 'e',
+            'Ã' => 'I', 'ÃŒ' => 'I', 'ÃŽ' => 'I', 'Ã' => 'I',
+            'Ã­' => 'i', 'Ã¬' => 'i', 'Ã®' => 'i', 'Ã¯' => 'i',
+            'Ã“' => 'O', 'Ã’' => 'O', 'Ã”' => 'O', 'Ã–' => 'O', 'Ã•' => 'O',
+            'Ã³' => 'o', 'Ã²' => 'o', 'Ã´' => 'o', 'Ã¶' => 'o', 'Ãµ' => 'o',
+            'Ãš' => 'U', 'Ã™' => 'U', 'Ã›' => 'U', 'Ãœ' => 'U',
+            'Ãº' => 'u', 'Ã¹' => 'u', 'Ã»' => 'u', 'Ã¼' => 'u',
+            'Ã‘' => 'N', 'Ã±' => 'n',
+            'Ã‡' => 'C', 'Ã§' => 'c'
         );
         $str = strtr($str, $unwanted_array);
         return $str;
@@ -177,55 +175,55 @@ function Header()
         $this->SetFillColor($this->secondaryColor[0], $this->secondaryColor[1], $this->secondaryColor[2]);
         $this->Rect(0, $this->GetY(), 210, 2, 'F');
     
-    // Eliminamos el Rect completo y dibujamos solo las líneas necesarias
+    // Eliminamos el Rect completo y dibujamos solo las lÃ­neas necesarias
     $this->SetLineWidth(0.5);
     $this->SetDrawColor(0, 0, 0);
     
-    // Líneas verticales del encabezado
-    $this->Line(10, 10, 10, 42); // Línea vertical izquierda
-    $this->Line(200, 10, 200, 42); // Línea vertical derecha
+    // LÃ­neas verticales del encabezado
+    $this->Line(10, 10, 10, 42); // LÃ­nea vertical izquierda
+    $this->Line(200, 10, 200, 42); // LÃ­nea vertical derecha
     
-    // Línea horizontal SUPERIOR del encabezado
+    // LÃ­nea horizontal SUPERIOR del encabezado
     $this->Line(10, 10, 200, 10);
     
-    // Línea vertical divisora (después del logo)
+    // LÃ­nea vertical divisora (despuÃ©s del logo)
     $this->Line(80, 10, 80, 42);
     
-    // Línea vertical divisora (antes del código)
+    // LÃ­nea vertical divisora (antes del cÃ³digo)
     $this->Line(145, 10, 145, 42);
     
-    // Líneas horizontales para separar las secciones
-    $this->Line(80, 27.5, 200, 27.5); // Línea horizontal superior derecha
+    // LÃ­neas horizontales para separar las secciones
+    $this->Line(80, 27.5, 200, 27.5); // LÃ­nea horizontal superior derecha
     
-    // Logo (dinámico según entidad)
+    // Logo (dinÃ¡mico segÃºn entidad)
     if (!empty($this->logoPath) && file_exists($this->logoPath)) {
         $this->Image($this->logoPath, 15, 20, 60);
     }
     
-    // Sección central - Tipo de Documento
+    // SecciÃ³n central - Tipo de Documento
     $this->SetFont('Arial', 'B', 11);
     $this->SetXY(80, 13);
     $this->Cell(65, 6, 'Tipo de Documento:', 0, 1, 'C');
     $this->SetX(80);
     $this->Cell(65, 6, 'Formato', 0, 1, 'C');
     
-    // Fecha de elaboración
+    // Fecha de elaboraciÃ³n
     $this->SetFont('Arial', 'B', 9);
     $this->SetXY(80, 30);
-    $this->Cell(65, 5, 'Fecha de Elaboración:', 0, 1, 'C');
+    $this->Cell(65, 5, 'Fecha de ElaboraciÃ³n:', 0, 1, 'C');
     $this->SetFont('Arial', '', 9);
     $this->SetX(80);
     $fecha_formato = date('d-M-Y', strtotime($orden_compra['fecha_solicitud']));
     $fecha_formato = strtoupper($fecha_formato);
     $this->Cell(65, 5, $fecha_formato, 0, 1, 'C');
     
-    // Sección derecha - Código y datos
+    // SecciÃ³n derecha - CÃ³digo y datos
     $this->SetFont('Arial', 'B', 9);
     $this->SetXY(145, 13);
-    $this->Cell(55, 5, 'Código: POARH-03-4', 0, 1, 'C');
+    $this->Cell(55, 5, 'CÃ³digo: POARH-03-4', 0, 1, 'C');
     
     $this->SetX(145);
-    $this->Cell(55, 5, 'Revisión: 01', 0, 1, 'C');
+    $this->Cell(55, 5, 'RevisiÃ³n: 01', 0, 1, 'C');
     
     // Folio de la orden
     $this->SetFont('Arial', 'B', 9);
@@ -233,14 +231,14 @@ function Header()
     $folio_text = 'FOLIO: ' . (isset($orden_compra['folio']) ? $orden_compra['folio'] : 'N/A');
     $this->Cell(55, 7, $folio_text, 0, 1, 'C');
     
-    // Línea INFERIOR 
+    // LÃ­nea INFERIOR 
     $this->SetLineWidth(0.5);
     $this->Line(10, 42, 200, 42);
     
     $this->Ln(3);
 }
 
-    // Pie de página
+    // Pie de pÃ¡gina
     function Footer()
     {
         // Franja verde superior
@@ -248,18 +246,18 @@ function Header()
         $this->SetFillColor($this->primaryColor[0], $this->primaryColor[1], $this->primaryColor[2]);
         $this->Rect(0, $this->GetY(), 210, 2, 'F');
         
-        // Información del pie
+        // InformaciÃ³n del pie
         $this->SetY(-15);
         $this->SetFont('Arial', '', 8);
         $this->SetTextColor($this->textGray[0], $this->textGray[1], $this->textGray[2]);
         
-        // Fecha de generación (izquierda)
+        // Fecha de generaciÃ³n (izquierda)
         $this->SetX(15);
         $this->Cell(60, 5, 'Generado: ' . date('d/m/Y H:i'), 0, 0, 'L');
 
-         // Número de página
+         // NÃºmero de pÃ¡gina
         $this->SetX(145);
-        $this->Cell(55, 5, 'Página ' . $this->PageNo() . ' de {nb}', 0, 1, 'C');
+        $this->Cell(55, 5, 'PÃ¡gina ' . $this->PageNo() . ' de {nb}', 0, 1, 'C');
         
         // Barra azul marino inferior
         $this->SetY(-10);
@@ -267,7 +265,7 @@ function Header()
         $this->Rect(0, $this->GetY() + 10, 210, 10, 'F');
     }
 
-    // Rectángulo redondeado
+    // RectÃ¡ngulo redondeado
     function RoundedRect($x, $y, $w, $h, $r, $style = '')
     {
         $k = $this->k;
@@ -306,7 +304,7 @@ function Header()
             $x2*$this->k, ($h-$y2)*$this->k, $x3*$this->k, ($h-$y3)*$this->k));
     }
 
-    // Título de sección
+    // TÃ­tulo de secciÃ³n
     function SectionTitle($title)
     {
         // Barra lateral verde
@@ -321,8 +319,8 @@ function Header()
         $this->Ln(2);
     }
 
-    // Card de información (opcionalmente dibuja el fondo).
-    // $draw: si es false, no dibuja el rectángulo; $padding controla el espacio interno vertical.
+    // Card de informaciÃ³n (opcionalmente dibuja el fondo).
+    // $draw: si es false, no dibuja el rectÃ¡ngulo; $padding controla el espacio interno vertical.
     function InfoCard($height, $draw = true, $padding = 4)
     {
         $y = $this->GetY();
@@ -341,10 +339,10 @@ function Header()
         $this->SetY($y + $padding);
     }
 
-    // Campo de información
+    // Campo de informaciÃ³n
     function InfoField($label, $value, $width = 90, $newLine = false)
     {
-        // Ajuste de anchos para etiqueta y valor. Si el ancho total es pequeño, usar etiqueta más estrecha.
+        // Ajuste de anchos para etiqueta y valor. Si el ancho total es pequeÃ±o, usar etiqueta mÃ¡s estrecha.
         $labelWidth = ($width > 60) ? 40 : 28;
         $valueWidth = max(20, $width - $labelWidth);
 
@@ -355,7 +353,7 @@ function Header()
         $this->SetFont('Arial', '', 9);
         $this->SetTextColor(0, 0, 0);
 
-        // Si el valor es demasiado ancho o se solicita salto de línea, usar MultiCell para que haga wrap correctamente.
+        // Si el valor es demasiado ancho o se solicita salto de lÃ­nea, usar MultiCell para que haga wrap correctamente.
         $displayValue = $this->encodeText($value);
         if ($newLine || $this->GetStringWidth($displayValue) > $valueWidth) {
             // Guardar X actual para posicionar al final correctamente
@@ -405,7 +403,7 @@ function Header()
                 $this->SetFillColor(255, 255, 255);
             }
             
-            // Número con fondo verde claro
+            // NÃºmero con fondo verde claro
             if($contador % 2 == 1) {
                 $this->SetFillColor(235, 245, 238);
             }
@@ -420,7 +418,7 @@ function Header()
             $subtotal = ($row['cantidad'] * ($row['precio_unitario'] ?? 0));
             $total_general += $subtotal;
             
-            // Subtotal con fuente más destacada
+            // Subtotal con fuente mÃ¡s destacada
             $this->SetFont('Arial', 'B', 9);
             $this->Cell($w[5], 7, '$' . number_format($subtotal, 2), 'LR', 0, 'R', true);
             $this->SetFont('Arial', '', 9);
@@ -430,7 +428,7 @@ function Header()
             $contador++;
         }
         
-        // Línea de cierre con color
+        // LÃ­nea de cierre con color
         $this->SetDrawColor($this->secondaryColor[0], $this->secondaryColor[1], $this->secondaryColor[2]);
         $this->SetLineWidth(0.5);
         $this->Cell(array_sum($w), 0, '', 'T');
@@ -496,10 +494,10 @@ $pdf->setEntityConfig($entityConfig, __DIR__ . '/../assets/img');
 $pdf->AliasNbPages();
 $pdf->AddPage();
 
-// Información básica
+// InformaciÃ³n bÃ¡sica
 $pdf->SetY(63);
 
-// Información del proveedor
+// InformaciÃ³n del proveedor
 $pdf->SectionTitle('INFORMACION GENERAL');
 
 $lineas_info = 3;
@@ -533,7 +531,7 @@ if ($orden_compra['nombre_obra']) {
 
 $pdf->Ln(6);
 
-// Información del proveedor
+// InformaciÃ³n del proveedor
 $pdf->SectionTitle('INFORMACION DEL PROVEEDOR');
 
 $lineas_proveedor = 1;
@@ -595,7 +593,7 @@ while($item = $items->fetch_assoc()) {
 
 $total_calculado = $pdf->TablaItems($header, $data);
 
-// Totales con método mejorado
+// Totales con mÃ©todo mejorado
 $pdf->Ln(6);
 $pdf->TotalesCard(
     $orden_compra['subtotal'] ?: $total_calculado,
@@ -603,10 +601,10 @@ $pdf->TotalesCard(
     $orden_compra['total']
 );
 
-// Descripción y observaciones
+// DescripciÃ³n y observaciones
 if (!empty($orden_compra['descripcion'])) {
     $pdf->Ln(10);
-    $pdf->SectionTitle('DESCRIPCIÓN');
+    $pdf->SectionTitle('DESCRIPCIÃ“N');
     $pdf->SetFont('Arial', '', 9);
     $pdf->MultiCell(0, 5, $orden_compra['descripcion']);
 }
@@ -618,7 +616,7 @@ if (!empty($orden_compra['observaciones'])) {
     $pdf->MultiCell(0, 5, $orden_compra['observaciones']);
 }
 
-// Firmas con diseño moderno
+// Firmas con diseÃ±o moderno
 $pdf->SetY(-60);
 $pdf->Ln(8);
 
@@ -631,7 +629,7 @@ $pdf->SetFillColor(248, 249, 250);
 $pdf->RoundedRect(25, $yFirma, 60, 25, 2, 'FD');
 $pdf->RoundedRect(125, $yFirma, 60, 25, 2, 'FD');
 
-// Líneas de firma
+// LÃ­neas de firma
 $pdf->SetDrawColor(0, 0, 0);
 $pdf->SetLineWidth(0.5);
 $pdf->Line(30, $yFirma + 15, 80, $yFirma + 15);
@@ -647,7 +645,7 @@ $pdf->SetFont('Arial', '', 8);
 $pdf->SetTextColor(73, 80, 87);
 
 // Primera fila de nombres
-$pdf->Cell(90, 4, 'Diana Giselle Ramírez Ávila', 0, 0, 'C');
+$pdf->Cell(90, 4, 'Diana Giselle RamÃ­rez Ãvila', 0, 0, 'C');
 $pdf->Cell(110, 4, 'Director/Responsable', 0, 1, 'C');
 
 // Output
@@ -661,4 +659,5 @@ if (isset($_GET['download'])) {
 
 $conn->close();
 ?>
+
 

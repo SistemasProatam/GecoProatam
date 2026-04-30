@@ -1,8 +1,6 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 header('Content-Type: application/json; charset=utf-8');
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // Incluir PHPMailer
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -10,7 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Función para subir archivos
+// FunciÃ³n para subir archivos
 function subirArchivo($file, $campo, $idUsuario)
 {
     if (!isset($file['name']) || empty($file['name'])) {
@@ -33,13 +31,13 @@ function subirArchivo($file, $campo, $idUsuario)
     return null;
 }
 
-// Función para enviar correo de bienvenida con contraseña temporal
-function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseña_temporal)
+// FunciÃ³n para enviar correo de bienvenida con contraseÃ±a temporal
+function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseÃ±a_temporal)
 {
     try {
         $mail = new PHPMailer(true);
 
-        // Configuración del servidor SMTP (misma que en EmailHandler)
+        // ConfiguraciÃ³n del servidor SMTP (misma que en EmailHandler)
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
@@ -55,7 +53,7 @@ function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseñ
             )
         );
 
-        // Configuración general
+        // ConfiguraciÃ³n general
         $mail->setFrom('sistemas@proatam.com', 'Sistemas Proatam');
         $mail->addAddress($destinatario, $nombres . ' ' . $apellidos);
         $mail->isHTML(true);
@@ -131,7 +129,7 @@ function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseñ
             <div class='container'>
                 <div class='header'>
                     <h1>PROATAM</h1>
-                    <h2>¡Bienvenido a nuestro sistema!</h2>
+                    <h2>Â¡Bienvenido a nuestro sistema!</h2>
                 </div>
                 
                 <div class='content'>
@@ -141,28 +139,28 @@ function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseñ
                     <div class='password-box'>
                         <h3 style='color: #007bff; margin-top: 0;'>Credenciales de acceso:</h3>
                         <p><strong>Correo:</strong> $destinatario</p>
-                        <p><strong>Contraseña temporal:</strong> 
-                           <span style='font-size: 20px; color: #e74c3c; font-weight: bold; letter-spacing: 2px;'>$contraseña_temporal</span>
+                        <p><strong>ContraseÃ±a temporal:</strong> 
+                           <span style='font-size: 20px; color: #e74c3c; font-weight: bold; letter-spacing: 2px;'>$contraseÃ±a_temporal</span>
                         </p>
                     </div>
                     
                     <div class='warning'>
-                        <p><strong>⚠️ Importante:</strong></p>
+                        <p><strong>âš ï¸ Importante:</strong></p>
                         <ul style='margin-bottom: 0;'>
-                            <li>Esta contraseña es temporal y debe ser cambiada en tu primer acceso</li>
-                            <li>Guarda esta información de manera segura</li>
+                            <li>Esta contraseÃ±a es temporal y debe ser cambiada en tu primer acceso</li>
+                            <li>Guarda esta informaciÃ³n de manera segura</li>
                             <li>No compartas tus credenciales con nadie</li>
                         </ul>
                     </div>
                     
-                    <p>Puedes acceder al sistema a través del siguiente enlace:</p>
-                    <a href='#' class='button'>Acceder al Sistema</a>
+                    <p>Puedes acceder al sistema a travÃ©s del siguiente enlace:</p>
+                    <a href='https://proatamgoc.duckdns.org' class='button'>Acceder al Sistema</a>
                     
-                    <p style='margin-top: 20px;'>Si tienes algún problema para acceder, contacta al departamento de sistemas.</p>
+                    <p style='margin-top: 20px;'>Si tienes algÃºn problema para acceder, contacta al departamento de sistemas.</p>
                 </div>
                 
                 <div class='footer'>
-                    <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+                    <p>Este es un correo automÃ¡tico, por favor no respondas a este mensaje.</p>
                     <p>&copy; " . date('Y') . " PROATAM. Todos los derechos reservados.</p>
                 </div>
             </div>
@@ -170,19 +168,19 @@ function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseñ
         </html>
         ";
 
-        // Versión texto plano
+        // VersiÃ³n texto plano
         $mail->AltBody = "Bienvenido a PROATAM\n\n" .
             "Hola $nombres $apellidos,\n\n" .
             "Tu cuenta ha sido creada exitosamente.\n\n" .
             "Credenciales de acceso:\n" .
             "Correo: $destinatario\n" .
-            "Contraseña temporal: $contraseña_temporal\n\n" .
+            "ContraseÃ±a temporal: $contraseÃ±a_temporal\n\n" .
             "IMPORTANTE:\n" .
-            "- Esta contraseña es temporal\n" .
+            "- Esta contraseÃ±a es temporal\n" .
             "- Debes cambiarla en tu primer acceso\n" .
-            "- Guarda esta información de manera segura\n\n" .
+            "- Guarda esta informaciÃ³n de manera segura\n\n" .
             "Accede al sistema en: https://proatamgoc.duckdns.org/login.php\n\n" .
-            "Este es un correo automático, no respondas.";
+            "Este es un correo automÃ¡tico, no respondas.";
 
         // Enviar correo
         $mail->send();
@@ -194,7 +192,7 @@ function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseñ
 }
 
 try {
-    // Datos básicos
+    // Datos bÃ¡sicos
     $nombres = $_POST['nombres'] ?? '';
     $apellidos = $_POST['apellidos'] ?? '';
     $correo_corporativo = $_POST['correo_corporativo'] ?? '';
@@ -207,7 +205,7 @@ try {
     $contacto_emergencia_parentesco = $_POST['contacto_emergencia_parentesco'] ?? '';
     $contacto_emergencia_telefono = $_POST['contacto_emergencia_telefono'] ?? '';
 
-    // Validaciones básicas
+    // Validaciones bÃ¡sicas
     if (!$nombres || !$apellidos || !$correo_corporativo || !$departamento_id) {
         echo json_encode(['status' => 'error', 'message' => 'Faltan campos obligatorios.']);
         exit;
@@ -224,15 +222,15 @@ try {
     $check->execute();
     $check->store_result();
     if ($check->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'El correo corporativo ya está registrado.']);
+        echo json_encode(['status' => 'error', 'message' => 'El correo corporativo ya estÃ¡ registrado.']);
         exit;
     }
 
-    // Generar contraseña temporal
-    $contraseña_temporal = bin2hex(random_bytes(4));
-    $password_hash = password_hash($contraseña_temporal, PASSWORD_DEFAULT);
+    // Generar contraseÃ±a temporal
+    $contraseÃ±a_temporal = bin2hex(random_bytes(4));
+    $password_hash = password_hash($contraseÃ±a_temporal, PASSWORD_DEFAULT);
 
-    // Iniciar transacción para asegurar consistencia
+    // Iniciar transacciÃ³n para asegurar consistencia
     $conn->begin_transaction();
 
     try {
@@ -244,7 +242,7 @@ try {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         if (!$stmt) {
-            throw new Exception("Error al preparar inserción de usuario: " . $conn->error);
+            throw new Exception("Error al preparar inserciÃ³n de usuario: " . $conn->error);
         }
 
         $password_temporal = 1;
@@ -312,7 +310,7 @@ try {
 
             $stmtUpdate = $conn->prepare($updateSQL);
             if (!$stmtUpdate) {
-                throw new Exception("Error al preparar actualización de archivos: " . $conn->error);
+                throw new Exception("Error al preparar actualizaciÃ³n de archivos: " . $conn->error);
             }
 
             $stmtUpdate->bind_param($updateTypes, ...$updateParams);
@@ -322,7 +320,7 @@ try {
             $stmtUpdate->close();
         }
 
-        // Manejar contratos (después de subir los otros archivos)
+        // Manejar contratos (despuÃ©s de subir los otros archivos)
         if (isset($_FILES['contratos']) && !empty($_FILES['contratos']['name'][0])) {
             $tipos_contrato = $_POST['tipos_contrato'] ?? [];
 
@@ -346,7 +344,7 @@ try {
                     VALUES (?, ?, ?, ?)");
 
                         if (!$stmtContrato) {
-                            throw new Exception("Error al preparar inserción de contrato: " . $conn->error);
+                            throw new Exception("Error al preparar inserciÃ³n de contrato: " . $conn->error);
                         }
 
                         $rutaCompleta = '/uploads/usuarios/' . $nombreArchivo;
@@ -363,30 +361,30 @@ try {
             }
         }
 
-        // Confirmar transacción
+        // Confirmar transacciÃ³n
         $conn->commit();
 
-        // Enviar correo con la contraseña temporal
-        $correo_enviado = enviarCorreoBienvenida($correo_corporativo, $nombres, $apellidos, $contraseña_temporal);
+        // Enviar correo con la contraseÃ±a temporal
+        $correo_enviado = enviarCorreoBienvenida($correo_corporativo, $nombres, $apellidos, $contraseÃ±a_temporal);
 
         if ($correo_enviado) {
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Usuario creado exitosamente. La contraseña temporal ha sido enviada al correo del usuario.',
+                'message' => 'Usuario creado exitosamente. La contraseÃ±a temporal ha sido enviada al correo del usuario.',
                 'archivos_subidos' => $archivosSubidos,
                 'correo_enviado' => true
             ]);
         } else {
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Usuario creado, pero no se pudo enviar el correo automático.',
-                'contraseña' => $contraseña_temporal,
+                'message' => 'Usuario creado, pero no se pudo enviar el correo automÃ¡tico.',
+                'contraseÃ±a' => $contraseÃ±a_temporal,
                 'archivos_subidos' => $archivosSubidos,
                 'correo_enviado' => false
             ]);
         }
     } catch (Exception $e) {
-        // Revertir transacción en caso de error
+        // Revertir transacciÃ³n en caso de error
         $conn->rollback();
         throw $e;
     }
@@ -394,6 +392,8 @@ try {
     $stmt->close();
     $conn->close();
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Excepción: ' . $e->getMessage()]);
+    echo json_encode(['status' => 'error', 'message' => 'ExcepciÃ³n: ' . $e->getMessage()]);
 }
+
+
 

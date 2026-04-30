@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // IMPORTANTE: Incluir EmailHandler
 require_once __DIR__ . '/../EmailHandler.php';
@@ -20,7 +18,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-// Función para traducir estados
+// FunciÃ³n para traducir estados
 function traducirEstado($estado)
 {
   $estados = [
@@ -31,7 +29,7 @@ function traducirEstado($estado)
   return $estados[$estado] ?? ucfirst($estado);
 }
 
-// Procesar cambio de estado si se envió el formulario
+// Procesar cambio de estado si se enviÃ³ el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
   $nuevo_estado = $_POST['nuevo_estado'];
   $comentario = $_POST['comentario'] ?? '';
@@ -63,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
     $requisicion_data = $stmt_datos->get_result()->fetch_assoc();
 
     if (!$requisicion_data) {
-      die("Error: No se pudieron obtener los datos de la requisición");
+      die("Error: No se pudieron obtener los datos de la requisiciÃ³n");
     }
 
     // DEBUG
     error_log("=== CAMBIO DE ESTADO DESDE see_requis.php ===");
-    error_log("Requisición ID: " . $id);
+    error_log("RequisiciÃ³n ID: " . $id);
     error_log("Folio: " . $requisicion_data['folio']);
     error_log("Nuevo estado: " . $nuevo_estado);
     error_log("Solicitante: " . $requisicion_data['nombre_solicitante']);
@@ -82,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
     $stmt_update->bind_param("si", $nuevo_estado, $id);
 
     if ($stmt_update->execute()) {
-      error_log("✅ Estado actualizado en BD");
+      error_log("âœ… Estado actualizado en BD");
 
       // ========================================
       // REGISTRAR EN HISTORIAL
@@ -90,32 +88,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
       try {
         $sql_historial = "INSERT INTO requisicion_historial (requisicion_id, usuario_id, accion, comentario) VALUES (?, ?, ?, ?)";
         $stmt_historial = $conn->prepare($sql_historial);
-        $accion = $nuevo_estado === 'aprobado' ? 'Aprobó requisición' : 'Rechazó requisición';
+        $accion = $nuevo_estado === 'aprobado' ? 'AprobÃ³ requisiciÃ³n' : 'RechazÃ³ requisiciÃ³n';
         $stmt_historial->bind_param("iiss", $id, $_SESSION['user_id'], $accion, $comentario);
         $stmt_historial->execute();
-        error_log("✅ Historial registrado");
+        error_log("âœ… Historial registrado");
       } catch (Exception $e) {
-        error_log("⚠️ Error al insertar en historial: " . $e->getMessage());
+        error_log("âš ï¸ Error al insertar en historial: " . $e->getMessage());
       }
 
       // ========================================
-      // ENVIAR NOTIFICACIÓN POR CORREO
+      // ENVIAR NOTIFICACIÃ“N POR CORREO
       // ========================================
 
       // Validar que existe correo del solicitante
       if (empty($requisicion_data['correo_corporativo'])) {
-        error_log("⚠️ ADVERTENCIA: El solicitante no tiene correo corporativo registrado");
+        error_log("âš ï¸ ADVERTENCIA: El solicitante no tiene correo corporativo registrado");
         header("Location: see_requis.php?id=$id&success=1&email=no_correo");
         exit;
       }
 
-      error_log("Iniciando envío de notificación...");
+      error_log("Iniciando envÃ­o de notificaciÃ³n...");
 
       try {
         $emailHandler = new EmailHandler();
-        error_log("✅ EmailHandler instanciado");
+        error_log("âœ… EmailHandler instanciado");
 
-        // Preparar datos para la notificación
+        // Preparar datos para la notificaciÃ³n
         $datosRequisicion = [
           'id' => $id,
           'folio' => $requisicion_data['folio'],
@@ -130,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
 
         error_log("Enviando correo a: " . $requisicion_data['correo_corporativo']);
 
-        // Enviar la notificación
+        // Enviar la notificaciÃ³n
         $resultado = $emailHandler->enviarNotificacionCambioEstado(
           $requisicion_data['correo_corporativo'],
           $requisicion_data['nombre_solicitante'],
@@ -138,29 +136,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
         );
 
         if ($resultado) {
-          error_log("✅ CORREO ENVIADO EXITOSAMENTE");
+          error_log("âœ… CORREO ENVIADO EXITOSAMENTE");
           header("Location: see_requis.php?id=$id&success=1&email=enviado");
         } else {
-          error_log("❌ FALLÓ EL ENVÍO DEL CORREO");
+          error_log("âŒ FALLÃ“ EL ENVÃO DEL CORREO");
           header("Location: see_requis.php?id=$id&success=1&email=error");
         }
         exit;
       } catch (Exception $e) {
-        error_log("❌ EXCEPCIÓN AL ENVIAR CORREO: " . $e->getMessage());
-        error_log("❌ Archivo: " . $e->getFile() . " Línea: " . $e->getLine());
+        error_log("âŒ EXCEPCIÃ“N AL ENVIAR CORREO: " . $e->getMessage());
+        error_log("âŒ Archivo: " . $e->getFile() . " LÃ­nea: " . $e->getLine());
         header("Location: see_requis.php?id=$id&success=1&email=excepcion");
         exit;
       }
     } else {
       $mensaje_error = "Error al actualizar el estado: " . $stmt_update->error;
-      error_log("❌ Error al actualizar estado: " . $stmt_update->error);
+      error_log("âŒ Error al actualizar estado: " . $stmt_update->error);
     }
   } else {
-    $mensaje_error = "Estado no válido";
+    $mensaje_error = "Estado no vÃ¡lido";
   }
 }
 
-// Obtener requisición CON LOS NUEVOS CAMPOS DE UBICACIÓN
+// Obtener requisiciÃ³n CON LOS NUEVOS CAMPOS DE UBICACIÃ“N
 $sql = "SELECT r.*, e.nombre AS entidad, u.nombres, u.apellidos, u.correo_corporativo, c.nombre AS categoria,
                p.nombre_proyecto, o.nombre_obra, cat.nombre_catalogo
         FROM requisiciones r
@@ -177,7 +175,7 @@ $stmt->execute();
 $requisicion = $stmt->get_result()->fetch_assoc();
 
 if (!$requisicion) {
-  die("Requisición no encontrada");
+  die("RequisiciÃ³n no encontrada");
 }
 
 // Obtener items CON CONCEPTOS
@@ -198,12 +196,12 @@ $stmt_items->bind_param("i", $id);
 $stmt_items->execute();
 $items = $stmt_items->get_result();
 
-// Obtener el comentario de rechazo si está rechazada
+// Obtener el comentario de rechazo si estÃ¡ rechazada
 $comentario_rechazo = '';
 if ($requisicion['estado'] === 'rechazado') {
   try {
     $sql_comentario = "SELECT comentario FROM requisicion_historial 
-                          WHERE requisicion_id = ? AND accion = 'Rechazó requisición' 
+                          WHERE requisicion_id = ? AND accion = 'RechazÃ³ requisiciÃ³n' 
                           ORDER BY fecha_cambio DESC LIMIT 1";
     $stmt_comentario = $conn->prepare($sql_comentario);
     $stmt_comentario->bind_param("i", $id);
@@ -219,7 +217,7 @@ if ($requisicion['estado'] === 'rechazado') {
 }
 
 // Obtener archivos adjuntos
-$sql_archivos = "SELECT id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime, fecha_subida 
+$sql_archivos = "SELECT id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime, fecha_subida 
                  FROM requisicion_archivos 
                  WHERE requisicion_id = ?
                  ORDER BY fecha_subida DESC";
@@ -228,7 +226,7 @@ $stmt_archivos->bind_param("i", $id);
 $stmt_archivos->execute();
 $archivos = $stmt_archivos->get_result();
 
-// Función para formatear bytes
+// FunciÃ³n para formatear bytes
 function formatBytes($bytes, $precision = 2)
 {
   $units = array('B', 'KB', 'MB', 'GB', 'TB');
@@ -240,7 +238,7 @@ function formatBytes($bytes, $precision = 2)
 }
 
 /**
- * Genera texto descriptivo de la ubicación seleccionada
+ * Genera texto descriptivo de la ubicaciÃ³n seleccionada
  */
 function generarTextoUbicacion($requisicion_data)
 {
@@ -255,10 +253,10 @@ function generarTextoUbicacion($requisicion_data)
   }
 
   if (!empty($requisicion_data['nombre_catalogo'])) {
-    $ubicacion[] = "Catálogo: " . $requisicion_data['nombre_catalogo'];
+    $ubicacion[] = "CatÃ¡logo: " . $requisicion_data['nombre_catalogo'];
   }
 
-  return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicación específica";
+  return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicaciÃ³n especÃ­fica";
 }
 ?>
 
@@ -267,10 +265,10 @@ function generarTextoUbicacion($requisicion_data)
 
 <head>
   <meta charset="UTF-8">
-  <title>Detalles Requisición <?= htmlspecialchars($requisicion['folio']) ?></title>
+  <title>Detalles RequisiciÃ³n <?= htmlspecialchars($requisicion['folio']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
   <style>
     .estado-badge {
@@ -345,7 +343,8 @@ function generarTextoUbicacion($requisicion_data)
 
 <body>
 
-  <?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
+  <?php
+include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -355,12 +354,12 @@ function generarTextoUbicacion($requisicion_data)
         <span>/</span>
         <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
         <span>/</span>
-        <span>Detalles de Requisición</span>
+        <span>Detalles de RequisiciÃ³n</span>
       </div>
 
       <div class="row align-items-end">
         <div class="col-lg-8">
-          <h1 class="hero-title">Requisición - <?= htmlspecialchars($requisicion['folio']) ?></h1>
+          <h1 class="hero-title">RequisiciÃ³n - <?= htmlspecialchars($requisicion['folio']) ?></h1>
         </div>
       </div>
 
@@ -375,26 +374,27 @@ function generarTextoUbicacion($requisicion_data)
 
       <div class="form-body">
         <!-- Mostrar mensajes -->
-        <?php if (isset($_GET['success'])): ?>
+        <?php
+if (isset($_GET['success'])): ?>
           <?php
-          $email_status = $_GET['email'] ?? '';
+$email_status = $_GET['email'] ?? '';
           $mensaje_clase = 'success';
           $icono = 'check-circle';
           $mensaje = 'Estado actualizado correctamente';
 
           switch ($email_status) {
             case 'enviado':
-              $mensaje .= ' y notificación enviada por correo al solicitante.';
+              $mensaje .= ' y notificaciÃ³n enviada por correo al solicitante.';
               break;
             case 'error':
               $mensaje_clase = 'warning';
               $icono = 'exclamation-triangle';
-              $mensaje .= ', pero hubo un problema al enviar la notificación por correo.';
+              $mensaje .= ', pero hubo un problema al enviar la notificaciÃ³n por correo.';
               break;
             case 'excepcion':
               $mensaje_clase = 'warning';
               $icono = 'exclamation-triangle';
-              $mensaje .= ', pero ocurrió un error al intentar enviar el correo.';
+              $mensaje .= ', pero ocurriÃ³ un error al intentar enviar el correo.';
               break;
             case 'no_correo':
               $mensaje_clase = 'warning';
@@ -409,19 +409,22 @@ function generarTextoUbicacion($requisicion_data)
             <i class="bi bi-<?= $icono ?>"></i> <?= $mensaje ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
-        <?php if (isset($mensaje_error)): ?>
+        <?php
+if (isset($mensaje_error)): ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
-        <!-- Información General -->
+        <!-- InformaciÃ³n General -->
         <div class="section-title">
           <i class="bi bi-info-circle"></i>
-          Información General
+          InformaciÃ³n General
         </div>
 
         <div class="row mb-3">
@@ -443,28 +446,31 @@ function generarTextoUbicacion($requisicion_data)
           <div class="col-md-6">
             <label class="form-label">Solicitante</label>
             <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?>" readonly>
-            <?php if (!empty($requisicion['correo_corporativo'])): ?>
+            <?php
+if (!empty($requisicion['correo_corporativo'])): ?>
               <small class="text-muted">
                 <i class="bi bi-envelope"></i> <?= htmlspecialchars($requisicion['correo_corporativo']) ?>
               </small>
-            <?php else: ?>
+            <?php
+else: ?>
               <small class="text-warning">
                 <i class="bi bi-exclamation-triangle"></i> Sin correo registrado
               </small>
-            <?php endif; ?>
+            <?php
+endif; ?>
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label class="form-label">Categoría</label>
+            <label class="form-label">CategorÃ­a</label>
             <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['categoria']) ?>" readonly>
           </div>
           <div class="col-md-6">
             <label class="form-label">Estado Actual</label>
             <div class="mt-1">
               <?php
-              switch ($requisicion['estado']) {
+switch ($requisicion['estado']) {
                 case 'pendiente':
                   echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-clock"></i> Pendiente</span>';
                   break;
@@ -480,44 +486,53 @@ function generarTextoUbicacion($requisicion_data)
           </div>
         </div>
 
-        <!-- Ubicación del Presupuesto -->
-        <?php if (
+        <!-- UbicaciÃ³n del Presupuesto -->
+        <?php
+if (
           !empty($requisicion['nombre_proyecto']) || !empty($requisicion['nombre_obra']) ||
           !empty($requisicion['nombre_catalogo'])
         ): ?>
           <div class="section-title mt-4">
             <i class="bi bi-diagram-3"></i>
-            Ubicación del Presupuesto
+            UbicaciÃ³n del Presupuesto
           </div>
 
           <div class="row mb-3">
-            <?php if (!empty($requisicion['nombre_proyecto'])): ?>
+            <?php
+if (!empty($requisicion['nombre_proyecto'])): ?>
               <div class="col-md-6">
                 <label class="form-label">Proyecto</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_proyecto']) ?>" readonly>
               </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
 
-            <?php if (!empty($requisicion['nombre_obra'])): ?>
+            <?php
+if (!empty($requisicion['nombre_obra'])): ?>
               <div class="col-md-6">
                 <label class="form-label">Obra</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_obra']) ?>" readonly>
               </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
           </div>
 
           <div class="row mb-3">
-            <?php if (!empty($requisicion['nombre_catalogo'])): ?>
+            <?php
+if (!empty($requisicion['nombre_catalogo'])): ?>
               <div class="col-md-6">
-                <label class="form-label">Catálogo</label>
+                <label class="form-label">CatÃ¡logo</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_catalogo']) ?>" readonly>
               </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
           </div>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
-        <!-- Mostrar comentario de rechazo si está rechazada -->
-        <?php if ($requisicion['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
+        <!-- Mostrar comentario de rechazo si estÃ¡ rechazada -->
+        <?php
+if ($requisicion['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-dots"></i>
             Motivo del Rechazo
@@ -528,7 +543,8 @@ function generarTextoUbicacion($requisicion_data)
             </div>
             <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
           </div>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
         <!-- Items -->
         <div class="section-title mt-4">
@@ -549,7 +565,7 @@ function generarTextoUbicacion($requisicion_data)
           </thead>
           <tbody>
             <?php
-            $i = 1;
+$i = 1;
             while ($item = $items->fetch_assoc()): ?>
               <tr>
                 <td><?= $i++ ?></td>
@@ -558,54 +574,66 @@ function generarTextoUbicacion($requisicion_data)
                 <td><?= htmlspecialchars($item['cantidad']) ?></td>
                 <td><?= htmlspecialchars($item['unidad']) ?></td>
                 <td>
-                  <?php if (!empty($item['codigo_concepto'])): ?>
+                  <?php
+if (!empty($item['codigo_concepto'])): ?>
                     <div class="concepto-info">
-                      <?php if (!empty($item['numero_original'])): ?>
+                      <?php
+if (!empty($item['numero_original'])): ?>
                         <span class="concepto-badge">
                           <i class="bi bi-hash"></i> <?= htmlspecialchars($item['numero_original']) ?>
                         </span>
-                      <?php endif; ?>
+                      <?php
+endif; ?>
                       <span class="concepto-badge">
                         <i class="bi bi-tag"></i> <?= htmlspecialchars($item['codigo_concepto']) ?>
                       </span>
-                      <?php if (!empty($item['nombre_concepto'])): ?>
+                      <?php
+if (!empty($item['nombre_concepto'])): ?>
                         <br>
                         <small><?= htmlspecialchars($item['nombre_concepto']) ?></small>
-                      <?php endif; ?>
+                      <?php
+endif; ?>
                     </div>
-                  <?php else: ?>
+                  <?php
+else: ?>
                     <span class="text-muted">-</span>
-                  <?php endif; ?>
+                  <?php
+endif; ?>
                 </td>
               </tr>
-            <?php endwhile; ?>
+            <?php
+endwhile; ?>
           </tbody>
         </table>
 
         <!-- Extra -->
-        <?php if (!empty($requisicion['extra'])): ?>
+        <?php
+if (!empty($requisicion['extra'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-plus-circle"></i>
             Producto/servicio no listado
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['extra']) ?></textarea>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
-        <!-- Descripción -->
+        <!-- DescripciÃ³n -->
         <div class="section-title mt-4">
           <i class="bi bi-file-text"></i>
-          Descripción
+          DescripciÃ³n
         </div>
         <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['descripcion']) ?></textarea>
 
         <!-- Observaciones -->
-        <?php if (!empty($requisicion['observaciones'])): ?>
+        <?php
+if (!empty($requisicion['observaciones'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-text"></i>
             Observaciones
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['observaciones']) ?></textarea>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
         <!-- Archivos Adjuntos -->
         <div class="section-title mt-4">
@@ -613,21 +641,22 @@ function generarTextoUbicacion($requisicion_data)
           Archivos Adjuntos
         </div>
 
-        <?php if ($archivos->num_rows > 0): ?>
+        <?php
+if ($archivos->num_rows > 0): ?>
           <div class="table-responsive">
             <table class="table table-hover">
               <thead>
                 <tr>
                   <th style="width: 5%">#</th>
                   <th style="width: 45%">Nombre del Archivo</th>
-                  <th style="width: 15%">Tamaño</th>
+                  <th style="width: 15%">TamaÃ±o</th>
                   <th style="width: 15%">Tipo</th>
                   <th style="width: 20%">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
-                $i = 1;
+$i = 1;
                 while ($archivo = $archivos->fetch_assoc()):
                   $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
                   $icono = 'file-earmark';
@@ -658,7 +687,7 @@ function generarTextoUbicacion($requisicion_data)
                     </td>
                     <td>
                       <span class="badge bg-light text-dark">
-                        <?= formatBytes($archivo['tamaño_archivo']) ?>
+                        <?= formatBytes($archivo['tamaÃ±o_archivo']) ?>
                       </span>
                     </td>
                     <td>
@@ -675,19 +704,22 @@ function generarTextoUbicacion($requisicion_data)
                       </button>
                     </td>
                   </tr>
-                <?php endwhile; ?>
+                <?php
+endwhile; ?>
               </tbody>
             </table>
           </div>
-        <?php else: ?>
+        <?php
+else: ?>
           <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta requisición.
+            <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta requisiciÃ³n.
           </div>
-        <?php endif; ?>
+        <?php
+endif; ?>
 
         <!-- Cambiar Estado (solo para requisiciones pendientes y si es supervisor) -->
         <?php
-        $esEncargado = isset($_SESSION['departamento']) && in_array($_SESSION['departamento'], ['Gerente de Operaciones', 'Procura']);
+$esEncargado = isset($_SESSION['departamento']) && in_array($_SESSION['departamento'], ['Gerente de Operaciones', 'Procura']);
         if ($requisicion['estado'] === 'pendiente' && $esEncargado):
         ?>
           <div class="section-title mt-4">
@@ -695,20 +727,23 @@ function generarTextoUbicacion($requisicion_data)
             Cambiar Estado
           </div>
 
-          <?php if (!empty($requisicion['correo_corporativo'])): ?>
+          <?php
+if (!empty($requisicion['correo_corporativo'])): ?>
             <div class="alert alert-info mb-3">
               <i class="bi bi-envelope"></i>
-              <strong>Notificación automática:</strong> Al cambiar el estado, se enviará un correo a
+              <strong>NotificaciÃ³n automÃ¡tica:</strong> Al cambiar el estado, se enviarÃ¡ un correo a
               <strong><?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?></strong>
               (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>)
             </div>
-          <?php else: ?>
+          <?php
+else: ?>
             <div class="alert alert-warning mb-3">
               <i class="bi bi-exclamation-triangle"></i>
               <strong>Advertencia:</strong> El solicitante no tiene correo registrado.
-              No se enviará notificación automática.
+              No se enviarÃ¡ notificaciÃ³n automÃ¡tica.
             </div>
-          <?php endif; ?>
+          <?php
+endif; ?>
 
           <form method="POST" class="mb-4">
             <div class="row">
@@ -729,11 +764,11 @@ function generarTextoUbicacion($requisicion_data)
             <div class="row mt-3">
               <div class="col-md-12">
                 <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
+                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisiÃ³n..."></textarea>
                 <small class="text-muted">
                   <i class="bi bi-info-circle"></i>
-                  Si rechaza la requisición, este comentario se mostrará como motivo del rechazo
-                  <?= !empty($requisicion['correo_corporativo']) ? 'y se incluirá en el correo de notificación' : '' ?>.
+                  Si rechaza la requisiciÃ³n, este comentario se mostrarÃ¡ como motivo del rechazo
+                  <?= !empty($requisicion['correo_corporativo']) ? 'y se incluirÃ¡ en el correo de notificaciÃ³n' : '' ?>.
                 </small>
               </div>
             </div>
@@ -746,7 +781,8 @@ function generarTextoUbicacion($requisicion_data)
               </div>
             </div>
           </form>
-        <?php endif; ?>
+        <?php
+endif; ?>
       </div>
     </div>
   </div>
@@ -762,7 +798,7 @@ function generarTextoUbicacion($requisicion_data)
   <div id="loadingOverlay">
     <div class="loading-box">
       <div class="spinner-border text-primary" role="status"></div>
-      <div class="mt-3">Procesando… por favor espere</div>
+      <div class="mt-3">Procesandoâ€¦ por favor espere</div>
     </div>
   </div>
 
@@ -770,14 +806,14 @@ function generarTextoUbicacion($requisicion_data)
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // Función para seleccionar estado
+    // FunciÃ³n para seleccionar estado
     function seleccionarEstado(estado) {
       document.getElementById('nuevo_estado').value = estado;
       document.getElementById('btnConfirmar').disabled = false;
 
       const btnConfirmar = document.getElementById('btnConfirmar');
       if (estado === 'aprobado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Aprobación';
+        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar AprobaciÃ³n';
         btnConfirmar.className = 'btn btn-success';
       } else {
         btnConfirmar.innerHTML = '<i class="bi bi-x-lg"></i> Confirmar Rechazo';
@@ -785,14 +821,14 @@ function generarTextoUbicacion($requisicion_data)
       }
     }
 
-    // Función para ver archivo
+    // FunciÃ³n para ver archivo
     function verArchivo(archivoId, tipoMime) {
       const tiposVisualizables = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
       if (tiposVisualizables.includes(tipoMime)) {
         window.open('/orders/view_archivo.php?id=' + archivoId, '_blank');
       } else {
-        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
+        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargarÃ¡ automÃ¡ticamente.');
         window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
       }
     }
@@ -812,9 +848,13 @@ function generarTextoUbicacion($requisicion_data)
   </script>
 
   <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-  <?php include __DIR__ . "/../includes/footer.php"; ?>
+  <?php
+include __DIR__ . "/../includes/footer.php"; ?>
 
 
 </body>
 
 </html>
+
+
+

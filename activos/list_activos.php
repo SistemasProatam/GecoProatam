@@ -1,14 +1,12 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
-// ===== Mensajes de sesión =====
+// ===== Mensajes de sesiÃ³n =====
 $msg_success = $_SESSION['success'] ?? '';
 $msg_error   = $_SESSION['error']   ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
@@ -105,7 +103,7 @@ function urlFiltros(array $extras = []): string {
     <title>Registro de Activos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
 
@@ -113,7 +111,7 @@ function urlFiltros(array $extras = []): string {
         /* Badge estatus */
         .badge-activo   { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-inactivo { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        /* Badge condición */
+        /* Badge condiciÃ³n */
         .badge-bueno    { background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-regular  { background:#fef9c3; color:#92400e; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-malo     { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
@@ -122,13 +120,14 @@ function urlFiltros(array $extras = []): string {
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "". BASE_URL ."/includes/navbar.php"; ?>
+<?php
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
     <div class="container hero-content">
         <div class="breadcrumb-custom">
-            <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
+            <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
             <span>/</span>
             <span>Registro de Activos</span>
         </div>
@@ -144,44 +143,55 @@ function urlFiltros(array $extras = []): string {
     <div class="form-container">
         <div class="form-body">
 
-            <!-- ===== Alertas de sesión ===== -->
-            <?php if ($msg_success): ?>
+            <!-- ===== Alertas de sesiÃ³n ===== -->
+            <?php
+if ($msg_success): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle"></i> <?= $msg_success ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <?php endif; ?>
-            <?php if ($msg_error): ?>
+            <?php
+endif; ?>
+            <?php
+if ($msg_error): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="bi bi-exclamation-triangle"></i> <?= $msg_error ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
 
             <!-- ===== Buscador ===== -->
-            <form class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+            <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
                 <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo_id) ?>">
                 <input type="hidden" name="estatus" value="<?= htmlspecialchars($estatus) ?>">
                 <input class="form-control w-100" type="search" name="q"
-                       placeholder="Buscar por código o nombre..."
+                       placeholder="Buscar por cÃ³digo o nombre..."
                        value="<?= htmlspecialchars($busqueda) ?>" />
                 <button class="btn btn-outline-success" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
             </form>
 
+            <div class="mb-2">
+                <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
+                    <i class="bi bi-funnel"></i> Filtros
+                </h5>
+            </div>
             <!-- ===== Filtros ===== -->
-            <form method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+            <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
                 <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
 
                 <div style="flex:0 0 auto; min-width:160px;">
                     <select name="tipo" class="form-select">
                         <option value="">-- Tipo --</option>
-                        <?php while ($t = $tipos->fetch_assoc()): ?>
+                        <?php
+while ($t = $tipos->fetch_assoc()): ?>
                             <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($t['nombre']) ?>
                             </option>
-                        <?php endwhile; ?>
+                        <?php
+endwhile; ?>
                     </select>
                 </div>
 
@@ -193,18 +203,18 @@ function urlFiltros(array $extras = []): string {
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-funnel"></i> Filtrar
-                </button>
-
-                <?php if ($busqueda || $tipo_id || $estatus): ?>
+                <?php
+if ($busqueda || $tipo_id || $estatus): ?>
                 <a href="list_activos.php" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle"></i> Limpiar
                 </a>
-                <?php endif; ?>
+                <?php
+endif; ?>
             </form>
 
-            <!-- ===== Contador + Botón agregar ===== -->
+            <div id="table-container-wrapper">
+
+            <!-- ===== Contador + BotÃ³n agregar ===== -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="badge-num"><?= $totalRegistros ?> activo<?= $totalRegistros != 1 ? 's' : '' ?></span>
                 <button class="button-56" type="button" onclick="window.location.href='new_activo.php'">
@@ -213,9 +223,11 @@ function urlFiltros(array $extras = []): string {
             </div>
 
             <!-- ===== Lista ===== -->
-            <?php if ($result && $result->num_rows > 0): ?>
+            <?php
+if ($result && $result->num_rows > 0): ?>
             <ul class="list-group">
-                <?php while ($row = $result->fetch_assoc()): ?>
+                <?php
+while ($row = $result->fetch_assoc()): ?>
                 <li class="list-group-item d-flex justify-content-between align-items-center gap-2 py-3">
 
                     <div style="min-width:0; flex:1;">
@@ -228,9 +240,11 @@ function urlFiltros(array $extras = []): string {
                         <div class="mt-1"><?= htmlspecialchars($row['nombre']) ?></div>
                         <small class="text-muted">
                             <i class="bi bi-tag"></i> <?= htmlspecialchars($row['tipo']) ?>
-                            <?php if ($row['ubicacion']): ?>
+                            <?php
+if ($row['ubicacion']): ?>
                                 &nbsp;|&nbsp;<i class="bi bi-geo-alt"></i> <?= htmlspecialchars($row['ubicacion']) ?>
-                            <?php endif; ?> |
+                            <?php
+endif; ?> |
                             <span <?= $row['condicion'] ?>>
                                 <?= ucfirst($row['condicion']) ?>
                             </span>
@@ -252,11 +266,13 @@ function urlFiltros(array $extras = []): string {
                     </div>
 
                 </li>
-                <?php endwhile; ?>
+                <?php
+endwhile; ?>
             </ul>
 
-            <!-- ===== Paginación ===== -->
-            <?php if ($totalPaginas > 1): ?>
+            <!-- ===== PaginaciÃ³n ===== -->
+            <?php
+if ($totalPaginas > 1): ?>
             <nav class="mt-4">
                 <ul class="pagination justify-content-center flex-wrap">
 
@@ -268,7 +284,7 @@ function urlFiltros(array $extras = []): string {
                     </li>
 
                     <?php
-                    // Mostrar máximo 5 páginas alrededor de la actual
+// Mostrar mÃ¡ximo 5 pÃ¡ginas alrededor de la actual
                     $inicio = max(1, $pagina - 2);
                     $fin    = min($totalPaginas, $pagina + 2);
 
@@ -276,25 +292,34 @@ function urlFiltros(array $extras = []): string {
                         <li class="page-item">
                             <a class="page-link" href="<?= urlFiltros(['page' => 1]) ?>">1</a>
                         </li>
-                        <?php if ($inicio > 2): ?>
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                        <?php
+if ($inicio > 2): ?>
+                            <li class="page-item disabled"><span class="page-link">â€¦</span></li>
+                        <?php
+endif; ?>
+                    <?php
+endif; ?>
 
-                    <?php for ($p = $inicio; $p <= $fin; $p++): ?>
+                    <?php
+for ($p = $inicio; $p <= $fin; $p++): ?>
                         <li class="page-item <?= $p === $pagina ? 'active' : '' ?>">
                             <a class="page-link" href="<?= urlFiltros(['page' => $p]) ?>"><?= $p ?></a>
                         </li>
-                    <?php endfor; ?>
+                    <?php
+endfor; ?>
 
-                    <?php if ($fin < $totalPaginas): ?>
-                        <?php if ($fin < $totalPaginas - 1): ?>
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        <?php endif; ?>
+                    <?php
+if ($fin < $totalPaginas): ?>
+                        <?php
+if ($fin < $totalPaginas - 1): ?>
+                            <li class="page-item disabled"><span class="page-link">â€¦</span></li>
+                        <?php
+endif; ?>
                         <li class="page-item">
                             <a class="page-link" href="<?= urlFiltros(['page' => $totalPaginas]) ?>"><?= $totalPaginas ?></a>
                         </li>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
 
                     <!-- Siguiente -->
                     <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
@@ -305,19 +330,25 @@ function urlFiltros(array $extras = []): string {
 
                 </ul>
             </nav>
-            <?php endif; ?>
+            <?php
+endif; ?>
 
-            <?php else: ?>
+            <?php
+else: ?>
             <div class="text-center text-muted py-5">
                 <i class="bi bi-inbox" style="font-size:3rem;"></i>
                 <p class="mt-2">No hay activos registrados<?= ($busqueda || $tipo_id || $estatus) ? ' con esos filtros' : '' ?></p>
-                <?php if ($busqueda || $tipo_id || $estatus): ?>
+                <?php
+if ($busqueda || $tipo_id || $estatus): ?>
                     <a href="list_activos.php" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-x-circle"></i> Limpiar filtros
                     </a>
-                <?php endif; ?>
+                <?php
+endif; ?>
             </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
+            </div> <!-- /table-container-wrapper -->
 
         </div><!-- /form-body -->
     </div><!-- /form-container -->
@@ -338,7 +369,94 @@ document.addEventListener('DOMContentLoaded', function() {
         crossorigin="anonymous">
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+include __DIR__ . "/../includes/footer.php"; ?>
+
+<script>
+// FunciÃ³n para actualizar la lista vÃ­a AJAX
+function initAJAX() {
+    const searchForm = document.getElementById('search-form');
+    const filterForm = document.getElementById('filter-form');
+    const container = document.getElementById('table-container-wrapper');
+
+    if (!searchForm || !filterForm || !container) return;
+
+    function updateList(url, pushState = true) {
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('table-container-wrapper');
+                
+                if (newContent) {
+                    container.innerHTML = newContent.innerHTML;
+                }
+
+                const newSearch = doc.getElementById('search-form');
+                const newFilter = doc.getElementById('filter-form');
+                if (newSearch) syncForm(searchForm, newSearch);
+                if (newFilter) syncForm(filterForm, newFilter);
+
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+
+                if (pushState) window.history.pushState({}, '', url);
+                
+                // Reinicializar tooltips
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+    }
+
+    function syncForm(current, source) {
+        source.querySelectorAll('input, select').forEach(input => {
+            const target = current.querySelector(`[name="${input.name}"]`);
+            if (target) target.value = input.value;
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink) {
+            e.preventDefault();
+            updateList(pageLink.href);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    [searchForm, filterForm].forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const params = new URLSearchParams(new FormData(filterForm));
+            const searchData = new FormData(searchForm);
+            params.set('q', searchData.get('q') || "");
+            
+            params.set('page', '1');
+            updateList('?' + params.toString());
+        });
+    });
+
+    filterForm.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', () => filterForm.requestSubmit());
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initAJAX);
+</script>
+
 </body>
 </html>
+
+
 

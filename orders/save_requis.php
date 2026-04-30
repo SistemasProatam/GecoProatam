@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 require_once __DIR__ . '/../EmailHandler.php';
 
@@ -23,11 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $solicitante_id = $_POST['solicitante_id'] ?? null;
     $categoria_id   = $_POST['categoria_id'] ?? null;
 
-    // NUEVOS CAMPOS DE UBICACIÓN
+    // NUEVOS CAMPOS DE UBICACIÃ“N
     $proyecto_id    = $_POST['proyecto_id'] ?? null;
     $obra_id        = $_POST['obra_id'] ?? null;
     $catalogo_id    = $_POST['catalogo_id'] ?? null;
-    // $concepto_id ya no se usa a nivel de requisición principal
+    // $concepto_id ya no se usa a nivel de requisiciÃ³n principal
 
     $descripcion    = $_POST['descripcion'] ?? '';
     $observaciones  = $_POST['observaciones'] ?? '';
@@ -49,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($categoria_id)) {
-        $errores[] = "La categoría es obligatoria.";
+        $errores[] = "La categorÃ­a es obligatoria.";
     }
 
     if (empty($proyecto_id)) {
@@ -61,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($catalogo_id)) {
-        $errores[] = "El catálogo es obligatorio.";
+        $errores[] = "El catÃ¡logo es obligatorio.";
     }
 
     if (empty($items)) {
-        $errores[] = "Debe agregar al menos un item a la requisición.";
+        $errores[] = "Debe agregar al menos un item a la requisiciÃ³n.";
     }
 
     // Si hay errores, retornar respuesta JSON
@@ -93,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
     // ================================
-    // Insertar requisición SIN concepto_id
+    // Insertar requisiciÃ³n SIN concepto_id
     // ================================
     $sql = "INSERT INTO requisiciones 
                 (folio, entidad_id, solicitante_id, categoria_id, 
@@ -102,9 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)";
 
     $stmt = $conn->prepare($sql);
-    if (!$stmt) die("Error en la preparación: " . $conn->error);
+    if (!$stmt) die("Error en la preparaciÃ³n: " . $conn->error);
 
-    // Debug para ver qué parámetros se están enviando
+    // Debug para ver quÃ© parÃ¡metros se estÃ¡n enviando
     error_log("Folio: " . $folio);
     error_log("Entidad ID: " . $entidad_id);
     error_log("Solicitante ID: " . $solicitante_id);
@@ -112,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log("Proyecto ID: " . $proyecto_id);
     error_log("Obra ID: " . $obra_id);
     error_log("Catalogo ID: " . $catalogo_id);
-    error_log("Descripción: " . $descripcion);
+    error_log("DescripciÃ³n: " . $descripcion);
     error_log("Observaciones: " . $observaciones);
     error_log("Extra: " . $extra);
     error_log("Fecha solicitud: " . $fecha_solicitud);
@@ -132,12 +130,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fecha_solicitud
     );
 
-    if (!$stmt->execute()) die("Error al guardar la requisición: " . $stmt->error);
+    if (!$stmt->execute()) die("Error al guardar la requisiciÃ³n: " . $stmt->error);
 
     $requisicion_id = $stmt->insert_id;
 
     // ================================
-    // Insertar items dinámicos CON CONCEPTO POR ITEM
+    // Insertar items dinÃ¡micos CON CONCEPTO POR ITEM
     // ================================
     if (!empty($items)) {
         // Verificar si la tabla tiene la columna concepto_id
@@ -149,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             (requisicion_id, tipo, producto_id, cantidad, unidad_id, concepto_id) 
                          VALUES (?, ?, ?, ?, ?, ?)";
             $stmt_item = $conn->prepare($sql_item);
-            if (!$stmt_item) die("Error preparación items: " . $conn->error);
+            if (!$stmt_item) die("Error preparaciÃ³n items: " . $conn->error);
 
             foreach ($items as $item) {
                 $tipo        = $item['tipo'] ?? null;
@@ -158,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $unidad_id   = $item['unidad_id'] ?? null;
                 $item_concepto_id = $item['concepto_id'] ?? null;
 
-                // Si concepto_id está vacío, establecer como NULL
+                // Si concepto_id estÃ¡ vacÃ­o, establecer como NULL
                 if (empty($item_concepto_id)) {
                     $item_concepto_id = null;
                 }
@@ -170,12 +168,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $stmt_item->close();
         } else {
-            // Versión sin concepto_id en items (backward compatibility)
+            // VersiÃ³n sin concepto_id en items (backward compatibility)
             $sql_item = "INSERT INTO requisicion_items 
                             (requisicion_id, tipo, producto_id, cantidad, unidad_id) 
                          VALUES (?, ?, ?, ?, ?)";
             $stmt_item = $conn->prepare($sql_item);
-            if (!$stmt_item) die("Error preparación items: " . $conn->error);
+            if (!$stmt_item) die("Error preparaciÃ³n items: " . $conn->error);
 
             foreach ($items as $item) {
                 $tipo        = $item['tipo'] ?? null;
@@ -208,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($_FILES['archivos']['error'][$key] === UPLOAD_ERR_OK && !empty($nombre)) {
 
                 $tmpName = $_FILES['archivos']['tmp_name'][$key];
-                $tamaño = $_FILES['archivos']['size'][$key];
+                $tamaÃ±o = $_FILES['archivos']['size'][$key];
                 $tipo = $_FILES['archivos']['type'][$key];
 
                 $nombreArchivo = basename($nombre);
@@ -220,12 +218,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if (move_uploaded_file($tmpName, $rutaArchivo)) {
                     $sql_file = "INSERT INTO requisicion_archivos 
-                                    (requisicion_id, nombre_archivo, ruta_archivo, tamaño_archivo, tipo_mime)
+                                    (requisicion_id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime)
                                  VALUES (?, ?, ?, ?, ?)";
                     $stmt_file = $conn->prepare($sql_file);
 
                     if ($stmt_file) {
-                        $stmt_file->bind_param("issis", $requisicion_id, $nombreArchivo, $rutaArchivo, $tamaño, $tipo);
+                        $stmt_file->bind_param("issis", $requisicion_id, $nombreArchivo, $rutaArchivo, $tamaÃ±o, $tipo);
 
                         if ($stmt_file->execute()) {
                             $archivos_subidos++;
@@ -239,14 +237,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        error_log("Requisición $requisicion_id: Se subieron $archivos_subidos archivos");
+        error_log("RequisiciÃ³n $requisicion_id: Se subieron $archivos_subidos archivos");
     }
 
     // ================================
     // NOTIFICACIONES POR CORREO
     // ================================
 
-    // Obtener datos completos de la requisición
+    // Obtener datos completos de la requisiciÃ³n
     $sql_requisicion = "SELECT r.*, e.nombre as entidad_nombre, c.nombre as categoria_nombre, 
                         p.nombre_proyecto, o.nombre_obra, cat.nombre_catalogo,
                         u.nombres, u.apellidos, u.correo_corporativo as solicitante_correo 
@@ -288,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_items->execute();
     $items_data = $stmt_items->get_result()->fetch_all(MYSQLI_ASSOC);
 
-    // Preparar datos para notificación
+    // Preparar datos para notificaciÃ³n
     $datosRequisicion = [
         'folio' => $requisicion_data['folio'],
         'solicitante' => $requisicion_data['nombres'] . ' ' . $requisicion_data['apellidos'],
@@ -317,7 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Enviar notificación a supervisores usando EmailHandler
+    // Enviar notificaciÃ³n a supervisores usando EmailHandler
     if (!empty($supervisores)) {
         try {
             $emailHandler = new EmailHandler();
@@ -344,34 +342,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 );
             }
 
-            error_log("Notificación enviada a " . count($supervisores) . " supervisores para requisición " . $datosRequisicion['folio']);
+            error_log("NotificaciÃ³n enviada a " . count($supervisores) . " supervisores para requisiciÃ³n " . $datosRequisicion['folio']);
         } catch (Exception $e) {
-            error_log("Error enviando notificación: " . $e->getMessage());
+            error_log("Error enviando notificaciÃ³n: " . $e->getMessage());
         }
     }
 
     // ================================
     // Redirigir o retornar JSON
     // ================================
-    // Si es una petición AJAX (fetch), retornar JSON
+    // Si es una peticiÃ³n AJAX (fetch), retornar JSON
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
         header('Content-Type: application/json');
         echo json_encode([
             'status' => 'success',
-            'message' => 'Requisición guardada correctamente',
+            'message' => 'RequisiciÃ³n guardada correctamente',
             'folio' => $folio,
             'requisicion_id' => $requisicion_id
         ]);
         exit;
     }
 
-    // Si es una petición normal (form tradicional), redirigir
+    // Si es una peticiÃ³n normal (form tradicional), redirigir
     header("Location: list_requis.php?msg=success&folio=" . urlencode($folio));
     exit;
 }
 
 /**
- * Genera texto descriptivo de la ubicación seleccionada
+ * Genera texto descriptivo de la ubicaciÃ³n seleccionada
  */
 function generarTextoUbicacion($requisicion_data)
 {
@@ -386,9 +384,11 @@ function generarTextoUbicacion($requisicion_data)
     }
 
     if (!empty($requisicion_data['nombre_catalogo'])) {
-        $ubicacion[] = "Catálogo: " . $requisicion_data['nombre_catalogo'];
+        $ubicacion[] = "CatÃ¡logo: " . $requisicion_data['nombre_catalogo'];
     }
 
-    return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicación específica";
+    return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicaciÃ³n especÃ­fica";
 }
+
+
 

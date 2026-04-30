@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // ==== Filtros ====
 $busqueda = $_GET['q'] ?? '';
@@ -25,7 +23,7 @@ $sqlBase = "FROM obras o
 $params = [];
 $types = "";
 
-// Búsqueda
+// BÃºsqueda
 if (!empty($busqueda)) {
     $sqlBase .= " AND (o.numero_obra LIKE ? OR o.nombre_obra LIKE ? OR o.descripcion LIKE ? OR p.nombre_proyecto LIKE ?)";
     $like = "%$busqueda%";
@@ -81,7 +79,7 @@ while ($proyecto = $proyectosResult->fetch_assoc()) {
     $proyectos[] = $proyecto;
 }
 
-// Total páginas
+// Total pÃ¡ginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
@@ -93,7 +91,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .badge-presupuesto {
@@ -123,7 +121,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   </style>
 </head>
 <body>
-<?php include __DIR__ . "/../includes/navbar.php"; ?>
+<?php
+include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -150,12 +149,36 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     <div class="form-body">
       
         <!-- Buscador -->
-      <form class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+      <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+        <input type="hidden" name="proyecto_id" value="<?= htmlspecialchars($proyecto_id) ?>">
         <input class="form-control w-100" type="search" name="q" placeholder="Buscar obra..." value="<?= htmlspecialchars($busqueda) ?>">
         <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
       </form>
 
-      <!-- Botón de agregar obra -->
+      <div class="mb-2">
+        <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
+          <i class="bi bi-funnel"></i> Filtros
+        </h5>
+      </div>
+      <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+        <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
+        <div style="flex: 0 0 auto; min-width: 250px;">
+          <select name="proyecto_id" class="form-select">
+            <option value="">-- Todos los proyectos --</option>
+            <?php
+foreach ($proyectos as $p): ?>
+              <option value="<?= $p['id'] ?>" <?= $proyecto_id == $p['id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($p['nombre_proyecto']) ?>
+              </option>
+            <?php
+endforeach; ?>
+          </select>
+        </div>
+      </form>
+
+      <div id="table-container-wrapper">
+
+      <!-- BotÃ³n de agregar obra -->
       <div class="d-flex justify-content-between mb-3">
         <span class="badge-num"><?= $totalRegistros ?> obras</span>
         <button class="button-56" type="button" onclick="agregarObra(<?= $proyecto_id ?>)">
@@ -164,9 +187,11 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       </div>
 
       <!-- Lista de obras -->
-      <?php if($result && $result->num_rows > 0): ?>
+      <?php
+if($result && $result->num_rows > 0): ?>
       <ul class="list-group">
-        <?php while($row = $result->fetch_assoc()): 
+        <?php
+while($row = $result->fetch_assoc()): 
           $costo_disponible = $row['costo_directo'] - $row['costo_directo_utilizado'];
           $porcentaje_utilizado = $row['costo_directo'] > 0 ? ($row['costo_directo_utilizado'] / $row['costo_directo']) * 100 : 0;
           $progress_class = $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
@@ -177,7 +202,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
               <div class="flex-grow-1">
                 <strong><?= htmlspecialchars($row['nombre_obra']) ?></strong>
                 <div class="text-muted small">
-                  <div><strong>Número:</strong> <?= htmlspecialchars($row['numero_obra']) ?></div>
+                  <div><strong>NÃºmero:</strong> <?= htmlspecialchars($row['numero_obra']) ?></div>
                 </div>
                 
               </div>
@@ -193,25 +218,31 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             </button>
           </div>
         </li>
-        <?php endwhile; ?>
+        <?php
+endwhile; ?>
       </ul>
 
-      <!-- Paginación -->
-      <?php if($totalPaginas > 1): ?>
-      <nav aria-label="Paginación">
+      <!-- PaginaciÃ³n -->
+      <?php
+if($totalPaginas > 1): ?>
+      <nav aria-label="PaginaciÃ³n">
         <ul class="pagination justify-content-center mt-3">
-          <?php for($i = 1; $i <= $totalPaginas; $i++): ?>
+          <?php
+for($i = 1; $i <= $totalPaginas; $i++): ?>
           <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
             <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= $proyecto_id ?>&page=<?= $i ?>">
               <?= $i ?>
             </a>
           </li>
-          <?php endfor; ?>
+          <?php
+endfor; ?>
         </ul>
       </nav>
-      <?php endif; ?>
+      <?php
+endif; ?>
       
-      <?php else: ?>
+      <?php
+else: ?>
       <div class="text-center text-muted py-4">
         <i class="bi bi-inbox" style="font-size: 3rem;"></i>
         <p class="mt-2">No hay obras registradas</p>
@@ -219,7 +250,9 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             <i class="bi bi-plus-circle"></i> Crear primera obra
           </button>
       </div>
-      <?php endif; ?>
+      <?php
+endif; ?>
+      </div> <!-- /table-container-wrapper -->
     </div>
   </div>
 </div>
@@ -243,11 +276,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-// Función para agregar obra
+// FunciÃ³n para agregar obra
 function agregarObra(proyectoId) {
     console.log("ID del proyecto:", proyectoId); // DEBUG
     
-    // Primero obtener información del proyecto para validaciones
+    // Primero obtener informaciÃ³n del proyecto para validaciones
     fetch(`get_info_proyecto.php?id=${proyectoId}`)
         .then(res => {
             console.log("Respuesta HTTP:", res.status); // DEBUG
@@ -262,7 +295,7 @@ function agregarObra(proyectoId) {
                 return;
             }
             
-            // Resto del código...
+            // Resto del cÃ³digo...
             Swal.fire({
                 title: "Nueva Obra",
                 html: `
@@ -270,7 +303,7 @@ function agregarObra(proyectoId) {
                         <input type="hidden" name="proyecto_id" value="${proyectoId}">
                         
                         <div class="mb-2">
-                            <label class="form-label">Número de Obra <span class="required">*</span></label>
+                            <label class="form-label">NÃºmero de Obra <span class="required">*</span></label>
                             <input type="text" name="numero_obra" class="form-control" required>
                         </div>
 
@@ -280,8 +313,8 @@ function agregarObra(proyectoId) {
                         </div>
 
                         <div class="mb-2">
-                            <label class="form-label">Descripción de la Obra</label>
-                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles y características de la obra..."></textarea>
+                            <label class="form-label">DescripciÃ³n de la Obra</label>
+                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles y caracterÃ­sticas de la obra..."></textarea>
                         </div>
 
                         <div class="row">
@@ -304,7 +337,7 @@ function agregarObra(proyectoId) {
                         <div class="mb-2">
                             <label class="form-label">Costo Directo <span class="required">*</span></label>
                             <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-                            <small class="text-muted">Presupuesto para órdenes de compra de esta obra</small>
+                            <small class="text-muted">Presupuesto para Ã³rdenes de compra de esta obra</small>
                         </div>
                     </form>
                 `,
@@ -321,23 +354,23 @@ function agregarObra(proyectoId) {
                         .then(res => res.json())
                         .then(data => {
                             if(data.status === 'success'){
-                                Swal.fire("¡Éxito!", "Obra creada correctamente", "success")
+                                Swal.fire("Â¡Ã‰xito!", "Obra creada correctamente", "success")
                                     .then(() => verObras(proyectoId));
                             } else {
                                 Swal.showValidationMessage(data.message || "Error al guardar la obra");
                             }
                         })
-                        .catch(() => Swal.showValidationMessage("Error de conexión"));
+                        .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
                 }
             });
         })
         .catch(error => {
             console.error("Error en fetch:", error);
-            Swal.fire("Error", "No se pudo cargar la información del proyecto", "error");
+            Swal.fire("Error", "No se pudo cargar la informaciÃ³n del proyecto", "error");
         });
 }
 
-// Función para editar obra
+// FunciÃ³n para editar obra
 function editarObra(obraId) {
     fetch(`edit_obra.php?id=${obraId}`)
         .then(res => res.json())
@@ -368,7 +401,7 @@ function editarObra(obraId) {
                                 </div>
 
                                 <div class="mb-2">
-                                    <label class="form-label">Número de Obra</label>
+                                    <label class="form-label">NÃºmero de Obra</label>
                                     <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
                                 </div>
 
@@ -378,7 +411,7 @@ function editarObra(obraId) {
                                 </div>
 
                                 <div class="mb-2">
-                                    <label class="form-label">Descripción de la Obra</label>
+                                    <label class="form-label">DescripciÃ³n de la Obra</label>
                                     <textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea>
                                 </div>
 
@@ -401,7 +434,7 @@ function editarObra(obraId) {
                                 <div class="mb-2">
                                     <label class="form-label">Costo Directo</label>
                                     <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-                                    <small class="text-muted">Presupuesto para órdenes de compra</small>
+                                    <small class="text-muted">Presupuesto para Ã³rdenes de compra</small>
                                 </div>
                             </form>
                         `,
@@ -418,29 +451,29 @@ function editarObra(obraId) {
                                 .then(res => res.json())
                                 .then(resp => {
                                     if (resp.status === "success") {
-                                        Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
+                                        Swal.fire("Â¡Ã‰xito!", "Obra actualizada correctamente", "success")
                                             .then(() => location.reload());
                                     } else {
                                         Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
                                     }
                                 })
-                                .catch(() => Swal.showValidationMessage("Error de conexión"));
+                                .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
                         }
                     });
                 });
         });
 }
 
-// Función para eliminar obra
+// FunciÃ³n para eliminar obra
 function eliminarObra(obraId) {
     Swal.fire({
-        title: '¿Seguro que deseas eliminar esta obra?',
-        text: "Esta acción no se puede deshacer. Las órdenes de compra asociadas quedarán sin obra asignada.",
+        title: 'Â¿Seguro que deseas eliminar esta obra?',
+        text: "Esta acciÃ³n no se puede deshacer. Las Ã³rdenes de compra asociadas quedarÃ¡n sin obra asignada.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#525252',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'SÃ­, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if(result.isConfirmed){
@@ -448,7 +481,7 @@ function eliminarObra(obraId) {
                 .then(res => res.json())
                 .then(resp => {
                     if(resp.status === "success"){
-                        Swal.fire('¡Eliminada!', 'Obra eliminada correctamente', 'success')
+                        Swal.fire('Â¡Eliminada!', 'Obra eliminada correctamente', 'success')
                             .then(() => location.reload());
                     } else {
                         Swal.fire('Error', resp.message || 'No se pudo eliminar la obra', 'error');
@@ -458,15 +491,15 @@ function eliminarObra(obraId) {
     });
 }
 
-// Función para ver proyecto
+// FunciÃ³n para ver proyecto
 function verProyecto(proyectoId) {
     window.location.href = `details_project.php?id=${proyectoId}`;
 }
 
-// Función para gestionar archivos de obra (similar a la de proyectos)
+// FunciÃ³n para gestionar archivos de obra (similar a la de proyectos)
 function gestionarArchivosObra(obraId) {
     // Implementar similar a gestionarArchivos() pero para obras
-    Swal.fire('En desarrollo', 'La gestión de archivos para obras estará disponible pronto', 'info');
+    Swal.fire('En desarrollo', 'La gestiÃ³n de archivos para obras estarÃ¡ disponible pronto', 'info');
 }
 </script>
 
@@ -476,10 +509,96 @@ function verObras(proyectoId) {
 }
 </script>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php
+include __DIR__ . "/../includes/footer.php"; ?>
+
+<script>
+// FunciÃ³n para actualizar la lista vÃ­a AJAX
+function initAJAX() {
+    const searchForm = document.getElementById('search-form');
+    const filterForm = document.getElementById('filter-form');
+    const container = document.getElementById('table-container-wrapper');
+
+    if (!searchForm || !filterForm || !container) return;
+
+    function updateList(url, pushState = true) {
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('table-container-wrapper');
+                
+                if (newContent) {
+                    container.innerHTML = newContent.innerHTML;
+                }
+
+                const newSearch = doc.getElementById('search-form');
+                const newFilter = doc.getElementById('filter-form');
+                if (newSearch) syncForm(searchForm, newSearch);
+                if (newFilter) syncForm(filterForm, newFilter);
+
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+
+                if (pushState) window.history.pushState({}, '', url);
+                
+                // Reinicializar tooltips si es necesario
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+    }
+
+    function syncForm(current, source) {
+        source.querySelectorAll('input, select').forEach(input => {
+            const target = current.querySelector(`[name="${input.name}"]`);
+            if (target) target.value = input.value;
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink) {
+            e.preventDefault();
+            updateList(pageLink.href);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    [searchForm, filterForm].forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const params = new URLSearchParams(new FormData(filterForm));
+            const searchData = new FormData(searchForm);
+            params.set('q', searchData.get('q') || "");
+            
+            params.set('page', '1');
+            updateList('?' + params.toString());
+        });
+    });
+
+    filterForm.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', () => filterForm.requestSubmit());
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initAJAX);
+</script>
 
 <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
 </body>
 </html>
+
+
 

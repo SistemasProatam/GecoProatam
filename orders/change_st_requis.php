@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // IMPORTANTE: Incluir EmailHandler al inicio
 require_once __DIR__ . '/../EmailHandler.php';
@@ -22,10 +20,10 @@ if($rol_actual != '9') {
 
 $id = $_GET['id'] ?? null;
 if(!$id) {
-    die("ID de requisición no proporcionado.");
+    die("ID de requisiciÃ³n no proporcionado.");
 }
 
-// Función para traducir estados
+// FunciÃ³n para traducir estados
 function traducirEstado($estado) {
     $estados = [
         'espera' => 'Pendiente',
@@ -42,10 +40,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $comentarios = $_POST['comentarios'] ?? '';
     
     if(!in_array($nuevo_estado, ['espera','aprobada','rechazada','pendiente'])) {
-        die("Estado inválido.");
+        die("Estado invÃ¡lido.");
     }
 
-    // Obtener datos completos de la requisición antes de actualizar
+    // Obtener datos completos de la requisiciÃ³n antes de actualizar
     $sql_requisicion = "SELECT r.*, 
                         u.correo_corporativo, 
                         CONCAT(u.nombres, ' ', u.apellidos) as nombre_solicitante,
@@ -62,12 +60,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $requisicion_data = $stmt_req->get_result()->fetch_assoc();
 
     if(!$requisicion_data) {
-        die("Requisición no encontrada.");
+        die("RequisiciÃ³n no encontrada.");
     }
 
     // DEBUG INICIAL
     error_log("=== INICIANDO CAMBIO DE ESTADO ===");
-    error_log("Requisición: " . $requisicion_data['folio']);
+    error_log("RequisiciÃ³n: " . $requisicion_data['folio']);
     error_log("Solicitante: " . $requisicion_data['nombre_solicitante']);
     error_log("Correo: " . $requisicion_data['correo_corporativo']);
     error_log("Nuevo estado: " . $nuevo_estado);
@@ -77,26 +75,26 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $stmt->bind_param("ssi", $nuevo_estado, $comentarios, $id);
     
     if($stmt->execute()){
-        error_log("✅ Estado actualizado en BD correctamente");
+        error_log("âœ… Estado actualizado en BD correctamente");
         
         // ==========================================
-        // NOTIFICACIÓN POR CORREO
+        // NOTIFICACIÃ“N POR CORREO
         // ==========================================
         
         // Validar que existe correo del solicitante
         if(empty($requisicion_data['correo_corporativo'])) {
-            error_log("⚠️ ADVERTENCIA: El solicitante no tiene correo corporativo registrado");
+            error_log("âš ï¸ ADVERTENCIA: El solicitante no tiene correo corporativo registrado");
             header("Location: list_requis.php?msg=estado_actualizado_sin_email&folio=" . $requisicion_data['folio']);
             exit;
         }
         
-        error_log("📧 Iniciando proceso de notificación...");
+        error_log("ðŸ“§ Iniciando proceso de notificaciÃ³n...");
         
         try {
             $emailHandler = new EmailHandler();
-            error_log("✅ Instancia de EmailHandler creada");
+            error_log("âœ… Instancia de EmailHandler creada");
             
-            // Preparar datos para la notificación
+            // Preparar datos para la notificaciÃ³n
             $datosRequisicion = [
                 'folio' => $requisicion_data['folio'],
                 'estado' => traducirEstado($nuevo_estado),
@@ -108,9 +106,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 'url_sistema' => 'http://localhost/requisiciones/list_requis.php' // AJUSTA ESTA URL
             ];
             
-            error_log("📨 Enviando notificación a: " . $requisicion_data['correo_corporativo']);
+            error_log("ðŸ“¨ Enviando notificaciÃ³n a: " . $requisicion_data['correo_corporativo']);
             
-            // Intentar enviar la notificación
+            // Intentar enviar la notificaciÃ³n
             $resultado = $emailHandler->enviarNotificacionCambioEstado(
                 $requisicion_data['correo_corporativo'],
                 $requisicion_data['nombre_solicitante'],
@@ -118,30 +116,30 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             );
             
             if($resultado) {
-                error_log("✅ NOTIFICACIÓN ENVIADA EXITOSAMENTE");
+                error_log("âœ… NOTIFICACIÃ“N ENVIADA EXITOSAMENTE");
                 header("Location: list_requis.php?msg=estado_actualizado_con_email&folio=" . $requisicion_data['folio']);
             } else {
-                error_log("❌ FALLÓ EL ENVÍO DE LA NOTIFICACIÓN (pero estado actualizado)");
+                error_log("âŒ FALLÃ“ EL ENVÃO DE LA NOTIFICACIÃ“N (pero estado actualizado)");
                 header("Location: list_requis.php?msg=estado_actualizado_sin_email&folio=" . $requisicion_data['folio']);
             }
             exit;
             
         } catch (Exception $e) {
-            error_log("❌ EXCEPCIÓN AL ENVIAR EMAIL: " . $e->getMessage());
-            error_log("❌ Archivo: " . $e->getFile() . " Línea: " . $e->getLine());
+            error_log("âŒ EXCEPCIÃ“N AL ENVIAR EMAIL: " . $e->getMessage());
+            error_log("âŒ Archivo: " . $e->getFile() . " LÃ­nea: " . $e->getLine());
             
-            // El estado sí se actualizó, solo falló el email
+            // El estado sÃ­ se actualizÃ³, solo fallÃ³ el email
             header("Location: list_requis.php?msg=estado_actualizado_error_email&folio=" . $requisicion_data['folio']);
             exit;
         }
         
     } else {
-        error_log("❌ Error al actualizar estado en BD: " . $stmt->error);
+        error_log("âŒ Error al actualizar estado en BD: " . $stmt->error);
         die("Error al actualizar estado: " . $stmt->error);
     }
 }
 
-// Obtener estado actual y datos de la requisición para mostrar el formulario
+// Obtener estado actual y datos de la requisiciÃ³n para mostrar el formulario
 $sql = "SELECT r.*, u.correo_corporativo, CONCAT(u.nombres, ' ', u.apellidos) as nombre_solicitante,
                e.nombre as entidad_nombre, c.nombre as categoria_nombre
         FROM requisiciones r 
@@ -154,7 +152,7 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 if($result->num_rows == 0) {
-    die("Requisición no encontrada.");
+    die("RequisiciÃ³n no encontrada.");
 }
 $requisicion = $result->fetch_assoc();
 ?>
@@ -163,7 +161,7 @@ $requisicion = $result->fetch_assoc();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cambiar Estado Requisición #<?= $id ?></title>
+<title>Cambiar Estado RequisiciÃ³n #<?= $id ?></title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <style>
@@ -178,15 +176,15 @@ $requisicion = $result->fetch_assoc();
     <div class="card shadow">
         <div class="card-header">
             <h1 class="h4 mb-0">
-                <i class="bi bi-pencil-square"></i> Cambiar Estado Requisición
+                <i class="bi bi-pencil-square"></i> Cambiar Estado RequisiciÃ³n
             </h1>
         </div>
         <div class="card-body">
             
-            <!-- Información de la requisición -->
+            <!-- InformaciÃ³n de la requisiciÃ³n -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h5 class="text-primary">Información de la Requisición</h5>
+                    <h5 class="text-primary">InformaciÃ³n de la RequisiciÃ³n</h5>
                     <table class="table table-sm table-borderless">
                         <tr>
                             <td><strong>Folio:</strong></td>
@@ -199,11 +197,14 @@ $requisicion = $result->fetch_assoc();
                         <tr>
                             <td><strong>Correo:</strong></td>
                             <td>
-                                <?php if(!empty($requisicion['correo_corporativo'])): ?>
+                                <?php
+if(!empty($requisicion['correo_corporativo'])): ?>
                                     <small class="text-muted"><?= htmlspecialchars($requisicion['correo_corporativo']) ?></small>
-                                <?php else: ?>
+                                <?php
+else: ?>
                                     <span class="badge bg-warning text-dark">Sin correo registrado</span>
-                                <?php endif; ?>
+                                <?php
+endif; ?>
                             </td>
                         </tr>
                         <tr>
@@ -211,7 +212,7 @@ $requisicion = $result->fetch_assoc();
                             <td><?= htmlspecialchars($requisicion['entidad_nombre']) ?></td>
                         </tr>
                         <tr>
-                            <td><strong>Categoría:</strong></td>
+                            <td><strong>CategorÃ­a:</strong></td>
                             <td><?= htmlspecialchars($requisicion['categoria_nombre']) ?></td>
                         </tr>
                     </table>
@@ -219,8 +220,8 @@ $requisicion = $result->fetch_assoc();
                 <div class="col-md-6">
                     <h5 class="text-primary">Estado Actual</h5>
                     <div class="d-flex align-items-center mb-3">
-                        <?php 
-                        $badge_class = [
+                        <?php
+$badge_class = [
                             'espera' => 'bg-warning',
                             'pendiente' => 'bg-warning',
                             'aprobada' => 'bg-success',
@@ -232,14 +233,16 @@ $requisicion = $result->fetch_assoc();
                         </span>
                     </div>
                     
-                    <?php if(!empty($requisicion['comentarios_operaciones'])): ?>
+                    <?php
+if(!empty($requisicion['comentarios_operaciones'])): ?>
                     <div class="mt-3">
                         <h6>Comentarios anteriores:</h6>
                         <div class="alert alert-info py-2">
                             <small><?= htmlspecialchars($requisicion['comentarios_operaciones']) ?></small>
                         </div>
                     </div>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                 </div>
             </div>
 
@@ -267,25 +270,28 @@ $requisicion = $result->fetch_assoc();
                               placeholder="Agregue comentarios sobre el cambio de estado..."><?= htmlspecialchars($requisicion['comentarios_operaciones'] ?? '') ?></textarea>
                 </div>
 
-                <?php if(!empty($requisicion['correo_corporativo'])): ?>
+                <?php
+if(!empty($requisicion['correo_corporativo'])): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle"></i> 
-                    <strong>Notificación por correo:</strong> Al cambiar el estado, se enviará automáticamente 
+                    <strong>NotificaciÃ³n por correo:</strong> Al cambiar el estado, se enviarÃ¡ automÃ¡ticamente 
                     un correo a <strong><?= htmlspecialchars($requisicion['nombre_solicitante']) ?></strong> 
                     (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>)
                 </div>
-                <?php else: ?>
+                <?php
+else: ?>
                 <div class="alert alert-warning">
                     <i class="bi bi-exclamation-triangle"></i> 
                     <strong>Advertencia:</strong> El solicitante no tiene correo corporativo registrado. 
-                    No se enviará notificación automática.
+                    No se enviarÃ¡ notificaciÃ³n automÃ¡tica.
                 </div>
-                <?php endif; ?>
+                <?php
+endif; ?>
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-check-circle"></i> Actualizar Estado
-                        <?= !empty($requisicion['correo_corporativo']) ? 'y Enviar Notificación' : '' ?>
+                        <?= !empty($requisicion['correo_corporativo']) ? 'y Enviar NotificaciÃ³n' : '' ?>
                     </button>
                     <a href="list_requis.php" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Volver al Listado
@@ -299,4 +305,5 @@ $requisicion = $result->fetch_assoc();
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 

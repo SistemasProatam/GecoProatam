@@ -1,13 +1,11 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../conexion.php";
 
 $obra_id = isset($_GET['obra_id']) ? (int)$_GET['obra_id'] : 0;
 
 if ($obra_id <= 0) {
-    echo json_encode(['error' => 'ID de obra no válido']);
+    echo json_encode(['error' => 'ID de obra no vÃ¡lido']);
     exit;
 }
 
@@ -37,4 +35,5 @@ while ($row = $result->fetch_assoc()) {
 echo json_encode(['subcontratos' => $subcontratos]);
 $conn->close();
 ?>
+
 

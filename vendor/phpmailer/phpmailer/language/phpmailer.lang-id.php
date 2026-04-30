@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Indonesian PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -29,3 +28,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect() gagal.';
 $PHPMAILER_LANG['smtp_error']           = 'Kesalahan pada pelayan SMTP: ';
 $PHPMAILER_LANG['variable_set']         = 'Tidak dapat mengatur atau mengatur ulang variabel: ';
 $PHPMAILER_LANG['extension_missing']    = 'Ekstensi PHP tidak tersedia: ';
+

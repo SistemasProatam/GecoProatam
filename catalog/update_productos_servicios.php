@@ -1,21 +1,19 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
     exit;
 }
 
@@ -31,16 +29,16 @@ if (empty($id) || empty($nombre) || empty($tipo)) {
     exit;
 }
 
-// Validar que el tipo sea válido
+// Validar que el tipo sea vÃ¡lido
 $tiposPermitidos = ['producto', 'servicio'];
 if (!in_array(strtolower($tipo), $tiposPermitidos)) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Tipo no válido. Debe ser "producto" o "servicio"']);
+    echo json_encode(['status' => 'error', 'message' => 'Tipo no vÃ¡lido. Debe ser "producto" o "servicio"']);
     exit;
 }
 
 try {
-    // ✅ CORREGIDO: Sin campo proveedor_id
+    // âœ… CORREGIDO: Sin campo proveedor_id
     $sql = "UPDATE productos_servicios SET nombre = ?, descripcion = ?, tipo = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
     
@@ -48,7 +46,7 @@ try {
         throw new Exception("Error al preparar consulta: " . $conn->error);
     }
     
-    // ✅ CORREGIDO: Solo 4 parámetros "sssi" en lugar de "ssisi"
+    // âœ… CORREGIDO: Solo 4 parÃ¡metros "sssi" en lugar de "ssisi"
     $stmt->bind_param("sssi", $nombre, $descripcion, $tipo, $id);
     
     if ($stmt->execute()) {
@@ -79,4 +77,5 @@ try {
 
 $conn->close();
 ?>
+
 

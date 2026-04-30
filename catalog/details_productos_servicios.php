@@ -1,15 +1,13 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 $id = $_GET['id'] ?? 0;
 
@@ -41,21 +39,24 @@ if (!$producto) {
     </div>
     
     <?php
- if (!empty($producto['descripcion'])): ?>
+if (!empty($producto['descripcion'])): ?>
     <div class="mb-3">
-        <strong>Descripción:</strong><br>
+        <strong>DescripciÃ³n:</strong><br>
         <?= nl2br(htmlspecialchars($producto['descripcion'])) ?>
     </div>
-    <?php endif; ?>
+    <?php
+endif; ?>
     
     <div class="mb-3">
-        <strong>Fecha de creación:</strong><br>
+        <strong>Fecha de creaciÃ³n:</strong><br>
         <?= date('d/m/Y H:i', strtotime($producto['fecha_creacion'])) ?>
     </div>
 </div>
 
 <?php
-// Cerrar conexión
+// Cerrar conexiÃ³n
 $stmt->close();
 $conn->close();
 ?>
+
+

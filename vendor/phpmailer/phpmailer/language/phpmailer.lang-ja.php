@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Japanese PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -35,3 +34,4 @@ $PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP接続に失敗しました。';
 $PHPMAILER_LANG['smtp_detail']          = '詳細: ';
 $PHPMAILER_LANG['smtp_error']           = 'SMTPサーバーエラー: ';
 $PHPMAILER_LANG['variable_set']         = '変数が存在しません: ';
+

@@ -1,17 +1,14 @@
-<?php
-require_once __DIR__ . '/../config.php';
-
-
+﻿<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesión y prevenir caching
+// Verificar sesiÃ³n y prevenir caching
 checkSession();
 preventCaching();
 
 
-include(__DIR__ . "/../conexion.php");
+require_once __DIR__ . "/../conexion.php";
 
 // Obtener entidad_id
 $entidad_id = $_GET['entidad_id'] ?? null;
@@ -37,7 +34,7 @@ $prefijo = $prefijos[$entidad_id] ?? 'OCGEN';
 $check_table = $conn->query("SHOW TABLES LIKE 'ordenes_compra'");
 
 if (!$check_table || $check_table->num_rows == 0) {
-    // Si no existe la tabla, generar folio básico
+    // Si no existe la tabla, generar folio bÃ¡sico
     $next_number = 1;
     $folio = $prefijo . '-' . str_pad($next_number, 4, "0", STR_PAD_LEFT);
     
@@ -51,7 +48,7 @@ if (!$check_table || $check_table->num_rows == 0) {
     exit;
 }
 
-// Buscar el último folio de esta entidad en este año
+// Buscar el Ãºltimo folio de esta entidad en este aÃ±o
 $sql = "SELECT folio 
         FROM ordenes_compra 
         WHERE folio LIKE ? 
@@ -62,7 +59,7 @@ $like_pattern =  $prefijo . '-%';
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
-    // Error en la preparación, generar folio básico
+    // Error en la preparaciÃ³n, generar folio bÃ¡sico
     $next_number = 1;
     $folio = $prefijo . '-' . str_pad($next_number, 4, "0", STR_PAD_LEFT);
     
@@ -83,7 +80,7 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $last_folio = $result->fetch_assoc()['folio'];
     
-    // Extraer el número del folio: PRO01-2025-0001
+    // Extraer el nÃºmero del folio: PRO01-2025-0001
     $parts = explode("-", $last_folio);
     
     if (count($parts) >= 3) {
@@ -93,7 +90,7 @@ if ($result->num_rows > 0) {
         $next_number = 1;
     }
 } else {
-    // Primera orden de compra de esta entidad en este año
+    // Primera orden de compra de esta entidad en este aÃ±o
     $next_number = 1;
 }
 
@@ -107,4 +104,5 @@ echo json_encode([
     'numero' => $next_number
 ]);
 ?>
+
 
