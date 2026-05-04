@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -119,9 +119,9 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                 <form id="formEditarUsuario" method="POST" action="update_user.php" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $user['id'] ?>">
 
-                    <!-- InformaciÃ³n BÃ¡sica -->
+                    <!-- Información Básica -->
                     <div class="section-title">
-                        <h4><i class="bi bi-person"></i> InformaciÃ³n BÃ¡sica</h4>
+                        <h4><i class="bi bi-person"></i> Información Básica</h4>
                     </div>
 
                     <div class="row">
@@ -162,7 +162,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">NÃºmero de Celular Particular</label>
+                                <label class="form-label">Número de Celular Particular</label>
                                 <input type="text" name="telefono_personal" class="form-control"
                                     value="<?= htmlspecialchars($user['telefono_personal'] ?? '') ?>">
                             </div>
@@ -216,7 +216,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">NÃºmero de Celular</label>
+                                <label class="form-label">Número de Celular</label>
                                 <input type="text" name="contacto_emergencia_telefono" class="form-control"
                                     value="<?= htmlspecialchars($user['contacto_emergencia_telefono'] ?? '') ?>">
                             </div>
@@ -235,26 +235,26 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                                 <?php
 mostrarCampoArchivo('curriculum_pdf', 'Curriculum Vitae', $user); ?>
                                 <?php
-mostrarCampoArchivo('identificacion_pdf', 'IdentificaciÃ³n Oficial', $user); ?>
+mostrarCampoArchivo('identificacion_pdf', 'Identificación Oficial', $user); ?>
                                 <?php
 mostrarCampoArchivo('acta_nacimiento_pdf', 'Acta de Nacimiento', $user); ?>
                                 <?php
 mostrarCampoArchivo('curp_pdf', 'CURP', $user); ?>
                                 <?php
-mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de SituaciÃ³n Fiscal', $user); ?>
+mostrarCampoArchivo('situacion_fiscal_pdf', 'Constancia de Situación Fiscal', $user); ?>
                                 <?php
 mostrarCampoArchivo('acuerdo_confidencialidad_pdf', 'Acuerdo de Confidencialidad (PDF)', $user); ?>
                             </div>
 
                             <div class="col-md-6">
                                 <?php
-mostrarCampoArchivo('nss_pdf', 'NÃºmero de Seguro Social', $user); ?>
+mostrarCampoArchivo('nss_pdf', 'Número de Seguro Social', $user); ?>
                                 <?php
 mostrarCampoArchivo('comprobante_domicilio_pdf', 'Comprobante de Domicilio', $user); ?>
                                 <?php
 mostrarCampoArchivo('foto_jpg', 'Foto (JPG, fondo blanco)', $user); ?>
                                 <?php
-mostrarCampoArchivo('comprobante_estudios_pdf', 'Ãšltimo Comprobante de Estudios', $user); ?>
+mostrarCampoArchivo('comprobante_estudios_pdf', 'Último Comprobante de Estudios', $user); ?>
                                 <?php
 mostrarCampoArchivo('credencial_pdf', 'Credencial Corporativa (PDF)', $user); ?>
                             </div>
@@ -267,7 +267,7 @@ mostrarSeccionContratos($id, $conn); ?>
                         </div>
                     </div>
 
-                    <!-- Botones de acciÃ³n -->
+                    <!-- Botones de acción -->
                     <div class="d-flex justify-content-between mt-4">
                         <a href="details_user.php?id=<?= $user['id'] ?>" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Cancelar
@@ -287,13 +287,13 @@ include __DIR__ . "/../includes/footer.php"; ?>
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesandoâ€¦ por favor espere</div>
+            <div class="mt-3">Procesando… por favor espere</div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Manejar el envÃ­o del formulario - VersiÃ³n consolidada
+        // Manejar el envío del formulario - Versión consolidada
         document.getElementById('formEditarUsuario').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -313,7 +313,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                     if (data.status === 'success') {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Â¡Ã‰xito!',
+                            title: '¡Éxito!',
                             html: data.message,
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
@@ -337,7 +337,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                     if (overlay) overlay.style.display = 'none';
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error de conexiÃ³n',
+                        title: 'Error de conexión',
                         text: 'No se pudo conectar con el servidor',
                         confirmButtonText: 'Aceptar'
                     });
@@ -384,7 +384,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                 if (contratoId) {
                     const input = item.querySelector('input[name="contrato_id[]"]');
                     if (input) {
-                        // Crear campo hidden para marcar eliminaciÃ³n
+                        // Crear campo hidden para marcar eliminación
                         const eliminarInput = document.createElement('input');
                         eliminarInput.type = 'hidden';
                         eliminarInput.name = 'eliminar_contrato[]';
@@ -409,7 +409,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
 </html>
 
 <?php
-// FunciÃ³n para mostrar campos de archivo
+// Función para mostrar campos de archivo
 function mostrarCampoArchivo($campo, $label, $user)
 {
     $archivo = $user[$campo] ?? '';
@@ -439,7 +439,7 @@ endif; ?>
 ?>
 
 <?php
-// FunciÃ³n para mostrar la secciÃ³n de contratos
+// Función para mostrar la sección de contratos
 function mostrarSeccionContratos($id, $conn)
 {
 ?>
@@ -514,7 +514,7 @@ $stmt_contratos->close(); ?>
         <button type="button" class="btn btn-sm btn-secondary mt-2" id="agregar-contrato">
             <i class="bi bi-plus"></i> Agregar nuevo contrato
         </button>
-        <small class="text-muted d-block mt-1">Puedes agregar mÃºltiples contratos</small>
+        <small class="text-muted d-block mt-1">Puedes agregar múltiples contratos</small>
     </div>
 <?php
 }

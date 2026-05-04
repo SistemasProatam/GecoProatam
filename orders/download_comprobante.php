@@ -1,11 +1,11 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 
 require_once __DIR__ . "/../conexion.php";
 
-// Verificar que se proporcionÃ³ un ID
+// Verificar que se proporcionó un ID
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("ID de orden de compra no proporcionado");
 }
@@ -31,10 +31,10 @@ if (!file_exists($rutaArchivo)) {
     die("Archivo no encontrado en el servidor");
 }
 
-// Obtener informaciÃ³n del archivo
+// Obtener información del archivo
 $nombreArchivo = basename($rutaArchivo);
 $extension = strtolower(pathinfo($rutaArchivo, PATHINFO_EXTENSION));
-$tamaÃ±o = filesize($rutaArchivo);
+$tamaño = filesize($rutaArchivo);
 
 // Determinar MIME type
 $tiposMime = [
@@ -58,7 +58,7 @@ $modoDescarga = isset($_GET['download']) && $_GET['download'] == 1;
 if (!$modoDescarga && in_array($extension, $visualizables)) {
     // Visualizar en navegador
     header('Content-Type: ' . $mimetype);
-    header('Content-Length: ' . $tamaÃ±o);
+    header('Content-Length: ' . $tamaño);
     header('Content-Transfer-Encoding: binary');
     header('Accept-Ranges: bytes');
     if (ob_get_level()) ob_end_clean();
@@ -67,7 +67,7 @@ if (!$modoDescarga && in_array($extension, $visualizables)) {
     // Descargar como archivo
     header('Content-Type: ' . $mimetype);
     header('Content-Disposition: attachment; filename="' . $nombreArchivo . '"');
-    header('Content-Length: ' . $tamaÃ±o);
+    header('Content-Length: ' . $tamaño);
     header('Content-Transfer-Encoding: binary');
     header('Accept-Ranges: bytes');
     if (ob_get_level()) ob_end_clean();

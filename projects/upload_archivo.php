@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -19,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Verificar que sea POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
     exit;
 }
 
@@ -32,7 +32,7 @@ if (empty($proyecto_id)) {
 }
 
 try {
-    // Verificar nÃºmero mÃ¡ximo de archivos (5)
+    // Verificar número máximo de archivos (5)
     $sqlCount = "SELECT COUNT(*) as total FROM proyecto_adjuntos WHERE proyecto_id = ?";
     $stmtCount = $conn->prepare($sqlCount);
     $stmtCount->bind_param("i", $proyecto_id);
@@ -41,12 +41,12 @@ try {
     $count = $resultCount->fetch_assoc()['total'];
     
     if ($count >= 5) {
-        throw new Exception('MÃ¡ximo 5 archivos permitidos por proyecto');
+        throw new Exception('Máximo 5 archivos permitidos por proyecto');
     }
     
-    // Verificar que se enviÃ³ un archivo
+    // Verificar que se envió un archivo
     if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception('No se recibiÃ³ ningÃºn archivo o hay un error en la subida');
+        throw new Exception('No se recibió ningún archivo o hay un error en la subida');
     }
     
     $archivo = $_FILES['archivo'];
@@ -57,7 +57,7 @@ try {
         throw new Exception('Solo se permiten archivos PDF');
     }
     
-    // Validar tamaÃ±o (10MB)
+    // Validar tamaño (10MB)
     if ($archivo['size'] > 10 * 1024 * 1024) {
         throw new Exception('El archivo no puede ser mayor a 10MB');
     }
@@ -70,7 +70,7 @@ try {
         }
     }
     
-    // Generar nombre Ãºnico
+    // Generar nombre único
     $nombreArchivo = uniqid() . '_' . basename($archivo['name']);
     $rutaArchivo = $directorio . $nombreArchivo;
     
@@ -95,7 +95,7 @@ try {
             'message' => 'Archivo subido correctamente'
         ]);
     } else {
-        // Si falla la BD, eliminar el archivo fÃ­sico
+        // Si falla la BD, eliminar el archivo físico
         unlink($rutaArchivo);
         throw new Exception('Error al guardar en base de datos: ' . $stmt->error);
     }
@@ -111,7 +111,7 @@ try {
     ]);
 }
 
-// Cerrar conexiÃ³n
+// Cerrar conexión
 if (isset($conn)) {
     $conn->close();
 }

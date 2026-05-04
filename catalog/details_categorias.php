@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -17,7 +17,7 @@ $stmt->execute();
 $categoria = $stmt->get_result()->fetch_assoc();
 
 if (!$categoria) {
-    echo "<p class='text-danger'>CategorÃ­a no encontrada</p>";
+    echo "<p class='text-danger'>Categoría no encontrada</p>";
     exit;
 }
 ?>
@@ -29,15 +29,15 @@ if (!$categoria) {
     </div>
     
     <div class="mb-3">
-        <strong>DescripciÃ³n:</strong><br>
+        <strong>Descripción:</strong><br>
         <?php
 $desc = trim($categoria['descripcion'] ?? '');
-            echo $desc !== '' ? nl2br(htmlspecialchars($desc)) : '<em>Sin descripciÃ³n</em>';
+            echo $desc !== '' ? nl2br(htmlspecialchars($desc)) : '<em>Sin descripción</em>';
         ?>
     </div>
 
     <div class="mb-3">
-        <strong>Fecha de creaciÃ³n:</strong><br>
+        <strong>Fecha de creación:</strong><br>
         <?= date('d/m/Y H:i', strtotime($categoria['fecha_creacion'])) ?>
     </div>
 </div>

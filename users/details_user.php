@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -268,13 +268,13 @@ endif; ?>
             <!-- INFO GRID -->
             <div class="info-grid">
 
-                <!-- InformaciÃ³n Personal -->
+                <!-- Información Personal -->
                 <div class="info-panel mx-1">
                     <div class="panel-header">
                         <div class="panel-icon">
                             <i class="bi bi-person-vcard"></i>
                         </div>
-                        <h4>InformaciÃ³n Personal</h4>
+                        <h4>Información Personal</h4>
                     </div>
                     <ul class="info-list">
                         <li class="info-item">
@@ -294,7 +294,7 @@ endif; ?>
                             <span><?= htmlspecialchars($user['correo_personal'] ?? '-') ?></span>
                         </li>
                         <li class="info-item">
-                            <strong>TelÃ©fono Personal:</strong>
+                            <strong>Teléfono Personal:</strong>
                             <span><?= htmlspecialchars($user['telefono_personal'] ?? '-') ?></span>
                         </li>
                         <li class="info-item">
@@ -326,7 +326,7 @@ endif; ?>
                             <span><?= htmlspecialchars($user['contacto_emergencia_parentesco'] ?? '-') ?></span>
                         </li>
                         <li class="info-item">
-                            <strong>NÃºmero de Celular:</strong>
+                            <strong>Número de Celular:</strong>
                             <span><?= htmlspecialchars($user['contacto_emergencia_telefono'] ?? '-') ?></span>
                         </li>
                     </ul>
@@ -366,14 +366,14 @@ endif; ?>
                     <?php
 $documentos = [
                         'curriculum_pdf' => ['icon' => 'bi-file-earmark-person', 'title' => 'Curriculum Vitae'],
-                        'identificacion_pdf' => ['icon' => 'bi-card-checklist', 'title' => 'IdentificaciÃ³n Oficial'],
+                        'identificacion_pdf' => ['icon' => 'bi-card-checklist', 'title' => 'Identificación Oficial'],
                         'acta_nacimiento_pdf' => ['icon' => 'bi-file-earmark-text', 'title' => 'Acta de Nacimiento'],
                         'curp_pdf' => ['icon' => 'bi-file-earmark-richtext', 'title' => 'CURP'],
-                        'situacion_fiscal_pdf' => ['icon' => 'bi-cash-coin', 'title' => 'Constancia de SituaciÃ³n Fiscal'],
-                        'nss_pdf' => ['icon' => 'bi-shield-check', 'title' => 'NÃºmero de Seguro Social'],
+                        'situacion_fiscal_pdf' => ['icon' => 'bi-cash-coin', 'title' => 'Constancia de Situación Fiscal'],
+                        'nss_pdf' => ['icon' => 'bi-shield-check', 'title' => 'Número de Seguro Social'],
                         'comprobante_domicilio_pdf' => ['icon' => 'bi-house', 'title' => 'Comprobante de Domicilio'],
                         'foto_jpg' => ['icon' => 'bi-camera', 'title' => 'Foto'],
-                        'comprobante_estudios_pdf' => ['icon' => 'bi-mortarboard', 'title' => 'Ãšltimo Comprobante de Estudios'],
+                        'comprobante_estudios_pdf' => ['icon' => 'bi-mortarboard', 'title' => 'Último Comprobante de Estudios'],
                         'credencial_pdf' => ['icon' => 'bi-person-badge', 'title' => 'Credencial Corporativa'],
                         'acuerdo_confidencialidad_pdf' => ['icon' => 'bi-file-lock', 'title' => 'Acuerdo de Confidencialidad']
                     ];

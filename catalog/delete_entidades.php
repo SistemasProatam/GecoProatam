@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -19,7 +19,7 @@ if (empty($id)) {
 }
 
 try {
-    // Verificar si la entidad estÃ¡ en uso
+    // Verificar si la entidad está en uso
     $sql_check = "SELECT COUNT(*) as total FROM requisiciones WHERE entidad_id = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param("i", $id);
@@ -30,7 +30,7 @@ try {
     if ($in_use > 0) {
         echo json_encode([
             'status' => 'error', 
-            'message' => 'No se puede eliminar la entidad porque estÃ¡ siendo utilizada en requisiciones'
+            'message' => 'No se puede eliminar la entidad porque está siendo utilizada en requisiciones'
         ]);
         exit;
     }

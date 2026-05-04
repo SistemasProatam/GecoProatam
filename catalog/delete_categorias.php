@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -19,7 +19,7 @@ if (empty($id)) {
 }
 
 try {
-    // Verificar si la categorÃ­a estÃ¡ en uso
+    // Verificar si la categoría está en uso
     $sql_check = "SELECT COUNT(*) as total FROM requisiciones WHERE categoria_id = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param("i", $id);
@@ -30,7 +30,7 @@ try {
     if ($in_use > 0) {
         echo json_encode([
             'status' => 'error', 
-            'message' => 'No se puede eliminar la categorÃ­a porque estÃ¡ siendo utilizada en requisiciones'
+            'message' => 'No se puede eliminar la categoría porque está siendo utilizada en requisiciones'
         ]);
         exit;
     }
@@ -45,7 +45,7 @@ try {
     $stmt->bind_param("i", $id);
     
     if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'CategorÃ­a eliminada exitosamente']);
+        echo json_encode(['status' => 'success', 'message' => 'Categoría eliminada exitosamente']);
     } else {
         throw new Exception("Error al ejecutar: " . $stmt->error);
     }
@@ -53,7 +53,7 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'status' => 'error', 
-        'message' => 'Error al eliminar la categorÃ­a: ' . $e->getMessage()
+        'message' => 'Error al eliminar la categoría: ' . $e->getMessage()
     ]);
 }
 ?>

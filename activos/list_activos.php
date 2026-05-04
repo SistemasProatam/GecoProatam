@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -6,7 +6,7 @@ preventCaching();
 
 require_once __DIR__ . "/../conexion.php";
 
-// ===== Mensajes de sesiÃ³n =====
+// ===== Mensajes de sesión =====
 $msg_success = $_SESSION['success'] ?? '';
 $msg_error   = $_SESSION['error']   ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
@@ -111,7 +111,7 @@ function urlFiltros(array $extras = []): string {
         /* Badge estatus */
         .badge-activo   { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-inactivo { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        /* Badge condiciÃ³n */
+        /* Badge condición */
         .badge-bueno    { background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-regular  { background:#fef9c3; color:#92400e; border-radius:20px; padding:3px 10px; font-size:.75rem; }
         .badge-malo     { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
@@ -143,7 +143,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <div class="form-container">
         <div class="form-body">
 
-            <!-- ===== Alertas de sesiÃ³n ===== -->
+            <!-- ===== Alertas de sesión ===== -->
             <?php
 if ($msg_success): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -166,7 +166,7 @@ endif; ?>
                 <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo_id) ?>">
                 <input type="hidden" name="estatus" value="<?= htmlspecialchars($estatus) ?>">
                 <input class="form-control w-100" type="search" name="q"
-                       placeholder="Buscar por cÃ³digo o nombre..."
+                       placeholder="Buscar por código o nombre..."
                        value="<?= htmlspecialchars($busqueda) ?>" />
                 <button class="btn btn-outline-success" type="submit">
                     <i class="bi bi-search"></i>
@@ -214,7 +214,7 @@ endif; ?>
 
             <div id="table-container-wrapper">
 
-            <!-- ===== Contador + BotÃ³n agregar ===== -->
+            <!-- ===== Contador + Botón agregar ===== -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="badge-num"><?= $totalRegistros ?> activo<?= $totalRegistros != 1 ? 's' : '' ?></span>
                 <button class="button-56" type="button" onclick="window.location.href='new_activo.php'">
@@ -270,7 +270,7 @@ endif; ?> |
 endwhile; ?>
             </ul>
 
-            <!-- ===== PaginaciÃ³n ===== -->
+            <!-- ===== Paginación ===== -->
             <?php
 if ($totalPaginas > 1): ?>
             <nav class="mt-4">
@@ -284,7 +284,7 @@ if ($totalPaginas > 1): ?>
                     </li>
 
                     <?php
-// Mostrar mÃ¡ximo 5 pÃ¡ginas alrededor de la actual
+// Mostrar máximo 5 páginas alrededor de la actual
                     $inicio = max(1, $pagina - 2);
                     $fin    = min($totalPaginas, $pagina + 2);
 
@@ -294,7 +294,7 @@ if ($totalPaginas > 1): ?>
                         </li>
                         <?php
 if ($inicio > 2): ?>
-                            <li class="page-item disabled"><span class="page-link">â€¦</span></li>
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
                         <?php
 endif; ?>
                     <?php
@@ -312,7 +312,7 @@ endfor; ?>
 if ($fin < $totalPaginas): ?>
                         <?php
 if ($fin < $totalPaginas - 1): ?>
-                            <li class="page-item disabled"><span class="page-link">â€¦</span></li>
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
                         <?php
 endif; ?>
                         <li class="page-item">
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
 include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
-// FunciÃ³n para actualizar la lista vÃ­a AJAX
+// Función para actualizar la lista vía AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
     const filterForm = document.getElementById('filter-form');

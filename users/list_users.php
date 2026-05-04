@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -69,7 +69,7 @@ while($dep = $departamentos->fetch_assoc()){
     $departamentosOptions .= "<option value='{$dep['id']}' $selected>{$dep['nombre']}</option>";
 }
 
-// Total pÃ¡ginas
+// Total páginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
@@ -137,7 +137,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div id="table-container-wrapper">
 
-  <!-- BotÃ³n de agregar usuario -->
+  <!-- Botón de agregar usuario -->
   <div class="d-flex justify-content-between mb-3">
         <span class="badge-num"><?= $totalRegistros ?> usuarios</span>
         <a href="add_user.php" class="button-56" style="text-decoration: none;">
@@ -178,10 +178,10 @@ while($row = $result->fetch_assoc()): ?>
 endwhile; ?>
       </ul>
 
-      <!-- PaginaciÃ³n -->
+      <!-- Paginación -->
       <?php
 if($totalPaginas>1): ?>
-      <nav aria-label="PaginaciÃ³n">
+      <nav aria-label="Paginación">
         <ul class="pagination justify-content-center mt-3">
           <?php
 for($i=1;$i<=$totalPaginas;$i++): ?>
@@ -218,13 +218,13 @@ include __DIR__ . "/../includes/footer.php"; ?>
 <script>
 function eliminarUsuario(id) {
   Swal.fire({
-    title: 'Â¿Seguro que deseas eliminar este usuario?',
-    text: "Esta acciÃ³n no se puede deshacer",
+    title: '¿Seguro que deseas eliminar este usuario?',
+    text: "Esta acción no se puede deshacer",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#525252',
-    confirmButtonText: 'SÃ­, eliminar',
+    confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if(result.isConfirmed){
@@ -239,7 +239,7 @@ function eliminarUsuario(id) {
           if(data.status === 'success'){
             Swal.fire({
               icon: 'success',
-              title: 'Â¡Eliminado!',
+              title: '¡Eliminado!',
               text: data.message,
               confirmButtonText: 'Aceptar'
             }).then(() => {
@@ -254,7 +254,7 @@ function eliminarUsuario(id) {
               icon: 'error',
               title: 'No se puede eliminar',
               html: `<div style="text-align: left;">
-                       <p><strong>RazÃ³n:</strong> ${data.message}</p>
+                       <p><strong>Razón:</strong> ${data.message}</p>
                        <hr>
                        <small class="text-muted">
                          <i class="bi bi-info-circle"></i> 
@@ -269,7 +269,7 @@ function eliminarUsuario(id) {
           console.error('Error:', error);
           Swal.fire({
             icon: 'error',
-            title: 'Error de conexiÃ³n',
+            title: 'Error de conexión',
             html: `No se pudo conectar con el servidor.<br>
                    <small>Detalle: ${error.message}</small>`,
             confirmButtonText: 'Entendido'
@@ -279,7 +279,7 @@ function eliminarUsuario(id) {
   });
 }
 
-// FunciÃ³n para actualizar la lista vÃ­a AJAX
+// Función para actualizar la lista vía AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
     const filterForm = document.getElementById('filter-form');

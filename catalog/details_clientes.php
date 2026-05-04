@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -19,7 +19,8 @@ if (!$cliente) {
     exit;
 }
 
-function mostrarValor($valor) {
+function mostrarValor($valor)
+{
     return trim($valor) !== ''
         ? nl2br(htmlspecialchars($valor))
         : '<em>No especificado</em>';
@@ -38,20 +39,22 @@ function mostrarValor($valor) {
     </div>
 
     <div class="mb-3">
+        <strong>Email:</strong><br>
+        <?= mostrarValor($cliente['email'] ?? '') ?>
+    </div>
+
+    <div class="mb-3">
         <strong>RFC:</strong><br>
         <?= mostrarValor($cliente['rfc'] ?? '') ?>
     </div>
 
     <div class="mb-3">
-        <strong>DirecciÃ³n:</strong><br>
+        <strong>Dirección:</strong><br>
         <?= mostrarValor($cliente['direccion'] ?? '') ?>
     </div>
 
     <div class="mb-3">
-        <strong>Fecha de creaciÃ³n:</strong><br>
+        <strong>Fecha de creación:</strong><br>
         <?= date('d/m/Y H:i', strtotime($cliente['fecha_creacion'])) ?>
     </div>
 </div>
-
-
-

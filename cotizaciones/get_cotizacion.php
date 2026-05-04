@@ -1,5 +1,5 @@
-﻿<?php
-// get_cotizacion.php â€” Devuelve datos de una cotizaciÃ³n en JSON
+<?php
+// get_cotizacion.php — Devuelve datos de una cotización en JSON
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -32,7 +32,7 @@ $stmt->close();
 $conn->close();
 
 if (!$row) {
-    echo json_encode(['success' => false, 'message' => 'CotizaciÃ³n no encontrada']);
+    echo json_encode(['success' => false, 'message' => 'Cotización no encontrada']);
     exit;
 }
 

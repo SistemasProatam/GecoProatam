@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -18,7 +18,7 @@ $pagina    = max(1, (int)($_GET['page'] ?? 1));
 $porPagina = 10;
 $offset    = ($pagina - 1) * $porPagina;
 
-// ConstrucciÃ³n de WHERE dinÃ¡mica
+// Construcción de WHERE dinámica
 $where  = "WHERE 1=1";
 $params = [];
 $types  = "";
@@ -36,7 +36,7 @@ if ($types) $stmtTotal->bind_param($types, ...$params);
 $stmtTotal->execute();
 $totalRegistros = $stmtTotal->get_result()->fetch_assoc()['total'] ?? 0;
 
-// Total para paginaciÃ³n
+// Total para paginación
 $stmtTotal = $conn->prepare("SELECT COUNT(*) AS total FROM cotizaciones c $where");
 if ($types) $stmtTotal->bind_param($types, ...$params);
 $stmtTotal->execute();
@@ -44,7 +44,7 @@ $total     = (int)$stmtTotal->get_result()->fetch_assoc()['total'];
 $totalPags = (int)ceil($total / $porPagina);
 $stmtTotal->close();
 
-// Registros de la pÃ¡gina actual
+// Registros de la página actual
 $paramsPag = array_merge($params, [$porPagina, $offset]);
 $typesPag  = $types . "ii";
 $stmt = $conn->prepare("
@@ -108,17 +108,17 @@ require_once __DIR__ . "/../includes/navbar.php"; ?>
 
         <!-- Buscador -->
         <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
-          <input class="form-control w-100" type="search" name="q" placeholder="Buscar cotizaciÃ³n..."
+          <input class="form-control w-100" type="search" name="q" placeholder="Buscar cotización..."
             value="<?= htmlspecialchars($busqueda) ?>">
           <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
         </form>
 
         <div id="table-container-wrapper">
-        <!-- BotÃ³n de agregar proyecto -->
+        <!-- Botón de agregar proyecto -->
         <div class="d-flex justify-content-between mb-3">
           <span class="badge-num"><?= $totalRegistros  ?> cotizaciones</span>
           <button class="button-56" type="button" onclick="location.href='<?= BASE_URL ?>/cotizaciones/cotizacion.php'">
-            <i class="bi bi-plus-circle"></i> Nueva CotizaciÃ³n
+            <i class="bi bi-plus-circle"></i> Nueva Cotización
           </button>
         </div>
 
@@ -181,13 +181,13 @@ while ($row = $result->fetch_assoc()):
 endwhile; ?>
         </div>
 
-        <!-- PaginaciÃ³n -->
+        <!-- Paginación -->
         <?php
 if ($totalPags > 1): ?>
           <nav class="mt-4">
             <ul class="pagination pagination-sm justify-content-center mb-0">
               <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
-                <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina - 1 ?>">â€¹</a>
+                <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina - 1 ?>">‹</a>
               </li>
               <?php
 foreach (range(max(1, $pagina - 2), min($totalPags, $pagina + 2)) as $i): ?>
@@ -197,7 +197,7 @@ foreach (range(max(1, $pagina - 2), min($totalPags, $pagina + 2)) as $i): ?>
               <?php
 endforeach; ?>
               <li class="page-item <?= $pagina >= $totalPags ? 'disabled' : '' ?>">
-                <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina + 1 ?>">â€º</a>
+                <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina + 1 ?>">›</a>
               </li>
             </ul>
           </nav>
@@ -214,12 +214,12 @@ else: ?>
           <?php
 if (!$busqueda): ?>
             <button type="button" onclick="location.href='<?= BASE_URL ?>/cotizaciones/cotizacion.php'" class="button-56">
-              <i class="bi bi-plus-circle"></i> Crear primera cotizaciÃ³n
+              <i class="bi bi-plus-circle"></i> Crear primera cotización
             </button>
           <?php
 else: ?>
             <button type="button" onclick="location.href='<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php'" class="button-56">
-              <i class="bi bi-plus-circle"></i> Limpiar bÃºsqueda
+              <i class="bi bi-plus-circle"></i> Limpiar búsqueda
             </button>
           <?php
 endif; ?>
@@ -232,16 +232,16 @@ endif; ?>
     </div>
   </div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ══════════════════════════════════════════
      MODAL: VER PDF (iframe)
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+══════════════════════════════════════════ -->
   <div class="modal fade modal-cot" id="modalVer" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
             <i class="bi bi-file-earmark-pdf me-2"></i>
-            <span id="verFolio">CotizaciÃ³n</span>
+            <span id="verFolio">Cotización</span>
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
@@ -263,15 +263,15 @@ endif; ?>
     </div>
   </div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     MODAL: EDITAR COTIZACIÃ“N
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ══════════════════════════════════════════
+     MODAL: EDITAR COTIZACIÓN
+══════════════════════════════════════════ -->
   <div class="modal fade modal-edit" id="modalEditar" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title text-white">
-            <i class="bi bi-pencil-square me-2"></i>Editar CotizaciÃ³n
+            <i class="bi bi-pencil-square me-2"></i>Editar Cotización
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
@@ -301,21 +301,21 @@ endif; ?>
                 <div class="field-edit">
                   <label>Moneda</label>
                   <select id="editMoneda" name="moneda">
-                    <option value="MXN">MXN â€” Pesos Mexicanos</option>
-                    <option value="USD">USD â€” DÃ³lares Americanos</option>
+                    <option value="MXN">MXN — Pesos Mexicanos</option>
+                    <option value="USD">USD — Dólares Americanos</option>
                   </select>
                 </div>
               </div>
-              <!-- Fila 2: AtenciÃ³n, CompaÃ±Ã­a -->
+              <!-- Fila 2: Atención, Compañía -->
               <div class="col-md-6">
                 <div class="field-edit">
-                  <label>AtenciÃ³n a <span class="text-danger">*</span></label>
+                  <label>Atención a <span class="text-danger">*</span></label>
                   <input type="text" id="editAtencion" name="atencion" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="field-edit">
-                  <label>CompaÃ±Ã­a</label>
+                  <label>Compañía</label>
                   <input type="text" id="editCompania" name="compania">
                 </div>
               </div>
@@ -341,7 +341,7 @@ endif; ?>
               <!-- Fila 4: Tiempo, Forma de pago -->
               <div class="col-md-6">
                 <div class="field-edit">
-                  <label>Tiempo de ejecuciÃ³n</label>
+                  <label>Tiempo de ejecución</label>
                   <input type="text" id="editTiempo" name="tiempo_ejecucion">
                 </div>
               </div>
@@ -389,18 +389,18 @@ endif; ?>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   <script>
-    // â”€â”€ VER COTIZACIÃ“N (modal PDF) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── VER COTIZACIÓN (modal PDF) ─────────────────────────────────
     function verCotizacion(id, folio) {
-      document.getElementById('verFolio').textContent = folio || 'CotizaciÃ³n';
+      document.getElementById('verFolio').textContent = folio || 'Cotización';
       document.getElementById('verContenido').innerHTML = `
     <iframe src="descargar_cotizacion.php?id=${id}&inline=1"
             style="width:100%;height:75vh;border:none;background:#fff;"
-            title="Vista previa cotizaciÃ³n"></iframe>`;
+            title="Vista previa cotización"></iframe>`;
       document.getElementById('verDescargar').href = 'descargar_cotizacion.php?id=' + id;
       new bootstrap.Modal(document.getElementById('modalVer')).show();
     }
 
-    // â”€â”€ EDITAR COTIZACIÃ“N â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── EDITAR COTIZACIÓN ──────────────────────────────────────────
     function editarCotizacion(id) {
       fetch('get_cotizacion.php?id=' + id)
         .then(r => r.json())
@@ -432,7 +432,7 @@ endif; ?>
     function guardarEdicion() {
       const atencion = document.getElementById('editAtencion').value.trim();
       if (!atencion) {
-        Swal.fire('Campo requerido', 'El campo "AtenciÃ³n a" es obligatorio.', 'warning');
+        Swal.fire('Campo requerido', 'El campo "Atención a" es obligatorio.', 'warning');
         return;
       }
 
@@ -450,7 +450,7 @@ endif; ?>
             Swal.fire({
               icon: 'success',
               title: 'Guardado',
-              text: resp.message || 'CotizaciÃ³n actualizada.',
+              text: resp.message || 'Cotización actualizada.',
               timer: 2000,
               showConfirmButton: false
             }).then(() => location.reload());
@@ -458,19 +458,19 @@ endif; ?>
             Swal.fire('Error', resp.message || 'No se pudo guardar.', 'error');
           }
         })
-        .catch(() => Swal.fire('Error', 'Fallo de conexiÃ³n.', 'error'));
+        .catch(() => Swal.fire('Error', 'Fallo de conexión.', 'error'));
     }
 
-    // â”€â”€ ELIMINAR COTIZACIÃ“N (borrado fÃ­sico de BD) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── ELIMINAR COTIZACIÓN (borrado físico de BD) ─────────────────
     function eliminarCotizacion(id, folio) {
       Swal.fire({
-        title: 'Â¿Eliminar permanentemente?',
-        html: `La cotizaciÃ³n <strong>${folio}</strong> serÃ¡ eliminada de la base de datos. Esta acciÃ³n no se puede deshacer.`,
+        title: '¿Eliminar permanentemente?',
+        html: `La cotización <strong>${folio}</strong> será eliminada de la base de datos. Esta acción no se puede deshacer.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc2626',
         cancelButtonColor: '#6b7280',
-        confirmButtonText: '<i class="bi bi-trash3"></i> SÃ­, eliminar',
+        confirmButtonText: '<i class="bi bi-trash3"></i> Sí, eliminar',
         cancelButtonText: 'Cancelar',
         focusCancel: true,
       }).then(result => {
@@ -490,7 +490,7 @@ endif; ?>
               Swal.fire({
                 icon: 'success',
                 title: 'Eliminada',
-                text: data.message || 'CotizaciÃ³n eliminada.',
+                text: data.message || 'Cotización eliminada.',
                 timer: 2000,
                 showConfirmButton: false
               });
@@ -498,7 +498,7 @@ endif; ?>
               Swal.fire('Error', data.message || 'No se pudo eliminar.', 'error');
             }
           })
-          .catch(() => Swal.fire('Error', 'Fallo de conexiÃ³n al eliminar.', 'error'));
+          .catch(() => Swal.fire('Error', 'Fallo de conexión al eliminar.', 'error'));
       });
     }
   </script>
@@ -507,7 +507,7 @@ endif; ?>
 include __DIR__ . "/../includes/footer.php"; ?>
 
   <script>
-    // FunciÃ³n para actualizar la lista vÃ­a AJAX
+    // Función para actualizar la lista vía AJAX
     function initAJAX() {
       const searchForm = document.getElementById('search-form');
       const container = document.getElementById('table-container-wrapper');

@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -24,7 +24,7 @@ if (!$proveedor) {
 
 <div class="text-start">
     <div class="mb-3">
-        <strong>RazÃ³n Social:</strong><br>
+        <strong>Razón Social:</strong><br>
         <?= htmlspecialchars($proveedor['razon_social'] ?? '') ?>
     </div>
 
@@ -39,7 +39,7 @@ if (!$proveedor) {
     </div>
 
     <div class="mb-3">
-        <strong>TelÃ©fono:</strong><br>
+        <strong>Teléfono:</strong><br>
         <?= htmlspecialchars($proveedor['telefono'] ?? 'No especificado') ?>
     </div>
 
@@ -49,7 +49,7 @@ if (!$proveedor) {
     </div>
 
     <div class="mb-3">
-        <strong>DirecciÃ³n:</strong><br>
+        <strong>Dirección:</strong><br>
         <?php
 $direccion = trim($proveedor['direccion'] ?? '');
             echo $direccion !== ''
@@ -69,7 +69,7 @@ $contacto = trim($proveedor['contacto'] ?? '');
     </div>
 
     <div class="mb-3">
-        <strong>Fecha de creaciÃ³n:</strong><br>
+        <strong>Fecha de creación:</strong><br>
         <?= !empty($proveedor['fecha_creacion'])
             ? date('d/m/Y H:i', strtotime($proveedor['fecha_creacion']))
             : '-' ?>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -24,12 +24,12 @@ if (!$archivo) {
     die("Archivo no encontrado");
 }
 
-// Verificar que el archivo existe fÃ­sicamente
+// Verificar que el archivo existe físicamente
 if (!file_exists($archivo['ruta_archivo'])) {
-    die("El archivo fÃ­sico no existe");
+    die("El archivo físico no existe");
 }
 
-// Headers para visualizaciÃ³n en el navegador
+// Headers para visualización en el navegador
 header('Content-Type: ' . $archivo['tipo_mime']);
 header('Content-Disposition: inline; filename="' . $archivo['nombre_archivo'] . '"');
 header('Cache-Control: must-revalidate');

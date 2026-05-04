@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -54,7 +54,7 @@ $stmt->bind_param($typesPag, ...$paramsPag);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Total pÃ¡ginas
+// Total páginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
@@ -98,7 +98,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 <div class="hero-section">
   <div class="container hero-content">
     <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> PÃ¡gina de inicio</a>
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Página de inicio</a>
       <span>/</span>
       <span>Registro de Proyectos</span>
     </div>
@@ -127,7 +127,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
       <div id="table-container-wrapper">
 
-      <!-- BotÃ³n de agregar proyecto -->
+      <!-- Botón de agregar proyecto -->
       <div class="d-flex justify-content-between mb-3">
         <span class="badge-num"><?= $totalRegistros ?> proyectos</span>
         <button class="button-56" type="button" onclick="agregarProyecto()">
@@ -190,10 +190,10 @@ endif; ?>
 endwhile; ?>
       </ul>
 
-      <!-- PaginaciÃ³n -->
+      <!-- Paginación -->
       <?php
 if($totalPaginas>1): ?>
-      <nav aria-label="PaginaciÃ³n">
+      <nav aria-label="Paginación">
         <ul class="pagination justify-content-center mt-3">
           <?php
 for($i=1;$i<=$totalPaginas;$i++): ?>
@@ -251,12 +251,12 @@ function agregarProyecto() {
           <select name="cliente_id" class="form-select">${clientesOptions}</select>
         </div>
         <div class="mb-2">
-          <label class="form-label">NÃºmero de LicitaciÃ³n <span class="required">*</span></label>
+          <label class="form-label">Número de Licitación <span class="required">*</span></label>
           <input type="text" name="numero_licitacion" class="form-control" required>
         </div>
 
         <div class="mb-2">
-          <label class="form-label">NÃºmero de Contrato <span class="required">*</span></label>
+          <label class="form-label">Número de Contrato <span class="required">*</span></label>
           <input type="text" name="numero_contrato" class="form-control" required>
         </div>
 
@@ -266,7 +266,7 @@ function agregarProyecto() {
         </div>
 
         <div class="mb-2">
-          <label class="form-label">DescripciÃ³n del Proyecto</label>
+          <label class="form-label">Descripción del Proyecto</label>
           <textarea name="descripcion" class="form-control" rows="3"></textarea>
         </div>
 
@@ -299,7 +299,7 @@ function agregarProyecto() {
         <div class="mb-2">
           <label class="form-label">Costo Directo <span class="required">*</span></label>
           <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-          <small class="text-muted">Este serÃ¡ el presupuesto disponible para Ã³rdenes de compra</small>
+          <small class="text-muted">Este será el presupuesto disponible para órdenes de compra</small>
         </div>
       </form>
     `,
@@ -335,7 +335,7 @@ function agregarProyecto() {
                         }
                     })
                     .catch((error) => {
-                        Swal.showValidationMessage("Error de conexiÃ³n: " + error.message);
+                        Swal.showValidationMessage("Error de conexión: " + error.message);
                     });
                 }
             });
@@ -365,7 +365,7 @@ function verObras(proyectoId) {
           </button>
         </div>
         <div class="alert alert-info">
-          <small><i class="bi bi-info-circle"></i> Las obras tienen su propio presupuesto de costo directo para Ã³rdenes de compra.</small>
+          <small><i class="bi bi-info-circle"></i> Las obras tienen su propio presupuesto de costo directo para órdenes de compra.</small>
         </div>
       `;
 
@@ -381,10 +381,10 @@ function verObras(proyectoId) {
               <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
                   <strong>${obra.nombre_obra}</strong><br>
-                  <small>NÃºmero: ${obra.numero_obra}</small><br>
+                  <small>Número: ${obra.numero_obra}</small><br>
                   <small>Inicio: ${obra.fecha_inicio}</small><br>
                   <small>Fin: ${obra.fecha_fin}</small><br>
-                  <small>${obra.descripcion || 'Sin descripciÃ³n'}</small><br>
+                  <small>${obra.descripcion || 'Sin descripción'}</small><br>
                   <small><strong>Monto:</strong> ${parseFloat(obra.monto_designado).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small><br>
                   <small><strong>Costo directo:</strong> ${parseFloat(obra.costo_directo).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small><br>
                   <small><strong>Disponible:</strong> ${parseFloat(costo_disponible).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small>
@@ -393,7 +393,7 @@ function verObras(proyectoId) {
                   </div>
                 </div>
                 <div class="btn-group-vertical" style="gap:5px;">
-                  <button class="btn btn-sm btn-info" onclick="gestionarCatalogos(${obra.id}, '${obra.nombre_obra.replace(/'/g, "\\'")}', ${proyectoId})" title="CatÃ¡logos">
+                  <button class="btn btn-sm btn-info" onclick="gestionarCatalogos(${obra.id}, '${obra.nombre_obra.replace(/'/g, "\\'")}', ${proyectoId})" title="Catálogos">
                     <i class="bi bi-folder"></i>
                   </button>
                   <button class="btn btn-sm btn-warning" onclick="editarObra(${obra.id}, ${proyectoId})" title="Editar">
@@ -423,7 +423,7 @@ function verObras(proyectoId) {
 }
 
 function agregarObra(proyectoId) {
-    // Primero obtener informaciÃ³n del proyecto para validaciones
+    // Primero obtener información del proyecto para validaciones
     fetch(`get_info_proyecto.php?id=${proyectoId}`)
         .then(res => res.json())
         .then(proyecto => {
@@ -434,7 +434,7 @@ function agregarObra(proyectoId) {
                         <input type="hidden" name="proyecto_id" value="${proyectoId}">
                         
                         <div class="mb-2">
-                            <label class="form-label">NÃºmero de Obra <span class="required">*</span></label>
+                            <label class="form-label">Número de Obra <span class="required">*</span></label>
                             <input type="text" name="numero_obra" class="form-control" required>
                         </div>
 
@@ -444,8 +444,8 @@ function agregarObra(proyectoId) {
                         </div>
 
                         <div class="mb-2">
-                            <label class="form-label">DescripciÃ³n de la Obra</label>
-                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles y caracterÃ­sticas de la obra..."></textarea>
+                            <label class="form-label">Descripción de la Obra</label>
+                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles y características de la obra..."></textarea>
                         </div>
 
                         <div class="row">
@@ -468,7 +468,7 @@ function agregarObra(proyectoId) {
                         <div class="mb-2">
                             <label class="form-label">Costo Directo <span class="required">*</span></label>
                             <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-                            <small class="text-muted">Presupuesto para Ã³rdenes de compra de esta obra</small>
+                            <small class="text-muted">Presupuesto para órdenes de compra de esta obra</small>
                         </div>
                     </form>
                 `,
@@ -485,13 +485,13 @@ function agregarObra(proyectoId) {
                         .then(res => res.json())
                         .then(data => {
                             if(data.status === 'success'){
-                                Swal.fire("Â¡Ã‰xito!", "Obra creada correctamente", "success")
+                                Swal.fire("¡Éxito!", "Obra creada correctamente", "success")
                                     .then(() => verObras(proyectoId));
                             } else {
                                 Swal.showValidationMessage(data.message || "Error al guardar la obra");
                             }
                         })
-                        .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
+                        .catch(() => Swal.showValidationMessage("Error de conexión"));
                 }
             });
         });
@@ -513,7 +513,7 @@ function editarObra(obraId) {
                         <input type="hidden" name="id" value="${data.id}">
                         
                         <div class="mb-2">
-                            <label class="form-label">NÃºmero de Obra</label>
+                            <label class="form-label">Número de Obra</label>
                             <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
                         </div>
 
@@ -523,7 +523,7 @@ function editarObra(obraId) {
                         </div>
 
                         <div class="mb-2">
-                            <label class="form-label">DescripciÃ³n de la Obra</label>
+                            <label class="form-label">Descripción de la Obra</label>
                             <textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea>
                         </div>
 
@@ -546,7 +546,7 @@ function editarObra(obraId) {
                         <div class="mb-2">
                             <label class="form-label">Costo Directo</label>
                             <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-                            <small class="text-muted">Presupuesto para Ã³rdenes de compra</small>
+                            <small class="text-muted">Presupuesto para órdenes de compra</small>
                         </div>
                     </form>
                 `,
@@ -563,13 +563,13 @@ function editarObra(obraId) {
                         .then(res => res.json())
                         .then(resp => {
                             if (resp.status === "success") {
-                                Swal.fire("Â¡Ã‰xito!", "Obra actualizada correctamente", "success")
+                                Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
                                     .then(() => verObras(data.proyecto_id));
                             } else {
                                 Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
                             }
                         })
-                        .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
+                        .catch(() => Swal.showValidationMessage("Error de conexión"));
                 }
             });
         });
@@ -577,13 +577,13 @@ function editarObra(obraId) {
 
 function eliminarObra(obraId, proyectoId) {
   Swal.fire({
-    title: 'Â¿Seguro que deseas eliminar esta obra?',
-    text: "Esta acciÃ³n no se puede deshacer. Las Ã³rdenes de compra asociadas quedarÃ¡n sin obra asignada.",
+    title: '¿Seguro que deseas eliminar esta obra?',
+    text: "Esta acción no se puede deshacer. Las órdenes de compra asociadas quedarán sin obra asignada.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#525252',
-    confirmButtonText: 'SÃ­, eliminar',
+    confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if(result.isConfirmed){
@@ -591,7 +591,7 @@ function eliminarObra(obraId, proyectoId) {
         .then(res => res.json())
         .then(resp => {
           if(resp.status === "success"){
-            Swal.fire('Â¡Eliminada!', 'Obra eliminada correctamente', 'success')
+            Swal.fire('¡Eliminada!', 'Obra eliminada correctamente', 'success')
               .then(() => verObras(proyectoId));
           } else {
             Swal.fire('Error', resp.message || 'No se pudo eliminar la obra', 'error');
@@ -606,7 +606,7 @@ function mostrarProyecto(id) {
     .then(res => res.text())
     .then(data => {
       Swal.fire({
-        title: 'InformaciÃ³n del Proyecto',
+        title: 'Información del Proyecto',
         html: `<div class="swal-info-card">${data}</div>`,
         width: 700,
         showCloseButton: true,
@@ -617,13 +617,13 @@ function mostrarProyecto(id) {
 
 function eliminarProyecto(id) {
   Swal.fire({
-    title: 'Â¿Seguro que deseas eliminar este proyecto?',
-    text: "Esto eliminarÃ¡ tambiÃ©n todas las obras asociadas y su historial",
+    title: '¿Seguro que deseas eliminar este proyecto?',
+    text: "Esto eliminará también todas las obras asociadas y su historial",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#525252',
-    confirmButtonText: 'SÃ­, eliminar',
+    confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if(result.isConfirmed){
@@ -646,7 +646,7 @@ function eliminarProyecto(id) {
 include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
-// FunciÃ³n para actualizar la lista vÃ­a AJAX
+// Función para actualizar la lista vía AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
     const container = document.getElementById('table-container-wrapper');

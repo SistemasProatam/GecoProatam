@@ -1,21 +1,21 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
 require_once __DIR__ . "/../conexion.php";
 
-// Obtener datos de sesiÃ³n
+// Obtener datos de sesión
 $departamento_id = $_SESSION['departamento_id'] ?? 0;
 
-// ParÃ¡metros de bÃºsqueda y paginaciÃ³n
+// Parámetros de búsqueda y paginación
 $busqueda = $_GET['q'] ?? '';
 $pagina = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$por_pagina = 10; // Mostrar 10 elementos por pÃ¡gina
+$por_pagina = 10; // Mostrar 10 elementos por página
 $offset = ($pagina - 1) * $por_pagina;
 
 // Filtros
@@ -23,7 +23,7 @@ $estado_filtro = $_GET['estado'] ?? '';
 $entidad_filtro = $_GET['entidad'] ?? '';
 $obra_filtro = $_GET['obra'] ?? '';
 
-// Construir WHERE dinÃ¡mico
+// Construir WHERE dinámico
 $where = [];
 $params = [];
 $types = '';
@@ -55,7 +55,7 @@ if ($obra_filtro !== '') {
 
 $where_sql = $where ? "WHERE " . implode(" AND ", $where) : "";
 
-// Consulta principal - CORREGIDA para incluir proveedor y requisiciÃ³n
+// Consulta principal - CORREGIDA para incluir proveedor y requisición
 $sql = "SELECT o.id, o.folio, o.estado, o.fecha_solicitud, o.descripcion, o.total,
                e.nombre AS entidad,
                p.nombre AS proveedor,
@@ -131,7 +131,7 @@ if ($obrasRes) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Ã“rdenes de Compra</title>
+    <title>Registro de Órdenes de Compra</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
@@ -233,7 +233,7 @@ if ($obrasRes) {
             }
         }
 
-        /* TransiciÃ³n para actualizaciones AJAX */
+        /* Transición para actualizaciones AJAX */
         #table-container-wrapper {
             transition: opacity 0.3s ease;
         }
@@ -242,7 +242,7 @@ if ($obrasRes) {
 
 <body>
     <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+    include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -250,12 +250,12 @@ include __DIR__ . "/../includes/navbar.php"; ?>
             <div class="breadcrumb-custom">
                 <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
-                <span>Registro de Ã“rdenes de Compra</span>
+                <span>Registro de Órdenes de Compra</span>
             </div>
 
             <div class="row align-items-end">
                 <div class="col-lg-8">
-                    <h1 class="hero-title">Registro de Ã“rdenes de Compra</h1>
+                    <h1 class="hero-title">Registro de Órdenes de Compra</h1>
                 </div>
             </div>
 
@@ -312,67 +312,67 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                     </div>
                 </form>
 
-                <!-- Contenedor dinÃ¡mico para actualizaciones AJAX -->
+                <!-- Contenedor dinámico para actualizaciones AJAX -->
                 <div id="table-container-wrapper">
-                    <!-- BotÃ³n de agregar OC -->
+                    <!-- Botón de agregar OC -->
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="badge-num"><?= $totalRegistros ?> Ã³rdenes de compra</span>
+                        <span class="badge-num"><?= $totalRegistros ?> Órdenes de compra</span>
                         <button class="button-56" type="button" onclick="window.location.href='new_order.php'">
                             <i class="bi bi-plus-circle"></i> Agregar
                         </button>
                     </div>
 
-                    <!-- Mensaje de Ã©xito -->
+                    <!-- Mensaje de éxito -->
                     <?php
-if (isset($_GET['msg']) && $_GET['msg'] === 'success'): ?>
+                    if (isset($_GET['msg']) && $_GET['msg'] === 'success'): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="bi bi-check-circle-fill"></i>
-                            <strong>Â¡Ã‰xito!</strong> Orden de compra
+                            <strong>¡Éxito!</strong> Orden de compra
                             <?php
-if (isset($_GET['folio'])): ?>
+                            if (isset($_GET['folio'])): ?>
                                 <strong><?= htmlspecialchars($_GET['folio']) ?></strong>
                             <?php
-endif; ?>
+                            endif; ?>
                             creada correctamente.
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php
-endif; ?>
+                    endif; ?>
 
-                    <!-- Lista de Ã³rdenes de compra con scroll horizontal -->
+                    <!-- Lista de órdenes de compra con scroll horizontal -->
                     <div class="table-container">
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Folio OC</th>
                                     <th>Entidad</th>
-                                    <th>RequisiciÃ³n</th>
+                                    <th>Requisición</th>
                                     <th>Estado</th>
                                     <th>Fecha de Solicitud</th>
-                                    <th>DescripciÃ³n</th>
+                                    <th>Descripción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-if ($result && $result->num_rows > 0): ?>
+                                if ($result && $result->num_rows > 0): ?>
                                     <?php
-while ($oc = $result->fetch_assoc()): ?>
+                                    while ($oc = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td><?= htmlspecialchars($oc['folio']) ?></td>
                                             <td><?= htmlspecialchars($oc['entidad']) ?></td>
                                             <td>
                                                 <?php
-if ($oc['folio_requisicion']): ?>
+                                                if ($oc['folio_requisicion']): ?>
                                                     <span><?= htmlspecialchars($oc['folio_requisicion']) ?></span>
                                                 <?php
-else: ?>
+                                                else: ?>
                                                     <span class="text-muted">-</span>
                                                 <?php
-endif; ?>
+                                                endif; ?>
                                             </td>
                                             <td>
                                                 <?php
-switch ($oc['estado']) {
+                                                switch ($oc['estado']) {
                                                     case 'pendiente':
                                                         echo '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente</span>';
                                                         break;
@@ -408,61 +408,61 @@ switch ($oc['estado']) {
                                                     </button>
 
                                                     <?php
-if ($oc['estado'] == 'devuelto'): ?>
-                                                        <!-- BotÃ³n de descargar PDF -->
+                                                    if ($oc['estado'] == 'devuelto'): ?>
+                                                        <!-- Botón de descargar PDF -->
                                                         <button class="btn-ed" onclick="descargarPDF(<?= $oc['id'] ?>)" title="Descargar PDF"
                                                             data-bs-toggle="tooltip" data-bs-placement="top">
                                                             <i class="bi bi-download"></i>
                                                         </button>
                                                     <?php
-endif; ?>
+                                                    endif; ?>
 
                                                     <?php
-if ($oc['estado'] == 'pagado'): ?>
-                                                        <!-- BotÃ³n de descargar PDF -->
+                                                    if ($oc['estado'] == 'pagado'): ?>
+                                                        <!-- Botón de descargar PDF -->
                                                         <button class="btn-download" onclick="descargarPDF(<?= $oc['id'] ?>)" title="Descargar PDF"
                                                             data-bs-toggle="tooltip" data-bs-placement="top">
                                                             <i class="bi bi-download"></i>
                                                         </button>
                                                     <?php
-endif; ?>
+                                                    endif; ?>
                                                 </div>
                                             </td>
                                         </tr>
                                     <?php
-endwhile; ?>
+                                    endwhile; ?>
                                 <?php
-else: ?>
+                                else: ?>
                                     <tr>
                                         <td colspan="7" class="text-center text-muted py-4">
                                             <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                                            <p class="mt-2">No hay Ã³rdenes de compra registradas</p>
+                                            <p class="mt-2">No hay órdenes de compra registradas</p>
                                         </td>
                                     </tr>
                                 <?php
-endif; ?>
+                                endif; ?>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- PaginaciÃ³n estilo catÃ¡logo -->
+                    <!-- Paginación estilo catálogo -->
                     <?php
-if ($totalPaginas > 1): ?>
-                        <nav aria-label="PaginaciÃ³n">
+                    if ($totalPaginas > 1): ?>
+                        <nav aria-label="Paginación">
                             <ul class="pagination justify-content-center mt-3">
                                 <?php
-for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                for ($i = 1; $i <= $totalPaginas; $i++): ?>
                                     <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
                                         <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= $i ?>">
                                             <?= $i ?>
                                         </a>
                                     </li>
                                 <?php
-endfor; ?>
+                                endfor; ?>
                             </ul>
                         </nav>
                     <?php
-endif; ?>
+                    endif; ?>
                 </div>
             </div>
         </div>
@@ -484,7 +484,7 @@ endif; ?>
             const filterForm = document.getElementById('filter-form');
             const container = document.getElementById('table-container-wrapper');
 
-            // FunciÃ³n para actualizar la lista vÃ­a AJAX
+            // Función para actualizar la lista vía AJAX
             function updateList(url, pushState = true) {
                 container.style.opacity = '0.5';
                 container.style.pointerEvents = 'none';
@@ -495,7 +495,7 @@ endif; ?>
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
 
-                        // Actualizar contenido de la tabla y paginaciÃ³n
+                        // Actualizar contenido de la tabla y paginación
                         const newContent = doc.getElementById('table-container-wrapper');
                         if (newContent) {
                             container.innerHTML = newContent.innerHTML;
@@ -536,7 +536,7 @@ endif; ?>
                 });
             }
 
-            // DelegaciÃ³n de eventos para clics en la paginaciÃ³n
+            // Delegación de eventos para clics en la paginación
             document.addEventListener('click', function(e) {
                 const pageLink = e.target.closest('.page-link');
                 if (pageLink) {
@@ -549,7 +549,7 @@ endif; ?>
                 }
             });
 
-            // Manejo unificado de envÃ­os de formulario
+            // Manejo unificado de envíos de formulario
             [searchForm, filterForm].forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -558,12 +558,12 @@ endif; ?>
                     const searchData = new FormData(searchForm);
                     params.set('q', searchData.get('q') || "");
 
-                    params.set('page', '1'); // Resetear a pÃ¡gina 1 al filtrar/buscar
+                    params.set('page', '1'); // Resetear a página 1 al filtrar/buscar
                     updateList('?' + params.toString());
                 });
             });
 
-            // Auto-envÃ­o al cambiar filtros de selecciÃ³n
+            // Auto-envío al cambiar filtros de selección
             filterForm.querySelectorAll('select').forEach(select => {
                 select.addEventListener('change', () => {
                     filterForm.requestSubmit();
@@ -575,7 +575,7 @@ endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // FunciÃ³n para descargar PDF
+        // Función para descargar PDF
         function descargarPDF(ocId) {
             // Descargar directamente
             window.open(`download_pdf_oc.php?id=${ocId}`, '_blank');
@@ -583,10 +583,8 @@ endif; ?>
     </script>
 
     <?php
-include __DIR__ . "/../includes/footer.php"; ?>
+    include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
-
-

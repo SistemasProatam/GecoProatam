@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
 
@@ -159,8 +159,8 @@ while ($row = $result_activos->fetch_assoc()) {
 
                 <div>
                     <p>
-                        <b>Â¿Necesitas ayuda?</b> Estamos para apoyarte. <br>
-                        Completa el formulario y nos pondremos en contacto contigo a travÃ©s del correo corporativo.
+                        <b>¿Necesitas ayuda?</b> Estamos para apoyarte. <br>
+                        Completa el formulario y nos pondremos en contacto contigo a través del correo corporativo.
                     </p>
                 </div>
 
@@ -168,7 +168,7 @@ while ($row = $result_activos->fetch_assoc()) {
 
                     <!-- ===== SOLICITANTE ===== -->
                     <div class="section-title">
-                        <i class="bi bi-person-circle"></i> InformaciÃ³n del Solicitante
+                        <i class="bi bi-person-circle"></i> Información del Solicitante
                     </div>
 
                     <div class="row">
@@ -191,7 +191,7 @@ while ($row = $result_activos->fetch_assoc()) {
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Departamento / Ãrea <span class="required">*</span></label>
+                                <label class="form-label">Departamento / Área <span class="required">*</span></label>
                                 <input type="text" name="departamento" id="departamento" class="form-control" required
                                     value="<?= htmlspecialchars($user_data['departamento']) ?>">
                             </div>
@@ -212,7 +212,7 @@ while ($row = $result_activos->fetch_assoc()) {
                             <i class="bi bi-box-seam"></i>
                             <span id="activoBadgeText">
                                 <strong><?= htmlspecialchars($activo_pre['codigo']) ?></strong>
-                                â€“ <?= htmlspecialchars($activo_pre['nombre']) ?>
+                                – <?= htmlspecialchars($activo_pre['nombre']) ?>
                                 <small class="text-muted">(<?= htmlspecialchars($activo_pre['tipo']) ?>)</small>
                             </span>
                             <span class="remove-activo" onclick="limpiarActivo()" title="Quitar activo">
@@ -238,12 +238,12 @@ while ($row = $result_activos->fetch_assoc()) {
                             <div id="activoSearchWrap">
                                 <div class="activo-autocomplete">
                                     <input type="text" id="activoBusqueda" class="form-control"
-                                        placeholder="Escriba cÃ³digo o nombre del activo...">
+                                        placeholder="Escriba código o nombre del activo...">
                                     <div class="autocomplete-list" id="autocompleteList"></div>
                                 </div>
                                 <small class="text-muted">
                                     <i class="bi bi-info-circle"></i>
-                                    Si el problema estÃ¡ relacionado con un activo registrado, selecciÃ³nelo aquÃ­.
+                                    Si el problema está relacionado con un activo registrado, selecciónelo aquí.
                                 </small>
                             </div>
                         </div>
@@ -256,18 +256,18 @@ while ($row = $result_activos->fetch_assoc()) {
                         <div class="form-group">
                             <label class="form-label">Asunto <span class="required">*</span></label>
                             <input type="text" name="asunto" id="asunto" class="form-control" required
-                                placeholder="Breve descripciÃ³n del problema">
+                                placeholder="Breve descripción del problema">
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Sistema / Ãrea Afectada <span class="required">*</span></label>
+                                    <label class="form-label">Sistema / Área Afectada <span class="required">*</span></label>
                                     <select name="sistema_afectado" id="sistema_afectado" class="form-select" required>
                                         <option value="">Selecciona el sistema afectado</option>
                                         <option value="Activo / Equipo">Activo / Equipo</option>
                                         <option value="Sistema PROATAM">Sistema Integral PROATAM</option>
-                                        <option value="Correo ElectrÃ³nico">Correo ElectrÃ³nico</option>
+                                        <option value="Correo Electrónico">Correo Electrónico</option>
                                         <option value="Otro">Otro</option>
                                     </select>
                                 </div>
@@ -277,17 +277,17 @@ while ($row = $result_activos->fetch_assoc()) {
                                     <label class="form-label">Nivel de Urgencia <span class="required">*</span></label>
                                     <select name="urgencia" id="urgencia" class="form-select" required>
                                         <option value="">Selecciona el nivel de urgencia</option>
-                                        <option value="Baja">Baja â€“ No afecta operaciones</option>
-                                        <option value="Media">Media â€“ Afecta parcialmente</option>
-                                        <option value="Alta">Alta â€“ Afecta significativamente</option>
-                                        <option value="Urgente">Urgente â€“ Bloquea operaciones crÃ­ticas</option>
+                                        <option value="Baja">Baja – No afecta operaciones</option>
+                                        <option value="Media">Media – Afecta parcialmente</option>
+                                        <option value="Alta">Alta – Afecta significativamente</option>
+                                        <option value="Urgente">Urgente – Bloquea operaciones críticas</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">DescripciÃ³n Detallada <span class="required">*</span></label>
+                            <label class="form-label">Descripción Detallada <span class="required">*</span></label>
                             <textarea name="descripcion" id="descripcion" class="form-control" rows="4" required
                                 placeholder="Describe el problema con el mayor detalle posible..."></textarea>
                         </div>
@@ -300,7 +300,7 @@ while ($row = $result_activos->fetch_assoc()) {
                         <div class="form-group">
                             <small class="text-muted d-block mb-3">
                                 <i class="bi bi-info-circle"></i>
-                                Puedes adjuntar imÃ¡genes, documentos o capturas de pantalla. MÃ¡x. 5 archivos, 5 MB c/u.
+                                Puedes adjuntar imágenes, documentos o capturas de pantalla. Máx. 5 archivos, 5 MB c/u.
                             </small>
                             <div class="input-group">
                                 <input type="file" class="form-control" id="singleFileInput"
@@ -324,7 +324,7 @@ while ($row = $result_activos->fetch_assoc()) {
                         <!-- ===== ENVIAR ===== -->
                         <div class="form-actions mt-3">
                             <div class="send-otxt">
-                                La respuesta a esta solicitud serÃ¡ enviada por medio del correo corporativo.
+                                La respuesta a esta solicitud será enviada por medio del correo corporativo.
                             </div>
                             <div class="container overflow-hidden text-center">
                                 <div class="row gx-5">
@@ -344,7 +344,7 @@ while ($row = $result_activos->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- BotÃ³n volver -->
+    <!-- Botón volver -->
     <div class="fab-container-backbtn">
         <a onclick="history.back()" class="fab-button-backbtn gray">
             <i class="bi bi-arrow-left"></i>
@@ -356,7 +356,7 @@ while ($row = $result_activos->fetch_assoc()) {
 
     <script>
         // ----------------------------------------------------------------
-        // CatÃ¡logo de activos desde PHP
+        // Catálogo de activos desde PHP
         // ----------------------------------------------------------------
         const ACTIVOS = <?= json_encode($activos_array) ?>;
 
@@ -390,7 +390,7 @@ while ($row = $result_activos->fetch_assoc()) {
                 filtrados.forEach(a => {
                     const div = document.createElement('div');
                     div.className = 'autocomplete-item';
-                    div.innerHTML = `<strong>${a.codigo}</strong> â€“ ${a.nombre}
+                    div.innerHTML = `<strong>${a.codigo}</strong> – ${a.nombre}
                              <small class="text-muted ms-1">(${a.tipo})</small>`;
                     div.addEventListener('click', () => seleccionarActivo(a));
                     listaAuto.appendChild(div);
@@ -413,7 +413,7 @@ while ($row = $result_activos->fetch_assoc()) {
             document.getElementById('activoTipo').value = activo.tipo;
 
             document.getElementById('activoBadgeText').innerHTML =
-                `<strong>${activo.codigo}</strong> â€“ ${activo.nombre}
+                `<strong>${activo.codigo}</strong> – ${activo.nombre}
          <small class="text-muted">(${activo.tipo})</small>`;
 
             document.getElementById('activoBadge').style.display = 'inline-flex';
@@ -421,7 +421,7 @@ while ($row = $result_activos->fetch_assoc()) {
             listaAuto.style.display = 'none';
             if (inputBusqueda) inputBusqueda.value = '';
 
-            // Si el sistema afectado estÃ¡ vacÃ­o, preseleccionar "Activo / Equipo"
+            // Si el sistema afectado está vacío, preseleccionar "Activo / Equipo"
             const sysSelect = document.getElementById('sistema_afectado');
             if (!sysSelect.value) sysSelect.value = 'Activo / Equipo';
         }
@@ -453,11 +453,11 @@ while ($row = $result_activos->fetch_assoc()) {
 
             const file = input.files[0];
             if (adjuntosSeleccionados.length >= MAX_ADJ) {
-                Swal.fire('LÃ­mite alcanzado', 'Solo puedes agregar hasta ' + MAX_ADJ + ' archivos.', 'warning');
+                Swal.fire('Límite alcanzado', 'Solo puedes agregar hasta ' + MAX_ADJ + ' archivos.', 'warning');
                 return;
             }
             if (file.size > MAX_SIZE * 1024 * 1024) {
-                Swal.fire('Archivo muy grande', `"${file.name}" supera el lÃ­mite de ${MAX_SIZE} MB.`, 'warning');
+                Swal.fire('Archivo muy grande', `"${file.name}" supera el límite de ${MAX_SIZE} MB.`, 'warning');
                 return;
             }
             adjuntosSeleccionados.push(file);
@@ -493,7 +493,7 @@ while ($row = $result_activos->fetch_assoc()) {
         }
 
         // ----------------------------------------------------------------
-        // EnvÃ­o del formulario
+        // Envío del formulario
         // ----------------------------------------------------------------
         document.getElementById('supportForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -530,8 +530,8 @@ while ($row = $result_activos->fetch_assoc()) {
                 document.getElementById('correo_corporativo').classList.add('is-invalid');
                 Swal.fire({
                     icon: 'error',
-                    title: 'Email invÃ¡lido',
-                    text: 'Ingresa un correo electrÃ³nico vÃ¡lido.'
+                    title: 'Email inválido',
+                    text: 'Ingresa un correo electrónico válido.'
                 });
                 return;
             }
@@ -543,7 +543,7 @@ while ($row = $result_activos->fetch_assoc()) {
             formData.delete('adjuntos[]');
             adjuntosSeleccionados.forEach(f => formData.append('adjuntos[]', f));
 
-            // Estado del botÃ³n
+            // Estado del botón
             const textoOriginal = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enviando...';
@@ -559,17 +559,17 @@ while ($row = $result_activos->fetch_assoc()) {
                 try {
                     result = JSON.parse(text);
                 } catch {
-                    throw new Error('Respuesta invÃ¡lida del servidor');
+                    throw new Error('Respuesta inválida del servidor');
                 }
 
                 if (result.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Â¡Solicitud Enviada!',
+                        title: '¡Solicitud Enviada!',
                         html: `<div style="text-align:left;">
                             <p><strong>${result.message}</strong></p>
                             ${result.ticket ? `<p><strong>Ticket:</strong> ${result.ticket}</p>` : ''}
-                            <p>Hemos enviado una confirmaciÃ³n a tu correo corporativo.</p>
+                            <p>Hemos enviado una confirmación a tu correo corporativo.</p>
                         </div>`,
                         confirmButtonText: 'Aceptar',
                         confirmButtonColor: '#3085d6'
@@ -584,7 +584,7 @@ while ($row = $result_activos->fetch_assoc()) {
             } catch (err) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error de conexiÃ³n',
+                    title: 'Error de conexión',
                     text: 'No se pudo conectar con el servidor.'
                 });
             } finally {

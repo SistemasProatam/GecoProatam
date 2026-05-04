@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Verificar si la obra existe y obtener informaciÃ³n
+    // Verificar si la obra existe y obtener información
     $sql_check = "SELECT id, proyecto_id FROM obras WHERE id = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param("i", $obra_id);
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Verificar si el nÃºmero de obra ya existe en otro obra del mismo proyecto
+    // Verificar si el número de obra ya existe en otro obra del mismo proyecto
     $sql_check_numero = "SELECT id FROM obras WHERE proyecto_id = ? AND numero_obra = ? AND id != ?";
     $stmt_check_numero = $conn->prepare($sql_check_numero);
     $stmt_check_numero->bind_param("isi", $obra_info['proyecto_id'], $numero_obra, $obra_id);
@@ -55,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result_check_numero = $stmt_check_numero->get_result();
 
     if ($result_check_numero->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Ya existe otra obra con este nÃºmero en el proyecto']);
+        echo json_encode(['status' => 'error', 'message' => 'Ya existe otra obra con este número en el proyecto']);
         exit;
     }
 
-    // Iniciar transacciÃ³n
+    // Iniciar transacción
     $conn->begin_transaction();
 
     try {
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
 }
 ?>
 

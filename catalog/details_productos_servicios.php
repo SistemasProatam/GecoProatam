@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -41,20 +41,20 @@ if (!$producto) {
     <?php
 if (!empty($producto['descripcion'])): ?>
     <div class="mb-3">
-        <strong>DescripciÃ³n:</strong><br>
+        <strong>Descripción:</strong><br>
         <?= nl2br(htmlspecialchars($producto['descripcion'])) ?>
     </div>
     <?php
 endif; ?>
     
     <div class="mb-3">
-        <strong>Fecha de creaciÃ³n:</strong><br>
+        <strong>Fecha de creación:</strong><br>
         <?= date('d/m/Y H:i', strtotime($producto['fecha_creacion'])) ?>
     </div>
 </div>
 
 <?php
-// Cerrar conexiÃ³n
+// Cerrar conexión
 $stmt->close();
 $conn->close();
 ?>

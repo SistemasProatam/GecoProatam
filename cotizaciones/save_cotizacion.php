@@ -1,5 +1,5 @@
-﻿<?php
-// save_cotizacion.php â€” Guarda cotizaciÃ³n en BD, devuelve JSON con id
+<?php
+// save_cotizacion.php — Guarda cotización en BD, devuelve JSON con id
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -7,7 +7,7 @@ checkSession();
 header('Content-Type: application/json; charset=UTF-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
     exit;
 }
 
@@ -30,22 +30,22 @@ $total        = fPost('total');
 $tasaIva      = in_array((int)sPost('tasa_iva'), [0, 8, 16]) ? (int)sPost('tasa_iva') : 16;
 $tiempo       = sPost('tiempo');
 $formaPago    = sPost('forma_pago');
-$vigencia     = sPost('vigencia') ?: '30 dÃ­as naturales';
+$vigencia     = sPost('vigencia') ?: '30 días naturales';
 $moneda       = sPost('moneda')  ?: 'MXN';
 $notas        = sPost('notas');
 $emisorNombre = sPost('emisor_nombre');
 $emisorDepto  = sPost('emisor_depto');
 
-// Obtener ID del usuario que crea la cotizaciÃ³n (ajusta segÃºn tu variable de sesiÃ³n)
+// Obtener ID del usuario que crea la cotización (ajusta según tu variable de sesión)
 $creado_por = $_SESSION['usuario_id'] ?? $_SESSION['id'] ?? $_SESSION['user_id'] ?? null;
 
 // Validar obligatorio
 if (!$atencion) {
-    echo json_encode(['status' => 'error', 'message' => 'El campo "AtenciÃ³n a" es obligatorio.']);
+    echo json_encode(['status' => 'error', 'message' => 'El campo "Atención a" es obligatorio.']);
     exit;
 }
 if (!$folio) {
-    echo json_encode(['status' => 'error', 'message' => 'No se recibiÃ³ el folio.']);
+    echo json_encode(['status' => 'error', 'message' => 'No se recibió el folio.']);
     exit;
 }
 
@@ -77,12 +77,12 @@ $stmtEnt->close();
 $alcances_seleccionados = $_POST['alcances'] ?? [];
 $alcances_extra_text = trim($_POST['alcances_extra'] ?? '');
 
-// Alcances â†’ JSON (solo los seleccionados)
+// Alcances → JSON (solo los seleccionados)
 $alcances_json = json_encode([
     'seleccionados' => array_values($alcances_seleccionados)
 ], JSON_UNESCAPED_UNICODE);
 
-// Conceptos â†’ JSON (con clave 'descripcion' para compatibilidad con descargar)
+// Conceptos → JSON (con clave 'descripcion' para compatibilidad con descargar)
 $unidades = $_POST['unidad']   ?? [];
 $cants    = $_POST['cantidad'] ?? [];
 $precios  = $_POST['precio']   ?? [];
@@ -107,7 +107,7 @@ $stmtCheck = $conn->prepare("SELECT id FROM cotizaciones WHERE folio = ? LIMIT 1
 $stmtCheck->bind_param("s", $folio);
 $stmtCheck->execute();
 if ($stmtCheck->get_result()->num_rows > 0) {
-    // Folio ya existe â€” regenerar con timestamp para evitar colisiÃ³n
+    // Folio ya existe — regenerar con timestamp para evitar colisión
     $folio = $folio . '-' . time();
 }
 $stmtCheck->close();
@@ -176,7 +176,7 @@ if ($stmt->execute()) {
 
     echo json_encode([
         'status'  => 'success',
-        'message' => 'CotizaciÃ³n guardada correctamente.',
+        'message' => 'Cotización guardada correctamente.',
         'id'      => $newId,
         'folio'   => $folio,
     ]);

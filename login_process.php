@@ -1,11 +1,11 @@
-﻿<?php
+<?php
 header('Content-Type: application/json');
 session_start();
 
-// Incluir conexiÃ³n
+// Incluir conexión
 require_once __DIR__ . "/conexion.php";
 
-// Verificar conexiÃ³n
+// Verificar conexión
 if ($conn->connect_error) {
     echo json_encode([
         "status" => "error",
@@ -18,11 +18,11 @@ if ($conn->connect_error) {
 $correo_corporativo = $_POST['correo_corporativo'] ?? '';
 $password = $_POST['password'] ?? '';
 
-// Validaciones bÃ¡sicas
+// Validaciones básicas
 if (empty($correo_corporativo) || empty($password)) {
     echo json_encode([
         "status" => "error",
-        "message" => "Debes ingresar correo corporativo y contraseÃ±a"
+        "message" => "Debes ingresar correo corporativo y contraseña"
     ]);
     exit;
 }
@@ -64,12 +64,12 @@ if ($result->num_rows === 0) {
     exit;
 }
 
-// Si llegamos aquÃ­, el usuario existe
+// Si llegamos aquí, el usuario existe
 $row = $result->fetch_assoc();
 
-// Verificar contraseÃ±a
+// Verificar contraseña
 if (password_verify($password, $row['password'])) {
-    // Guardar datos en sesiÃ³n
+    // Guardar datos en sesión
     $_SESSION['user_id'] = $row['id'];
     $_SESSION['nombres'] = $row['nombres'];
     $_SESSION['apellidos'] = $row['apellidos'];
@@ -77,12 +77,12 @@ if (password_verify($password, $row['password'])) {
     $_SESSION['departamento_id'] = $row['departamento_id'];
     $_SESSION['departamento'] = $row['departamento_nombre'] ?? '';
 
-    // Si la contraseÃ±a es temporal, setear la bandera change_pass
+    // Si la contraseña es temporal, setear la bandera change_pass
     if ($row['password_temporal']) {
         $_SESSION['change_pass'] = true;
     }
 
-    // RedirecciÃ³n segÃºn departamento
+    // Redirección según departamento
     $redirect = "index.php"; // Por defecto
 
     if ($row['password_temporal']) {
@@ -92,8 +92,8 @@ if (password_verify($password, $row['password'])) {
     }
 
     /**
-     * REDIRECT DESPUÃ‰S DEL LOGIN
-     * (para cuando el usuario fue enviado al login desde otra pÃ¡gina)
+     * REDIRECT DESPUÉS DEL LOGIN
+     * (para cuando el usuario fue enviado al login desde otra página)
      */
     if (!empty($_SESSION['redirect_after_login'])) {
         $redirect = $_SESSION['redirect_after_login'];
@@ -109,10 +109,10 @@ if (password_verify($password, $row['password'])) {
     exit;
 }
 
-// Si llega aquÃ­, correo o contraseÃ±a incorrectos
+// Si llega aquí, correo o contraseña incorrectos
 echo json_encode([
     "status" => "error",
-    "message" => "Correo o contraseÃ±a incorrectos"
+    "message" => "Correo o contraseña incorrectos"
 ]);
 exit;
 

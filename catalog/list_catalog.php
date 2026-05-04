@@ -1,15 +1,15 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
 require_once __DIR__ . "/../conexion.php";
 
-// ==== ConfiguraciÃ³n de entidades ====
+// ==== Configuración de entidades ====
 $entidades = [
   'productos_servicios' => [
     'nombre' => 'Productos y Servicios',
@@ -26,7 +26,7 @@ $entidades = [
     'color' => 'success'
   ],
   'categorias' => [
-    'nombre' => 'CategorÃ­as',
+    'nombre' => 'Categorías',
     'tabla' => 'categorias',
     'campo_nombre' => 'nombre',
     'icono' => 'bi-tags',
@@ -69,12 +69,12 @@ $pagina = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $por_pagina = 10;
 $offset = ($pagina - 1) * $por_pagina;
 
-// ====== Query base dinÃ¡mica ======
+// ====== Query base dinámica ======
 $sqlBase = "FROM {$entidad_config['tabla']} e";
 $params = [];
 $types = "";
 
-// CondiciÃ³n base
+// Condición base
 $sqlBase .= " WHERE 1=1";
 
 // Busqueda
@@ -134,7 +134,7 @@ if ($entidad_seleccionada === 'productos_servicios') {
   }
 }
 
-// Total pÃ¡ginas
+// Total páginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
@@ -143,7 +143,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 
 <head>
   <meta charset="UTF-8">
-  <title>CatÃ¡logo</title>
+  <title>Catálogo</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
@@ -189,12 +189,12 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <div class="breadcrumb-custom">
         <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
         <span>/</span>
-        <a href="<?= BASE_URL ?>/projects/list_project.php"> CÃ¡talogo del sistema</a>
+        <a href="<?= BASE_URL ?>/projects/list_project.php"> Cátalogo del sistema</a>
       </div>
 
       <div class="row align-items-end">
         <div class="col-lg-8">
-          <h1 class="hero-title">CÃ¡talogo del sistema</h1>
+          <h1 class="hero-title">Cátalogo del sistema</h1>
         </div>
       </div>
     </div>
@@ -207,7 +207,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     <div class="form-container">
 
       <div class="form-body">
-        <!-- Cards de SelecciÃ³n de Entidades -->
+        <!-- Cards de Selección de Entidades -->
         <div class="row mb-5">
           <?php
 
@@ -244,7 +244,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 
           <div id="table-container-wrapper">
 
-            <!-- Filtros EspecÃ­ficos por Entidad -->
+            <!-- Filtros Específicos por Entidad -->
             <?php
             if ($entidad_seleccionada === 'productos_servicios'): ?>
               <div class="mb-2">
@@ -267,9 +267,16 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             <?php
             endif; ?>
 
-            <!-- BotÃ³n de agregar -->
+            <!-- Botón de agregar -->
             <div class="d-flex justify-content-between mb-3">
               <span class="badge-num"><?= $totalRegistros ?> <?= strtolower($entidad_config['nombre']) ?></span>
+              <?php
+              if ($entidad_seleccionada === 'clientes'): ?>
+                <button class="btn btn-gray" type="button" onclick="historialCliente()">
+                  <i class="bi bi-clock-history"></i> Historial de Evaluaciones
+                </button>
+              <?php
+              endif; ?>
               <button class="button-56" type="button" onclick="agregarItem()">
                 <i class="bi bi-plus-circle"></i> Agregar <?= $entidad_config['nombre'] ?>
               </button>
@@ -326,23 +333,23 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                 endwhile; ?>
               </ul>
 
-              <!-- PaginaciÃ³n -->
+              <!-- Paginación -->
               <?php
               if ($totalPaginas > 1): ?>
 
                 <?php
-                $maxVisible = 10; // cantidad mÃ¡xima de nÃºmeros visibles
+                $maxVisible = 10; // cantidad máxima de números visibles
 
-                // Calcular bloque actual de 10 pÃ¡ginas
+                // Calcular bloque actual de 10 páginas
                 $bloqueActual = ceil($pagina / $maxVisible);
                 $inicio = (($bloqueActual - 1) * $maxVisible) + 1;
                 $fin = min($inicio + $maxVisible - 1, $totalPaginas);
                 ?>
 
-                <nav aria-label="PaginaciÃ³n">
+                <nav aria-label="Paginación">
                   <ul class="pagination justify-content-center mt-3">
 
-                    <!-- BotÃ³n Anterior -->
+                    <!-- Botón Anterior -->
                     <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
                       <a class="page-link"
                         href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&proveedor=<?= urlencode($proveedor_id) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $pagina - 1 ?>"
@@ -351,7 +358,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                       </a>
                     </li>
 
-                    <!-- NÃºmeros de pÃ¡gina (solo 10 visibles) -->
+                    <!-- Números de página (solo 10 visibles) -->
                     <?php
                     for ($i = $inicio; $i <= $fin; $i++): ?>
                       <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
@@ -363,7 +370,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                     <?php
                     endfor; ?>
 
-                    <!-- BotÃ³n Siguiente -->
+                    <!-- Botón Siguiente -->
                     <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
                       <a class="page-link"
                         href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&proveedor=<?= urlencode($proveedor_id) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $pagina + 1 ?>"
@@ -397,7 +404,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     let entidadActual = '<?= $entidad_seleccionada ?>';
     const proveedoresOptions = `<?= $proveedoresOptions ?>`;
 
-    // Inicializar al cargar la pÃ¡gina
+    // Inicializar al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
       const contenidoPlegable = document.getElementById('contenido-plegable');
       const localEntidad = contenidoPlegable?.getAttribute('data-entidad-actual');
@@ -432,7 +439,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         .then(res => res.text())
         .then(data => {
           Swal.fire({
-            title: `InformaciÃ³n del ${document.title.split(' ')[0]}`,
+            title: `Información del ${document.title.split(' ')[0]}`,
             html: `<div class="swal-info-card">${data}</div>`,
             width: 600,
             showCloseButton: true,
@@ -441,14 +448,14 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         })
         .catch(error => {
           console.error('Error:', error);
-          Swal.fire('Error', 'No se pudo cargar la informaciÃ³n', 'error');
+          Swal.fire('Error', 'No se pudo cargar la información', 'error');
         });
     }
 
     function agregarItem() {
       let formHtml = '';
 
-      // Formulario dinÃ¡mico segÃºn la entidad
+      // Formulario dinámico según la entidad
       switch (entidadActual) {
         case 'productos_servicios':
           formHtml = `
@@ -465,7 +472,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <input type="text" class="form-control" name="nombre" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">DescripciÃ³n</label>
+                        <label class="form-label">Descripción</label>
                         <textarea class="form-control" name="descripcion"></textarea>
                     </div>
                 </form>
@@ -475,7 +482,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
           formHtml = `
                 <form id="formAgregarItem">
                     <div class="mb-2">
-                        <label class="form-label">RazÃ³n Social <span class="text-danger">*</span></label>
+                        <label class="form-label">Razón Social <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="razon_social" required>
                     </div>
                     <div class="mb-2">
@@ -487,7 +494,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <input type="text" class="form-control" name="rfc" maxlength="15">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">TelÃ©fono</label>
+                        <label class="form-label">Teléfono</label>
                         <input type="text" class="form-control" name="telefono">
                     </div>
                     <div class="mb-2">
@@ -495,7 +502,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <input type="email" class="form-control" name="email">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">DirecciÃ³n</label>
+                        <label class="form-label">Dirección</label>
                         <textarea class="form-control" name="direccion" rows="3"></textarea>
                     </div>
                     <div class="mb-2">
@@ -517,11 +524,15 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <input type="text" class="form-control" name="nombre_abreviado">
                     </div>
                     <div class="mb-2">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+                    <div class="mb-2">
                         <label class="form-label">RFC</label>
                         <input type="text" class="form-control" name="rfc" maxlength="15">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">DirecciÃ³n</label>
+                        <label class="form-label">Dirección</label>
                         <textarea class="form-control" name="direccion" rows="3"></textarea>
                     </div>
                 </form>
@@ -545,7 +556,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <input type="text" class="form-control" name="nombre" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">DescripciÃ³n</label>
+                        <label class="form-label">Descripción</label>
                         <textarea class="form-control" name="descripcion"></textarea>
                     </div>
                 </form>
@@ -567,7 +578,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             .then(res => res.json())
             .then(data => {
               if (data.status === 'success') {
-                Swal.fire("Â¡Ã‰xito!", data.message, "success")
+                Swal.fire("¡Éxito!", data.message, "success")
                   .then(() => location.reload());
               } else {
                 Swal.showValidationMessage(data.message || "Error al guardar");
@@ -575,7 +586,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             })
             .catch(error => {
               console.error('Error:', error);
-              Swal.showValidationMessage("Error de conexiÃ³n");
+              Swal.showValidationMessage("Error de conexión");
             });
         }
       });
@@ -595,7 +606,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 
           let formHtml = '';
 
-          // Formularios dinÃ¡micos segÃºn la entidad
+          // Formularios dinámicos según la entidad
           switch (entidadActual) {
             case 'productos_servicios':
               formHtml = `
@@ -613,7 +624,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                                 <input type="text" class="form-control" name="nombre" value="${data.nombre || ''}" required>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">DescripciÃ³n</label>
+                                <label class="form-label">Descripción</label>
                                 <textarea class="form-control" name="descripcion">${data.descripcion || ''}</textarea>
                             </div>
                         </form>
@@ -626,7 +637,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             <input type="hidden" name="id" value="${data.id ?? ''}">
 
             <div class="mb-2">
-                <label class="form-label">RazÃ³n Social <span class="text-danger">*</span></label>
+                <label class="form-label">Razón Social <span class="text-danger">*</span></label>
                 <input type="text" class="form-control"
                        name="razon_social"
                        value="${data.razon_social ?? ''}"
@@ -649,7 +660,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             </div>
 
             <div class="mb-2">
-                <label class="form-label">TelÃ©fono</label>
+                <label class="form-label">Teléfono</label>
                 <input type="text" class="form-control"
                        name="telefono"
                        value="${data.telefono ?? ''}">
@@ -663,7 +674,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             </div>
 
             <div class="mb-2">
-                <label class="form-label">DirecciÃ³n</label>
+                <label class="form-label">Dirección</label>
                 <textarea class="form-control"
                           name="direccion"
                           rows="3">${data.direccion ?? ''}</textarea>
@@ -700,7 +711,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                                 <input type="text" class="form-control" name="nombre" value="${data.nombre || ''}" required>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">DescripciÃ³n</label>
+                                <label class="form-label">Descripción</label>
                                 <textarea class="form-control" name="descripcion">${data.descripcion || ''}</textarea>
                             </div>
                         </form>
@@ -716,7 +727,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                                 <input type="text" class="form-control" name="nombre" value="${data.nombre || ''}" required>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">DescripciÃ³n</label>
+                                <label class="form-label">Descripción</label>
                                 <textarea class="form-control" name="descripcion">${data.descripcion || ''}</textarea>
                             </div>
                         </form>
@@ -736,11 +747,15 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                                 <input type="text" class="form-control" name="nombre_abreviado" value="${data.nombre_abreviado || ''}">
                             </div>
                             <div class="mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" value="${data.email || ''}">
+                            </div>
+                            <div class="mb-2">
                                 <label class="form-label">RFC</label>
                                 <input type="text" class="form-control" name="rfc" value="${data.rfc || ''}" maxlength="15">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">DirecciÃ³n</label>
+                                <label class="form-label">Dirección</label>
                                 <textarea class="form-control" name="direccion" rows="3">${data.direccion || ''}</textarea>
                             </div>
                         </form>
@@ -756,7 +771,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                                 <input type="text" class="form-control" name="nombre" value="${data.nombre || ''}" required>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">DescripciÃ³n</label>
+                                <label class="form-label">Descripción</label>
                                 <textarea class="form-control" name="descripcion">${data.descripcion || ''}</textarea>
                             </div>
                         </form>
@@ -768,7 +783,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
               const proveedorSelect = document.querySelector('select[name="proveedor_id"]');
               if (proveedorSelect) {
                 proveedorSelect.value = data.proveedor_id;
-                console.log('Proveedor seleccionado automÃ¡ticamente:', data.proveedor_id);
+                console.log('Proveedor seleccionado automáticamente:', data.proveedor_id);
               } else {
                 setTimeout(configurarSelectProveedor, 50);
               }
@@ -797,7 +812,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                 .then(res => res.json())
                 .then(resp => {
                   if (resp.status === "success") {
-                    Swal.fire("Â¡Ã‰xito!", resp.message, "success")
+                    Swal.fire("¡Éxito!", resp.message, "success")
                       .then(() => location.reload());
                   } else {
                     Swal.showValidationMessage(resp.message || "Error al actualizar");
@@ -805,7 +820,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                 })
                 .catch(error => {
                   console.error('Error:', error);
-                  Swal.showValidationMessage("Error de conexiÃ³n: " + error.message);
+                  Swal.showValidationMessage("Error de conexión: " + error.message);
                 });
             }
           });
@@ -813,19 +828,19 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         })
         .catch(error => {
           console.error('Error:', error);
-          Swal.fire('Error', 'No se pudo cargar la informaciÃ³n', 'error');
+          Swal.fire('Error', 'No se pudo cargar la información', 'error');
         });
     }
 
     function eliminarItem(id) {
       Swal.fire({
-        title: 'Â¿Seguro que deseas eliminar este registro?',
-        text: "Esta acciÃ³n no se puede deshacer",
+        title: '¿Seguro que deseas eliminar este registro?',
+        text: "Esta acción no se puede deshacer",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#525252',
-        confirmButtonText: 'SÃ­, eliminar',
+        confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
@@ -841,7 +856,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             })
             .catch(error => {
               console.error('Error:', error);
-              Swal.fire('Error', 'Error de conexiÃ³n', 'error');
+              Swal.fire('Error', 'Error de conexión', 'error');
             });
         }
       });
@@ -852,6 +867,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     function evaluarProveedor(id) {
       window.location.href = `evaluacion_proveedor.php?id=${id}`;
     }
+
+    function historialCliente(id) {
+      window.location.href = `historial_cliente.php?id=${id}`;
+    }
   </script>
 
   <?php
@@ -859,7 +878,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 
 </body>
 <script>
-  // LÃ³gica AJAX para list_catalog
+  // Lógica AJAX para list_catalog
   function initAJAX() {
     const searchForm = document.getElementById('search-form');
     const filterForm = document.getElementById('filter-form');
@@ -950,4 +969,3 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 </body>
 
 </html>
-

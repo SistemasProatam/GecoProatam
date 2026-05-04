@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // details_obra.php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -16,7 +16,7 @@ if ($obra_id <= 0) {
   exit;
 }
 
-// Obtener informaciÃ³n completa de la obra
+// Obtener información completa de la obra
 $sql_obra = "SELECT o.*, p.nombre_proyecto, p.numero_licitacion, p.numero_contrato,
              (SELECT COALESCE(SUM(costo_directo_utilizado), 0) FROM presupuesto_control 
               WHERE obra_id = o.id) as costo_directo_utilizado,
@@ -42,7 +42,7 @@ $costo_disponible = $obra['costo_directo'] - $obra['costo_directo_utilizado'];
 $porcentaje_utilizado = $obra['costo_directo'] > 0 ?
   ($obra['costo_directo_utilizado'] / $obra['costo_directo']) * 100 : 0;
 
-// Obtener catÃ¡logos de la obra
+// Obtener catálogos de la obra
 $sql_catalogos = "SELECT * FROM catalogos WHERE obra_id = ? ORDER BY fecha_creacion DESC";
 $stmt_catalogos = $conn->prepare($sql_catalogos);
 $stmt_catalogos->bind_param("i", $obra_id);
@@ -237,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           break;
         }
 
-        // Nombre del usuario en sesiÃ³n (ajusta segÃºn tu sistema de sesiones)
+        // Nombre del usuario en sesión (ajusta según tu sistema de sesiones)
         $usuarioNombre = $_SESSION['nombre_completo']
           ?? ($_SESSION['nombres'] ?? 'Usuario del sistema');
 
@@ -273,9 +273,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               );
             }
             $enviado = true;
-            error_log("Alerta de exceso enviada a SubdirecciÃ³n - Obra ID: {$oid}");
+            error_log("Alerta de exceso enviada a Subdirección - Obra ID: {$oid}");
           } else {
-            error_log("No se encontrÃ³ Subdirector activo con correo - Obra ID: {$oid}");
+            error_log("No se encontró Subdirector activo con correo - Obra ID: {$oid}");
           }
         } catch (Exception $e) {
           error_log("Error al enviar alerta de exceso: " . $e->getMessage());
@@ -285,8 +285,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           'success' => true,
           'enviado' => $enviado,
           'message' => $enviado
-            ? 'NotificaciÃ³n enviada a SubdirecciÃ³n'
-            : 'Subcontrato guardado. No se encontrÃ³ Subdirector con correo registrado.'
+            ? 'Notificación enviada a Subdirección'
+            : 'Subcontrato guardado. No se encontró Subdirector con correo registrado.'
         ]);
         break;
 
@@ -1304,7 +1304,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
         </div>
       </div>
 
-      <!-- EstadÃ­sticas de Presupuesto -->
+      <!-- Estadísticas de Presupuesto -->
       <div class="budget-stats">
         <div class="budget-stat">
           <div class="budget-stat-label">Costo Directo</div>
@@ -1327,18 +1327,18 @@ include __DIR__ . "/../includes/navbar.php"; ?>
       <!-- INFO PANELS -->
       <div class="info-grid gap-4">
 
-        <!-- InformaciÃ³n General -->
+        <!-- Información General -->
         <div class="info-panel">
           <div class="panel-header">
             <div class="panel-icon">
               <i class="bi bi-info-circle"></i>
             </div>
-            <h4>InformaciÃ³n General</h4>
+            <h4>Información General</h4>
           </div>
 
           <ul class="info-list">
             <li class="info-item">
-              <span class="info-label">NÃºmero de Obra</span>
+              <span class="info-label">Número de Obra</span>
               <span class="info-value"><?= htmlspecialchars($obra['numero_obra']) ?></span>
             </li>
             <li class="info-item">
@@ -1346,7 +1346,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
               <span class="info-value"><?= htmlspecialchars($obra['nombre_proyecto']) ?></span>
             </li>
             <li class="info-item">
-              <span class="info-label">LicitaciÃ³n</span>
+              <span class="info-label">Licitación</span>
               <span class="info-value"><?= htmlspecialchars($obra['numero_licitacion']) ?></span>
             </li>
             <li class="info-item">
@@ -1358,19 +1358,19 @@ include __DIR__ . "/../includes/navbar.php"; ?>
               <span class="info-value"><?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?></span>
             </li>
             <li class="info-item">
-              <span class="info-label">DescripciÃ³n</span>
+              <span class="info-label">Descripción</span>
               <span class="info-value"><?= htmlspecialchars($obra['descripcion']) ?></span>
             </li>
           </ul>
         </div>
 
-        <!-- InformaciÃ³n Financiera -->
+        <!-- Información Financiera -->
         <div class="info-panel">
           <div class="panel-header">
             <div class="panel-icon">
               <i class="bi bi-cash-stack"></i>
             </div>
-            <h4>InformaciÃ³n Financiera</h4>
+            <h4>Información Financiera</h4>
           </div>
 
           <ul class="info-list">
@@ -1386,12 +1386,12 @@ include __DIR__ . "/../includes/navbar.php"; ?>
         </div>
       </div>
 
-      <!-- CatÃ¡logos -->
+      <!-- Catálogos -->
       <div class="works-section">
 
         <div class="section-header">
           <div class="section-title-group">
-            <h4>CatÃ¡logo</h4>
+            <h4>Catálogo</h4>
           </div>
         </div>
 
@@ -1420,12 +1420,12 @@ endif; ?>
                       </a>
                       <button class="btn-ed"
                         onclick="editarCatalogo(<?= $catalogo['id'] ?>)"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar CatÃ¡logo">
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Catálogo">
                         <i class="bi bi-pencil"></i>
                       </button>
                       <button class="btn-del"
                         onclick="eliminarCatalogo(<?= $catalogo['id'] ?>, <?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar CatÃ¡logo">
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Catálogo">
                         <i class="bi bi-trash3"></i>
                       </button>
                     </div>
@@ -1438,10 +1438,10 @@ endwhile; ?>
 else: ?>
             <div class="text-center text-muted py-4">
               <i class="bi bi-folder" style="font-size: 3rem;"></i>
-              <p class="mt-2">No hay catÃ¡logos registrados</p>
+              <p class="mt-2">No hay catálogos registrados</p>
               <button class="btn btn-success"
                 onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')">
-                <i class="bi bi-plus-circle"></i> Crear Primer CatÃ¡logo
+                <i class="bi bi-plus-circle"></i> Crear Primer Catálogo
               </button>
             </div>
           <?php
@@ -1619,7 +1619,7 @@ endif; ?>
       <div style="font-size:.85rem;color:#475569;margin-bottom:14px;" id="sc-exceso-detalle"></div>
       <div style="background:rgba(232,68,90,.06);border:1px solid rgba(232,68,90,.2);border-radius:8px;padding:12px 14px;font-size:.82rem;color:#c0392b;margin-bottom:16px;">
         <i class="bi bi-envelope me-1"></i>
-        Se notificarÃ¡ a <strong>SubdirecciÃ³n</strong> por correo electrÃ³nico sobre este aumento en el valor de los subcontratos.
+        Se notificará a <strong>Subdirección</strong> por correo electrónico sobre este aumento en el valor de los subcontratos.
       </div>
       <div class="sc-fa">
         <button class="btn-sc-s" onclick="scCancelarExceso()">Cancelar</button>
@@ -1638,7 +1638,7 @@ endif; ?>
       scExcesoCallback = callback;
       var exceso = nuevaSuma - costoDirecto;
       scEl('sc-exceso-detalle').innerHTML =
-        '<p>La suma total de subcontratos (<strong>' + scFmt(nuevaSuma) + '</strong>) superarÃ¡ el costo directo de la obra (<strong>' + scFmt(costoDirecto) + '</strong>).</p>' +
+        '<p>La suma total de subcontratos (<strong>' + scFmt(nuevaSuma) + '</strong>) superará el costo directo de la obra (<strong>' + scFmt(costoDirecto) + '</strong>).</p>' +
         '<p>Exceso: <strong style="color:#c0392b">' + scFmt(exceso) + '</strong></p>';
       scEl('sc-modal-exceso').classList.add('open');
     }
@@ -1650,13 +1650,13 @@ endif; ?>
 
     function scConfirmarExceso() {
       scEl('sc-modal-exceso').classList.remove('open');
-      // Enviar notificaciÃ³n por correo
+      // Enviar notificación por correo
       scAjax({
         action: 'notificar_exceso_subcontratos',
         obra_id: SC_OBRA_ID
       }, function(e, r) {
-        if (!r.success) scToast('Aviso: no se pudo enviar el correo a subdirecciÃ³n', 'error');
-        else scToast('NotificaciÃ³n enviada a subdirecciÃ³n', 'info');
+        if (!r.success) scToast('Aviso: no se pudo enviar el correo a subdirección', 'error');
+        else scToast('Notificación enviada a subdirección', 'info');
       });
       // Ejecutar el guardado
       if (scExcesoCallback) scExcesoCallback();
@@ -1673,7 +1673,7 @@ endif; ?>
       });
     });
 
-    // FunciÃ³n para editar obra
+    // Función para editar obra
     function editarObra(id) {
       fetch(`edit_obra.php?id=${id}`)
         .then(res => {
@@ -1700,7 +1700,7 @@ endif; ?>
                     </div>
 
                     <div class="mb-2">
-                      <label class="form-label">NÃºmero de Obra</label>
+                      <label class="form-label">Número de Obra</label>
                       <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
                     </div>
 
@@ -1710,8 +1710,8 @@ endif; ?>
                     </div>
 
                     <div class="mb-2">
-                      <label class="form-label">DescripciÃ³n</label>
-                      <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos y caracterÃ­sticas de la obra...">${data.descripcion || ''}</textarea>
+                      <label class="form-label">Descripción</label>
+                      <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos y características de la obra...">${data.descripcion || ''}</textarea>
                     </div>
 
                     <div class="row">
@@ -1753,13 +1753,13 @@ endif; ?>
                 .then(res => res.json())
                 .then(resp => {
                   if (resp.status === "success") {
-                    Swal.fire("Â¡Ã‰xito!", "Obra actualizada correctamente", "success")
+                    Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
                       .then(() => location.reload());
                   } else {
                     Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
                   }
                 })
-                .catch(() => Swal.showValidationMessage("Error de conexiÃ³n"));
+                .catch(() => Swal.showValidationMessage("Error de conexión"));
             }
           });
         })
@@ -1769,7 +1769,7 @@ endif; ?>
         });
     }
 
-    // FunciÃ³n para gestionar archivos de obra
+    // Función para gestionar archivos de obra
     function gestionarArchivos(obraId) {
       fetch(`get_archivos_obra.php?obra_id=${obraId}`)
         .then(res => res.json())
@@ -1779,9 +1779,9 @@ endif; ?>
                   <form id="formSubirArchivo" enctype="multipart/form-data">
                     <input type="hidden" name="obra_id" value="${obraId}">
                     <div class="mb-2">
-                      <label class="form-label">Subir archivo PDF (MÃ¡ximo 5 archivos)</label>
+                      <label class="form-label">Subir archivo PDF (Máximo 5 archivos)</label>
                       <input type="file" name="archivo" class="form-control" accept=".pdf" required>
-                      <small class="text-muted">TamaÃ±o mÃ¡ximo: 10MB</small>
+                      <small class="text-muted">Tamaño máximo: 10MB</small>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm" onclick="subirArchivoObra()">
                       <i class="bi bi-upload"></i> Subir PDF
@@ -1819,7 +1819,7 @@ endif; ?>
           }
 
           Swal.fire({
-            title: 'GestiÃ³n de Archivos PDF',
+            title: 'Gestión de Archivos PDF',
             html: archivosHtml,
             width: 700,
             showCloseButton: true,
@@ -1832,7 +1832,7 @@ endif; ?>
         });
     }
 
-    // FunciÃ³n para subir archivo de obra
+    // Función para subir archivo de obra
     function subirArchivoObra() {
       const form = document.getElementById('formSubirArchivo');
       const formData = new FormData(form);
@@ -1844,7 +1844,7 @@ endif; ?>
         .then(res => res.json())
         .then(data => {
           if (data.status === 'success') {
-            Swal.fire('Â¡Ã‰xito!', data.message, 'success')
+            Swal.fire('¡Éxito!', data.message, 'success')
               .then(() => {
                 const obraId = formData.get('obra_id');
                 gestionarArchivos(obraId);
@@ -1859,14 +1859,14 @@ endif; ?>
         });
     }
 
-    // FunciÃ³n para eliminar archivo de obra
+    // Función para eliminar archivo de obra
     function eliminarArchivoObra(archivoId, obraId) {
       Swal.fire({
-        title: 'Â¿Eliminar archivo?',
-        text: 'Esta acciÃ³n no se puede deshacer',
+        title: '¿Eliminar archivo?',
+        text: 'Esta acción no se puede deshacer',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'SÃ­, eliminar',
+        confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#dc3545'
       }).then((result) => {
@@ -1883,7 +1883,7 @@ endif; ?>
             .then(res => res.json())
             .then(data => {
               if (data.status === 'success') {
-                Swal.fire('Â¡Eliminado!', data.message, 'success')
+                Swal.fire('¡Eliminado!', data.message, 'success')
                   .then(() => gestionarArchivos(obraId));
               } else {
                 Swal.fire('Error', data.message, 'error');
@@ -1897,25 +1897,25 @@ endif; ?>
       });
     }
 
-    // FunciÃ³n para ver PDF
+    // Función para ver PDF
     function verPDF(rutaArchivo) {
       window.open(rutaArchivo, '_blank');
     }
 
-    // FunciÃ³n para gestionar catÃ¡logos (necesaria para el botÃ³n)
+    // Función para gestionar catálogos (necesaria para el botón)
     function gestionarCatalogos(obraId, obraNombre) {
-      // Esta funciÃ³n debe estar definida en catalogo-obras.js
+      // Esta función debe estar definida en catalogo-obras.js
       if (typeof gestionarCatalogos === 'function') {
         gestionarCatalogos(obraId, obraNombre);
       } else {
-        console.error('FunciÃ³n gestionarCatalogos no disponible');
-        // Recargar la pÃ¡gina como fallback
+        console.error('Función gestionarCatalogos no disponible');
+        // Recargar la página como fallback
         location.reload();
       }
     }
   </script>
 
-  <!-- Cargar subcontratos al cargar la pÃ¡gina -->
+  <!-- Cargar subcontratos al cargar la página -->
   <script>
     var SC_OBRA_ID = <?= (int)$obra_id ?>;
     var scLista = [],
@@ -2201,7 +2201,7 @@ endif; ?>
 
       // Calcular suma total de subcontratos existentes (excluyendo el que se edita)
       var sumaActual = scLista.reduce(function(s, x) {
-        if (id && x.id == id) return s; // excluir el que se estÃ¡ editando
+        if (id && x.id == id) return s; // excluir el que se está editando
         return s + parseFloat(x.total_estimado || 0) + parseFloat(x.total_extraordinarios || 0);
       }, 0);
 
@@ -2209,9 +2209,9 @@ endif; ?>
       var costoDirecto = <?= (float)$obra['costo_directo'] ?>;
 
       if (nuevaSuma > costoDirecto) {
-        // Mostrar modal de notificaciÃ³n antes de guardar
+        // Mostrar modal de notificación antes de guardar
         scMostrarModalExceso(nuevaSuma, costoDirecto, function() {
-          // El usuario confirmÃ³, continuar guardando
+          // El usuario confirmó, continuar guardando
           scEjecutarGuardar(id, proveedor_id, total, pct, desc);
         });
       } else {

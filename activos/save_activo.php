@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -8,12 +8,12 @@ preventCaching();
 require_once __DIR__ . "/../conexion.php";
 require_once __DIR__ . "/qr_generator.php";
 
-// â”€â”€â”€ CONSTANTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CONSTANTES ─────────────────────────────────────────────────────────────
 define('MAX_DOCUMENTO_MB', 10);           // 10 MB por documento normal
-define('MAX_CATALOGO_MB', 1024);          // 1 GB para catÃ¡logo de refacciones
-define('MAX_IMAGEN_MB', 10);              // 10 MB para imÃ¡genes
+define('MAX_CATALOGO_MB', 1024);          // 1 GB para catálogo de refacciones
+define('MAX_IMAGEN_MB', 10);              // 10 MB para imágenes
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ───────────────────────────────────────────────────────────────
 
 function sanitize($val) {
     return isset($val) ? trim($val) : null;
@@ -30,15 +30,15 @@ function subirArchivo($inputName, $carpetaDestino, $maxMB = MAX_DOCUMENTO_MB) {
     }
     $file = $_FILES[$inputName];
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        error_log("Error subiendo {$inputName}: cÃ³digo " . $file['error']);
+        error_log("Error subiendo {$inputName}: código " . $file['error']);
         return null;
     }
     
     $maxBytes = $maxMB * 1024 * 1024;
     if ($maxMB > 0 && $file['size'] > $maxBytes) {
         $sizeMB = round($file['size'] / 1024 / 1024, 2);
-        error_log("Archivo {$inputName} supera {$maxMB} MB. TamaÃ±o: {$sizeMB} MB");
-        $_SESSION['upload_errors'][] = "El archivo '" . $file['name'] . "' excede el lÃ­mite de {$maxMB} MB";
+        error_log("Archivo {$inputName} supera {$maxMB} MB. Tamaño: {$sizeMB} MB");
+        $_SESSION['upload_errors'][] = "El archivo '" . $file['name'] . "' excede el límite de {$maxMB} MB";
         return null;
     }
     
@@ -65,7 +65,7 @@ function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = MAX_IMAGEN_M
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES[$inputName]['error'][$i] !== UPLOAD_ERR_OK) continue;
         if ($maxMB > 0 && $_FILES[$inputName]['size'][$i] > $maxMB * 1024 * 1024) {
-            error_log("Archivo mÃºltiple supera {$maxMB} MB: " . $_FILES[$inputName]['name'][$i]);
+            error_log("Archivo múltiple supera {$maxMB} MB: " . $_FILES[$inputName]['name'][$i]);
             continue;
         }
         $ext     = strtolower(pathinfo($_FILES[$inputName]['name'][$i], PATHINFO_EXTENSION));
@@ -82,7 +82,7 @@ function subirArchivoMultiple($inputName, $carpetaDestino, $maxMB = MAX_IMAGEN_M
     return $rutas;
 }
 
-// â”€â”€â”€ Generar cÃ³digo Ãºnico â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Generar código único ───────────────────────────────────────────────────
 
 function generarCodigo($conn, $tipo_id) {
     $stmt = $conn->prepare("SELECT prefijo FROM activo_tipos WHERE id = ?");
@@ -100,7 +100,7 @@ function generarCodigo($conn, $tipo_id) {
     return $prefijo . '-' . str_pad($siguiente, 4, '0', STR_PAD_LEFT);
 }
 
-// â”€â”€â”€ Recoger POST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Recoger POST ───────────────────────────────────────────────────────────
 
 $tipo_id         = (int)($_POST['tipo_id'] ?? 0);
 $nombre          = sanitize($_POST['nombre'] ?? '');
@@ -122,11 +122,11 @@ if (!$tipo_id || $nombre === '') {
 $codigo    = generarCodigo($conn, $tipo_id);
 $qr_token  = QRGenerator::generarToken();
 
-// â”€â”€â”€ Subir imagen principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Subir imagen principal ─────────────────────────────────────────────────
 
 $img_principal = subirArchivo('img_foto_principal', 'fotos', MAX_IMAGEN_MB);
 
-// â”€â”€â”€ Insertar activo principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Insertar activo principal ──────────────────────────────────────────────
 
 $sql = "INSERT INTO activos
         (tipo_id, codigo, nombre, condicion, responsable_id, departamento_id,
@@ -151,7 +151,7 @@ if (!$stmt->execute()) {
 
 $activo_id = $conn->insert_id;
 
-// â”€â”€â”€ Generar y guardar imagen QR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Generar y guardar imagen QR ────────────────────────────────────────────
 
 $qr_ruta = QRGenerator::generarYGuardar($qr_token);
 if ($qr_ruta) {
@@ -160,7 +160,7 @@ if ($qr_ruta) {
     $stmt_qr->execute();
 }
 
-// â”€â”€â”€ Detalles segÃºn tipo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Detalles según tipo ────────────────────────────────────────────────────
 
 $stmt_tipo = $conn->prepare("SELECT nombre FROM activo_tipos WHERE id = ?");
 $stmt_tipo->bind_param("i", $tipo_id);
@@ -173,7 +173,7 @@ function normTipo($s) {
 }
 $tipo_norm = normTipo($tipo_lower);
 
-// â”€â”€ VehÃ­culos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Vehículos ────────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'vehiculo') || str_contains($tipo_norm, 'vehiculos')) {
     $sql_v = "INSERT INTO vehiculos_detalle
               (activo_id, marca, modelo, anio, color, placa, vin, numero_motor,
@@ -213,7 +213,7 @@ if (str_contains($tipo_norm, 'vehiculo') || str_contains($tipo_norm, 'vehiculos'
     $stmt_v->execute();
 }
 
-// â”€â”€ Maquinaria â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Maquinaria ────────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'maquinaria')) {
     $foto_motor = subirArchivo('m_foto_motor', 'maquinaria', MAX_IMAGEN_MB);
     $sql_m = "INSERT INTO maquinaria_detalle
@@ -228,7 +228,7 @@ if (str_contains($tipo_norm, 'maquinaria')) {
     $stmt_m->execute();
 }
 
-// â”€â”€ Mobiliario â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Mobiliario ────────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'mobiliario')) {
     $sql_mob = "INSERT INTO mobiliario_detalle
                 (activo_id, marca, modelo, numero_items, medida_aprox,
@@ -248,7 +248,7 @@ if (str_contains($tipo_norm, 'mobiliario')) {
     $stmt_mob->execute();
 }
 
-// â”€â”€ Inmuebles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Inmuebles ─────────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'inmueble') || str_contains($tipo_norm, 'inmuebles')) {
     $sql_inm = "INSERT INTO inmuebles_detalle
                 (activo_id, tipo_inmueble, tipo_posesion, uso, direccion, coordenadas,
@@ -277,7 +277,7 @@ if (str_contains($tipo_norm, 'inmueble') || str_contains($tipo_norm, 'inmuebles'
     $stmt_inm->execute();
 }
 
-// â”€â”€ Herramientas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Herramientas ──────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'herramienta') || str_contains($tipo_norm, 'herramientas')) {
     $sql_h = "INSERT INTO herramientas_detalle
               (activo_id, marca, modelo, numero_serie, asignacion, ubicacion_fisica, descripcion)
@@ -293,7 +293,7 @@ if (str_contains($tipo_norm, 'herramienta') || str_contains($tipo_norm, 'herrami
     $stmt_h->execute();
 }
 
-// â”€â”€ TICs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── TICs ──────────────────────────────────────────────────────────────────────
 if (str_contains($tipo_norm, 'tic')) {
     $sql_t = "INSERT INTO tics_detalle
               (activo_id, marca, modelo, numero_serie, sistema_operativo, procesador,
@@ -321,7 +321,7 @@ if (str_contains($tipo_norm, 'tic')) {
     $stmt_t->execute();
 }
 
-// â”€â”€â”€ Documentos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Documentos ─────────────────────────────────────────────────────────────
 
 $docs = [
     'doc_factura'               => ['carpeta' => 'documentos', 'maxMB' => MAX_DOCUMENTO_MB, 'tipo' => 'factura'],
@@ -349,7 +349,7 @@ foreach ($docs as $inputName => $cfg) {
     }
 }
 
-// â”€â”€â”€ ImÃ¡genes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Imágenes ────────────────────────────────────────────────────────────────
 
 $stmt_img = $conn->prepare(
     "INSERT INTO activos_imagenes (activo_id, tipo_imagen, ruta_archivo, fecha_subida)
@@ -377,7 +377,7 @@ if ($foto_serie) {
     $stmt_img->execute();
 }
 
-// â”€â”€â”€ Documentos extra (fiscal + extra) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Documentos extra (fiscal + extra) ──────────────────────────────────────
 
 if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
     $total = count($_FILES['documentos']['name']);
@@ -413,7 +413,7 @@ if (isset($_FILES['documentos']) && !empty($_FILES['documentos']['name'][0])) {
     }
 }
 
-// â”€â”€â”€ Redirigir â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Redirigir ───────────────────────────────────────────────────────────────
 
 header("Location: details_activo.php?id={$activo_id}&success=1");
 exit;

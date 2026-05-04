@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../conexion.php";
 
 $requisicion_id = $_GET['requisicion_id'] ?? null;
 if (!$requisicion_id) {
-    echo json_encode(["error" => "Falta ID de requisiciÃ³n"]);
+    echo json_encode(["error" => "Falta ID de requisición"]);
     exit;
 }
 

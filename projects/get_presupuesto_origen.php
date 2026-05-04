@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -13,7 +13,7 @@ function obtenerPresupuestoOrigen($proyecto_id, $obra_id = null) {
     global $conn;
     
     if ($obra_id) {
-        // Si hay obra especÃ­fica, usar su presupuesto
+        // Si hay obra específica, usar su presupuesto
         $sql = "SELECT * FROM presupuesto_control 
                 WHERE obra_id = ? AND proyecto_id = ?";
         $stmt = $conn->prepare($sql);
@@ -29,7 +29,7 @@ function obtenerPresupuestoOrigen($proyecto_id, $obra_id = null) {
         
         if ($row_check['total_obras'] > 0) {
             // Proyecto tiene obras, no se puede usar presupuesto directo del proyecto
-            return ['error' => 'Este proyecto tiene obras. Selecciona una obra especÃ­fica.'];
+            return ['error' => 'Este proyecto tiene obras. Selecciona una obra específica.'];
         } else {
             // Usar presupuesto del proyecto
             $sql = "SELECT * FROM presupuesto_control 
@@ -45,11 +45,11 @@ function obtenerPresupuestoOrigen($proyecto_id, $obra_id = null) {
     if ($result->num_rows > 0) {
         return $result->fetch_assoc();
     } else {
-        return ['error' => 'No se encontrÃ³ presupuesto para el origen especificado'];
+        return ['error' => 'No se encontró presupuesto para el origen especificado'];
     }
 }
 
-// Uso en Ã³rdenes de compra
+// Uso en órdenes de compra
 if (isset($_GET['proyecto_id'])) {
     $proyecto_id = $_GET['proyecto_id'];
     $obra_id = $_GET['obra_id'] ?? null;

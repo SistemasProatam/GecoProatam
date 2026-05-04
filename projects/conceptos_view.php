@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -10,14 +10,14 @@ $obra_id     = (int)($_GET['obra_id']     ?? 0);
 
 if ($catalogo_id <= 0) { header("Location: list_obras.php"); exit; }
 
-// â”€â”€ CatÃ¡logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Catálogo ─────────────────────────────────────────────────────
 $stmt = $conn->prepare("SELECT * FROM catalogos WHERE id = ?");
 $stmt->bind_param("i", $catalogo_id);
 $stmt->execute();
 $catalogo = $stmt->get_result()->fetch_assoc();
 if (!$catalogo) { header("Location: list_obras.php"); exit; }
 
-// â”€â”€ Obra â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Obra ─────────────────────────────────────────────────────────
 $obra_info = null;
 if ($obra_id > 0) {
     $so = $conn->prepare("SELECT * FROM obras WHERE id = ?");
@@ -26,11 +26,11 @@ if ($obra_id > 0) {
     $obra_info = $so->get_result()->fetch_assoc();
 }
 
-// â”€â”€ Verificar tablas opcionales â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Verificar tablas opcionales ───────────────────────────────────
 $tiene_ordenes = $conn->query("SHOW TABLES LIKE 'orden_compra_items'")->num_rows > 0
               && $conn->query("SHOW TABLES LIKE 'ordenes_compra'")->num_rows > 0;
 
-// â”€â”€ EstadÃ­sticas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Estadísticas ──────────────────────────────────────────────────
 if ($tiene_ordenes) {
     $sq = "SELECT
                COUNT(c.id)                        AS total_conceptos,
@@ -55,7 +55,7 @@ $ss->bind_param("i", $catalogo_id);
 $ss->execute();
 $stats = $ss->get_result()->fetch_assoc();
 
-// â”€â”€ Obtener Ã¡rbol de nodos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Obtener árbol de nodos ────────────────────────────────────────
 $sn = $conn->prepare(
     "SELECT id, parent_id, clave, titulo, nivel, sort_path
      FROM concepto_nodos
@@ -70,7 +70,7 @@ while ($n = $res_nodos->fetch_assoc()) {
     $nodos_por_id[(int)$n['id']] = $n + ['hijos' => [], 'conceptos' => []];
 }
 
-// â”€â”€ Obtener conceptos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Obtener conceptos ─────────────────────────────────────────────
 if ($tiene_ordenes) {
     $sq_c = "SELECT c.*, n.sort_path AS nodo_sort_path,
                     (SELECT COUNT(*) FROM orden_compra_items oci
@@ -107,7 +107,7 @@ while ($c = $res_c->fetch_assoc()) {
     }
 }
 
-// â”€â”€ Construir Ã¡rbol padre â†’ hijos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Construir árbol padre → hijos ─────────────────────────────────
 $raices = [];
 foreach ($nodos_por_id as $id => &$nodo) {
     $pid = $nodo['parent_id'] ? (int)$nodo['parent_id'] : null;
@@ -123,7 +123,7 @@ unset($nodo);
 // HELPERS DE RENDER
 // ================================================================
 
-/** Paleta visual por nivel â€” se cicla si hay mÃ¡s de 6 niveles */
+/** Paleta visual por nivel — se cicla si hay más de 6 niveles */
 function nivelEstilo(int $nivel): array {
     $paleta = [
         1 => ['bg' => '#1a3a5c', 'color' => '#ffffff', 'border' => '#1a3a5c', 'icon' => 'bi-folder-fill',      'fw' => 700, 'fs' => '1rem'],
@@ -152,15 +152,15 @@ function totalMontoNodo(array &$nodo): float {
 }
 
 /**
- * Renderiza un nodo y todo su subÃ¡rbol de forma recursiva.
- * Funciona para cualquier profundidad sin cambiar cÃ³digo.
+ * Renderiza un nodo y todo su subárbol de forma recursiva.
+ * Funciona para cualquier profundidad sin cambiar código.
  */
 function renderNodo(array &$nodo): void {
     global $catalogo_id, $catalogo, $obra_id, $obra_info;
 
     $nivel  = (int)$nodo['nivel'];
     $est    = nivelEstilo($nivel);
-    $indent = ($nivel - 1) * 18; // px de sangrÃ­a por nivel
+    $indent = ($nivel - 1) * 18; // px de sangría por nivel
     $t_items = totalItemsNodo($nodo);
     $t_monto = totalMontoNodo($nodo);
     ?>
@@ -367,7 +367,7 @@ endif; ?>
             <div class="mt-3">
                 <button class="btn btn-sm btn-outline-light" 
                         onclick="editarCatalogo(<?= $catalogo_id ?>, '<?= addslashes($catalogo['nombre_catalogo']) ?>', '<?= addslashes($catalogo['descripcion']) ?>')">
-                    <i class="bi bi-pencil-square me-1"></i> Editar InformaciÃ³n del CatÃ¡logo
+                    <i class="bi bi-pencil-square me-1"></i> Editar Información del Catálogo
                 </button>
             </div>
         </div>
@@ -375,12 +375,12 @@ endif; ?>
 
     <div class="content-wrapper">
 
-        <!-- ESTADÃSTICAS -->
+        <!-- ESTADÍSTICAS -->
         <div class="budget-dashboard">
             <div class="dashboard-header">
                 <div class="dashboard-title">
                     <div class="title-icon"><i class="bi bi-info-circle"></i></div>
-                    <h3>InformaciÃ³n General</h3>
+                    <h3>Información General</h3>
                 </div>
             </div>
             <div class="budget-stats">
@@ -389,7 +389,7 @@ endif; ?>
                     <div class="budget-stat-value"><?= $stats['total_conceptos'] ?></div>
                 </div>
                 <div class="budget-stat">
-                    <div class="budget-stat-label">Nodos en Ãrbol</div>
+                    <div class="budget-stat-label">Nodos en Árbol</div>
                     <div class="budget-stat-value"><?= $stats['total_nodos'] ?></div>
                 </div>
                 <div class="budget-stat">
@@ -412,7 +412,7 @@ endif; ?>
                         <h3>Conceptos</h3>
                     </div>
                     <select id="filtroItems" class="form-select form-select-sm" style="width:auto;">
-                        <option value="todos">â€” Todos â€”</option>
+                        <option value="todos">— Todos —</option>
                         <option value="conItems">Con items</option>
                         <option value="sinItems">Sin items</option>
                     </select>
@@ -434,18 +434,18 @@ endif; ?>
             <?php
 if (!empty($raices) || !empty($conceptos_sin_nodo)): ?>
 
-                <!-- ÃRBOL N NIVELES -->
+                <!-- ÁRBOL N NIVELES -->
                 <?php
 foreach ($raices as &$raiz): renderNodo($raiz); endforeach; ?>
 
-                <!-- SIN CATEGORÃA -->
+                <!-- SIN CATEGORÍA -->
                 <?php
 if (!empty($conceptos_sin_nodo)): ?>
                     <div class="mt-4">
                         <div class="nodo-header d-flex align-items-center gap-2 px-3 py-2 mb-2"
                              style="background:#f8fafc;border-left:4px solid #adb5bd;border-radius:0 6px 6px 0;">
                             <i class="bi bi-question-circle text-muted"></i>
-                            <span class="fw-semibold text-muted" style="font-size:.9rem;">Sin CategorÃ­a</span>
+                            <span class="fw-semibold text-muted" style="font-size:.9rem;">Sin Categoría</span>
                             <span class="badge bg-secondary ms-auto"><?= count($conceptos_sin_nodo) ?></span>
                         </div>
                         <?php
@@ -499,15 +499,15 @@ endif; ?>
                     <div id="editFormBody" class="d-none">
                         <input type="hidden" id="editId">
 
-                        <!-- IDENTIFICACIÃ“N -->
-                        <div class="sec-label"><i class="bi bi-tag me-1"></i>IdentificaciÃ³n</div>
+                        <!-- IDENTIFICACIÓN -->
+                        <div class="sec-label"><i class="bi bi-tag me-1"></i>Identificación</div>
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label fw-semibold">CÃ³digo <span class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold">Código <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="editCodigo">
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-semibold">NÃºm. Original</label>
+                                <label class="form-label fw-semibold">Núm. Original</label>
                                 <input type="text" class="form-control" id="editNumOrig">
                             </div>
                             <div class="col-md-6">
@@ -516,23 +516,23 @@ endif; ?>
                             </div>
                         </div>
                         <div class="mt-3">
-                            <label class="form-label fw-semibold">DescripciÃ³n</label>
+                            <label class="form-label fw-semibold">Descripción</label>
                             <textarea class="form-control" id="editDesc" rows="4"></textarea>
                         </div>
 
-                        <!-- JERARQUÃA -->
-                        <div class="sec-label mt-1"><i class="bi bi-diagram-3 me-1"></i>PosiciÃ³n en la JerarquÃ­a</div>
+                        <!-- JERARQUÍA -->
+                        <div class="sec-label mt-1"><i class="bi bi-diagram-3 me-1"></i>Posición en la Jerarquía</div>
                         <div class="alert alert-light border mb-3" style="font-size:.82rem;">
                             <i class="bi bi-info-circle-fill text-primary me-1"></i>
                             Escribe la <strong>clave del nodo padre</strong> al que pertenece este concepto.<br>
-                            Los segmentos se separan por <code>.</code> â€” cada segmento es un nivel.<br>
+                            Los segmentos se separan por <code>.</code> — cada segmento es un nivel.<br>
                             <strong>Ejemplos:</strong>
                             <code>CIMENTACION</code> &bull;
                             <code>PRELIMINARES</code> &bull;
                             <code>I.2</code> &bull;
                             <code>I.2.1</code> &bull;
                             <code>OBRAS.POZO.EQUIPAMIENTO</code><br>
-                            Si el nodo no existe se crea automÃ¡ticamente.
+                            Si el nodo no existe se crea automáticamente.
                         </div>
                         <div class="row g-3 align-items-end">
                             <div class="col-md-8">
@@ -540,7 +540,7 @@ endif; ?>
                                 <input type="text" class="form-control font-monospace"
                                        id="editNodoClave"
                                        placeholder="Ej: CIMENTACION  |  I.2  |  OBRAS.POZO.EQUIP">
-                                <div class="form-text">Deja vacÃ­o para dejar el concepto sin categorÃ­a.</div>
+                                <div class="form-text">Deja vacío para dejar el concepto sin categoría.</div>
                             </div>
                             <div class="col-md-4">
                                 <div id="nivelPreview"
@@ -551,12 +551,12 @@ endif; ?>
                             </div>
                         </div>
 
-                        <!-- MEDICIÃ“N Y COSTOS -->
-                        <div class="sec-label mt-1"><i class="bi bi-currency-dollar me-1"></i>MediciÃ³n y Costos</div>
+                        <!-- MEDICIÓN Y COSTOS -->
+                        <div class="sec-label mt-1"><i class="bi bi-currency-dollar me-1"></i>Medición y Costos</div>
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Unidad</label>
-                                <input type="text" class="form-control" id="editUnidad" placeholder="pza, m, m2, kgâ€¦">
+                                <input type="text" class="form-control" id="editUnidad" placeholder="pza, m, m2, kg…">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Cantidad</label>
@@ -579,7 +579,7 @@ endif; ?>
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
                                 onclick="calcularImporte()">
-                            <i class="bi bi-calculator me-1"></i>Calcular importe (Cant Ã— P.U.)
+                            <i class="bi bi-calculator me-1"></i>Calcular importe (Cant × P.U.)
                         </button>
 
                         <!-- PERIODO -->
@@ -627,7 +627,7 @@ endif; ?>
     const obraNombre     = '<?= $obra_info ? addslashes($obra_info['nombre_obra']) : '' ?>';
     const API            = 'catalogos_manager.php';
 
-    // â”€â”€ Filtro â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Filtro ───────────────────────────────────────────────────
     function toggleFilter(tipo) {
         document.querySelectorAll('.concepto-item').forEach(el => {
             const ti = el.dataset.tieneItems === 'si';
@@ -637,16 +637,16 @@ endif; ?>
         });
     }
 
-    // â”€â”€ Wrappers funciones externas (catalogo-obras.js) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Wrappers funciones externas (catalogo-obras.js) ──────────
     function mostrarFormConcepto() {
         typeof mostrarFormularioConcepto === 'function'
             ? mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId, obraNombre)
-            : Swal.fire('Error', 'FunciÃ³n no disponible. Recarga la pÃ¡gina.', 'error');
+            : Swal.fire('Error', 'Función no disponible. Recarga la página.', 'error');
     }
     function importarExcelConceptos() {
         typeof mostrarImportarExcelConceptos === 'function'
             ? mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId, obraNombre)
-            : Swal.fire('Error', 'FunciÃ³n no disponible. Recarga la pÃ¡gina.', 'error');
+            : Swal.fire('Error', 'Función no disponible. Recarga la página.', 'error');
     }
     function eliminarConceptoView(cid, catId, catNombre, oId, oNombre) {
         typeof eliminarConcepto === 'function' &&
@@ -662,16 +662,16 @@ endif; ?>
             verDetalleConcepto(cid, codigo, catalogoId, catalogoNombre, obraId, obraNombre);
     }
 
-    // â”€â”€ Preview nivel mientras se escribe la clave â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Preview nivel mientras se escribe la clave ───────────────
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('editNodoClave').addEventListener('input', function () {
             const val   = this.value.trim();
             const nivel = val === '' ? null : val.split('.').length;
-            document.getElementById('nivelNum').textContent = nivel ? nivel : 'â€”';
+            document.getElementById('nivelNum').textContent = nivel ? nivel : '—';
         });
     });
 
-    // â”€â”€ MODAL EDITAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── MODAL EDITAR ─────────────────────────────────────────────
     function abrirModalEditar(conceptoId) {
         // Resetear estado
         document.getElementById('editSpinner').classList.remove('d-none');
@@ -707,7 +707,7 @@ endif; ?>
 
                 // Preview nivel
                 const nk = c.nodo_clave || '';
-                document.getElementById('nivelNum').textContent  = nk ? nk.split('.').length : 'â€”';
+                document.getElementById('nivelNum').textContent  = nk ? nk.split('.').length : '—';
                 document.getElementById('editCodLabel').textContent = c.codigo_concepto || '';
                 document.getElementById('editFormBody').classList.remove('d-none');
             })
@@ -723,7 +723,7 @@ endif; ?>
         if (q > 0 && pu > 0) {
             document.getElementById('editImporte').value = (q * pu).toFixed(2);
         } else {
-            Swal.fire('AtenciÃ³n', 'Ingresa Cantidad y Precio Unitario primero.', 'warning');
+            Swal.fire('Atención', 'Ingresa Cantidad y Precio Unitario primero.', 'warning');
         }
     }
 
@@ -731,13 +731,13 @@ endif; ?>
         const codigo = document.getElementById('editCodigo').value.trim();
         const nombre = document.getElementById('editNombre').value.trim();
         if (!codigo || !nombre) {
-            Swal.fire('AtenciÃ³n', 'El CÃ³digo y el Nombre son obligatorios.', 'warning');
+            Swal.fire('Atención', 'El Código y el Nombre son obligatorios.', 'warning');
             return;
         }
 
         const btn = document.getElementById('btnGuardar');
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardandoâ€¦';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
 
         const fd = new FormData();
         fd.append('action',          'actualizar_concepto');

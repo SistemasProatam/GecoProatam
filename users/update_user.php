@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../conexion.php";
 header('Content-Type: application/json');
 
-// FunciÃ³n para subir archivos
+// Función para subir archivos
 function subirArchivo($file, $campo, $idUsuario)
 {
     if (!isset($file['name']) || empty($file['name'])) {
@@ -39,7 +39,7 @@ $contacto_emergencia_nombre = trim($_POST['contacto_emergencia_nombre'] ?? '');
 $contacto_emergencia_parentesco = trim($_POST['contacto_emergencia_parentesco'] ?? '');
 $contacto_emergencia_telefono = trim($_POST['contacto_emergencia_telefono'] ?? '');
 
-// ValidaciÃ³n obligatoria
+// Validación obligatoria
 if (!$departamento_id || $departamento_id === "") {
     echo json_encode(["status" => "error", "message" => "Debes seleccionar un departamento."]);
     exit;
@@ -56,17 +56,17 @@ $check->bind_param("si", $correo_corporativo, $id);
 $check->execute();
 $check->store_result();
 if ($check->num_rows > 0) {
-    echo json_encode(["status" => "error", "message" => "El correo corporativo ya estÃ¡ registrado por otro usuario."]);
+    echo json_encode(["status" => "error", "message" => "El correo corporativo ya está registrado por otro usuario."]);
     exit;
 }
 
 $departamento_id = intval($departamento_id);
 
 try {
-    // Iniciar transacciÃ³n para asegurar consistencia
+    // Iniciar transacción para asegurar consistencia
     $conn->begin_transaction();
 
-    // Preparar actualizaciÃ³n de datos bÃ¡sicos
+    // Preparar actualización de datos básicos
     $sql = "UPDATE usuarios SET 
                 nombres = ?, 
                 apellidos = ?, 
@@ -103,7 +103,7 @@ try {
     );
 
     if (!$stmt->execute()) {
-        throw new Exception("Error al actualizar datos bÃ¡sicos: " . $stmt->error);
+        throw new Exception("Error al actualizar datos básicos: " . $stmt->error);
     }
 
     // Manejar subida de archivos
@@ -160,7 +160,7 @@ try {
 
         $stmtUpdate = $conn->prepare($updateSQL);
         if (!$stmtUpdate) {
-            throw new Exception("Error al preparar actualizaciÃ³n de archivos: " . $conn->error);
+            throw new Exception("Error al preparar actualización de archivos: " . $conn->error);
         }
 
         $stmtUpdate->bind_param($updateTypes, ...$updateParams);
@@ -176,7 +176,7 @@ try {
             $contrato_id = intval($contrato_id);
             $tipo_contrato = $_POST['tipos_contrato_existentes'][$index] ?? '';
 
-            // Verificar si se marcÃ³ para eliminar
+            // Verificar si se marcó para eliminar
             $eliminar = isset($_POST['eliminar_contrato']) && in_array($contrato_id, $_POST['eliminar_contrato']);
 
             if ($eliminar) {
@@ -185,7 +185,7 @@ try {
                 $stmtDelete->bind_param("i", $contrato_id);
                 $stmtDelete->execute();
 
-                // TambiÃ©n eliminar archivo fÃ­sico si existe
+                // También eliminar archivo físico si existe
                 $sqlSelect = "SELECT nombre_archivo FROM contratos_usuario WHERE id = ?";
                 $stmtSelect = $conn->prepare($sqlSelect);
                 $stmtSelect->bind_param("i", $contrato_id);
@@ -212,7 +212,7 @@ try {
                 $stmtUpdateContrato->execute();
                 $stmtUpdateContrato->close();
 
-                // Verificar si se subiÃ³ un nuevo archivo para este contrato
+                // Verificar si se subió un nuevo archivo para este contrato
                 $fileKey = 'contratos_existentes_' . $contrato_id;
                 if (isset($_FILES[$fileKey]) && !empty($_FILES[$fileKey]['name'])) {
                     $archivoContrato = [
@@ -270,7 +270,7 @@ try {
         }
     }
 
-    // Confirmar transacciÃ³n
+    // Confirmar transacción
     $conn->commit();
 
     $contratosActualizados = isset($_POST['contrato_id']) ? count($_POST['contrato_id']) : 0;
@@ -282,7 +282,7 @@ try {
         "archivos_actualizados" => count($updateFields)
     ]);
 } catch (Exception $e) {
-    // Revertir transacciÃ³n en caso de error
+    // Revertir transacción en caso de error
     $conn->rollback();
     echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }

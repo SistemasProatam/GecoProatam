@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -65,7 +65,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Nueva RequisiciÃ³n</title>
+<title>Nueva Requisición</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
@@ -113,12 +113,12 @@ include __DIR__ . "/../includes/navbar.php"; ?>
       <span>/</span>
       <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
       <span>/</span>
-      <span>Nueva RequisiciÃ³n</span>
+      <span>Nueva Requisición</span>
     </div>
     
     <div class="row align-items-end">
       <div class="col-lg-8">
-        <h1 class="hero-title">Nueva RequisiciÃ³n</h1>
+        <h1 class="hero-title">Nueva Requisición</h1>
         </div>
       </div>
       
@@ -134,27 +134,27 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <div class="form-body">
       <form id="ordenCompraForm" method="POST" action="save_requis.php" enctype="multipart/form-data">
 
-        <!-- InformaciÃ³n General -->
+        <!-- Información General -->
         <div>
           <p>
             Este formulario debe ser completado por el personal autorizado
             para solicitar la compra de bienes o servicios, o para requerir
             el pago de facturas y compromisos adquiridos por la
-            organizaciÃ³n. <br />
-            <b>Importante:</b> El envÃ­o de este formulario no garantiza la
-            aprobaciÃ³n automÃ¡tica del pago o compra. AsegÃºrese de cumplir
+            organización. <br />
+            <b>Importante:</b> El envío de este formulario no garantiza la
+            aprobación automática del pago o compra. Asegúrese de cumplir
             con los procedimientos y tiempos establecidos por la
-            organizaciÃ³n. <br></p>
+            organización. <br></p>
            <p>Los campos marcados con <span class="required">*</span> son obligatorios.</p>
         </div>
 
-        <div class="section-title"><i class="bi bi-info-circle"></i> InformaciÃ³n General</div>
+        <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
 
-        <!-- Folio de RequisiciÃ³n  y fecha-->
+        <!-- Folio de Requisición  y fecha-->
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label">Folio de RequisiciÃ³n</label>
+              <label class="form-label">Folio de Requisición</label>
               <input
                 type="text"
                 class="form-control"
@@ -216,9 +216,9 @@ echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label">CategorÃ­a <span class="required">*</span></label>
+              <label class="form-label">Categoría <span class="required">*</span></label>
               <select class="form-select" id="categoria" name="categoria_id" required>
-                <option value="">Seleccionar CategorÃ­a</option>
+                <option value="">Seleccionar Categoría</option>
                 <?php
 if($result_categorias && $result_categorias->num_rows>0){
                   while($row=$result_categorias->fetch_assoc()){
@@ -230,8 +230,8 @@ if($result_categorias && $result_categorias->num_rows>0){
           </div>
         </div>
 
-        <!-- Proyecto, Obra, CatÃ¡logo -->
-        <div class="section-title"><i class="bi bi-diagram-3"></i> UbicaciÃ³n del Presupuesto</div>
+        <!-- Proyecto, Obra, Catálogo -->
+        <div class="section-title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</div>
 
         <div class="row">
           <div class="col-md-4">
@@ -262,7 +262,7 @@ if($result_proyectos && $result_proyectos->num_rows>0){
         <div class="row">
           <div class="col-md-4">
             <div class="form-group">
-              <label class="form-label">CatÃ¡logo</label>
+              <label class="form-label">Catálogo</label>
               <select class="form-select" id="catalogo" name="catalogo_id" disabled required>
                 <option value="">Primero seleccione una obra</option>
               </select>
@@ -270,7 +270,7 @@ if($result_proyectos && $result_proyectos->num_rows>0){
           </div>
         </div>
 
-        <!-- Items dinÃ¡micos -->
+        <!-- Items dinámicos -->
         <div class="section-title"><i class="bi bi-list-ul"></i> Items de la Orden</div>
 
         <div class="items-table">
@@ -283,11 +283,11 @@ if($result_proyectos && $result_proyectos->num_rows>0){
                 <th>Cantidad</th>
                 <th>Unidad</th>
                 <th>Concepto</th>
-                <th>AcciÃ³n</th>
+                <th>Acción</th>
               </tr>
             </thead>
             <tbody>
-             <!-- Inicialmente vacÃ­o -->
+             <!-- Inicialmente vacío -->
             </tbody>
           </table>
         </div>
@@ -298,12 +298,12 @@ if($result_proyectos && $result_proyectos->num_rows>0){
               </button>
             </div>
 
-        <!-- Extra, DescripciÃ³n y Observaciones -->
+        <!-- Extra, Descripción y Observaciones -->
       <div class="section-title"><i class="bi bi-plus-circle"></i>Producto/servicio no listado</div>
         <div class="form-group">
               <label class="form-label"
-                ><b>Â¿No encuentra un producto o servicio?</b> <br>
-                  Proporcione: Nombre, tipo (producto/servicio) y detalles adicionales para que este pueda ser aÃ±adido a la lista.</label
+                ><b>¿No encuentra un producto o servicio?</b> <br>
+                  Proporcione: Nombre, tipo (producto/servicio) y detalles adicionales para que este pueda ser añadido a la lista.</label
               >
               <textarea
                 class="form-control"
@@ -314,20 +314,20 @@ if($result_proyectos && $result_proyectos->num_rows>0){
               ></textarea>
             </div>
 
-        <div class="section-title"><i class="bi bi-file-text"></i> DescripciÃ³n</div>
+        <div class="section-title"><i class="bi bi-file-text"></i> Descripción</div>
         <div class="form-group">
               <label class="form-label"
                 >Describa de forma general y clara el bien o servicio que se
                 requiere, indicando su uso o finalidad, la cantidad aproximada y
-                cualquier detalle relevante que facilite su identificaciÃ³n o
-                cotizaciÃ³n.</label
+                cualquier detalle relevante que facilite su identificación o
+                cotización.</label
               >
               <textarea
                 class="form-control"
                 id="descripcion"
                 name="descripcion"
                 rows="3"
-                placeholder="Ingrese una descripciÃ³n adicional..."
+                placeholder="Ingrese una descripción adicional..."
               ></textarea>
             </div>
 
@@ -336,7 +336,7 @@ if($result_proyectos && $result_proyectos->num_rows>0){
               <label class="form-label"
                 >Utilice este espacio para anotar detalles importantes, como
                 requisitos de empaque, condiciones de pago acordadas, contacto
-                para entrega o cualquier otra observaciÃ³n que deba tenerse en
+                para entrega o cualquier otra observación que deba tenerse en
                 cuenta para procesar esta orden.</label
               >
               <textarea
@@ -354,8 +354,8 @@ if($result_proyectos && $result_proyectos->num_rows>0){
 <div class="form-group">
   <small class="text-muted d-block mt-2 mb-4">
     <i class="bi bi-info-circle"></i>
-    Cargue hasta 5 archivos seleccionÃ¡ndolos de uno en uno. 
-    Formatos permitidos: PDF, Word, Excel, imÃ¡genes. TamaÃ±o mÃ¡ximo por archivo: 10 MB.  
+    Cargue hasta 5 archivos seleccionándolos de uno en uno. 
+    Formatos permitidos: PDF, Word, Excel, imágenes. Tamaño máximo por archivo: 10 MB.  
   </small>
   
   <!-- Input visible para seleccionar archivos de uno en uno -->
@@ -383,7 +383,7 @@ if($result_proyectos && $result_proyectos->num_rows>0){
 
         <!-- Guardar -->
         <div class="form-actions mt-3">
-          <div class="send-otxt">Esta requisiciÃ³n serÃ¡ evaluada por el Supervisor de Proyectos.
+          <div class="send-otxt">Esta requisición será evaluada por el Supervisor de Proyectos.
           </div>
           <button type="submit" class="button-57"><i class="bi bi-floppy"></i> Guardar</button>
         </div>
@@ -393,12 +393,12 @@ if($result_proyectos && $result_proyectos->num_rows>0){
   </div>
 </div>
 
-<!-- Modal para catÃ¡logo de productos -->
+<!-- Modal para catálogo de productos -->
 <div class="modal fade" id="modalCatalogo" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">CatÃ¡logo de Productos y Servicios</h5>
+        <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -411,7 +411,7 @@ if($result_proyectos && $result_proyectos->num_rows>0){
               <tr>
                 <th>Nombre</th>
                 <th>Tipo</th>
-                <th>AcciÃ³n</th>
+                <th>Acción</th>
               </tr>
             </thead>
             <tbody id="tbodyCatalogo">
@@ -465,7 +465,7 @@ endif; ?>
 <div id="loadingOverlay">
     <div class="loading-box">
         <div class="spinner-border text-primary" role="status"></div>
-        <div class="mt-3">Procesandoâ€¦ por favor espere</div>
+        <div class="mt-3">Procesando… por favor espere</div>
     </div>
 </div>
 
@@ -473,7 +473,7 @@ endif; ?>
 
 <!-- Datos para JavaScript -->
 <script>
-// Datos de productos y unidades para el catÃ¡logo
+// Datos de productos y unidades para el catálogo
 const productosServiciosData = <?= json_encode($productos_array) ?>;
 const unidadesData = <?php
 $unidades_array = [];
@@ -490,11 +490,11 @@ $unidades_array = [];
 </script>
 
 <script>
-// Mostrar overlay Ãºnicamente al enviar el formulario de nueva requisiciÃ³n
+// Mostrar overlay únicamente al enviar el formulario de nueva requisición
 document.getElementById('ordenCompraForm')?.addEventListener('submit', function(e) {
   const overlay = document.getElementById('loadingOverlay');
   if (overlay) overlay.style.display = 'flex';
-  // Deshabilitar botones submit para evitar envÃ­os mÃºltiples
+  // Deshabilitar botones submit para evitar envíos múltiples
   this.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
 });
 </script>

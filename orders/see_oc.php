@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -18,7 +18,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-// FunciÃ³n para traducir estados
+// Función para traducir estados
 function traducirEstado($estado)
 {
   $estados = [
@@ -34,7 +34,7 @@ function traducirEstado($estado)
 }
 
 // ==============================================================================
-// FUNCIÃ“N PARA ACTUALIZAR MONTOS DISPONIBLES (SOLO CUANDO ES "PAGADO")
+// FUNCIÓN PARA ACTUALIZAR MONTOS DISPONIBLES (SOLO CUANDO ES "PAGADO")
 // ==============================================================================
 function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
 {
@@ -42,7 +42,7 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
   error_log("   Orden ID: {$orden_id}");
   error_log("   Total Orden: {$total_orden}");
 
-  // Obtener informaciÃ³n de ubicaciÃ³n de la orden
+  // Obtener información de ubicación de la orden
   $sql_info = "SELECT proyecto_id, obra_id, catalogo_id, concepto_id 
                  FROM ordenes_compra 
                  WHERE id = ?";
@@ -58,7 +58,7 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
 
   error_log("   Proyecto ID: " . ($proyecto_id ?: 'NULL'));
   error_log("   Obra ID: " . ($obra_id ?: 'NULL'));
-  error_log("   CatÃ¡logo ID: " . ($catalogo_id ?: 'NULL'));
+  error_log("   Catálogo ID: " . ($catalogo_id ?: 'NULL'));
 
   // ACTUALIZAR PROYECTO (SIEMPRE)
   if ($proyecto_id) {
@@ -171,7 +171,7 @@ function actualizarMontosDisponibles($conn, $orden_id, $total_orden)
     $stmt_obra->close();
   }
 
-  error_log(" FIN ACTUALIZACIÃ“N MONTOS DISPONIBLES");
+  error_log(" FIN ACTUALIZACIÓN MONTOS DISPONIBLES");
 }
 
 // ================================
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
   $nuevo_estado = $_POST['nuevo_estado'];
   $comentario = $_POST['comentario'] ?? '';
 
-  // Validar estado segÃºn el rol
+  // Validar estado según el rol
   $departamento = $_SESSION['departamento'] ?? '';
   $estados_permitidos = [];
 
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
   } elseif ($departamento === 'Gerente de Operaciones') {
     $estados_permitidos = ['devuelto', 'revisado'];
   } elseif ($departamento === 'Gerente de Recursos Humanos') {
-    $estados_permitidos = ['pagado'];
+    $estados_permitidos = ['pagado', 'devuelto'];
   }
 
   if (in_array($nuevo_estado, $estados_permitidos)) {
@@ -247,19 +247,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
 
         switch ($nuevo_estado) {
           case 'revisado':
-            $accion_texto = 'RevisÃ³ orden de compra';
+            $accion_texto = 'Revisó orden de compra';
             break;
           case 'aprobado':
-            $accion_texto = 'AprobÃ³ orden de compra';
+            $accion_texto = 'Aprobó orden de compra';
             break;
           case 'rechazado':
-            $accion_texto = 'RechazÃ³ orden de compra';
+            $accion_texto = 'Rechazó orden de compra';
             break;
           case 'devuelto':
-            $accion_texto = 'DevolviÃ³ orden de compra para editar';
+            $accion_texto = 'Devolvió orden de compra para editar';
             break;
           case 'pagado':
-            $accion_texto = 'MarcÃ³ como pagado y completado';
+            $accion_texto = 'Marcó como pagado y completado';
             break;
         }
 
@@ -280,19 +280,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
         error_log("=== PROCESANDO ORDEN COMO PAGADA ===");
         // 1. Actualizar montos disponibles
         actualizarMontosDisponibles($conn, $id, $oc_data['total']);
-        // 2. Transferir items a concepto_items si la orden tiene catÃ¡logo
+        // 2. Transferir items a concepto_items si la orden tiene catálogo
         if (!empty($oc_data['catalogo_id'])) {
-          // No se realiza transferencia automÃ¡tica a `concepto_items` porque
+          // No se realiza transferencia automática a `concepto_items` porque
           // dicha tabla no existe en esta BD. Los items quedan vinculados
-          // en `orden_compra_items` y se consultan directamente desde allÃ­.
+          // en `orden_compra_items` y se consultan directamente desde allí.
           error_log(" Transferencia a tabla 'concepto_items' omitida (tabla inexistente). Items quedan en orden_compra_items.");
         } else {
-          error_log(" No se puede transferir: falta catÃ¡logo");
+          error_log(" No se puede transferir: falta catálogo");
         }
       }
 
       // ========================================
-      // PREPARAR DATOS PARA NOTIFICACIÃ“N
+      // PREPARAR DATOS PARA NOTIFICACIÓN
       // ========================================
       try {
         $emailHandler = new EmailHandler();
@@ -317,7 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
         // Agregar info de transferencia si aplica
         if ($items_transferidos > 0) {
           $datosOrdenCompra['items_transferidos'] = $items_transferidos;
-          $datosOrdenCompra['catalogo_nombre'] = $oc_data['nombre_catalogo'] ?? 'CatÃ¡logo';
+          $datosOrdenCompra['catalogo_nombre'] = $oc_data['nombre_catalogo'] ?? 'Catálogo';
         }
 
         // ========================================
@@ -464,7 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
         $correos_fallidos = 0;
 
         foreach ($destinatarios as $destinatario) {
-          // Para el caso 'revisado' usamos la notificaciÃ³n general para todos (subdirector + solicitante)
+          // Para el caso 'revisado' usamos la notificación general para todos (subdirector + solicitante)
           if ($nuevo_estado === 'revisado') {
             $resultado = $emailHandler->enviarNotificacionOrdenCompra(
               $destinatario['correo_corporativo'],
@@ -472,16 +472,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
               $datosOrdenCompra
             );
           } else {
-            // Determinar quÃ© funciÃ³n usar segÃºn el destinatario
+            // Determinar qué función usar según el destinatario
             if ($destinatario['id'] == $oc_data['solicitante_id']) {
-              // Es el solicitante - usar funciÃ³n especÃ­fica
+              // Es el solicitante - usar función específica
               $resultado = $emailHandler->enviarNotificacionSolicitanteOC(
                 $destinatario['correo_corporativo'],
                 $destinatario['nombre_completo'],
                 $datosOrdenCompra
               );
             } else {
-              // Es otro destinatario (Gerente RH, etc.) - usar funciÃ³n general
+              // Es otro destinatario (Gerente RH, etc.) - usar función general
               $resultado = $emailHandler->enviarNotificacionOrdenCompra(
                 $destinatario['correo_corporativo'],
                 $destinatario['nombre_completo'],
@@ -499,7 +499,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
 
         error_log(" NOTIFICACIONES: {$correos_enviados} enviados, {$correos_fallidos} fallidos");
 
-        // Redirect con parÃ¡metros
+        // Redirect con parámetros
         $params = "id={$id}&success=1";
         if ($correos_enviados > 0) {
           $params .= "&email=enviado&count={$correos_enviados}";
@@ -513,7 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
         header("Location: see_oc.php?{$params}");
         exit;
       } catch (Exception $e) {
-        error_log(" EXCEPCIÃ“N AL ENVIAR CORREO: " . $e->getMessage());
+        error_log(" EXCEPCIÓN AL ENVIAR CORREO: " . $e->getMessage());
         header("Location: see_oc.php?id=$id&success=1&email=excepcion");
         exit;
       }
@@ -522,60 +522,172 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
       error_log(" Error al actualizar estado: " . $stmt_update->error);
     }
   } else {
-    $mensaje_error = "No tiene permisos para realizar esta acciÃ³n";
+    $mensaje_error = "No tiene permisos para realizar esta acción";
   }
 }
 
 // ================================
-// PROCESAR SUBIDA DE COMPROBANTE
+// PROCESAR SUBIR COMPROBANTE Y PAGAR (ACCIÓN UNIFICADA)
 // ================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_comprobante'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_comprobante_y_pagar'])) {
   $departamento = $_SESSION['departamento'] ?? '';
 
-  if ($departamento === 'Gerente de Recursos Humanos') {
+  if ($departamento !== 'Gerente de Recursos Humanos') {
+    $mensaje_error = "No tiene permisos para realizar esta acción";
+  } else {
+
+    // --- 1. Validar y guardar el archivo ---
+    $ruta_comprobante = null;
     if (isset($_FILES['comprobante']) && $_FILES['comprobante']['error'] === UPLOAD_ERR_OK) {
+      $extension = strtolower(pathinfo($_FILES['comprobante']['name'], PATHINFO_EXTENSION));
+      $extensiones_permitidas = ['pdf', 'jpg', 'jpeg', 'png'];
 
-      $uploadDir = __DIR__ . '/../uploads/comprobantes_pago/';
-      if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-      }
-
-      $nombreArchivo = basename($_FILES['comprobante']['name']);
-      $extension = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
-      $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
-      $nombreUnico = $nombreSinExtension . '_' . uniqid() . '.' . $extension;
-      $rutaArchivo = $uploadDir . $nombreUnico;
-
-      if (move_uploaded_file($_FILES['comprobante']['tmp_name'], $rutaArchivo)) {
-        // Actualizar estado y guardar ruta del comprobante
-        $sql_update = "UPDATE ordenes_compra 
-                              SET estado = 'comprobante_subido', 
-                                  comprobante_pago = ? 
-                              WHERE id = ?";
-        $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("si", $rutaArchivo, $id);
-
-        if ($stmt_update->execute()) {
-          // Registrar en historial
-          $sql_historial = "INSERT INTO orden_compra_historial (orden_compra_id, usuario_id, accion, comentario) 
-                                     VALUES (?, ?, 'SubiÃ³ comprobante de pago', '')";
-          $stmt_historial = $conn->prepare($sql_historial);
-          $stmt_historial->bind_param("ii", $id, $_SESSION['user_id']);
-          $stmt_historial->execute();
-
-          header("Location: see_oc.php?id=$id&success=1&comprobante=subido");
-          exit;
-        } else {
-          $mensaje_error = "Error al actualizar el estado";
-        }
+      if (!in_array($extension, $extensiones_permitidas)) {
+        $mensaje_error = "Formato de archivo no permitido. Use PDF, JPG o PNG.";
+      } elseif ($_FILES['comprobante']['size'] > 10 * 1024 * 1024) {
+        $mensaje_error = "El archivo excede el tamaño máximo de 10MB.";
       } else {
-        $mensaje_error = "Error al subir el archivo";
+        $directorio_comprobantes = __DIR__ . '/comprobantes/';
+        if (!is_dir($directorio_comprobantes)) {
+          mkdir($directorio_comprobantes, 0755, true);
+        }
+        $nombre_archivo = 'comprobante_' . $id . '_' . time() . '.' . $extension;
+        $ruta_destino = $directorio_comprobantes . $nombre_archivo;
+
+        if (!move_uploaded_file($_FILES['comprobante']['tmp_name'], $ruta_destino)) {
+          $mensaje_error = "Error al guardar el archivo. Verifique los permisos del directorio.";
+        } else {
+          $ruta_comprobante = 'comprobantes/' . $nombre_archivo;
+        }
       }
     } else {
-      $mensaje_error = "No se recibiÃ³ ningÃºn archivo o hubo un error";
+      $mensaje_error = "Debe adjuntar un archivo de comprobante.";
     }
-  } else {
-    $mensaje_error = "No tiene permisos para subir comprobantes";
+
+    // --- 2. Si el archivo se guardó bien, actualizar la BD ---
+    if (isset($ruta_comprobante) && !isset($mensaje_error)) {
+      $comentario = $_POST['comentario'] ?? '';
+
+      $sql_update = "UPDATE ordenes_compra SET estado = 'pagado', comprobante_pago = ?, fecha_actualizacion = NOW() WHERE id = ?";
+      $stmt_update = $conn->prepare($sql_update);
+
+      if (!$stmt_update) {
+        error_log("Error prepare: " . $conn->error);
+        $mensaje_error = "Error interno al preparar la consulta.";
+      } else {
+        $stmt_update->bind_param("si", $ruta_comprobante, $id);
+
+        if (!$stmt_update->execute()) {
+          error_log("Error execute: " . $stmt_update->error);
+          $mensaje_error = "Error al actualizar la base de datos: " . $stmt_update->error;
+        }
+      }
+
+      if ($stmt_update->execute()) {
+        // Registrar en historial
+        try {
+          $accion_texto = 'Subió comprobante y marcó como pagado';
+          $sql_historial = "INSERT INTO orden_compra_historial (orden_compra_id, usuario_id, accion, comentario) VALUES (?, ?, ?, ?)";
+          $stmt_historial = $conn->prepare($sql_historial);
+          $stmt_historial->bind_param("iiss", $id, $_SESSION['user_id'], $accion_texto, $comentario);
+          $stmt_historial->execute();
+        } catch (Exception $e) {
+          error_log("Error en historial: " . $e->getMessage());
+        }
+
+        // Actualizar montos disponibles
+        $sql_total = "SELECT total FROM ordenes_compra WHERE id = ?";
+        $stmt_total = $conn->prepare($sql_total);
+        $stmt_total->bind_param("i", $id);
+        $stmt_total->execute();
+        $total_oc = $stmt_total->get_result()->fetch_assoc()['total'];
+        actualizarMontosDisponibles($conn, $id, $total_oc);
+
+        // Enviar notificaciones (reutiliza misma lógica que cambiar_estado=pagado)
+        // Obtener datos de la orden para el correo
+        $sql_datos = "SELECT oc.*, CONCAT(u.nombres, ' ', u.apellidos) as nombre_solicitante,
+                      e.nombre as entidad_nombre, c.nombre as categoria_nombre,
+                      p.nombre as proveedor_nombre, pro.nombre_proyecto, ob.nombre_obra,
+                      cat.nombre_catalogo, con.codigo_concepto, con.nombre_concepto
+                      FROM ordenes_compra oc
+                      LEFT JOIN usuarios u ON oc.solicitante_id = u.id
+                      LEFT JOIN entidades e ON oc.entidad_id = e.id
+                      LEFT JOIN categorias c ON oc.categoria_id = c.id
+                      LEFT JOIN proveedores p ON oc.proveedor_id = p.id
+                      LEFT JOIN proyectos pro ON oc.proyecto_id = pro.id
+                      LEFT JOIN obras ob ON oc.obra_id = ob.id
+                      LEFT JOIN catalogos cat ON oc.catalogo_id = cat.id
+                      LEFT JOIN conceptos con ON oc.concepto_id = con.id
+                      WHERE oc.id = ?";
+        $stmt_datos = $conn->prepare($sql_datos);
+        $stmt_datos->bind_param("i", $id);
+        $stmt_datos->execute();
+        $oc_data = $stmt_datos->get_result()->fetch_assoc();
+
+        try {
+          $emailHandler = new EmailHandler();
+          $datosOrdenCompra = [
+            'id'              => $id,
+            'folio'           => $oc_data['folio'],
+            'estado'          => 'Pagado y Completado',
+            'comentarios'     => $comentario,
+            'solicitante'     => $oc_data['nombre_solicitante'],
+            'entidad'         => $oc_data['entidad_nombre'] ?? 'Sin especificar',
+            'categoria'       => $oc_data['categoria_nombre'] ?? 'Sin especificar',
+            'proveedor'       => $oc_data['proveedor_nombre'] ?? 'Sin especificar',
+            'proyecto'        => $oc_data['nombre_proyecto'] ?? 'Sin especificar',
+            'obra'            => $oc_data['nombre_obra'] ?? 'N/A',
+            'catalogo'        => $oc_data['nombre_catalogo'] ?? 'N/A',
+            'concepto'        => ($oc_data['codigo_concepto'] ?? '') . ($oc_data['nombre_concepto'] ? ' - ' . $oc_data['nombre_concepto'] : 'N/A'),
+            'total'           => '$' . number_format($oc_data['total'], 2),
+            'fecha_solicitud' => date('d/m/Y H:i', strtotime($oc_data['fecha_solicitud']))
+          ];
+
+          $destinatarios = [];
+          // Solicitante
+          $stmt_s = $conn->prepare("SELECT id, correo_corporativo, CONCAT(nombres, ' ', apellidos) as nombre_completo FROM usuarios WHERE id = ? AND activo = 1 AND correo_corporativo IS NOT NULL");
+          $stmt_s->bind_param("i", $oc_data['solicitante_id']);
+          $stmt_s->execute();
+          $res_s = $stmt_s->get_result();
+          if ($res_s && $res_s->num_rows > 0) {
+            $destinatarios[] = $res_s->fetch_assoc();
+          }
+          // Subdirector
+          $res_sub = $conn->query("SELECT u.id, u.correo_corporativo, CONCAT(u.nombres, ' ', u.apellidos) as nombre_completo FROM usuarios u JOIN departamentos d ON u.departamento_id = d.id WHERE d.nombre LIKE '%Subdirector General%' AND u.activo = 1 AND u.correo_corporativo IS NOT NULL");
+          if ($res_sub) while ($row = $res_sub->fetch_assoc()) $destinatarios[] = $row;
+
+          $correos_enviados = 0;
+          foreach ($destinatarios as $destinatario) {
+            if ($destinatario['id'] == $oc_data['solicitante_id']) {
+              // Al solicitante se usa función específica
+              $resultado = $emailHandler->enviarNotificacionSolicitanteOC(
+                $destinatario['correo_corporativo'],
+                $destinatario['nombre_completo'],
+                $datosOrdenCompra
+              );
+            } else {
+              // Al resto (subdirector, etc.) se usa función general
+              $resultado = $emailHandler->enviarNotificacionOrdenCompra(
+                $destinatario['correo_corporativo'],
+                $destinatario['nombre_completo'],
+                $datosOrdenCompra
+              );
+            }
+
+            if ($resultado) {
+              $correos_enviados++;
+            }
+          }
+        } catch (Exception $e) {
+          error_log("Error enviando correos: " . $e->getMessage());
+        }
+
+        header("Location: see_oc.php?id={$id}&success=1&email=" . ($correos_enviados > 0 ? 'enviado' : 'error') . "&comprobante=subido");
+        exit;
+      } else {
+        $mensaje_error = "Error al actualizar la base de datos: " . $stmt_update->error;
+      }
+    }
   }
 }
 
@@ -610,12 +722,12 @@ if (!$orden_compra) {
   die("Orden de compra no encontrada");
 }
 
-// Obtener el comentario de rechazo si estÃ¡ rechazada
+// Obtener el comentario de rechazo si está rechazada
 $comentario_rechazo = '';
 if ($orden_compra['estado'] === 'rechazado') {
   try {
     $sql_comentario = "SELECT comentario FROM orden_compra_historial 
-                          WHERE orden_compra_id = ? AND accion = 'RechazÃ³ orden de compra' 
+                          WHERE orden_compra_id = ? AND accion = 'Rechazó orden de compra' 
                           ORDER BY fecha_cambio DESC LIMIT 1";
     $stmt_comentario = $conn->prepare($sql_comentario);
     $stmt_comentario->bind_param("i", $id);
@@ -643,7 +755,7 @@ $stmt_items->execute();
 $items = $stmt_items->get_result();
 
 // Obtener archivos adjuntos de la orden de compra
-$sql_archivos = "SELECT id, nombre_archivo, ruta_archivo, tamaÃ±o_archivo, tipo_mime, fecha_subida
+$sql_archivos = "SELECT id, nombre_archivo, ruta_archivo,tamaño_archivo, tipo_mime, fecha_subida
                  FROM orden_compra_archivos
                  WHERE orden_compra_id = ?
                  ORDER BY fecha_subida DESC";
@@ -652,7 +764,7 @@ $stmt_archivos->bind_param("i", $id);
 $stmt_archivos->execute();
 $archivos = $stmt_archivos->get_result();
 
-// FunciÃ³n para formatear bytes
+// Función para formatear bytes
 function formatBytes($bytes, $precision = 2)
 {
   $units = array('B', 'KB', 'MB', 'GB', 'TB');
@@ -663,12 +775,12 @@ function formatBytes($bytes, $precision = 2)
   return round($bytes, $precision) . ' ' . $units[$pow];
 }
 
-// Verificar permisos del usuario segÃºn su departamento
+// Verificar permisos del usuario segun su departamento
 $departamento = $_SESSION['departamento'] ?? '';
-$puede_revisar = ($departamento === 'Gerente de Operaciones');                    // Pendiente â†’ Revisado
-$puede_aprobar_rechazar = ($departamento === 'Subdirector General');              // Revisado â†’ Aprobado/Rechazado/Devuelto
-$puede_subir_comprobante = ($departamento === 'Gerente de Recursos Humanos');    // Aprobado â†’ Comprobante Subido
-$puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');         // Comprobante Subido â†’ Pagado
+$puede_revisar = ($departamento === 'Gerente de Operaciones');                    // Pendiente -> Revisado
+$puede_aprobar_rechazar = ($departamento === 'Subdirector General');              // Revisado -> Aprobado/Rechazado/Devuelto
+$puede_subir_comprobante = ($departamento === 'Gerente de Recursos Humanos');    // Aprobado -> Comprobante Subido
+$puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');         // Comprobante Subido -> Pagado
 ?>
 
 <!DOCTYPE html>
@@ -767,7 +879,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 <body>
 
   <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+  include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -794,9 +906,9 @@ include __DIR__ . "/../includes/navbar.php"; ?>
       <div class="form-body">
         <!-- Mostrar mensajes -->
         <?php
-if (isset($_GET['success'])): ?>
+        if (isset($_GET['success'])): ?>
           <?php
-$email_status = $_GET['email'] ?? '';
+          $email_status = $_GET['email'] ?? '';
           $comprobante_status = $_GET['comprobante'] ?? '';
           $transferidos = $_GET['transferidos'] ?? 0;
           $mensaje_clase = 'success';
@@ -811,7 +923,7 @@ $email_status = $_GET['email'] ?? '';
                 $count = $_GET['count'] ?? 0;
                 $mensaje .= " y se enviaron {$count} notificaciones por correo.";
                 if ($transferidos > 0) {
-                  $mensaje .= " Se transfirieron {$transferidos} items al catÃ¡logo.";
+                  $mensaje .= " Se transfirieron {$transferidos} items al catálogo.";
                 }
                 break;
               case 'error':
@@ -819,17 +931,17 @@ $email_status = $_GET['email'] ?? '';
                 $icono = 'exclamation-triangle';
                 $mensaje .= ', pero hubo un problema al enviar las notificaciones por correo.';
                 if ($transferidos > 0) {
-                  $mensaje .= " Se transfirieron {$transferidos} items al catÃ¡logo.";
+                  $mensaje .= " Se transfirieron {$transferidos} items al catálogo.";
                 }
                 break;
               case 'excepcion':
                 $mensaje_clase = 'warning';
                 $icono = 'exclamation-triangle';
-                $mensaje .= ', pero ocurriÃ³ un error al intentar enviar los correos.';
+                $mensaje .= ', pero ocurrió un error al intentar enviar los correos.';
                 break;
               default:
                 if ($transferidos > 0) {
-                  $mensaje .= " Se transfirieron {$transferidos} items al catÃ¡logo.";
+                  $mensaje .= " Se transfirieron {$transferidos} items al catálogo.";
                 }
             }
           }
@@ -839,21 +951,21 @@ $email_status = $_GET['email'] ?? '';
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         <?php
-endif; ?>
+        endif; ?>
 
         <?php
-if (isset($mensaje_error)): ?>
+        if (isset($mensaje_error)): ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         <?php
-endif; ?>
+        endif; ?>
 
-        <!-- InformaciÃ³n General -->
+        <!-- Información General -->
         <div class="section-title">
           <i class="bi bi-info-circle"></i>
-          InformaciÃ³n General
+          Información General
         </div>
 
         <div class="row mb-3">
@@ -880,7 +992,7 @@ endif; ?>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label class="form-label">CategorÃ­a</label>
+            <label class="form-label">Categoría</label>
             <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['categoria']) ?>" readonly>
           </div>
           <div class="col-md-6">
@@ -891,14 +1003,14 @@ endif; ?>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label class="form-label">RequisiciÃ³n Relacionada</label>
+            <label class="form-label">Requisición Relacionada</label>
             <input type="text" class="form-control" value="<?= $orden_compra['folio_requisicion'] ? htmlspecialchars($orden_compra['folio_requisicion']) : 'N/A' ?>" readonly>
           </div>
           <div class="col-md-6">
             <label class="form-label">Estado Actual</label>
             <div class="mt-1">
               <?php
-switch ($orden_compra['estado']) {
+              switch ($orden_compra['estado']) {
                 case 'pendiente':
                   echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-clock"></i> Pendiente</span>';
                   break;
@@ -927,46 +1039,46 @@ switch ($orden_compra['estado']) {
         </div>
 
         <?php
-// Obtener comentario del revisor (Gerente de Operaciones) o aprobador (Subdirector General)
-$comentario_decision = '';
-if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'comprobante_subido'])) {
-    // Buscar primero si hay un comentario de "revisado" o "aprobado"
-    $sql_comentario_decision = "SELECT accion, comentario FROM orden_compra_historial 
+        // Obtener comentario del revisor (Gerente de Operaciones) o aprobador (Subdirector General)
+        $comentario_decision = '';
+        if (in_array($orden_compra['estado'], ['revisado', 'aprobado', 'pagado', 'comprobante_subido'])) {
+          // Buscar primero si hay un comentario de "revisado" o "aprobado"
+          $sql_comentario_decision = "SELECT accion, comentario FROM orden_compra_historial 
                                 WHERE orden_compra_id = ? 
-                                AND (accion = 'RevisÃ³ orden de compra' OR accion = 'AprobÃ³ orden de compra')
+                                AND (accion = 'Revisó orden de compra' OR accion = 'Aprobó orden de compra')
                                 ORDER BY fecha_cambio DESC LIMIT 1";
-    $stmt_comentario_decision = $conn->prepare($sql_comentario_decision);
-    $stmt_comentario_decision->bind_param("i", $id);
-    $stmt_comentario_decision->execute();
-    $result_comentario_decision = $stmt_comentario_decision->get_result();
-    
-    if ($result_comentario_decision && $result_comentario_decision->num_rows > 0) {
-        $row = $result_comentario_decision->fetch_assoc();
-        $comentario_decision = $row['comentario'];
-        $accion_decision = $row['accion'];
-    }
-}
-?>
+          $stmt_comentario_decision = $conn->prepare($sql_comentario_decision);
+          $stmt_comentario_decision->bind_param("i", $id);
+          $stmt_comentario_decision->execute();
+          $result_comentario_decision = $stmt_comentario_decision->get_result();
 
-<?php
-if (!empty($comentario_decision)): ?>
-<div class="section-title mt-4">
-    <i class="bi bi-chat-dots"></i>
-    Comentario del <?= $accion_decision === 'RevisÃ³ orden de compra' ? 'Revisor' : 'Aprobador' ?>
-</div>
-<div class="comentario" style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px;">
-    <div class="comentario-header-decision" style="font-weight: bold; margin-bottom: 8px;">
-        <i class="bi bi-info-circle"></i> 
-        <?= $accion_decision === 'RevisÃ³ orden de compra' ? 'Gerente de Operaciones:' : 'Subdirector General:' ?>
-    </div>
-    <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_decision)) ?></p>
-</div>
-<?php
-endif; ?>
+          if ($result_comentario_decision && $result_comentario_decision->num_rows > 0) {
+            $row = $result_comentario_decision->fetch_assoc();
+            $comentario_decision = $row['comentario'];
+            $accion_decision = $row['accion'];
+          }
+        }
+        ?>
 
-        <!-- Mostrar comentario de rechazo si estÃ¡ rechazada -->
         <?php
-if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
+        if (!empty($comentario_decision)): ?>
+          <div class="section-title mt-4">
+            <i class="bi bi-chat-dots"></i>
+            Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
+          </div>
+          <div class="comentario" style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px;">
+            <div class="comentario-header-decision" style="font-weight: bold; margin-bottom: 8px;">
+              <i class="bi bi-info-circle"></i>
+              <?= $accion_decision === 'Revisó orden de compra' ? 'Gerente de Operaciones:' : 'Subdirector General:' ?>
+            </div>
+            <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_decision)) ?></p>
+          </div>
+        <?php
+        endif; ?>
+
+        <!-- Mostrar comentario de rechazo si está rechazada -->
+        <?php
+        if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-dots"></i>
             Motivo del Rechazo
@@ -978,61 +1090,61 @@ if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
             <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
           </div>
         <?php
-endif; ?>
+        endif; ?>
 
-        <!-- UbicaciÃ³n del Presupuesto -->
+        <!-- Ubicación del Presupuesto -->
         <div class="section-title mt-4">
           <i class="bi bi-diagram-3"></i>
-          UbicaciÃ³n del Presupuesto
+          Ubicación del Presupuesto
         </div>
 
         <div class="ubicacion-box">
           <div class="row">
             <?php
-if ($orden_compra['nombre_proyecto']): ?>
+            if ($orden_compra['nombre_proyecto']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Proyecto</strong></label>
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_proyecto']) ?></div>
               </div>
             <?php
-endif; ?>
+            endif; ?>
 
             <?php
-if ($orden_compra['nombre_obra']): ?>
+            if ($orden_compra['nombre_obra']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Obra</strong></label>
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_obra']) ?></div>
               </div>
             <?php
-endif; ?>
+            endif; ?>
 
             <?php
-if ($orden_compra['nombre_catalogo']): ?>
+            if ($orden_compra['nombre_catalogo']): ?>
               <div class="col-md-6 mb-3">
-                <label class="form-label"><strong>CatÃ¡logo</strong></label>
+                <label class="form-label"><strong>Catálogo</strong></label>
                 <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_catalogo']) ?></div>
               </div>
             <?php
-endif; ?>
+            endif; ?>
 
             <?php
-if($orden_compra['subcontrato_id']): ?>
-            <div class="col-md-6 mb-3">
-              <label class="form-label"><strong>Subcontrato</strong></label>
-              <div class="form-control-plaintext">
-                <?= htmlspecialchars($orden_compra['subcontrato_proveedor_nombre'] ?? 'Subcontrato #' . $orden_compra['subcontrato_id']) ?>
+            if ($orden_compra['subcontrato_id']): ?>
+              <div class="col-md-6 mb-3">
+                <label class="form-label"><strong>Subcontrato</strong></label>
+                <div class="form-control-plaintext">
+                  <?= htmlspecialchars($orden_compra['subcontrato_proveedor_nombre'] ?? 'Subcontrato #' . $orden_compra['subcontrato_id']) ?>
+                </div>
               </div>
-            </div>
-          <?php
-endif; ?>
+            <?php
+            endif; ?>
 
             <?php
-if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
+            if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
               <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Concepto</strong></label>
                 <div class="form-control-plaintext">
                   <?php
-if ($orden_compra['codigo_concepto'] && $orden_compra['nombre_concepto']) {
+                  if ($orden_compra['codigo_concepto'] && $orden_compra['nombre_concepto']) {
                     echo htmlspecialchars($orden_compra['codigo_concepto'] . ' - ' . $orden_compra['nombre_concepto']);
                   } elseif ($orden_compra['codigo_concepto']) {
                     echo htmlspecialchars($orden_compra['codigo_concepto']);
@@ -1045,7 +1157,7 @@ if ($orden_compra['codigo_concepto'] && $orden_compra['nombre_concepto']) {
                 </div>
               </div>
             <?php
-endif; ?>
+            endif; ?>
           </div>
         </div>
 
@@ -1067,7 +1179,7 @@ endif; ?>
           </thead>
           <tbody>
             <?php
-$i = 1;
+            $i = 1;
             $total_general = 0;
             while ($item = $items->fetch_assoc()):
               $subtotal = $item['cantidad'] * $item['precio_unitario'];
@@ -1089,7 +1201,7 @@ $i = 1;
                 <td>$<?= number_format($subtotal, 2) ?></td>
               </tr>
             <?php
-endwhile; ?>
+            endwhile; ?>
           </tbody>
         </table>
 
@@ -1103,7 +1215,7 @@ endwhile; ?>
               </div>
               <div class="row mb-2">
                 <div class="col-6"><strong>IVA <?php
-if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
+                                                if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
                                                   $porcentaje_iva = ($orden_compra['iva'] / $orden_compra['subtotal']) * 100;
                                                   if ($porcentaje_iva >= 15) {
                                                     echo '(16%):';
@@ -1126,27 +1238,27 @@ if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
           </div>
         </div>
 
-        <!-- DescripciÃ³n -->
+        <!-- Descripción -->
         <?php
-if (!empty($orden_compra['descripcion'])): ?>
+        if (!empty($orden_compra['descripcion'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-file-text"></i>
-            DescripciÃ³n
+            Descripción
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($orden_compra['descripcion']) ?></textarea>
         <?php
-endif; ?>
+        endif; ?>
 
         <!-- Observaciones -->
         <?php
-if (!empty($orden_compra['observaciones'])): ?>
+        if (!empty($orden_compra['observaciones'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-chat-text"></i>
             Observaciones
           </div>
           <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($orden_compra['observaciones']) ?></textarea>
         <?php
-endif; ?>
+        endif; ?>
 
         <!-- Archivos Adjuntos -->
         <div class="section-title mt-4">
@@ -1155,21 +1267,21 @@ endif; ?>
         </div>
 
         <?php
-if ($archivos->num_rows > 0): ?>
+        if ($archivos->num_rows > 0): ?>
           <div class="table-responsive">
             <table class="table table-hover">
               <thead>
                 <tr>
                   <th style="width: 5%">#</th>
                   <th style="width: 45%">Nombre del Archivo</th>
-                  <th style="width: 15%">TamaÃ±o</th>
+                  <th style="width: 15%">Tamaño</th>
                   <th style="width: 15%">Tipo</th>
                   <th style="width: 20%">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
-$i = 1;
+                $i = 1;
                 while ($archivo = $archivos->fetch_assoc()):
                   $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
                   $icono = 'file-earmark';
@@ -1200,7 +1312,7 @@ $i = 1;
                     </td>
                     <td>
                       <span class="badge bg-light text-dark">
-                        <?= formatBytes($archivo['tamaÃ±o_archivo']) ?>
+                        <?= formatBytes($archivo['tamaño_archivo']) ?>
                       </span>
                     </td>
                     <td>
@@ -1223,21 +1335,21 @@ $i = 1;
                     </td>
                   </tr>
                 <?php
-endwhile; ?>
+                endwhile; ?>
               </tbody>
             </table>
           </div>
         <?php
-else: ?>
+        else: ?>
           <div class="alert alert-info">
             <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta orden de compra.
           </div>
         <?php
-endif; ?>
+        endif; ?>
 
         <!-- Comprobante de Pago -->
         <?php
-if (!empty($orden_compra['comprobante_pago'])): ?>
+        if (!empty($orden_compra['comprobante_pago'])): ?>
           <div class="section-title mt-4">
             <i class="bi bi-receipt"></i>
             Comprobante de Pago
@@ -1264,11 +1376,11 @@ if (!empty($orden_compra['comprobante_pago'])): ?>
             </div>
           </div>
         <?php
-endif; ?>
+        endif; ?>
 
-        <!-- SECCIÃ“N DE ACCIONES PARA Gerente de Operaciones (ESTADO PENDIENTE) -->
+        <!-- SECCION DE ACCIONES PARA Gerente de Operaciones (ESTADO PENDIENTE) -->
         <?php
-if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
+        if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
           <div class="section-title mt-4">
             <i class="bi bi-gear"></i>
             Acciones Disponibles - Gerente de Operaciones
@@ -1276,14 +1388,14 @@ if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Ope
 
           <div class="alert alert-info mb-3">
             <i class="bi bi-envelope"></i>
-            <strong>NotificaciÃ³n automÃ¡tica:</strong> Al cambiar el estado se notificarÃ¡ al solicitante
+            <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante
             y al Subdirector General.
           </div>
 
           <form method="POST" class="mb-4">
             <div class="row">
               <div class="col-md-9">
-                <label class="form-label">AcciÃ³n</label>
+                <label class="form-label">Acción</label>
                 <div class="d-flex gap-2 flex-wrap">
                   <button type="button" class="btn btn-info btn-estado" onclick="seleccionarEstado('revisado')">
                     <i class="bi bi-check2-circle"></i> Marcar como Revisado
@@ -1301,10 +1413,10 @@ if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Ope
             <div class="row mt-3">
               <div class="col-md-12">
                 <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisiÃ³n..."></textarea>
+                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
                 <small class="text-muted">
                   <i class="bi bi-info-circle"></i>
-                  Si devuelve la orden de compra, este comentario se incluirÃ¡ en las notificaciones.
+                  Si devuelve la orden de compra, este comentario se incluirá en las notificaciones.
                 </small>
               </div>
             </div>
@@ -1312,17 +1424,17 @@ if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Ope
             <div class="row mt-3">
               <div class="col-md-12">
                 <button type="submit" name="cambiar_estado" class="btn btn-primary" id="btnConfirmar" disabled>
-                  <i class="bi bi-check-lg"></i> Confirmar DecisiÃ³n
+                  <i class="bi bi-check-lg"></i> Confirmar Decisión
                 </button>
               </div>
             </div>
           </form>
         <?php
-endif; ?>
+        endif; ?>
 
-        <!-- SECCIÃ“N DE ACCIONES PARA SUBDIRECTOR GENERAL (ESTADO REVISADO) -->
+        <!-- SECCION DE ACCIONES PARA SUBDIRECTOR GENERAL (ESTADO REVISADO) -->
         <?php
-if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
+        if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
           <div class="section-title mt-4">
             <i class="bi bi-gear"></i>
             Acciones Disponibles - Subdirector General
@@ -1330,14 +1442,14 @@ if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector Gen
 
           <div class="alert alert-info mb-3">
             <i class="bi bi-envelope"></i>
-            <strong>NotificaciÃ³n automÃ¡tica:</strong> Al cambiar el estado se notificarÃ¡ al solicitante
+            <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante
             y al Gerente de Recursos Humanos.
           </div>
 
           <form method="POST" class="mb-4">
             <div class="row">
               <div class="col-md-9">
-                <label class="form-label">AcciÃ³n</label>
+                <label class="form-label">Acción</label>
                 <div class="d-flex gap-2 flex-wrap">
                   <button type="button" class="btn btn-success btn-estado" onclick="seleccionarEstado('aprobado')">
                     <i class="bi bi-check-circle"></i> Aprobar
@@ -1359,10 +1471,10 @@ if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector Gen
             <div class="row mt-3">
               <div class="col-md-12">
                 <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisiÃ³n..."></textarea>
+                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
                 <small class="text-muted">
                   <i class="bi bi-info-circle"></i>
-                  Si rechaza o devuelve la orden de compra, este comentario se incluirÃ¡ en las notificaciones.
+                  Si rechaza o devuelve la orden de compra, este comentario se incluirá en las notificaciones.
                 </small>
               </div>
             </div>
@@ -1370,17 +1482,16 @@ if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector Gen
             <div class="row mt-3">
               <div class="col-md-12">
                 <button type="submit" name="cambiar_estado" class="btn btn-primary" id="btnConfirmar" disabled>
-                  <i class="bi bi-check-lg"></i> Confirmar DecisiÃ³n
+                  <i class="bi bi-check-lg"></i> Confirmar Decisión
                 </button>
               </div>
             </div>
           </form>
         <?php
-endif; ?>
+        endif; ?>
 
-        <!-- SECCIÃ“N DE COMPROBANTE - Solo Gerente de RRHH cuando estÃ¡ aprobado -->
-        <?php
-if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
+        <!-- SECCIÓN DE COMPROBANTE - Solo Gerente de RRHH cuando está aprobado -->
+        <?php if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
           <div class="section-title mt-4">
             <i class="bi bi-receipt"></i>
             Subir Comprobante de Pago
@@ -1388,10 +1499,14 @@ if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
 
           <div class="alert alert-warning mb-3">
             <i class="bi bi-info-circle"></i>
-            <strong>Instrucciones:</strong> Adjunte el comprobante de pago en formato PDF, JPG o PNG (mÃ¡ximo 10MB).
+            <strong>Instrucciones:</strong> Adjunte el comprobante de pago en formato PDF, JPG o PNG (máximo 10MB).
+            Al subir el comprobante, la orden quedará automáticamente marcada como <strong>pagada y completada</strong>.
           </div>
 
+          <!-- FORMULARIO UNIFICADO: sube comprobante + marca como pagado en un solo paso -->
           <form method="POST" enctype="multipart/form-data" class="mb-4">
+            <input type="hidden" name="nuevo_estado" value="pagado">
+
             <div class="row">
               <div class="col-md-8">
                 <label class="form-label">Archivo del Comprobante <span class="text-danger">*</span></label>
@@ -1400,133 +1515,133 @@ if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
                   class="form-control"
                   accept=".pdf,.jpg,.jpeg,.png"
                   required>
-                <small class="text-muted">Formatos permitidos: PDF, JPG, PNG | TamaÃ±o mÃ¡ximo: 10MB</small>
-              </div>
-              <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" name="subir_comprobante" class="btn btn-primary w-100">
-                  <i class="bi bi-upload"></i> Subir Comprobante
-                </button>
-              </div>
-            </div>
-          </form>
-        <?php
-endif; ?>
-
-        <!-- SECCIÃ“N DE MARCAR COMO PAGADO - Solo Gerente de RRHH cuando hay comprobante -->
-        <?php
-if ($orden_compra['estado'] === 'comprobante_subido' && $puede_marcar_pagado): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-currency-dollar"></i>
-            Marcar como Pagado y Completado
-          </div>
-
-          <div class="alert alert-info mb-3">
-            <i class="bi bi-envelope"></i>
-            <strong>NotificaciÃ³n automÃ¡tica:</strong> Al marcar como pagado, se notificarÃ¡ al solicitante y subdirector.
-            <?php
-if (!empty($orden_compra['nombre_catalogo'])): ?>
-              <br><i class="bi bi-diagram-3"></i>
-              <strong>Transferencia automÃ¡tica:</strong> Los items se transferirÃ¡n al catÃ¡logo "<?= htmlspecialchars($orden_compra['nombre_catalogo']) ?>".
-            <?php
-endif; ?>
-          </div>
-
-          <form method="POST" class="mb-4">
-            <input type="hidden" name="nuevo_estado" value="pagado">
-
-            <div class="row">
-              <div class="col-md-12">
-                <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue observaciones sobre el pago realizado..."></textarea>
+                <small class="text-muted">Formatos permitidos: PDF, JPG, PNG | Tamaño máximo: 10MB</small>
               </div>
             </div>
 
             <div class="row mt-3">
               <div class="col-md-12">
-                <button type="submit" name="cambiar_estado" class="btn btn-success btn-lg">
-                  <i class="bi bi-check-circle-fill"></i> Confirmar Pago y Completar Proceso
+                <label class="form-label">Comentario (Opcional)</label>
+                <textarea class="form-control" name="comentario" rows="3"
+                  placeholder="Agregue observaciones sobre el pago realizado..."></textarea>
+              </div>
+            </div>
+
+            <div class="alert alert-info mt-3 mb-2">
+              <i class="bi bi-envelope"></i>
+              <strong>Notificación automática:</strong> Al confirmar, se notificará al solicitante y subdirector.
+              <?php if (!empty($orden_compra['nombre_catalogo'])): ?>
+                <br><i class="bi bi-diagram-3"></i>
+                <strong>Transferencia automática:</strong> Los items se transferirán al catálogo "<?= htmlspecialchars($orden_compra['nombre_catalogo']) ?>".
+              <?php endif; ?>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <button type="submit" name="subir_comprobante_y_pagar" class="btn btn-success btn-lg w-100">
+                  <i class="bi bi-check-circle-fill"></i> Subir Comprobante y Confirmar Pago
                 </button>
               </div>
             </div>
           </form>
-        <?php
-endif; ?>
+        <?php endif; ?>
 
-        <!-- Botones de acciÃ³n -->
-        <div class="form-actions mt-4">
+        <!-- Botones de acción -->
+        <div class="form-actions mt-4 d-flex flex-wrap gap-2">
+
           <?php
-$es_sistemas = (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas');
-          if (($orden_compra['estado'] == 'devuelto' && $_SESSION['user_id'] == $orden_compra['solicitante_id']) || $es_sistemas): 
+          // Puede devolver: Gerente RRHH ($puede_subir_comprobante) o Sistemas
+          $es_sistemas     = (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas');
+          $puede_devolver  = $puede_subir_comprobante || $es_sistemas;
+          // Aplica en TODOS los estados excepto 'devuelto' y 'pendiente' (no tendría sentido)
+          $estados_devolver = ['aprobado', 'comprobante_subido', 'pagado'];
+          $estado_permite_devolver = in_array($orden_compra['estado'], $estados_devolver);
           ?>
+
+          <?php if ($estado_permite_devolver && $puede_devolver): ?>
+            <form method="POST" class="d-inline"
+              onsubmit="return confirm('¿Está seguro de devolver esta orden al solicitante para que la edite? El estado volverá a devuelto.')">
+              <input type="hidden" name="nuevo_estado" value="devuelto">
+              <textarea name="comentario" class="d-none" id="comentario_devolver"></textarea>
+              <button type="submit" name="cambiar_estado" class="btn btn-warning">
+                <i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar
+              </button>
+            </form>
+          <?php endif; ?>
+
+          <!-- Editar: cuando está devuelta y el usuario es el solicitante, o es Sistemas -->
+          <?php if (($orden_compra['estado'] == 'devuelto' && $_SESSION['user_id'] == $orden_compra['solicitante_id']) || $es_sistemas): ?>
             <a href="edit_oc.php?id=<?= $orden_compra['id'] ?>" class="btn btn-warning">
               <i class="bi bi-pencil"></i> Editar Orden de Compra
             </a>
-            <?php
-if($orden_compra['subcontrato_id']): ?>
-            <small class="text-muted ms-2">
-              <i class="bi bi-info-circle"></i> Esta orden estÃ¡ asociada a un subcontrato
-            </small>
-            <?php
-endif; ?>
-          <?php
-endif; ?>
+            <?php if ($orden_compra['subcontrato_id']): ?>
+              <small class="text-muted ms-2">
+                <i class="bi bi-info-circle"></i> Esta orden está asociada a un subcontrato
+              </small>
+            <?php endif; ?>
+          <?php endif; ?>
+
+        </div>
+
+        <!-- Boton de regreso -->
+        <div class="fab-container-backbtn">
+          <a onclick="history.back()" class="fab-button-backbtn gray">
+            <i class="bi bi-arrow-left"></i>
+            <span class="fab-tooltip-backbtn">Volver</span>
+          </a>
+        </div>
+
+        <div id="loadingOverlay">
+          <div class="loading-box">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-3">Procesando por favor espere</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Boton de regreso -->
-  <div class="fab-container-backbtn">
-    <a onclick="history.back()" class="fab-button-backbtn gray">
-      <i class="bi bi-arrow-left"></i>
-      <span class="fab-tooltip-backbtn">Volver</span>
-    </a>
-  </div>
-
-  <div id="loadingOverlay">
-    <div class="loading-box">
-      <div class="spinner-border text-primary" role="status"></div>
-      <div class="mt-3">Procesandoâ€¦ por favor espere</div>
-    </div>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // FunciÃ³n para seleccionar estado (Aprobar/Rechazar/Devolver)
+    // Función para seleccionar estado (Aprobar/Rechazar/Devolver)
     function seleccionarEstado(estado) {
       document.getElementById('nuevo_estado').value = estado;
       document.getElementById('btnConfirmar').disabled = false;
 
       const btnConfirmar = document.getElementById('btnConfirmar');
       if (estado === 'aprobado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar AprobaciÃ³n';
+        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Aprobación';
         btnConfirmar.className = 'btn btn-success';
       } else if (estado === 'revisado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check2-circle"></i> Confirmar RevisiÃ³n';
+        btnConfirmar.innerHTML = '<i class="bi bi-check2-circle"></i> Confirmar Revisión';
         btnConfirmar.className = 'btn btn-info';
       } else if (estado === 'rechazado') {
         btnConfirmar.innerHTML = '<i class="bi bi-x-lg"></i> Confirmar Rechazo';
         btnConfirmar.className = 'btn btn-danger';
       } else if (estado === 'devuelto') {
-        btnConfirmar.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Confirmar DevoluciÃ³n';
+        btnConfirmar.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Confirmar Devolución';
         btnConfirmar.className = 'btn btn-warning';
+      } else if (estado === 'pagado') {
+        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Pago';
+        btnConfirmar.className = 'btn btn-success';
       }
     }
 
-    // FunciÃ³n para ver archivo
+    // Función para ver archivo
     function verArchivo(archivoId, tipoMime) {
       const tiposVisualizables = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
       if (tiposVisualizables.includes(tipoMime)) {
         window.open('/orders/view_archivo_oc.php?id=' + archivoId, '_blank');
       } else {
-        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargarÃ¡ automÃ¡ticamente.');
+        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
         window.open('/orders/download_archivo_oc.php?id=' + archivoId, '_blank');
       }
     }
 
-    // FunciÃ³n para ver comprobante de pago
+    // Función para ver comprobante de pago
     function verComprobante(ordenId) {
       window.open('/orders/download_comprobante.php?id=' + ordenId, '_blank');
     }
@@ -1536,18 +1651,15 @@ endif; ?>
     // Mostrar overlay al enviar cualquier formulario de cambio de estado
     document.addEventListener('submit', function(e) {
       const form = e.target;
-      if (form.querySelector('[name="cambiar_estado"]') || form.querySelector('[name="subir_comprobante"]')) {
+      if (form.querySelector('[name="cambiar_estado"]') || form.querySelector('[name="subir_comprobante_y_pagar"]')) {
         document.getElementById("loadingOverlay").style.display = "flex";
       }
     });
   </script>
 
   <?php
-include __DIR__ . "/../includes/footer.php"; ?>
+  include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
-
-
-

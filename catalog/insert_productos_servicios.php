@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -13,7 +13,7 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
     exit;
 }
 
@@ -28,16 +28,16 @@ if (empty($nombre) || empty($tipo)) {
     exit;
 }
 
-// Validar que el tipo sea vÃ¡lido
+// Validar que el tipo sea válido
 $tiposPermitidos = ['producto', 'servicio'];
 if (!in_array(strtolower($tipo), $tiposPermitidos)) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Tipo no vÃ¡lido. Debe ser "producto" o "servicio"']);
+    echo json_encode(['status' => 'error', 'message' => 'Tipo no válido. Debe ser "producto" o "servicio"']);
     exit;
 }
 
 try {
-    // âœ… CORREGIDO: Solo 3 parÃ¡metros en lugar de 4
+    // ✅ CORREGIDO: Solo 3 parámetros en lugar de 4
     $sql = "INSERT INTO productos_servicios (nombre, descripcion, tipo) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     
@@ -45,7 +45,7 @@ try {
         throw new Exception("Error al preparar consulta: " . $conn->error);
     }
     
-    // âœ… CORREGIDO: Solo 3 bind params "sss" en lugar de "ssis"
+    // ✅ CORREGIDO: Solo 3 bind params "sss" en lugar de "ssis"
     $stmt->bind_param("sss", $nombre, $descripcion, $tipo);
     
     if ($stmt->execute()) {
