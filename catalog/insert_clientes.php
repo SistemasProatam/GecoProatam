@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $nombre = $_POST['nombre'] ?? '';
 $nombre_abreviado = $_POST['nombre_abreviado'] ?? '';
+$email = $_POST['email'] ?? '';
 $rfc = $_POST['rfc'] ?? '';
 $direccion = $_POST['direccion'] ?? '';
 
@@ -27,31 +28,27 @@ if (empty($nombre)) {
 }
 
 try {
-    $sql = "INSERT INTO clientes (nombre, nombre_abreviado, rfc, direccion) VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO clientes (nombre, nombre_abreviado, email, rfc, direccion) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    
+
     if (!$stmt) {
         throw new Exception("Error al preparar consulta: " . $conn->error);
     }
-    
-    $stmt->bind_param("ssss", $nombre, $nombre_abreviado, $rfc, $direccion);
-    
+
+    $stmt->bind_param("sssss", $nombre, $nombre_abreviado, $email, $rfc, $direccion);
+
     if ($stmt->execute()) {
         echo json_encode([
-            'status' => 'success', 
+            'status' => 'success',
             'message' => 'Cliente creado exitosamente',
             'id' => $conn->insert_id
         ]);
     } else {
         throw new Exception("Error al ejecutar: " . $stmt->error);
     }
-    
 } catch (Exception $e) {
     echo json_encode([
-        'status' => 'error', 
+        'status' => 'error',
         'message' => 'Error al crear el cliente: ' . $e->getMessage()
     ]);
 }
-?>
-
-

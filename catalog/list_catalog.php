@@ -270,6 +270,13 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             <!-- Botón de agregar -->
             <div class="d-flex justify-content-between mb-3">
               <span class="badge-num"><?= $totalRegistros ?> <?= strtolower($entidad_config['nombre']) ?></span>
+              <?php
+              if ($entidad_seleccionada === 'clientes'): ?>
+                <button class="btn btn-gray" type="button" onclick="historialCliente()">
+                  <i class="bi bi-clock-history"></i> Historial de Evaluaciones
+                </button>
+              <?php
+              endif; ?>
               <button class="button-56" type="button" onclick="agregarItem()">
                 <i class="bi bi-plus-circle"></i> Agregar <?= $entidad_config['nombre'] ?>
               </button>
@@ -517,6 +524,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <input type="text" class="form-control" name="nombre_abreviado">
                     </div>
                     <div class="mb-2">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+                    <div class="mb-2">
                         <label class="form-label">RFC</label>
                         <input type="text" class="form-control" name="rfc" maxlength="15">
                     </div>
@@ -736,6 +747,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                                 <input type="text" class="form-control" name="nombre_abreviado" value="${data.nombre_abreviado || ''}">
                             </div>
                             <div class="mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" value="${data.email || ''}">
+                            </div>
+                            <div class="mb-2">
                                 <label class="form-label">RFC</label>
                                 <input type="text" class="form-control" name="rfc" value="${data.rfc || ''}" maxlength="15">
                             </div>
@@ -852,6 +867,10 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     function evaluarProveedor(id) {
       window.location.href = `evaluacion_proveedor.php?id=${id}`;
     }
+
+    function historialCliente(id) {
+      window.location.href = `historial_cliente.php?id=${id}`;
+    }
   </script>
 
   <?php
@@ -950,4 +969,3 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 </body>
 
 </html>
-

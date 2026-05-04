@@ -19,7 +19,8 @@ if (!$cliente) {
     exit;
 }
 
-function mostrarValor($valor) {
+function mostrarValor($valor)
+{
     return trim($valor) !== ''
         ? nl2br(htmlspecialchars($valor))
         : '<em>No especificado</em>';
@@ -38,6 +39,11 @@ function mostrarValor($valor) {
     </div>
 
     <div class="mb-3">
+        <strong>Email:</strong><br>
+        <?= mostrarValor($cliente['email'] ?? '') ?>
+    </div>
+
+    <div class="mb-3">
         <strong>RFC:</strong><br>
         <?= mostrarValor($cliente['rfc'] ?? '') ?>
     </div>
@@ -52,6 +58,3 @@ function mostrarValor($valor) {
         <?= date('d/m/Y H:i', strtotime($cliente['fecha_creacion'])) ?>
     </div>
 </div>
-
-
-
