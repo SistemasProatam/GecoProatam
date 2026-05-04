@@ -1,18 +1,18 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
 checkSession();
 preventCaching();
 
-// â”€â”€â”€ CONTROL DE ACCESO POR DEPARTAMENTO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CONTROL DE ACCESO POR DEPARTAMENTO ─────────────────────
 
 $departamento_usuario = $_SESSION['departamento'] ?? '';
 
 $departamentos_permitidos = [
     'Director General',
     'Subdirector General',
-    'Coordinador de Control de Documentos y FacturaciÃ³n',
+    'Coordinador de Control de Documentos y Facturación',
     'Gerente de Seguridad Salud y Medio Ambiente',
     'Tecnico de Sistemas'
 ];
@@ -31,7 +31,7 @@ if (!$id) {
     exit;
 }
 
-// â”€â”€â”€ Activo principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Activo principal ────────────────────────────────────────────────────────
 $stmt = $conn->prepare(
     "SELECT a.*, at.nombre AS tipo_nombre, at.prefijo,
             u.nombres AS resp_nombres, u.apellidos AS resp_apellidos,
@@ -53,7 +53,7 @@ if (!$activo) {
 
 $tipo_norm = iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($activo['tipo_nombre'] ?? ''));
 
-// â”€â”€â”€ Detalles especÃ­ficos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Detalles específicos ────────────────────────────────────────────────────
 function fetchRow($conn, $sql, $id) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
@@ -87,21 +87,21 @@ if (str_contains($tipo_norm, 'tic')) {
     $detalle_tic = fetchRow($conn, "SELECT * FROM tics_detalle WHERE activo_id = ?", $id);
 }
 
-// â”€â”€â”€ Documentos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Documentos ─────────────────────────────────────────────────────────────
 $stmt_docs = $conn->prepare("SELECT * FROM activos_documentos WHERE activo_id = ? ORDER BY fecha_subida ASC");
 $stmt_docs->bind_param("i", $id);
 $stmt_docs->execute();
 $documentos = $stmt_docs->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// â”€â”€â”€ ImÃ¡genes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Imágenes ────────────────────────────────────────────────────────────────
 $stmt_imgs = $conn->prepare("SELECT * FROM activos_imagenes WHERE activo_id = ? ORDER BY fecha_subida ASC");
 $stmt_imgs->bind_param("i", $id);
 $stmt_imgs->execute();
 $imagenes = $stmt_imgs->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ────────────────────────────────────────────────────────────────
 function campo($label, $valor, $cols = 4) {
-    $v = $valor ?? 'â€”';
+    $v = $valor ?? '—';
     echo '<div class="col-md-' . $cols . ' detail-field">'
        . '<span class="detail-label">' . htmlspecialchars($label) . '</span>'
        . '<span class="detail-value">' . htmlspecialchars($v) . '</span>'
@@ -121,11 +121,11 @@ function labelTipoDoc($tipo) {
     $map = [
         'factura'             => 'Factura / Comprobante',
         'pedimento'           => 'Pedimento',
-        'poliza_seguro_mx'    => 'PÃ³liza de Seguro (MX)',
-        'poliza_seguro_usa'   => 'PÃ³liza de Seguro (USA)',
+        'poliza_seguro_mx'    => 'Póliza de Seguro (MX)',
+        'poliza_seguro_usa'   => 'Póliza de Seguro (USA)',
         'manual_usuario'      => 'Manual de Usuario',
         'manual_mantenimiento'=> 'Manual de Mantenimiento',
-        'catalogo_refacciones'=> 'CatÃ¡logo de Refacciones',
+        'catalogo_refacciones'=> 'Catálogo de Refacciones',
         'contrato'            => 'Contrato / Escritura',
         'expediente_predial'   => 'Expediente / Predial',
         'extra'               => 'Documento Extra',
@@ -148,7 +148,7 @@ $estatus_badges = [
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Activo â€“ <?= htmlspecialchars($activo['codigo']) ?></title>
+  <title>Activo – <?= htmlspecialchars($activo['codigo']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     crossorigin="anonymous" />
@@ -157,7 +157,7 @@ $estatus_badges = [
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_mobile.css" />
   <style>
-    /* â”€â”€ Hero image â”€â”€ */
+    /* ── Hero image ── */
     .hero-img-wrap {
       width: 100%;
       max-height: 380px;
@@ -188,7 +188,7 @@ $estatus_badges = [
     }
     .hero-img-placeholder i { font-size: 4rem; }
 
-    /* â”€â”€ Secciones â”€â”€ */
+    /* ── Secciones ── */
     .detail-section {
       background: #fff;
       border: 1px solid #e2e8f0;
@@ -222,7 +222,7 @@ $estatus_badges = [
       color: #212529;
     }
 
-    /* â”€â”€ GalerÃ­a â”€â”€ */
+    /* ── Galería ── */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -240,7 +240,7 @@ $estatus_badges = [
     .gallery-item img:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(0,0,0,.18); }
     .gallery-item small { font-size: .72rem; color: #6c757d; display: block; text-align: center; margin-top: 4px; }
 
-    /* â”€â”€ Docs â”€â”€ */
+    /* ── Docs ── */
     .doc-item-row {
       display: flex;
       align-items: center;
@@ -256,7 +256,7 @@ $estatus_badges = [
     .doc-item-row .doc-label { font-size: .75rem; color: #6c757d; }
     .doc-item-row .doc-name  { font-size: .9rem;  color: #212529; font-weight: 500; }
 
-    /* â”€â”€ CÃ³digo badge â”€â”€ */
+    /* ── Código badge ── */
     .codigo-badge {
       font-family: monospace;
       font-size: 1.1rem;
@@ -268,7 +268,7 @@ $estatus_badges = [
       letter-spacing: 1px;
     }
 
-    /* â”€â”€ Acciones â”€â”€ */
+    /* ── Acciones ── */
     .action-bar {
       display: flex;
       gap: 10px;
@@ -322,7 +322,7 @@ endif; ?>
 
       <?php
 if (!empty($activo['qr_token'])): ?>
-      <!-- â•â• QR DEL ACTIVO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ QR DEL ACTIVO ═════════════════════════════════════════════════ -->
       <div class="detail-section">
   <div class="row align-items-center g-4">
 
@@ -361,12 +361,12 @@ $qrRutaActual = array_key_exists('qr_ruta_imagen', $activo)
     <div class="col">
 
       <div class="section-title mb-2" style="border:none;padding:0;">
-        <i class="bi bi-qr-code"></i> CÃ³digo QR del Activo
+        <i class="bi bi-qr-code"></i> Código QR del Activo
       </div>
 
       <p class="text-muted mb-3" style="font-size:.88rem;">
-        Escanea este cÃ³digo para acceder rÃ¡pidamente a la informaciÃ³n del activo
-        desde cualquier dispositivo mÃ³vil.
+        Escanea este código para acceder rápidamente a la información del activo
+        desde cualquier dispositivo móvil.
       </p>
 
       <div class="d-flex flex-wrap gap-2">
@@ -384,7 +384,7 @@ $qrRutaActual = array_key_exists('qr_ruta_imagen', $activo)
       <?php
 endif; ?>
 
-      <!-- â•â• IMAGEN PRINCIPAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ IMAGEN PRINCIPAL ══════════════════════════════════════════════ -->
       <div class="hero-img-wrap">
         <?php
 if (!empty($activo['img_foto_principal'])): ?>
@@ -402,28 +402,28 @@ else: ?>
 endif; ?>
       </div>
 
-      <!-- â•â• INFORMACIÃ“N GENERAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ INFORMACIÓN GENERAL ═══════════════════════════════════════════ -->
       <div class="detail-section">
-        <div class="section-title"><i class="bi bi-info-circle"></i> InformaciÃ³n General</div>
+        <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
         <div class="row">
           <?php
 campo('Tipo de Activo',       $activo['tipo_nombre']);     ?>
           <?php
 campo('Nombre',               $activo['nombre']);          ?>
           <?php
-campo('CondiciÃ³n',            ucfirst($activo['condicion'] ?? ''));  ?>
+campo('Condición',            ucfirst($activo['condicion'] ?? ''));  ?>
           <?php
 campo('Responsable',          trim(($activo['resp_nombres'] ?? '') . ' ' . ($activo['resp_apellidos'] ?? '')) ?: null); ?>
           <?php
 campo('Departamento',         $activo['depto_nombre']);    ?>
           <?php
-campo('Fecha de AdquisiciÃ³n', $activo['fecha_adquisicion'] ? date('d/m/Y', strtotime($activo['fecha_adquisicion'])) : null); ?>
+campo('Fecha de Adquisición', $activo['fecha_adquisicion'] ? date('d/m/Y', strtotime($activo['fecha_adquisicion'])) : null); ?>
           <?php
 campo('Valor Factura (MXN)',  $activo['valor_factura'] ? '$' . number_format($activo['valor_factura'], 2) : null); ?>
           <?php
-campo('Vida Ãštil',            $activo['vida_util'] ? $activo['vida_util'] . ' aÃ±o(s)' : null); ?>
+campo('Vida Útil',            $activo['vida_util'] ? $activo['vida_util'] . ' año(s)' : null); ?>
           <?php
-campo('UbicaciÃ³n',            $activo['ubicacion'],  4); ?>
+campo('Ubicación',            $activo['ubicacion'],  4); ?>
           <?php
 campo('Fecha de Registro',    $activo['fecha_creacion'] ? date('d/m/Y H:i', strtotime($activo['fecha_creacion'])) : null); ?>
         </div>
@@ -437,30 +437,30 @@ if (!empty($activo['notas'])): ?>
 endif; ?>
       </div>
 
-      <!-- â•â• DETALLES VEHÃCULO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DETALLES VEHÍCULO ══════════════════════════════════════════════ -->
       <?php
 if ($detalle_vehiculo): ?>
       <div class="detail-section">
-        <div class="section-title"><i class="bi bi-truck"></i> Detalles del VehÃ­culo</div>
+        <div class="section-title"><i class="bi bi-truck"></i> Detalles del Vehículo</div>
         <div class="row">
           <?php
 campo('Marca',             $detalle_vehiculo['marca']);           ?>
           <?php
 campo('Modelo',            $detalle_vehiculo['modelo']);          ?>
           <?php
-campo('AÃ±o',               $detalle_vehiculo['anio']);            ?>
+campo('Año',               $detalle_vehiculo['anio']);            ?>
           <?php
 campo('Color',             $detalle_vehiculo['color']);           ?>
           <?php
 campo('Placa',             $detalle_vehiculo['placa']);           ?>
           <?php
-campo('VIN / NÂ° Serie',    $detalle_vehiculo['vin']);             ?>
+campo('VIN / N° Serie',    $detalle_vehiculo['vin']);             ?>
           <?php
-campo('NÂ° Motor',          $detalle_vehiculo['numero_motor']);    ?>
+campo('N° Motor',          $detalle_vehiculo['numero_motor']);    ?>
           <?php
 campo('Entidad Federativa',$detalle_vehiculo['entidad_federativa']); ?>
           <?php
-campo('NÂ° Pedimento',      $detalle_vehiculo['numero_pedimento']); ?>
+campo('N° Pedimento',      $detalle_vehiculo['numero_pedimento']); ?>
           <?php
 campo('Origen',            ucfirst($detalle_vehiculo['origen'] ?? '')); ?>
           <?php
@@ -470,11 +470,11 @@ campo('Propietario',       $detalle_vehiculo['nombre_propietario'], 8); ?>
         </div>
 
         <div class="row mt-3">
-          <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO MÃ‰XICO</strong></div>
+          <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO MÉXICO</strong></div>
           <?php
 campo('Aseguradora (MX)',   $detalle_vehiculo['nombre_aseguradora_mx']);    ?>
           <?php
-campo('TelÃ©fono (MX)',      $detalle_vehiculo['telefono_aseguradora_mx']);  ?>
+campo('Teléfono (MX)',      $detalle_vehiculo['telefono_aseguradora_mx']);  ?>
           <?php
 campo('Vto. Seguro (MX)',   $detalle_vehiculo['fecha_venc_seguro_mx'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_mx'])) : null); ?>
         </div>
@@ -483,7 +483,7 @@ campo('Vto. Seguro (MX)',   $detalle_vehiculo['fecha_venc_seguro_mx'] ? date('d/
           <?php
 campo('Aseguradora (USA)',  $detalle_vehiculo['nombre_aseguradora_usa']);   ?>
           <?php
-campo('TelÃ©fono (USA)',     $detalle_vehiculo['telefono_aseguradora_usa']); ?>
+campo('Teléfono (USA)',     $detalle_vehiculo['telefono_aseguradora_usa']); ?>
           <?php
 campo('Vto. Seguro (USA)',  $detalle_vehiculo['fecha_venc_seguro_usa'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_usa'])) : null); ?>
         </div>
@@ -491,7 +491,7 @@ campo('Vto. Seguro (USA)',  $detalle_vehiculo['fecha_venc_seguro_usa'] ? date('d
       <?php
 endif; ?>
 
-      <!-- â•â• DETALLES MAQUINARIA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DETALLES MAQUINARIA ════════════════════════════════════════════ -->
       <?php
 if ($detalle_maquinaria): ?>
       <div class="detail-section">
@@ -502,9 +502,9 @@ campo('Marca',             $detalle_maquinaria['marca']);        ?>
           <?php
 campo('Modelo',            $detalle_maquinaria['modelo']);       ?>
           <?php
-campo('NÂ° Serie',          $detalle_maquinaria['numero_serie']); ?>
+campo('N° Serie',          $detalle_maquinaria['numero_serie']); ?>
           <?php
-campo('Km / HorÃ³metro',    $detalle_maquinaria['kilometraje'] ? number_format($detalle_maquinaria['kilometraje']) : null); ?>
+campo('Km / Horómetro',    $detalle_maquinaria['kilometraje'] ? number_format($detalle_maquinaria['kilometraje']) : null); ?>
         </div>
         <?php
 if (!empty($detalle_maquinaria['foto_motor'])): ?>
@@ -519,7 +519,7 @@ endif; ?>
       <?php
 endif; ?>
 
-      <!-- â•â• DETALLES MOBILIARIO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DETALLES MOBILIARIO ════════════════════════════════════════════ -->
       <?php
 if ($detalle_mobiliario): ?>
       <div class="detail-section">
@@ -530,20 +530,20 @@ campo('Marca',            $detalle_mobiliario['marca']);             ?>
           <?php
 campo('Modelo',           $detalle_mobiliario['modelo']);            ?>
           <?php
-campo('NÂ° de Items',      $detalle_mobiliario['numero_items']);      ?>
+campo('N° de Items',      $detalle_mobiliario['numero_items']);      ?>
           <?php
 campo('Medida Aprox.',    $detalle_mobiliario['medida_aprox']);      ?>
           <?php
 campo('Edificio',         $detalle_mobiliario['edificio']);          ?>
           <?php
-campo('Ãrea / Depto.',    $detalle_mobiliario['area_departamento']); ?>
+campo('Área / Depto.',    $detalle_mobiliario['area_departamento']); ?>
           <?php
-campo('DirecciÃ³n',        $detalle_mobiliario['direccion'], 8);      ?>
+campo('Dirección',        $detalle_mobiliario['direccion'], 8);      ?>
         </div>
         <?php
 if (!empty($detalle_mobiliario['descripcion'])): ?>
           <div class="mt-2">
-            <span class="detail-label">DescripciÃ³n</span>
+            <span class="detail-label">Descripción</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_mobiliario['descripcion'])) ?></span>
           </div>
         <?php
@@ -552,7 +552,7 @@ endif; ?>
       <?php
 endif; ?>
 
-      <!-- â•â• DETALLES INMUEBLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DETALLES INMUEBLE ══════════════════════════════════════════════ -->
       <?php
 if ($detalle_inmueble): ?>
       <div class="detail-section">
@@ -561,11 +561,11 @@ if ($detalle_inmueble): ?>
           <?php
 campo('Tipo de Inmueble',         $detalle_inmueble['tipo_inmueble']);             ?>
           <?php
-campo('Tipo de PosesiÃ³n',         $detalle_inmueble['tipo_posesion']);             ?>
+campo('Tipo de Posesión',         $detalle_inmueble['tipo_posesion']);             ?>
           <?php
 campo('Uso',                      $detalle_inmueble['uso']);                       ?>
           <?php
-campo('DirecciÃ³n',                $detalle_inmueble['direccion'], 6);              ?>
+campo('Dirección',                $detalle_inmueble['direccion'], 6);              ?>
           <?php
 campo('Coordenadas GPS',          $detalle_inmueble['coordenadas'], 6);            ?>
           <?php
@@ -589,7 +589,7 @@ campo('Resp. Administrativo',     $detalle_inmueble['responsable_administrativo'
       <?php
 endif; ?>
 
-      <!-- â•â• DETALLES HERRAMIENTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DETALLES HERRAMIENTA ═══════════════════════════════════════════ -->
       <?php
 if ($detalle_herramienta): ?>
       <div class="detail-section">
@@ -600,16 +600,16 @@ campo('Marca',         $detalle_herramienta['marca']);            ?>
           <?php
 campo('Modelo',        $detalle_herramienta['modelo']);           ?>
           <?php
-campo('NÂ° Serie',      $detalle_herramienta['numero_serie']);     ?>
+campo('N° Serie',      $detalle_herramienta['numero_serie']);     ?>
           <?php
-campo('AsignaciÃ³n',    $detalle_herramienta['asignacion']);       ?>
+campo('Asignación',    $detalle_herramienta['asignacion']);       ?>
           <?php
-campo('UbicaciÃ³n',     $detalle_herramienta['ubicacion_fisica']); ?>
+campo('Ubicación',     $detalle_herramienta['ubicacion_fisica']); ?>
         </div>
         <?php
 if (!empty($detalle_herramienta['descripcion'])): ?>
           <div class="mt-2">
-            <span class="detail-label">DescripciÃ³n</span>
+            <span class="detail-label">Descripción</span>
             <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_herramienta['descripcion'])) ?></span>
           </div>
         <?php
@@ -618,7 +618,7 @@ endif; ?>
       <?php
 endif; ?>
 
-      <!-- â•â• DETALLES TICs â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DETALLES TICs ══════════════════════════════════════════════════ -->
       <?php
 if ($detalle_tic): ?>
       <div class="detail-section">
@@ -629,7 +629,7 @@ campo('Marca',            $detalle_tic['marca']);              ?>
           <?php
 campo('Modelo',           $detalle_tic['modelo']);             ?>
           <?php
-campo('NÂ° Serie',         $detalle_tic['numero_serie']);       ?>
+campo('N° Serie',         $detalle_tic['numero_serie']);       ?>
           <?php
 campo('Sistema Operativo',$detalle_tic['sistema_operativo']);  ?>
           <?php
@@ -643,7 +643,7 @@ campo('Office / Suite',   $detalle_tic['office']);             ?>
           <?php
 campo('Correo Asignado',  $detalle_tic['correo']);             ?>
           <?php
-campo('UbicaciÃ³n FÃ­sica', $detalle_tic['ubicacion_fisica']);   ?>
+campo('Ubicación Física', $detalle_tic['ubicacion_fisica']);   ?>
         </div>
         <?php
 if (!empty($detalle_tic['programas_instalados'])): ?>
@@ -665,7 +665,7 @@ endif; ?>
       <?php
 endif; ?>
 
-      <!-- â•â• DOCUMENTOS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ DOCUMENTOS ════════════════════════════════════════════════════ -->
       <?php
 if (!empty($documentos)): ?>
       <div class="detail-section">
@@ -689,7 +689,7 @@ endforeach; ?>
       <?php
 endif; ?>
 
-      <!-- â•â• GALERÃA DE IMÃGENES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ══ GALERÍA DE IMÁGENES ════════════════════════════════════════════ -->
       <?php
 $imgs_galeria = array_filter($imagenes, fn($im) => $im['tipo_imagen'] !== 'foto_principal');
       $foto_placa   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_placa');
@@ -699,7 +699,7 @@ $imgs_galeria = array_filter($imagenes, fn($im) => $im['tipo_imagen'] !== 'foto_
       <?php
 if (!empty($imgs_galeria)): ?>
       <div class="detail-section">
-        <div class="section-title"><i class="bi bi-card-image"></i> ImÃ¡genes</div>
+        <div class="section-title"><i class="bi bi-card-image"></i> Imágenes</div>
         <div class="gallery-grid">
           <?php
 foreach ($fotos_gen as $img): ?>
@@ -728,10 +728,10 @@ endforeach; ?>
 foreach ($foto_serie as $img): ?>
             <div class="gallery-item">
               <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                   alt="NÂ° Serie"
+                   alt="N° Serie"
                    data-bs-toggle="modal" data-bs-target="#modalGaleria"
                    onclick="abrirImagen(this)" />
-              <small>NÂ° Serie</small>
+              <small>N° Serie</small>
             </div>
           <?php
 endforeach; ?>
@@ -763,7 +763,7 @@ if (!empty($activo['img_foto_principal'])): ?>
 <?php
 endif; ?>
 
-<!-- Modal galerÃ­a -->
+<!-- Modal galería -->
 <div class="modal fade" id="modalGaleria" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content bg-dark border-0">
@@ -777,7 +777,7 @@ endif; ?>
   </div>
 </div>
 
-<!-- BotÃ³n volver -->
+<!-- Botón volver -->
 <div class="fab-container-backbtn">
   <a onclick="history.back()" class="fab-button-backbtn gray">
     <i class="bi bi-arrow-left"></i>

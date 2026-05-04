@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 header('Content-Type: application/json');
 require_once __DIR__ . "/conexion.php";
@@ -26,14 +26,14 @@ try {
     $user = $user_result->fetch_assoc();
     $user_id = $user['id'];
 
-    // Buscar token vÃ¡lido
+    // Buscar token válido
     $token_stmt = $conn->prepare("SELECT id, token_hash FROM password_reset_tokens WHERE user_id = ? AND expires_at > NOW() AND used = 0");
     $token_stmt->bind_param("i", $user_id);
     $token_stmt->execute();
     $token_result = $token_stmt->get_result();
     
     if ($token_result->num_rows === 0) {
-        echo json_encode(['status' => 'error', 'message' => 'El cÃ³digo ha expirado o no es vÃ¡lido. Solicita un nuevo cÃ³digo.']);
+        echo json_encode(['status' => 'error', 'message' => 'El código ha expirado o no es válido. Solicita un nuevo código.']);
         exit;
     }
 
@@ -43,7 +43,7 @@ try {
 
     // Verificar el token
     if (!password_verify($token, $stored_hash)) {
-        echo json_encode(['status' => 'error', 'message' => 'CÃ³digo incorrecto. Intenta nuevamente.']);
+        echo json_encode(['status' => 'error', 'message' => 'Código incorrecto. Intenta nuevamente.']);
         exit;
     }
 
@@ -52,17 +52,17 @@ try {
     $update_stmt->bind_param("i", $token_id);
     $update_stmt->execute();
 
-    // Generar token seguro para el cambio de contraseÃ±a
+    // Generar token seguro para el cambio de contraseña
     $reset_token = bin2hex(random_bytes(32));
     
-    // Guardar reset token en sesiÃ³n (alternativamente podrÃ­as usar la base de datos)
+    // Guardar reset token en sesión (alternativamente podrías usar la base de datos)
     $_SESSION['reset_token'] = $reset_token;
     $_SESSION['reset_user_id'] = $user_id;
     $_SESSION['reset_token_expiry'] = time() + 900; // 15 minutos
 
     echo json_encode([
         'status' => 'success', 
-        'message' => 'CÃ³digo verificado correctamente. Ahora puedes cambiar tu contraseÃ±a.',
+        'message' => 'Código verificado correctamente. Ahora puedes cambiar tu contraseña.',
         'reset_token' => $reset_token
     ]);
 

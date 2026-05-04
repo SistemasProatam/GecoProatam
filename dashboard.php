@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
 
@@ -38,7 +38,7 @@ $activos_total = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COALESCE(SUM(valor_factura),0) AS total FROM activos WHERE estatus = 'activo'");
 $activos_valor_total = $r->fetch_assoc()['total'];
 
-// --- NUEVAS MÃ‰TRICAS ---
+// --- NUEVAS MÉTRICAS ---
 $r = $conn->query("SELECT COUNT(*) AS total FROM obras");
 $obras_total = $r->fetch_assoc()['total'];
 
@@ -187,7 +187,7 @@ $tipo_colores = [
                         <div class="kpi-label">Proyectos</div>
                         <div class="kpi-value"><?= $proyectos_vigentes ?></div>
                         <div class="kpi-sub">
-                            <?= $proyectos_total ?> totales &nbsp;Â·&nbsp;
+                            <?= $proyectos_total ?> totales &nbsp;·&nbsp;
                             <span><?= $proyectos_terminados ?> terminados</span>
                         </div>
                     </div>
@@ -205,7 +205,7 @@ $tipo_colores = [
                 <a href="<?= BASE_URL ?>/orders/list_oc.php" class="kpi-card-link">
                     <div class="kpi-card c-sky fade-up delay-3">
                         <i class="bi bi-cart3 kpi-icon"></i>
-                        <div class="kpi-label">Ã“rdenes de Compra</div>
+                        <div class="kpi-label">Órdenes de Compra</div>
                         <div class="kpi-value"><?= $oc_total ?></div>
                         <div class="kpi-sub">Monto: <?= fmt($oc_monto) ?></div>
                     </div>
@@ -216,7 +216,7 @@ $tipo_colores = [
                         <i class="bi bi-clipboard-check kpi-icon"></i>
                         <div class="kpi-label">Requisiciones</div>
                         <div class="kpi-value"><?= $req_total ?></div>
-                        <div class="kpi-sub"><?= $req_pendientes ?> pendientes de revisiÃ³n</div>
+                        <div class="kpi-sub"><?= $req_pendientes ?> pendientes de revisión</div>
                     </div>
                 </a>
 
@@ -247,7 +247,7 @@ $tipo_colores = [
             </div>
 
             <!-- OC ESTADOS -->
-            <div class="section-label">Ã“rdenes de compra Â· estado actual</div>
+            <div class="section-label">Órdenes de compra · estado actual</div>
             <div class="grid-4 mb-section">
 
                 <div class="oc-stat fade-up delay-1">
@@ -276,13 +276,13 @@ $tipo_colores = [
 
             </div>
 
-            <!-- GRÃFICO OC ANCHO COMPLETO -->
+            <!-- GRÁFICO OC ANCHO COMPLETO -->
             <div class="mb-section">
                 <div class="panel fade-up delay-2">
                     <div class="panel-head">
                         <div class="panel-title">
                             <i class="bi bi-bar-chart-line" style="margin-right:8px;"></i>
-                            Ã“rdenes de Compra Â· Ãºltimos 6 meses
+                            Órdenes de Compra · últimos 6 meses
                         </div>
                     </div>
                     <div class="panel-body">
@@ -291,7 +291,7 @@ $tipo_colores = [
                 </div>
             </div>
 
-            <!-- DONA OC + ÃšLTIMAS OC + PROYECTOS A VENCER -->
+            <!-- DONA OC + ÚLTIMAS OC + PROYECTOS A VENCER -->
             <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:16px;" class="mb-section grid-triple">
 
                 <div class="panel fade-up delay-2">
@@ -333,8 +333,8 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-3">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-receipt" style="color:var(--sky);margin-right:8px;"></i>Ãšltimas Ã“rdenes de Compra</div>
-                        <a href="<?= BASE_URL ?>/orders/list_oc.php" style="font-size:.74rem;color:var(--accent);text-decoration:none;">Ver todas â†’</a>
+                        <div class="panel-title"><i class="bi bi-receipt" style="color:var(--sky);margin-right:8px;"></i>Últimas Órdenes de Compra</div>
+                        <a href="<?= BASE_URL ?>/orders/list_oc.php" style="font-size:.74rem;color:var(--accent);text-decoration:none;">Ver todas →</a>
                     </div>
                     <div class="panel-body" style="padding:0;">
                         <table class="dash-table">
@@ -388,7 +388,7 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-4">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-alarm" style="color:var(--rose);margin-right:8px;"></i>Vencen en 30 dÃ­as</div>
+                        <div class="panel-title"><i class="bi bi-alarm" style="color:var(--rose);margin-right:8px;"></i>Vencen en 30 días</div>
                     </div>
                     <div class="panel-body">
                         <?php
@@ -396,7 +396,7 @@ $tipo_colores = [
                         if (empty($proximos_vencer)): ?>
                             <div style="text-align:center;color:var(--ink2);padding:30px 0;font-size:.83rem;">
                                 <i class="bi bi-check-circle" style="font-size:1.8rem;color:var(--accent);display:block;margin-bottom:8px;"></i>
-                                Sin proyectos prÃ³ximos a vencer
+                                Sin proyectos próximos a vencer
                             </div>
                         <?php
 
@@ -410,11 +410,11 @@ $tipo_colores = [
                                 <div class="alert-row">
                                     <div class="alert-days" style="color:<?= $color ?>">
                                         <?= $dias ?>
-                                        <small>dÃ­as</small>
+                                        <small>días</small>
                                     </div>
                                     <div class="alert-info">
                                         <div class="alert-name"><?= htmlspecialchars($p['nombre_proyecto']) ?></div>
-                                        <div class="alert-client"><?= htmlspecialchars($p['cliente'] ?? 'Sin cliente') ?> Â· <?= date('d/m/Y', strtotime($p['fecha_fin'])) ?></div>
+                                        <div class="alert-client"><?= htmlspecialchars($p['cliente'] ?? 'Sin cliente') ?> · <?= date('d/m/Y', strtotime($p['fecha_fin'])) ?></div>
                                     </div>
                                 </div>
                             <?php
@@ -428,12 +428,12 @@ $tipo_colores = [
 
             </div>
 
-            <!-- CONDICIÃ“N ACTIVOS + DESGLOSE ACTIVOS -->
+            <!-- CONDICIÓN ACTIVOS + DESGLOSE ACTIVOS -->
             <div class="grid-2 mb-section">
 
                 <div class="panel fade-up delay-2">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-activity" style="color:var(--accent);margin-right:8px;"></i>CondiciÃ³n de Activos</div>
+                        <div class="panel-title"><i class="bi bi-activity" style="color:var(--accent);margin-right:8px;"></i>Condición de Activos</div>
                         <div style="font-size:.75rem;"><?= $activos_activos ?> activos totales</div>
                     </div>
                     <div class="panel-body">
@@ -444,14 +444,14 @@ $tipo_colores = [
                 <div class="panel fade-up delay-3">
                     <div class="panel-head">
                         <div class="panel-title"><i class="bi bi-table" style="color:var(--gold);margin-right:8px;"></i>Resumen de Activos por Tipo</div>
-                        <a href="<?= BASE_URL ?>/activos/list_activos.php" style="font-size:.74rem;color:var(--accent);text-decoration:none;">Ver todos â†’</a>
+                        <a href="<?= BASE_URL ?>/activos/list_activos.php" style="font-size:.74rem;color:var(--accent);text-decoration:none;">Ver todos →</a>
                     </div>
                     <div class="panel-body" style="padding:0;">
                         <table class="dash-table">
                             <thead>
                                 <tr>
                                     <th>Tipo</th>
-                                    <th>CÃ³digo</th>
+                                    <th>Código</th>
                                     <th style="text-align:right;">Cantidad</th>
                                     <th style="text-align:right;">Valor Total</th>
                                 </tr>
@@ -682,7 +682,7 @@ $tipo_colores = [
             }
         });
 
-        // 3. CondiciÃ³n activos
+        // 3. Condición activos
         new Chart(document.getElementById('chartCondicion'), {
             type: 'bar',
             data: {

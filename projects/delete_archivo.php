@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -17,7 +17,7 @@ if (empty($archivo_id)) {
 }
 
 try {
-    // Obtener informaciÃ³n del archivo
+    // Obtener información del archivo
     $sql = "SELECT ruta_archivo FROM proyecto_adjuntos WHERE id = ?";
     $stmt = $conn->prepare($sql);
     
@@ -30,10 +30,10 @@ try {
     $result = $stmt->get_result();
 
     if ($row = $result->fetch_assoc()) {
-        // Eliminar archivo fÃ­sico
+        // Eliminar archivo físico
         if (file_exists($row['ruta_archivo'])) {
             if (!unlink($row['ruta_archivo'])) {
-                throw new Exception('No se pudo eliminar el archivo fÃ­sico');
+                throw new Exception('No se pudo eliminar el archivo físico');
             }
         }
         
@@ -42,7 +42,7 @@ try {
         $stmtDelete = $conn->prepare($sqlDelete);
         
         if (!$stmtDelete) {
-            throw new Exception('Error al preparar la consulta de eliminaciÃ³n: ' . $conn->error);
+            throw new Exception('Error al preparar la consulta de eliminación: ' . $conn->error);
         }
         
         $stmtDelete->bind_param("i", $archivo_id);

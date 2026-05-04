@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -16,7 +16,7 @@ if (!$id) {
     die("Error: ID no proporcionado.");
 }
 
-// Eliminar (CASCADE eliminarÃ¡ automÃ¡ticamente items y archivos)
+// Eliminar (CASCADE eliminará automáticamente items y archivos)
 $sql = "DELETE FROM ordenes_compra WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);

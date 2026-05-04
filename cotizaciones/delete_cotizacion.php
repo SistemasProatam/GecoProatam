@@ -1,5 +1,5 @@
-﻿<?php
-// delete_cotizacion.php â€” Elimina FÃSICAMENTE una cotizaciÃ³n de la BD
+<?php
+// delete_cotizacion.php — Elimina FÍSICAMENTE una cotización de la BD
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -29,18 +29,18 @@ $row = $check->get_result()->fetch_assoc();
 $check->close();
 
 if (!$row) {
-    echo json_encode(['status' => 'error', 'message' => 'CotizaciÃ³n no encontrada']);
+    echo json_encode(['status' => 'error', 'message' => 'Cotización no encontrada']);
     exit;
 }
 
-// Borrado fÃ­sico real (DELETE, no UPDATE activo=0)
+// Borrado físico real (DELETE, no UPDATE activo=0)
 $stmt = $conn->prepare("DELETE FROM cotizaciones WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
     echo json_encode([
         'status'  => 'success',
-        'message' => 'CotizaciÃ³n ' . $row['folio'] . ' eliminada permanentemente.',
+        'message' => 'Cotización ' . $row['folio'] . ' eliminada permanentemente.',
     ]);
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Error al eliminar: ' . $conn->error]);

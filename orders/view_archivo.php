@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -16,7 +16,7 @@ if (!$archivo_id) {
     die("Error: ID de archivo no proporcionado.");
 }
 
-// Obtener informaciÃ³n del archivo
+// Obtener información del archivo
 $sql = "SELECT nombre_archivo, ruta_archivo, tipo_mime 
         FROM requisicion_archivos 
         WHERE id = ?";
@@ -37,7 +37,7 @@ if (!file_exists($ruta_completa)) {
     die("Error: El archivo no existe en el servidor.");
 }
 
-// Configurar headers para visualizaciÃ³n en el navegador
+// Configurar headers para visualización en el navegador
 header('Content-Type: ' . $archivo['tipo_mime']);
 header('Content-Disposition: inline; filename="' . basename($archivo['nombre_archivo']) . '"');
 header('Content-Length: ' . filesize($ruta_completa));

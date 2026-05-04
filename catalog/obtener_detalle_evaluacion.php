@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -11,11 +11,11 @@ header('Content-Type: application/json');
 $evaluacion_id = $_GET['id'] ?? 0;
 
 if ($evaluacion_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'ID invÃ¡lido']);
+    echo json_encode(['success' => false, 'message' => 'ID inválido']);
     exit();
 }
 
-// Obtener detalles completos de la evaluaciÃ³n
+// Obtener detalles completos de la evaluación
 $sql = "SELECT 
             ep.*,
             u.nombres,
@@ -31,7 +31,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    echo json_encode(['success' => false, 'message' => 'EvaluaciÃ³n no encontrada']);
+    echo json_encode(['success' => false, 'message' => 'Evaluación no encontrada']);
     exit();
 }
 

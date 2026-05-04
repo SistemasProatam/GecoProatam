@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -29,7 +29,7 @@ if (!$unidad) {
     </div>
     
     <div class="mb-3">
-        <strong>Fecha de creaciÃ³n:</strong><br>
+        <strong>Fecha de creación:</strong><br>
         <?= date('d/m/Y H:i', strtotime($unidad['fecha_creacion'])) ?>
     </div>
 </div>

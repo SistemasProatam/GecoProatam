@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // get_conceptos_by_subcontrato.php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../conexion.php";
@@ -9,7 +9,7 @@ $subcontrato_id = isset($_GET['subcontrato_id']) ? (int)$_GET['subcontrato_id'] 
 $catalogo_id = isset($_GET['catalogo_id']) ? (int)$_GET['catalogo_id'] : 0;
 
 if ($subcontrato_id <= 0) {
-    echo json_encode(['error' => 'ID de subcontrato no vÃ¡lido']);
+    echo json_encode(['error' => 'ID de subcontrato no válido']);
     exit;
 }
 

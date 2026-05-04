@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 require_once __DIR__ . "/../conexion.php";
@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 $catalogo_id = $_GET['catalogo_id'] ?? 0;
 
 if ($catalogo_id <= 0) {
-    echo json_encode(['error' => 'ID de catÃ¡logo invÃ¡lido']);
+    echo json_encode(['error' => 'ID de catálogo inválido']);
     exit;
 }
 

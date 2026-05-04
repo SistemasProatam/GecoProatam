@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -12,7 +12,7 @@ require_once __DIR__ . "/../conexion.php";
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'MÃ©todo no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
     exit;
 }
 
@@ -39,7 +39,7 @@ try {
     $stmt->bind_param("ssi", $nombre, $descripcion, $id);
     
     if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'CategorÃ­a actualizada exitosamente']);
+        echo json_encode(['status' => 'success', 'message' => 'Categoría actualizada exitosamente']);
     } else {
         throw new Exception("Error al ejecutar: " . $stmt->error);
     }
@@ -47,7 +47,7 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'status' => 'error', 
-        'message' => 'Error al actualizar la categorÃ­a: ' . $e->getMessage()
+        'message' => 'Error al actualizar la categoría: ' . $e->getMessage()
     ]);
 }
 ?>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
@@ -67,9 +67,9 @@ include __DIR__ . "/../includes/navbar.php"; ?>
             <div class="form-body">
                 <form id="formAgregarUsuario" method="POST" action="insert_user.php" enctype="multipart/form-data">
 
-                    <!-- InformaciÃ³n BÃ¡sica -->
+                    <!-- Información Básica -->
                     <div class="section-title">
-                        <h4><i class="bi bi-person"></i> InformaciÃ³n BÃ¡sica</h4>
+                        <h4><i class="bi bi-person"></i> Información Básica</h4>
                     </div>
 
                     <div class="row">
@@ -106,7 +106,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">NÃºmero de Celular Particular</label>
+                                <label class="form-label">Número de Celular Particular</label>
                                 <input type="text" name="telefono_personal" class="form-control">
                             </div>
                         </div>
@@ -134,7 +134,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                     <div class="mb-3">
                         <label class="form-label">Lista de Funciones y Actividades a Cargo</label>
                         <textarea name="funciones_actividades" class="form-control" rows="4"
-                            placeholder="Describa las funciones y actividades que tendrÃ¡ a cargo el usuario..."></textarea>
+                            placeholder="Describa las funciones y actividades que tendrá a cargo el usuario..."></textarea>
                     </div>
 
                     <!-- Contacto de Emergencia -->
@@ -157,7 +157,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">NÃºmero de Celular</label>
+                                <label class="form-label">Número de Celular</label>
                                 <input type="text" name="contacto_emergencia_telefono" class="form-control">
                             </div>
                         </div>
@@ -178,7 +178,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">IdentificaciÃ³n Oficial</label>
+                                    <label class="form-label">Identificación Oficial</label>
                                     <input type="file" name="identificacion_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -196,7 +196,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Constancia de SituaciÃ³n Fiscal</label>
+                                    <label class="form-label">Constancia de Situación Fiscal</label>
                                     <input type="file" name="situacion_fiscal_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -204,7 +204,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">NÃºmero de Seguro Social</label>
+                                    <label class="form-label">Número de Seguro Social</label>
                                     <input type="file" name="nss_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -222,7 +222,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Ãšltimo Comprobante de Estudios</label>
+                                    <label class="form-label">Último Comprobante de Estudios</label>
                                     <input type="file" name="comprobante_estudios_pdf" class="form-control" accept=".pdf">
                                     <small class="text-muted">Formato PDF</small>
                                 </div>
@@ -266,7 +266,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                                 <button type="button" class="btn btn-sm btn-secondary mt-2" id="agregar-contrato">
                                     <i class="bi bi-plus"></i> Agregar otro contrato
                                 </button>
-                                <small class="text-muted">Puedes subir mÃºltiples contratos</small>
+                                <small class="text-muted">Puedes subir múltiples contratos</small>
                             </div>
                         </div>
                     </div>
@@ -274,7 +274,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
                     <!-- Guardar -->
                     <div class="form-actions mt-3">
 
-                        <!-- Botones de acciÃ³n -->
+                        <!-- Botones de acción -->
                         <div class="d-flex justify-content-between mt-4">
                             <button type="submit" class="button-57">
                                 <i class="bi bi-floppy"></i> Guardar Usuario
@@ -291,7 +291,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesandoâ€¦ por favor espere</div>
+            <div class="mt-3">Procesando… por favor espere</div>
         </div>
     </div>
 
@@ -300,7 +300,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Manejar el envÃ­o del formulario - VersiÃ³n consolidada
+        // Manejar el envío del formulario - Versión consolidada
         document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -320,7 +320,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                     if (data.status === 'success') {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Â¡Ã‰xito!',
+                            title: '¡Éxito!',
                             html: data.message,
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
@@ -344,7 +344,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                     if (overlay) overlay.style.display = 'none';
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error de conexiÃ³n',
+                        title: 'Error de conexión',
                         text: 'No se pudo conectar con el servidor',
                         confirmButtonText: 'Aceptar'
                     });
@@ -354,7 +354,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
         });
     </script>
     <script>
-        // Manejar contratos mÃºltiples
+        // Manejar contratos múltiples
         document.getElementById('agregar-contrato').addEventListener('click', function() {
             const container = document.getElementById('contratos-container');
             const newItem = document.createElement('div');
@@ -377,7 +377,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
         `;
             container.appendChild(newItem);
 
-            // Habilitar botÃ³n de eliminar en todos menos el primero
+            // Habilitar botón de eliminar en todos menos el primero
             const removeBtns = document.querySelectorAll('.btn-remove-contrato');
             removeBtns[0].disabled = removeBtns.length <= 1;
         });
@@ -388,7 +388,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                 const item = e.target.closest('.contrato-item');
                 item.remove();
 
-                // Si solo queda uno, deshabilitar su botÃ³n de eliminar
+                // Si solo queda uno, deshabilitar su botón de eliminar
                 const removeBtns = document.querySelectorAll('.btn-remove-contrato');
                 if (removeBtns.length === 1) {
                     removeBtns[0].disabled = true;

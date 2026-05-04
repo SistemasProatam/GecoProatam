@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -16,7 +16,7 @@ $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'ID invÃ¡lido'
+        'message' => 'ID inválido'
     ]);
     exit;
 }

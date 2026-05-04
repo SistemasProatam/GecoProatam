@@ -1,24 +1,24 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/conexion.php"; // Ajusta la ruta si es necesario
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Si ya estÃ¡ loggeado, redirigir al index
+// Si ya está loggeado, redirigir al index
 if (isset($_SESSION['user_id'])) {
-    // Limpiar pestaÃ±as anteriores al hacer login
+    // Limpiar pestañas anteriores al hacer login
     if (isset($_SESSION['active_tabs'])) {
         $_SESSION['active_tabs'] = [];
     }
     header("Location: " . BASE_URL . "/index.php");
     exit();
 }
-$_SESSION['active_tabs'] = []; // Limpiar pestaÃ±as anteriores
+$_SESSION['active_tabs'] = []; // Limpiar pestañas anteriores
 
 if (isset($_GET['error'])) {
     $error_messages = [
-        'session_expired' => 'Tu sesiÃ³n ha expirado. Por favor, inicia sesiÃ³n nuevamente.',
-        'session_timeout' => 'Tu sesiÃ³n ha caducado por inactividad.'
+        'session_expired' => 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+        'session_timeout' => 'Tu sesión ha caducado por inactividad.'
     ];
 
     $error_message = $error_messages[$_GET['error']] ?? 'Error desconocido';
@@ -26,7 +26,7 @@ if (isset($_GET['error'])) {
     echo "<script>document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             icon: 'warning',
-            title: 'SesiÃ³n Expirada',
+            title: 'Sesión Expirada',
             text: '$error_message'
         });
     });</script>";
@@ -39,7 +39,7 @@ if (isset($_GET['error'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de SesiÃ³n</title>
+    <title>Inicio de Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/login.css">
@@ -57,7 +57,7 @@ if (isset($_GET['error'])) {
                     <a class="navbar-brand">
                         <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" />
                     </a>
-                    <h2>Inicio de SesiÃ³n</h2>
+                    <h2>Inicio de Sesión</h2>
 
                     <form id="loginForm">
                         <div class="form-group">
@@ -69,9 +69,9 @@ if (isset($_GET['error'])) {
                         </div>
 
                         <div class="form-group">
-                            <label for="password" class="form-label">ContraseÃ±a</label>
+                            <label for="password" class="form-label">Contraseña</label>
                             <div class="input-group">
-                                <input type="password" class="form-control custom-input" id="password" name="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+                                <input type="password" class="form-control custom-input" id="password" name="password" placeholder="••••••••">
                                 <button type="button" class="btn btn-outline-secondary toggle-password">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -79,11 +79,11 @@ if (isset($_GET['error'])) {
                         </div>
 
                         <div class="text-center mt-3 mb-3">
-                            <a href="forgot_password.php" class="forgot_pass">Â¿Olvidaste tu contraseÃ±a?</a>
+                            <a href="forgot_password.php" class="forgot_pass">¿Olvidaste tu contraseña?</a>
                         </div>
 
                         <button type="submit" class="button-57">
-                            <i class="bi bi-key"></i><span>Iniciar SesiÃ³n</span>
+                            <i class="bi bi-key"></i><span>Iniciar Sesión</span>
                         </button>
                     </form>
                 </div>
@@ -115,7 +115,7 @@ if (isset($_GET['error'])) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Mostrar/ocultar contraseÃ±a
+        // Mostrar/ocultar contraseña
         document.querySelectorAll('.toggle-password').forEach(btn => {
             btn.addEventListener('click', () => {
                 const input = btn.parentElement.querySelector('input');
@@ -145,7 +145,7 @@ if (isset($_GET['error'])) {
 
                 if (result.status === 'success') {
                     Swal.fire({
-                        title: 'Â¡Bienvenido!',
+                        title: '¡Bienvenido!',
                         html: `
             <div class="text-center">
                 <small class="text-muted">Redirigiendo...</small>
@@ -190,9 +190,9 @@ if (isset($_GET['error'])) {
                             title: 'Correo no registrado',
                             html: `
                         <div class="text-center">
-                            <h5 class="fw-bold">Este correo no estÃ¡ registrado en el sistema</h5>
+                            <h5 class="fw-bold">Este correo no está registrado en el sistema</h5>
                             <p class="text-muted mt-3">
-                                Verifica que el correo estÃ© correctamente escrito o contacta a Recursos Humanos.
+                                Verifica que el correo esté correctamente escrito o contacta a Recursos Humanos.
                             </p>
                         </div>
                     `,
@@ -215,7 +215,7 @@ if (isset($_GET['error'])) {
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error de conexiÃ³n',
+                    title: 'Error de conexión',
                     text: 'No se pudo conectar con el servidor'
                 });
             }
@@ -223,13 +223,13 @@ if (isset($_GET['error'])) {
     </script>
 
     <script>
-        // Carrusel personalizado automÃ¡tico
+        // Carrusel personalizado automático
         document.addEventListener('DOMContentLoaded', function() {
             const slides = document.querySelectorAll('.carousel-slide');
             let currentSlide = 0;
 
             if (slides.length > 0) {
-                // FunciÃ³n para cambiar slides
+                // Función para cambiar slides
                 function nextSlide() {
                     // Remover clase active del slide actual
                     slides[currentSlide].classList.remove('active');
@@ -241,7 +241,7 @@ if (isset($_GET['error'])) {
                     slides[currentSlide].classList.add('active');
                 }
 
-                // Iniciar el carrusel automÃ¡tico
+                // Iniciar el carrusel automático
                 setInterval(nextSlide, 5000); // Cambiar cada 2 segundos
             }
         });

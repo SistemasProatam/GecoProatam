@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -19,7 +19,7 @@ if (isset($_GET['msg'])) {
         case 'estado_actualizado_con_email':
             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="bi bi-check-circle"></i>
-                    <strong>Â¡Ã‰xito!</strong> Estado actualizado correctamente y notificaciÃ³n enviada por correo para la requisiciÃ³n <strong>' . $folio . '</strong>.
+                    <strong>¡Éxito!</strong> Estado actualizado correctamente y notificación enviada por correo para la requisición <strong>' . $folio . '</strong>.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
             break;
@@ -27,7 +27,7 @@ if (isset($_GET['msg'])) {
         case 'estado_actualizado_sin_email':
             echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <i class="bi bi-exclamation-triangle"></i>
-                    <strong>AtenciÃ³n:</strong> Estado actualizado para la requisiciÃ³n <strong>' . $folio . '</strong>, pero no se pudo enviar la notificaciÃ³n por correo.
+                    <strong>Atención:</strong> Estado actualizado para la requisición <strong>' . $folio . '</strong>, pero no se pudo enviar la notificación por correo.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
             break;
@@ -35,7 +35,7 @@ if (isset($_GET['msg'])) {
         case 'estado_actualizado_error_email':
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="bi bi-x-circle"></i>
-                    <strong>Error:</strong> El estado se actualizÃ³ para <strong>' . $folio . '</strong>, pero ocurriÃ³ un error al enviar la notificaciÃ³n.
+                    <strong>Error:</strong> El estado se actualizó para <strong>' . $folio . '</strong>, pero ocurrió un error al enviar la notificación.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
             break;
@@ -44,11 +44,11 @@ if (isset($_GET['msg'])) {
     echo '</div>';
 }
 
-// Obtener datos de sesiÃ³n
+// Obtener datos de sesion
 $departamento_id = $_SESSION['departamento_id'] ?? 0;
 $departamento_sesion = $_SESSION['departamento'] ?? '';
 
-// Departamentos autorizados para crear Ã³rdenes de compra
+// Departamentos autorizados para crear ordenes de compra
 $departamentos_crear_oc = [
     'Director General',
     'Subdirector General',
@@ -59,7 +59,7 @@ $departamentos_crear_oc = [
 
 $puede_crear_oc = in_array($departamento_sesion, $departamentos_crear_oc);
 
-// ParÃ¡metros de bÃºsqueda y paginaciÃ³n
+// Parametros de busqueda y paginacion
 $busqueda = $_GET['q'] ?? '';
 $pagina = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $por_pagina = 10;
@@ -69,7 +69,7 @@ $offset = ($pagina - 1) * $por_pagina;
 $estado_filtro = $_GET['estado'] ?? '';
 $entidad_filtro = $_GET['entidad'] ?? '';
 
-// Construir WHERE dinÃ¡mico
+// Construir WHERE dinámico
 $where = [];
 $params = [];
 $types = '';
@@ -154,7 +154,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
             margin-bottom: 1rem;
         }
 
-        /* Asegurar que la tabla tenga un ancho mÃ­nimo */
+        /* Asegurar que la tabla tenga un ancho mínimo */
         .table {
             min-width: 700px;
             margin: 0;
@@ -247,7 +247,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
 
 <body>
     <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+    include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -313,131 +313,131 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
                 <div id="table-container-wrapper">
 
-                <!-- BotÃ³n de agregar requisicion -->
-                <div class="d-flex justify-content-between mb-3">
-                    <span class="badge-num"><?= $totalRegistros ?> requisiciones</span>
-                    <button class="button-56" type="button" onclick="window.location.href='new_requis.php'">
-                        <i class="bi bi-plus-circle"></i> Agregar
-                    </button>
-                </div>
+                    <!-- Botón de agregar requisicion -->
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="badge-num"><?= $totalRegistros ?> requisiciones</span>
+                        <button class="button-56" type="button" onclick="window.location.href='new_requis.php'">
+                            <i class="bi bi-plus-circle"></i> Agregar
+                        </button>
+                    </div>
 
-                <!-- Lista de requisiciones con scroll horizontal -->
-                <div class="table-container">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Folio</th>
-                                <th>Entidad</th>
-                                <th>Estado</th>
-                                <th>Fecha de Solicitud</th>
-                                <th>DescripciÃ³n</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-if ($result && $result->num_rows > 0): ?>
+                    <!-- Lista de requisiciones con scroll horizontal -->
+                    <div class="table-container">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Folio</th>
+                                    <th>Entidad</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de Solicitud</th>
+                                    <th>Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <?php
-while ($row = $result->fetch_assoc()): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($row['folio']) ?></td>
-                                        <td><?= htmlspecialchars($row['entidad']) ?></td>
-                                        <td>
-                                            <?php
-switch ($row['estado']) {
-                                                case 'pendiente':
-                                                    echo '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente</span>';
-                                                    break;
-                                                case 'aprobado':
-                                                    echo '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Aprobado</span>';
-                                                    break;
-                                                case 'rechazado':
-                                                    echo '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Rechazado</span>';
-                                                    break;
-                                                default:
-                                                    echo '<span class="badge bg-secondary">' . htmlspecialchars($row['estado']) . '</span>';
-                                            }
-                                            ?>
-                                        </td>
-                                        <td><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
-                                        <td class="descripcion" title="<?= htmlspecialchars($row['descripcion']) ?>">
-                                                    <?= htmlspecialchars($row['descripcion']) ?>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" style="gap:5px;">
-                                                <button class="btn-inf" onclick="window.location.href='see_requis.php?id=<?= $row['id'] ?>'" title="Ver detalles"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top">
-                                                    <i class="bi bi-info-circle"></i>
-                                                </button>
-
-                                                <!-- SOLO mostrar botÃ³n de orden de compra si estÃ¡ APROBADO y el departamento tiene permiso -->
+                                if ($result && $result->num_rows > 0): ?>
+                                    <?php
+                                    while ($row = $result->fetch_assoc()): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($row['folio']) ?></td>
+                                            <td><?= htmlspecialchars($row['entidad']) ?></td>
+                                            <td>
                                                 <?php
-if ($row['estado'] === 'aprobado' && $puede_crear_oc): ?>
-                                                    <button class="btn-add-oc" onclick="window.location.href='new_order.php?requisicion_id=<?= $row['id'] ?>'" title="Crear orden de compra"
+                                                switch ($row['estado']) {
+                                                    case 'pendiente':
+                                                        echo '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente</span>';
+                                                        break;
+                                                    case 'aprobado':
+                                                        echo '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Aprobado</span>';
+                                                        break;
+                                                    case 'rechazado':
+                                                        echo '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Rechazado</span>';
+                                                        break;
+                                                    default:
+                                                        echo '<span class="badge bg-secondary">' . htmlspecialchars($row['estado']) . '</span>';
+                                                }
+                                                ?>
+                                            </td>
+                                            <td><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
+                                            <td class="descripcion" title="<?= htmlspecialchars($row['descripcion']) ?>">
+                                                <?= htmlspecialchars($row['descripcion']) ?>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" style="gap:5px;">
+                                                    <button class="btn-inf" onclick="window.location.href='see_requis.php?id=<?= $row['id'] ?>'" title="Ver detalles"
                                                         data-bs-toggle="tooltip" data-bs-placement="top">
-                                                        <i class="bi bi-file-earmark-plus"></i>
+                                                        <i class="bi bi-info-circle"></i>
                                                     </button>
-                                                <?php
-endif; ?>
-                                            </div>
+
+                                                    <!-- SOLO mostrar boton de orden de compra si está APROBADO y el departamento tiene permiso -->
+                                                    <?php
+                                                    if ($row['estado'] === 'aprobado' && $puede_crear_oc): ?>
+                                                        <button class="btn-add-oc" onclick="window.location.href='new_order.php?requisicion_id=<?= $row['id'] ?>'" title="Crear orden de compra"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="bi bi-file-earmark-plus"></i>
+                                                        </button>
+                                                    <?php
+                                                    endif; ?>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    endwhile; ?>
+                                <?php
+                                else: ?>
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                            <p class="mt-2">No hay requisiciones registradas</p>
                                         </td>
                                     </tr>
                                 <?php
-endwhile; ?>
-                            <?php
-else: ?>
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
-                                        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                                        <p class="mt-2">No hay requisiciones registradas</p>
-                                    </td>
-                                </tr>
-                            <?php
-endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <!-- PaginaciÃ³n estilo catÃ¡logo -->
-                <?php
-if ($totalPaginas > 1): ?>
-                    <nav aria-label="PaginaciÃ³n">
-                        <ul class="pagination justify-content-center mt-3">
-                            <?php
-for ($i = 1; $i <= $totalPaginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
-                                    <a class="page-link"
-                                        href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
-                                        <?= $i ?>
-                                    </a>
-                                </li>
-                            <?php
-endfor; ?>
-                        </ul>
-                    </nav>
-                <?php
-endif; ?>
+                    <!-- Paginación estilo catálogo -->
+                    <?php
+                    if ($totalPaginas > 1): ?>
+                        <nav aria-label="Paginación">
+                            <ul class="pagination justify-content-center mt-3">
+                                <?php
+                                for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                    <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
+                                        <a class="page-link"
+                                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
+                                            <?= $i ?>
+                                        </a>
+                                    </li>
+                                <?php
+                                endfor; ?>
+                            </ul>
+                        </nav>
+                    <?php
+                    endif; ?>
                 </div> <!-- /table-container-wrapper -->
             </div>
         </div>
     </div>
 
     <script>
-// Inicializar tooltips de Bootstrap
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
+        // Inicializar tooltips de Bootstrap
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <?php
-include __DIR__ . "/../includes/footer.php"; ?>
+    include __DIR__ . "/../includes/footer.php"; ?>
 
     <script>
-        // FunciÃ³n para actualizar la lista vÃ­a AJAX
+        // Función para actualizar la lista vía AJAX
         function initAJAX() {
             const searchForm = document.getElementById('search-form');
             const filterForm = document.getElementById('filter-form');
@@ -455,7 +455,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
                         const newContent = doc.getElementById('table-container-wrapper');
-                        
+
                         if (newContent) {
                             container.innerHTML = newContent.innerHTML;
                         }
@@ -469,7 +469,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                         container.style.pointerEvents = 'auto';
 
                         if (pushState) window.history.pushState({}, '', url);
-                        
+
                         // Reinicializar tooltips
                         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                         tooltipTriggerList.map(function(tooltipTriggerEl) {
@@ -495,7 +495,10 @@ include __DIR__ . "/../includes/footer.php"; ?>
                 if (pageLink) {
                     e.preventDefault();
                     updateList(pageLink.href);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
             });
 
@@ -505,7 +508,7 @@ include __DIR__ . "/../includes/footer.php"; ?>
                     const params = new URLSearchParams(new FormData(filterForm));
                     const searchData = new FormData(searchForm);
                     params.set('q', searchData.get('q') || "");
-                    
+
                     params.set('page', '1');
                     updateList('?' + params.toString());
                 });
@@ -522,6 +525,3 @@ include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 
 </html>
-
-
-

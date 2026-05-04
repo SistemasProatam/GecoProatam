@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // Incluir el gestor de sesiones UNA sola vez
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
-// Verificar sesiÃ³n y prevenir caching
+// Verificar sesión y prevenir caching
 checkSession();
 preventCaching();
 
@@ -32,10 +32,10 @@ try {
     
     if ($count_requisiciones > 0) {
         $in_use = true;
-        $message = 'No se puede eliminar el producto/servicio porque estÃ¡ siendo utilizado en requisiciones';
+        $message = 'No se puede eliminar el producto/servicio porque está siendo utilizado en requisiciones';
     }
     
-    // Si no estÃ¡ en uso, proceder con la eliminaciÃ³n
+    // Si no está en uso, proceder con la eliminación
     if (!$in_use) {
         // Soft delete - marcar como inactivo
         $sql = "UPDATE productos_servicios SET activo = 0 WHERE id = ?";

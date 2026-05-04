@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -48,9 +48,9 @@ $result_departamentos = $result;
         color:#495057; letter-spacing:1px;
       }
 
-      /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      /* ══════════════════════════════════════════
          SISTEMA DE ARCHIVOS CON ESTADO VISUAL
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+      ══════════════════════════════════════════ */
       .file-drop-zone {
         border: 2px dashed #cbd5e1;
         border-radius: 10px;
@@ -102,7 +102,7 @@ $result_departamentos = $result;
       }
       .file-chip .chip-remove:hover { opacity: 1; }
 
-      /* Adjuntos dinÃ¡micos (fiscal/extra) */
+      /* Adjuntos dinámicos (fiscal/extra) */
       .adj-item {
         display: flex; align-items: center; gap: 10px;
         padding: 8px 12px;
@@ -122,9 +122,9 @@ $result_departamentos = $result;
       .adj-meta { font-size: .75rem; color: #64748b; }
       .adj-item.error .adj-meta { color: #dc2626; font-weight: 600; }
 
-      /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      /* ══════════════════════════════════════════
          TOASTS
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+      ══════════════════════════════════════════ */
       #toastContainer {
         position: fixed; top: 76px; right: 20px;
         z-index: 9999;
@@ -187,9 +187,9 @@ $result_departamentos = $result;
       }
       @keyframes tProgress { from{width:100%;} to{width:0;} }
 
-      /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         MODAL DE CONFIRMACIÃ“N
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+      /* ══════════════════════════════════════════
+         MODAL DE CONFIRMACIÓN
+      ══════════════════════════════════════════ */
       .confirm-overlay {
         position: fixed; inset: 0;
         background: rgba(8,12,24,.5);
@@ -279,13 +279,13 @@ $result_departamentos = $result;
               <p>
                 Complete este formulario para registrar un nuevo activo en el sistema.
                 Seleccione primero el Tipo de Activo para que aparezcan los campos
-                especÃ­ficos correspondientes.<br />
-                <b>Importante:</b> El cÃ³digo de identificaciÃ³n se generarÃ¡ automÃ¡ticamente al guardar el registro.
+                específicos correspondientes.<br />
+                <b>Importante:</b> El código de identificación se generará automáticamente al guardar el registro.
               </p>
             </div>
 
-            <!-- ===== INFORMACIÃ“N GENERAL ===== -->
-            <div class="section-title"><i class="bi bi-info-circle"></i> InformaciÃ³n General</div>
+            <!-- ===== INFORMACIÓN GENERAL ===== -->
+            <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
 
             <div class="row">
               <div class="col-md-6">
@@ -307,9 +307,9 @@ $result_departamentos = $result;
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label">CÃ³digo de Activo</label>
+                  <label class="form-label">Código de Activo</label>
                   <div class="codigo-preview" id="codigoPreview">
-                    <i class="bi bi-upc-scan"></i> Se asignarÃ¡ al guardar
+                    <i class="bi bi-upc-scan"></i> Se asignará al guardar
                   </div>
                 </div>
               </div>
@@ -324,7 +324,7 @@ $result_departamentos = $result;
                   onchange="handleFile(this,'img_foto_principal','imagen',false)" />
                 <div class="file-drop-label">
                   <i class="bi bi-cloud-arrow-up"></i>
-                  <span>Haz clic para seleccionar â€” JPG, PNG, GIF o WebP (mÃ¡x. 10 MB)</span>
+                  <span>Haz clic para seleccionar — JPG, PNG, GIF o WebP (máx. 10 MB)</span>
                 </div>
               </div>
               <div class="file-chips" id="chips_img_foto_principal"></div>
@@ -340,7 +340,7 @@ $result_departamentos = $result;
               </div>
               <div class="col-md-4">
                 <div class="form-group">
-                  <label class="form-label">CondiciÃ³n <span class="required">*</span></label>
+                  <label class="form-label">Condición <span class="required">*</span></label>
                   <select class="form-select" name="condicion" required>
                     <option value="">Seleccionar</option>
                     <option value="bueno">Bueno</option>
@@ -390,7 +390,7 @@ $result_departamentos = $result;
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group">
-                  <label class="form-label">Fecha de AdquisiciÃ³n</label>
+                  <label class="form-label">Fecha de Adquisición</label>
                   <input type="date" class="form-control" name="fecha_adquisicion" />
                 </div>
               </div>
@@ -402,7 +402,7 @@ $result_departamentos = $result;
               </div>
               <div class="col-md-2">
                 <div class="form-group">
-                  <label class="form-label">Vida Ãštil <span class="comentario">(aÃ±os)</span></label>
+                  <label class="form-label">Vida Útil <span class="comentario">(años)</span></label>
                   <input type="number" class="form-control" name="vida_util" placeholder="0" min="0" />
                 </div>
               </div>
@@ -411,9 +411,9 @@ $result_departamentos = $result;
             <div class="row">
               <div class="col-md-8">
                 <div class="form-group">
-                  <label class="form-label">UbicaciÃ³n</label>
+                  <label class="form-label">Ubicación</label>
                   <input type="text" class="form-control" name="ubicacion"
-                    placeholder="Ej. Oficina RibereÃ±a, Almaguer, Obra..." />
+                    placeholder="Ej. Oficina Ribereña, Almaguer, Obra..." />
                 </div>
               </div>
               <div class="col-md-4">
@@ -430,17 +430,17 @@ $result_departamentos = $result;
             <div class="form-group">
               <label class="form-label">Notas Generales</label>
               <textarea class="form-control" name="notas" rows="2"
-                placeholder="Observaciones, historial de mantenimiento, caracterÃ­sticas adicionales..."></textarea>
+                placeholder="Observaciones, historial de mantenimiento, características adicionales..."></textarea>
             </div>
 
             <!-- ============================================================ -->
-            <!-- VEHÃCULOS                                                     -->
+            <!-- VEHÍCULOS                                                     -->
             <!-- ============================================================ -->
             <div id="seccion-vehiculos" class="section-detalle">
-              <div class="section-title"><i class="bi bi-truck"></i> Detalles del VehÃ­culo</div>
+              <div class="section-title"><i class="bi bi-truck"></i> Detalles del Vehículo</div>
               <small class="text-muted d-block mb-3">
                 <i class="bi bi-info-circle"></i>
-                Tipo de Gravamen: -Libre: Propiedad plena. -Limitado: Propiedad compartida o en proceso de pago. -Con gravamen: RestricciÃ³n legal o judicial activa.
+                Tipo de Gravamen: -Libre: Propiedad plena. -Limitado: Propiedad compartida o en proceso de pago. -Con gravamen: Restricción legal o judicial activa.
               </small>
               <div class="row">
                 <div class="col-md-4"><div class="form-group">
@@ -452,7 +452,7 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="v_modelo" placeholder="F-150, Hilux..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">AÃ±o</label>
+                  <label class="form-label">Año</label>
                   <input type="number" class="form-control" name="v_anio" placeholder="2024" min="1900" max="2099" />
                 </div></div>
               </div>
@@ -466,21 +466,21 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="v_placa" placeholder="ABC-123-D" />
                 </div></div>
                 <div class="col-md-3"><div class="form-group">
-                  <label class="form-label">VIN / NÃºmero de Serie</label>
+                  <label class="form-label">VIN / Número de Serie</label>
                   <input type="text" class="form-control" name="v_vin" placeholder="17 caracteres..." />
                 </div></div>
                 <div class="col-md-3"><div class="form-group">
-                  <label class="form-label">NÃºmero de Motor</label>
+                  <label class="form-label">Número de Motor</label>
                   <input type="text" class="form-control" name="v_numero_motor" />
                 </div></div>
               </div>
               <div class="row">
                 <div class="col-md-4"><div class="form-group">
                   <label class="form-label">Entidad Federativa</label>
-                  <input type="text" class="form-control" name="v_entidad_federativa" placeholder="Tamaulipas, Nuevo LeÃ³n..." />
+                  <input type="text" class="form-control" name="v_entidad_federativa" placeholder="Tamaulipas, Nuevo León..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">NÃºmero de Pedimento</label>
+                  <label class="form-label">Número de Pedimento</label>
                   <input type="text" class="form-control" name="v_numero_pedimento" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
@@ -509,15 +509,15 @@ $result_departamentos = $result;
               </div>
               <div class="row">
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">Aseguradora <span class="comentario">(MÃ©xico)</span></label>
+                  <label class="form-label">Aseguradora <span class="comentario">(México)</span></label>
                   <input type="text" class="form-control" name="v_nombre_aseguradora_mx" placeholder="Qualitas, Inbursa..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">TelÃ©fono Aseguradora <span class="comentario">(MÃ©xico)</span></label>
+                  <label class="form-label">Teléfono Aseguradora <span class="comentario">(México)</span></label>
                   <input type="text" class="form-control" name="v_telefono_aseguradora_mx" placeholder="800-XXX-XXXX" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">Vto. Seguro <span class="comentario">(MÃ©xico)</span></label>
+                  <label class="form-label">Vto. Seguro <span class="comentario">(México)</span></label>
                   <input type="date" class="form-control" name="v_fecha_vencimiento_seguro_mx" />
                 </div></div>
               </div>
@@ -527,7 +527,7 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="v_nombre_aseguradora_usa" placeholder="GEICO, State Farm..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">TelÃ©fono Aseguradora <span class="comentario">(USA)</span></label>
+                  <label class="form-label">Teléfono Aseguradora <span class="comentario">(USA)</span></label>
                   <input type="text" class="form-control" name="v_telefono_aseguradora_usa" placeholder="800-XXX-XXXX" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
@@ -552,13 +552,13 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="m_modelo" placeholder="D6T, PC200..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">NÃºmero de Serie</label>
+                  <label class="form-label">Número de Serie</label>
                   <input type="text" class="form-control" name="m_numero_serie" />
                 </div></div>
               </div>
               <div class="row">
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">Kilometraje / HorÃ³metro</label>
+                  <label class="form-label">Kilometraje / Horómetro</label>
                   <input type="number" class="form-control" name="m_kilometraje" placeholder="0" min="0" />
                 </div></div>
                 <div class="col-md-8"><div class="form-group">
@@ -569,7 +569,7 @@ $result_departamentos = $result;
                       onchange="handleFile(this,'m_foto_motor','imagen',false)" />
                     <div class="file-drop-label">
                       <i class="bi bi-camera"></i>
-                      <span>Seleccionar imagen del motor (mÃ¡x. 10 MB)</span>
+                      <span>Seleccionar imagen del motor (máx. 10 MB)</span>
                     </div>
                   </div>
                   <div class="file-chips" id="chips_m_foto_motor"></div>
@@ -592,7 +592,7 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="mob_modelo" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">NÃºmero de Items</label>
+                  <label class="form-label">Número de Items</label>
                   <input type="number" class="form-control" name="mob_numero_items" placeholder="1" min="1" />
                 </div></div>
               </div>
@@ -606,17 +606,17 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="mob_edificio" placeholder="Edificio A, Torre Norte..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">Ãrea / Departamento</label>
+                  <label class="form-label">Área / Departamento</label>
                   <input type="text" class="form-control" name="mob_area_departamento" placeholder="Recursos Humanos, Gerencia..." />
                 </div></div>
               </div>
               <div class="row">
                 <div class="col-md-6"><div class="form-group">
-                  <label class="form-label">DirecciÃ³n</label>
-                  <input type="text" class="form-control" name="mob_direccion" placeholder="Calle, nÃºmero, colonia..." />
+                  <label class="form-label">Dirección</label>
+                  <input type="text" class="form-control" name="mob_direccion" placeholder="Calle, número, colonia..." />
                 </div></div>
                 <div class="col-md-6"><div class="form-group">
-                  <label class="form-label">DescripciÃ³n</label>
+                  <label class="form-label">Descripción</label>
                   <textarea class="form-control" name="mob_descripcion" rows="2"></textarea>
                 </div></div>
               </div>
@@ -633,7 +633,7 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="inm_tipo" placeholder="Oficina, Bodega, Terreno..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">Tipo de PosesiÃ³n</label>
+                  <label class="form-label">Tipo de Posesión</label>
                   <input type="text" class="form-control" name="inm_tipo_posesion" placeholder="Propio, Arrendado, Comodato..." />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
@@ -643,12 +643,12 @@ $result_departamentos = $result;
               </div>
               <div class="row">
                 <div class="col-md-6"><div class="form-group">
-                  <label class="form-label">DirecciÃ³n</label>
+                  <label class="form-label">Dirección</label>
                   <input type="text" class="form-control" name="inm_direccion" />
                 </div></div>
                 <div class="col-md-6"><div class="form-group">
                   <label class="form-label">Coordenadas GPS</label>
-                  <input type="text" class="form-control" name="inm_coordenadas" placeholder="29.0729Â° N, 110.9559Â° W" />
+                  <input type="text" class="form-control" name="inm_coordenadas" placeholder="29.0729° N, 110.9559° W" />
                 </div></div>
               </div>
               <div class="row">
@@ -706,22 +706,22 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="h_modelo" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">NÃºmero de Serie</label>
+                  <label class="form-label">Número de Serie</label>
                   <input type="text" class="form-control" name="h_numero_serie" />
                 </div></div>
               </div>
               <div class="row">
                 <div class="col-md-6"><div class="form-group">
-                  <label class="form-label">AsignaciÃ³n</label>
+                  <label class="form-label">Asignación</label>
                   <input type="text" class="form-control" name="h_asignacion" />
                 </div></div>
                 <div class="col-md-6"><div class="form-group">
-                  <label class="form-label">UbicaciÃ³n</label>
+                  <label class="form-label">Ubicación</label>
                   <input type="text" class="form-control" name="h_ubicacion_fisica" />
                 </div></div>
               </div>
               <div class="form-group">
-                <label class="form-label">DescripciÃ³n</label>
+                <label class="form-label">Descripción</label>
                 <textarea class="form-control" name="h_descripcion" rows="2"></textarea>
               </div>
             </div>
@@ -741,7 +741,7 @@ $result_departamentos = $result;
                   <input type="text" class="form-control" name="t_modelo" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">NÃºmero de Serie</label>
+                  <label class="form-label">Número de Serie</label>
                   <input type="text" class="form-control" name="t_numero_serie" />
                 </div></div>
               </div>
@@ -773,7 +773,7 @@ $result_departamentos = $result;
                   <input type="email" class="form-control" name="t_correo" />
                 </div></div>
                 <div class="col-md-4"><div class="form-group">
-                  <label class="form-label">UbicaciÃ³n FÃ­sica</label>
+                  <label class="form-label">Ubicación Física</label>
                   <input type="text" class="form-control" name="t_ubicacion_fisica" />
                 </div></div>
               </div>
@@ -795,70 +795,70 @@ $result_departamentos = $result;
             <div class="section-title"><i class="bi bi-paperclip"></i> Documentos</div>
             <small class="text-muted d-block mb-4">
               <i class="bi bi-info-circle"></i>
-              Todos los campos son opcionales. MÃ¡ximo 10 MB por archivo (catÃ¡logo de refacciones hasta 1 GB).
+              Todos los campos son opcionales. Máximo 10 MB por archivo (catálogo de refacciones hasta 1 GB).
             </small>
 
             <div class="row">
               <div class="col-md-6 doc-item mb-3">
                 <label class="form-label">Factura / Comprobante de Compra</label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (mÃ¡x. 10 MB)</span></div></div>
+                <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_factura"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
                 <label class="form-label">Pedimento</label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
+                <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_pedimento"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
-                <label class="form-label">PÃ³liza de Seguro <span class="comentario">(MÃ©xico)</span></label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (mÃ¡x. 10 MB)</span></div></div>
+                <label class="form-label">Póliza de Seguro <span class="comentario">(México)</span></label>
+                <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_poliza_seguro"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
-                <label class="form-label">PÃ³liza de Seguro <span class="comentario">(USA)</span></label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (mÃ¡x. 10 MB)</span></div></div>
+                <label class="form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
+                <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_poliza_seguro_usa"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
-                <label class="form-label">Manual de Usuario / OperaciÃ³n</label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
+                <label class="form-label">Manual de Usuario / Operación</label>
+                <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_manual"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
                 <label class="form-label">Manual de Mantenimiento</label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
+                <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_manual_mantenimiento"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
-                <label class="form-label">CatÃ¡logo de Refacciones <span class="comentario">(mÃ¡x. 1 GB)</span></label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 1 GB)</span></div></div>
+                <label class="form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
+                <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 1 GB)</span></div></div>
                 <div class="file-chips" id="chips_doc_catalogo_refacciones"></div>
               </div>
               <div class="col-md-6 doc-item mb-3">
                 <label class="form-label">Contrato / Escritura</label>
-                <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (mÃ¡x. 10 MB)</span></div></div>
+                <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" /><div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_doc_contrato"></div>
               </div>
             </div>
 
             <!-- ============================================================ -->
-            <!-- IMÃGENES                                                      -->
+            <!-- IMÁGENES                                                      -->
             <!-- ============================================================ -->
-            <div class="section-title"><i class="bi bi-card-image"></i> ImÃ¡genes</div>
+            <div class="section-title"><i class="bi bi-card-image"></i> Imágenes</div>
             <div class="row">
               <div class="col-md-4 doc-item mb-3">
                 <label class="form-label">Fotos Generales</label>
-                <div class="file-drop-zone"><input type="file" id="input_img_foto_general" accept=".jpg,.jpeg,.png,.gif,.webp" multiple onchange="handleFile(this,'img_foto_general','imagen',true)" /><div class="file-drop-label"><i class="bi bi-images"></i><span>Varias imÃ¡genes (mÃ¡x. 10 MB c/u)</span></div></div>
+                <div class="file-drop-zone"><input type="file" id="input_img_foto_general" accept=".jpg,.jpeg,.png,.gif,.webp" multiple onchange="handleFile(this,'img_foto_general','imagen',true)" /><div class="file-drop-label"><i class="bi bi-images"></i><span>Varias imágenes (máx. 10 MB c/u)</span></div></div>
                 <div class="file-chips" id="chips_img_foto_general"></div>
               </div>
               <div class="col-md-4 doc-item mb-3">
                 <label class="form-label">Foto de Placa</label>
-                <div class="file-drop-zone"><input type="file" id="input_img_foto_placa" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_placa','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (mÃ¡x. 10 MB)</span></div></div>
+                <div class="file-drop-zone"><input type="file" id="input_img_foto_placa" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_placa','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_img_foto_placa"></div>
               </div>
               <div class="col-md-4 doc-item mb-3">
-                <label class="form-label">Foto de NÃºmero de Serie</label>
-                <div class="file-drop-zone"><input type="file" id="input_img_foto_numero_serie" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_numero_serie','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (mÃ¡x. 10 MB)</span></div></div>
+                <label class="form-label">Foto de Número de Serie</label>
+                <div class="file-drop-zone"><input type="file" id="input_img_foto_numero_serie" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_numero_serie','imagen',false)" /><div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (máx. 10 MB)</span></div></div>
                 <div class="file-chips" id="chips_img_foto_numero_serie"></div>
               </div>
             </div>
@@ -868,7 +868,7 @@ $result_departamentos = $result;
             <!-- ============================================================ -->
             <div class="section-title"><i class="bi bi-paperclip"></i> Expediente de Control Fiscal y Tenencia / Predial</div>
             <div class="form-group">
-              <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> MÃ¡x. 10 archivos, 10 MB c/u.</small>
+              <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> Máx. 10 archivos, 10 MB c/u.</small>
               <div class="input-group">
                 <input type="file" class="form-control" id="singleFileInputFiscal"
                   accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
@@ -886,11 +886,11 @@ $result_departamentos = $result;
             </div>
 
             <!-- ============================================================ -->
-            <!-- DOCUMENTACIÃ“N EXTRA                                           -->
+            <!-- DOCUMENTACIÓN EXTRA                                           -->
             <!-- ============================================================ -->
-            <div class="section-title"><i class="bi bi-paperclip"></i> DocumentaciÃ³n Extra</div>
+            <div class="section-title"><i class="bi bi-paperclip"></i> Documentación Extra</div>
             <div class="form-group">
-              <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> MÃ¡x. 10 archivos, 10 MB c/u.</small>
+              <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> Máx. 10 archivos, 10 MB c/u.</small>
               <div class="input-group">
                 <input type="file" class="form-control" id="singleFileInputExtra"
                   accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
@@ -909,7 +909,7 @@ $result_departamentos = $result;
 
             <!-- ===== GUARDAR ===== -->
             <div class="form-actions mt-3">
-              <div class="send-otxt">Verifique que toda la informaciÃ³n sea correcta antes de guardar el registro.</div>
+              <div class="send-otxt">Verifique que toda la información sea correcta antes de guardar el registro.</div>
               <div class="container overflow-hidden text-center">
                 <div class="row gx-5">
                   <div class="col">
@@ -940,24 +940,24 @@ $result_departamentos = $result;
       crossorigin="anonymous"></script>
 
     <script>
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // LÃMITES POR TIPO
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
+    // LÍMITES POR TIPO
+    // ═══════════════════════════════════════════════════════════════
     const LIMITES_MB = { normal: 10, imagen: 10, catalogo: 1024, adjunto: 10 };
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     // STORE DE ARCHIVOS  { campo: [{ file, ok }] }
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     const fileStore = {};
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     // TOASTS
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     const TCFG = {
       danger:  { title: 'Error',       icon: 'bi-x-circle-fill' },
       success: { title: 'Listo',       icon: 'bi-check-circle-fill' },
       warning: { title: 'Aviso',       icon: 'bi-exclamation-triangle-fill' },
-      info:    { title: 'InformaciÃ³n', icon: 'bi-info-circle-fill' },
+      info:    { title: 'Información', icon: 'bi-info-circle-fill' },
     };
 
     function mostrarAlerta(msg, tipo = 'danger') {
@@ -989,9 +989,9 @@ $result_departamentos = $result;
       setTimeout(() => el?.remove(), 290);
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // MODAL DE CONFIRMACIÃ“N  (reemplaza confirm() nativo)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
+    // MODAL DE CONFIRMACIÓN  (reemplaza confirm() nativo)
+    // ═══════════════════════════════════════════════════════════════
     function mostrarConfirmacion({ archivos, totalMB }) {
       return new Promise(resolve => {
         const ov = document.createElement('div');
@@ -999,8 +999,8 @@ $result_departamentos = $result;
         ov.innerHTML = `
           <div class="confirm-modal">
             <div class="m-icon"><i class="bi bi-cloud-arrow-up" style="font-size:1.4rem;"></i></div>
-            <h5>Â¿Confirmar subida?</h5>
-            <p>Se guardarÃ¡n los datos y se subirÃ¡n los archivos adjuntos.</p>
+            <h5>¿Confirmar subida?</h5>
+            <p>Se guardarán los datos y se subirán los archivos adjuntos.</p>
             <div class="m-stats">
               <div class="m-stat">
                 <div class="val">${archivos}</div>
@@ -1023,9 +1023,9 @@ $result_departamentos = $result;
       });
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     // MANEJO DE ARCHIVOS CON CHIPS
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     function handleFile(input, campo, tipo, multiple) {
       if (!fileStore[campo]) fileStore[campo] = [];
 
@@ -1044,7 +1044,7 @@ $result_departamentos = $result;
         if (ok) {
           mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) listo para subir.`, 'success');
         } else {
-          mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera el lÃ­mite de ${limiteMB} MB. RetÃ­ralo antes de guardar.`, 'danger');
+          mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera el límite de ${limiteMB} MB. Retíralo antes de guardar.`, 'danger');
         }
       });
 
@@ -1105,9 +1105,9 @@ $result_departamentos = $result;
       return { count, totalMB: (totalBytes / 1024 / 1024).toFixed(2) };
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // ADJUNTOS DINÃMICOS (fiscal / extra)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
+    // ADJUNTOS DINÁMICOS (fiscal / extra)
+    // ═══════════════════════════════════════════════════════════════
     const pools = { fiscal: [], extra: [] };
 
     function agregarAdjunto(tipo) {
@@ -1116,7 +1116,7 @@ $result_departamentos = $result;
       if (!input.files.length) { mostrarAlerta('Seleccione un archivo primero.', 'warning'); return; }
       const file = input.files[0];
 
-      if (pools[tipo].length >= 10) { mostrarAlerta('MÃ¡ximo 10 archivos por secciÃ³n.', 'warning'); return; }
+      if (pools[tipo].length >= 10) { mostrarAlerta('Máximo 10 archivos por sección.', 'warning'); return; }
 
       const sizeMB = file.size / 1024 / 1024;
       const ok = sizeMB <= LIMITES_MB.adjunto;
@@ -1125,7 +1125,7 @@ $result_departamentos = $result;
       if (ok) {
         mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) agregado.`, 'success');
       } else {
-        mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera 10 MB. RetÃ­ralo antes de guardar.`, 'danger');
+        mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera 10 MB. Retíralo antes de guardar.`, 'danger');
       }
 
       renderListaAdj(tipo);
@@ -1153,7 +1153,7 @@ $result_departamentos = $result;
         const sizeMB = (e.file.size / 1024 / 1024).toFixed(2);
         const cls  = e.ok ? 'ok'                   : 'error';
         const icon = e.ok ? 'bi-file-earmark-check' : 'bi-file-earmark-x';
-        const meta = e.ok ? `${sizeMB} MB`          : `${sizeMB} MB â€” excede el lÃ­mite de 10 MB`;
+        const meta = e.ok ? `${sizeMB} MB`          : `${sizeMB} MB — excede el límite de 10 MB`;
         return `
           <div class="adj-item ${cls}">
             <i class="bi ${icon} adj-icon"></i>
@@ -1168,11 +1168,11 @@ $result_departamentos = $result;
       }).join('');
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // SECCIONES DINÃMICAS POR TIPO
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
+    // SECCIONES DINÁMICAS POR TIPO
+    // ═══════════════════════════════════════════════════════════════
     const secciones = {
-      'vehiculos': 'seccion-vehiculos', 'vehÃ­culos': 'seccion-vehiculos',
+      'vehiculos': 'seccion-vehiculos', 'vehículos': 'seccion-vehiculos',
       'maquinaria': 'seccion-maquinaria', 'mobiliario': 'seccion-mobiliario',
       'inmuebles': 'seccion-inmuebles', 'herramientas': 'seccion-herramientas',
       'tics': 'seccion-tics', 'tic': 'seccion-tics',
@@ -1190,7 +1190,7 @@ $result_departamentos = $result;
       const nombreTipo = normalizarTexto(option.text);
       const prefijo = option.getAttribute('data-prefijo') || '';
       document.getElementById('codigoPreview').innerHTML =
-        '<i class="bi bi-upc-scan"></i> ' + prefijo + '-XXXX (se asignarÃ¡ al guardar)';
+        '<i class="bi bi-upc-scan"></i> ' + prefijo + '-XXXX (se asignará al guardar)';
       for (const [clave, idSec] of Object.entries(secciones)) {
         if (nombreTipo.includes(normalizarTexto(clave))) {
           const sec = document.getElementById(idSec);
@@ -1200,17 +1200,17 @@ $result_departamentos = $result;
       }
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // ENVÃO DEL FORMULARIO
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
+    // ENVÍO DEL FORMULARIO
+    // ═══════════════════════════════════════════════════════════════
     document.getElementById('activoForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      // 1. Bloquear si hay archivos invÃ¡lidos
+      // 1. Bloquear si hay archivos inválidos
       if (hayArchivosInvalidos()) {
         mostrarAlerta(
-          'No se puede guardar. Hay archivos que superan el lÃ­mite permitido. ' +
-          'Retira los archivos marcados en rojo e intÃ©ntalo de nuevo.',
+          'No se puede guardar. Hay archivos que superan el límite permitido. ' +
+          'Retira los archivos marcados en rojo e inténtalo de nuevo.',
           'danger'
         );
         // Hacer scroll al primer chip en error
@@ -1219,14 +1219,14 @@ $result_departamentos = $result;
         return;
       }
 
-      // 2. ConfirmaciÃ³n si hay archivos vÃ¡lidos
+      // 2. Confirmación si hay archivos válidos
       const { count, totalMB } = contarArchivosValidos();
       if (count > 0) {
         const confirmar = await mostrarConfirmacion({ archivos: count, totalMB });
         if (!confirmar) return;
       }
 
-      // 3. Deshabilitar botÃ³n
+      // 3. Deshabilitar botón
       const btn = document.getElementById('btnGuardar');
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
@@ -1264,7 +1264,7 @@ $result_departamentos = $result;
           if (res.redirected) { window.location.href = res.url; return; }
           return res.text().then(() => {
             if (res.status >= 400) {
-              mostrarAlerta('OcurriÃ³ un error al guardar. Revisa el log del servidor.', 'danger');
+              mostrarAlerta('Ocurrió un error al guardar. Revisa el log del servidor.', 'danger');
               btn.disabled = false;
               btn.innerHTML = '<i class="bi bi-floppy"></i> Guardar Activo';
             } else {
@@ -1279,9 +1279,9 @@ $result_departamentos = $result;
         });
     });
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     // SINCRONIZAR DEPARTAMENTO AL SELECCIONAR RESPONSABLE
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ═══════════════════════════════════════════════════════════════
     document.getElementById('responsable').addEventListener('change', function() {
       const deptId = this.options[this.selectedIndex].getAttribute('data-departamento');
       const sel = document.getElementById('departamento');

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
@@ -10,13 +10,13 @@ $catalogo_id = isset($_GET['catalogo_id']) ? intval($_GET['catalogo_id']) : 0;
 $busqueda = trim($_GET['busqueda'] ?? '');
 
 if ($catalogo_id <= 0) {
-    echo json_encode(['success' => false, 'error' => 'catalogo_id invÃ¡lido']);
+    echo json_encode(['success' => false, 'error' => 'catalogo_id inválido']);
     exit;
 }
 
 try {
-    // Buscar Ã³rdenes pagadas relacionadas con el catÃ¡logo directamente (oc.catalogo_id)
-    // o indirectamente a travÃ©s de items que fueron asignados al catÃ¡logo en concepto_items
+    // Buscar órdenes pagadas relacionadas con el catálogo directamente (oc.catalogo_id)
+    // o indirectamente a través de items que fueron asignados al catálogo en concepto_items
     $like = '%' . $busqueda . '%';
 
     $sql = "SELECT oc.id, oc.folio, oc.descripcion, oc.subtotal, oc.total, oc.fecha_pago, oc.fecha_solicitud, oc.proveedor_id, p.nombre AS proveedor_nombre
