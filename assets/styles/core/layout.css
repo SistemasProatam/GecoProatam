@@ -136,8 +136,16 @@ body, html {
     justify-content: center;
 }
 
-.app-sidebar.collapsed .brand-logo-link {
-    display: none;
+.sidebar-brand .brand-logo-link {
+    flex: 1;
+}
+
+.sidebar-brand .desktop-toggle {
+    margin-left: auto;
+}
+
+.app-sidebar.collapsed .desktop-toggle {
+    margin-left: 0;
 }
 
 .sidebar-menu {

@@ -39,7 +39,7 @@ function checkSession() {
     // Verificar si el usuario está loggeado
     if (!SessionManager::exists('user_id') || !SessionManager::exists('nombres')) {
         SessionManager::destroy();
-        safeRedirect("/login.php?error=session_expired");
+        safeRedirect(BASE_URL . "/login.php?error=session_expired");
     }
     
     // Verificar inactividad general (30 minutos para cierre forzoso)
@@ -49,7 +49,7 @@ function checkSession() {
         
         if (($current_time - SessionManager::get('last_activity')) > $inactive_time) {
             SessionManager::destroy();
-            safeRedirect("/login.php?error=session_timeout");
+            safeRedirect(BASE_URL . "/login.php?error=session_timeout");
         }
     }
     

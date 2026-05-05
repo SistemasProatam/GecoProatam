@@ -56,12 +56,12 @@ function is_active($path) {
     <!-- ─── SIDEBAR ──────────────────────────────────────────────────────────── -->
     <aside class="app-sidebar" id="appSidebar">
         <div class="sidebar-brand">
-            <button class="desktop-toggle btn-icon" onclick="toggleSidebar()">
-                <span class="material-symbols-rounded">menu</span>
-            </button>
             <a href="<?= BASE_URL ?>/index.php" class="brand-logo-link">
                 <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo">
             </a>
+            <button class="desktop-toggle btn-icon" onclick="toggleSidebar()">
+                <span class="material-symbols-rounded">menu</span>
+            </button>
         </div>
 
         <nav class="sidebar-menu">

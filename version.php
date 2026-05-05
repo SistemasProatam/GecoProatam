@@ -2,6 +2,6 @@
 require_once "config.php";
 
 //control de versiones automatico
-define('APP_VERSION', '1.4.48');
-define('APP_UPDATE', '30/04/2026');
+define('APP_VERSION', '1.romario');
+define('APP_UPDATE', '05/05/2026');
 

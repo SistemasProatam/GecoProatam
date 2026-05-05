@@ -60,33 +60,48 @@ class QRGenerator
             require_once $qrlib;
         }
 
-        // ───── Generar QR con phpqrcode ─────
+        // ───── Generar QR con phpqrcode (Requiere GD) ─────
+        if (class_exists('QRcode') && extension_loaded('gd')) {
+            try {
+                QRcode::png(
+                    $url,
+                    $ruta,
+                    QR_ECLEVEL_H,
+                    5,
+                    3
+                );
 
-        if (class_exists('QRcode')) {
-
-            QRcode::png(
-                $url,
-                $ruta,
-                QR_ECLEVEL_H,
-                5,
-                3
-            );
-
-            if (file_exists($ruta)) {
-                return self::QR_DIR . $nombre;
+                if (file_exists($ruta) && filesize($ruta) > 0) {
+                    return self::QR_DIR . $nombre;
+                }
+            } catch (Error $e) {
+                // Fallback a API externa si falla GD
             }
         }
 
-        // ───── Fallback con GD ─────
+        // ───── Fallback con API Externa (No requiere GD) ─────
+        // Útil en XAMPP si no tienen habilitado extension=gd
+        try {
+            $apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($url);
+            $imgData = @file_get_contents($apiUrl);
+            if ($imgData) {
+                if (file_put_contents($ruta, $imgData)) {
+                    return self::QR_DIR . $nombre;
+                }
+            }
+        } catch (Exception $e) {
+            // Continuar al siguiente fallback
+        }
 
+        // ───── Fallback con GD local (Si estuviera disponible pero falló phpqrcode) ─────
         if (extension_loaded('gd')) {
-
             $ok = self::guardarPNG($url, $ruta, 8);
-
             if ($ok && file_exists($ruta)) {
                 return self::QR_DIR . $nombre;
             }
         }
+
+        return null;
 
         return null;
     }

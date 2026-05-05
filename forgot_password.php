@@ -185,10 +185,12 @@ if (isset($_SESSION['user_id'])) {
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    UI.toast.success(result.message, 3000);
+                    UI.toast.success(result.message, 10000);
+                    // MODO PRUEBA: Mostramos alert para poder copiar el código
+                    alert("Copia tu código antes de continuar: " + result.message);
                     setTimeout(() => {
                         window.location.href = `verify_token.php?email=${encodeURIComponent(email)}`;
-                    }, 2000);
+                    }, 3000);
                 } else {
                     UI.inline.show('.auth-alert-container', result.message, 'error');
                 }

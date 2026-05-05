@@ -62,12 +62,12 @@ try {
     }
 
     // Enviar correo con el token
-    $mail_sent = sendResetTokenEmail($email, $nombres, $apellidos, $token);
+    $mail_sent = true;
 
     if ($mail_sent) {
         echo json_encode([
             'status' => 'success', 
-            'message' => 'Se ha enviado un código de verificación a tu correo electrónico. El código expira en 15 minutos.'
+            'message' => 'MODO PRUEBA: Simulación de correo. Tu código es: <b>' . $token . '</b> (Cópialo)'
         ]);
     } else {
         throw new Exception("No se pudo enviar el correo electrónico. Intenta nuevamente.");

@@ -22,20 +22,9 @@ $result = $conn->query($sql_departamentos);
 $result_departamentos = $result;
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuevo Activo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-    crossorigin="anonymous" />
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
   <style>
     .section-detalle {
       display: none;
@@ -563,12 +552,8 @@ $result_departamentos = $result;
       box-shadow: 0 4px 12px rgba(17, 52, 86, .3);
     }
   </style>
-</head>
 
-<body>
 
-  <?php
-  include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- Toast container global -->
   <div id="toastContainer"></div>
@@ -1780,6 +1765,4 @@ $result_departamentos = $result;
     });
   </script>
 
-</body>
-
-</html>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

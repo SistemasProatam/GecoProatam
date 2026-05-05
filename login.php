@@ -25,7 +25,7 @@ if (isset($_GET['error'])) {
 
     echo "<script>document.addEventListener('DOMContentLoaded', function() {
         UI.toast.warning('$error_message');
-    });<\/script>";
+    });</script>";
 }
 ?>
 

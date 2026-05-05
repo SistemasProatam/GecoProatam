@@ -31,9 +31,16 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nueva Contraseña</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
+    <style>
+        .req-list li { transition: color 0.3s; }
+        .req-list li.valid { color: var(--success-color, #198754) !important; font-weight: 500; }
+        .req-list li.valid i::before { content: "\F26A"; /* bi-check-circle-fill */ }
+    </style>
 </head>
 
 <body>
@@ -71,17 +78,49 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                         
                         <div class="auth-form-group">
                             <label for="new_password" class="auth-label">NUEVA CONTRASEÑA</label>
-                            <input type="password" name="new_password" id="new_password" class="auth-control" required
-                                placeholder="Mínimo 6 caracteres" minlength="6" maxlength="12">
+                            <div class="position-relative">
+                                <input type="password" name="new_password" id="new_password" class="auth-control" required
+                                    placeholder="Mínimo 6 caracteres" minlength="6" maxlength="12">
+                                <button type="button" class="toggle-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gray-400); cursor: pointer;">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="password-strength-container mt-2">
+                                <div class="progress" style="height: 4px; border-radius: 2px;">
+                                    <div class="progress-bar bg-danger" id="passwordStrengthBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <span id="passwordStrengthText" style="font-size: 0.75rem; font-weight: 600; color: #dc3545;"></span>
+                                </div>
+                                <div class="mt-2" style="font-size: 0.7rem; color: var(--gray-400);">
+                                    <div style="font-weight: 600; margin-bottom: 4px; color: var(--gray-600);">Requisito estricto:</div>
+                                    <ul class="list-unstyled d-flex flex-wrap gap-2 req-list mb-2">
+                                        <li id="reqLength"><i class="bi bi-circle-fill" style="font-size: 0.4rem; vertical-align: middle; margin-right: 2px;"></i>Entre 6 y 12 caracteres (límite máximo)</li>
+                                    </ul>
+                                    <div style="font-weight: 600; margin-bottom: 4px; color: var(--gray-600);">Recomendado para contraseña segura:</div>
+                                    <ul class="list-unstyled d-flex flex-wrap gap-2 req-list">
+                                        <li id="reqUpper"><i class="bi bi-circle-fill" style="font-size: 0.4rem; vertical-align: middle; margin-right: 2px;"></i>Mayúscula</li>
+                                        <li id="reqNumber"><i class="bi bi-circle-fill" style="font-size: 0.4rem; vertical-align: middle; margin-right: 2px;"></i>Número</li>
+                                        <li id="reqSpecial"><i class="bi bi-circle-fill" style="font-size: 0.4rem; vertical-align: middle; margin-right: 2px;"></i>Carácter especial</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
                             <div id="passwordLengthFeedback" class="text-danger mt-1" style="display: none; font-size: 0.7rem;">
-                                La contraseña debe tener entre 6 y 12 caracteres.
+                                La contraseña no debe exceder los 12 caracteres.
                             </div>
                         </div>
 
                         <div class="auth-form-group">
                             <label for="confirm_password" class="auth-label">CONFIRMAR CONTRASEÑA</label>
-                            <input type="password" name="confirm_password" id="confirm_password" class="auth-control" required
-                                placeholder="Repite tu nueva contraseña" minlength="6" maxlength="12">
+                            <div class="position-relative">
+                                <input type="password" name="confirm_password" id="confirm_password" class="auth-control" required
+                                    placeholder="Repite la contraseña" minlength="6" maxlength="12">
+                                <button type="button" class="toggle-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gray-400); cursor: pointer;">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
                             <div id="passwordMatchFeedback" class="text-danger mt-1" style="display: none; font-size: 0.7rem;">
                                 Las contraseñas no coinciden.
                             </div>
@@ -103,6 +142,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
             <!-- Panel de imagen con Carrusel -->
             <div class="col-lg-7 col-xl-8 d-none d-lg-block auth-image-panel">
                 <div class="auth-carousel">
+                    <!-- Slide 1 -->
                     <div class="carousel-slide active">
                         <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
@@ -114,25 +154,72 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                             </div>
                         </div>
                     </div>
+                    <!-- Slide 2 -->
+                    <div class="carousel-slide">
+                        <img src="<?= BASE_URL ?>/assets/img/slider3.png" alt="Industrial 2" class="carousel-img">
+                        <div class="carousel-overlay">
+                            <div class="carousel-quote">
+                                <blockquote class="quote-text">
+                                    "La seguridad no es un privilegio, es un estándar."
+                                </blockquote>
+                                <cite class="quote-author">DIRECCIÓN GENERAL, PROATAM</cite>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-dots">
+                        <span class="dot active" data-slide="0"></span>
+                        <span class="dot" data-slide="1"></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
 
     <script>
-        function validatePasswordLength(input) {
-            const feedback = document.getElementById('passwordLengthFeedback');
-            const password = input.value;
+        // Carrusel Lógica
+        const slides = document.querySelectorAll('.carousel-slide');
+        if (slides.length > 0) {
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            let slideInterval;
 
-            if (password.length > 12) {
-                feedback.style.display = 'block';
-                input.classList.add('is-invalid');
-            } else {
-                feedback.style.display = 'none';
-                input.classList.remove('is-invalid');
+            function showSlide(n) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                if(dots) dots.forEach(dot => dot.classList.remove('active'));
+                
+                currentSlide = (n + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+                if(dots[currentSlide]) dots[currentSlide].classList.add('active');
             }
+
+            function nextSlide() {
+                showSlide(currentSlide + 1);
+            }
+
+            function startInterval() {
+                stopInterval();
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+
+            function stopInterval() {
+                if (slideInterval) clearInterval(slideInterval);
+            }
+
+            if(dots) {
+                dots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const index = parseInt(dot.getAttribute('data-slide'));
+                        showSlide(index);
+                        startInterval();
+                    });
+                });
+            }
+
+            startInterval();
         }
 
         // Mostrar/ocultar contraseña con cambio de ícono
@@ -143,12 +230,10 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
 
                 if (input.type === 'password') {
                     input.type = 'text';
-                    icon.classList.remove('bi-eye');
-                    icon.classList.add('bi-eye-slash');
+                    icon.classList.replace('bi-eye-slash', 'bi-eye');
                 } else {
                     input.type = 'password';
-                    icon.classList.remove('bi-eye-slash');
-                    icon.classList.add('bi-eye');
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
                 }
             });
         });
@@ -159,12 +244,23 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
             const confirmPassword = this.value;
             const feedback = document.getElementById('passwordMatchFeedback');
 
-            if (confirmPassword && newPassword !== confirmPassword) {
+            if (confirmPassword === '') {
+                feedback.style.display = 'none';
+                this.classList.remove('is-invalid', 'is-valid');
+            } else if (newPassword !== confirmPassword) {
+                feedback.classList.remove('text-success');
+                feedback.classList.add('text-danger');
+                feedback.innerHTML = '<i class="bi bi-x-circle"></i> Las contraseñas no coinciden.';
                 feedback.style.display = 'block';
+                this.classList.remove('is-valid');
                 this.classList.add('is-invalid');
             } else {
-                feedback.style.display = 'none';
+                feedback.classList.remove('text-danger');
+                feedback.classList.add('text-success');
+                feedback.innerHTML = '<i class="bi bi-check-circle"></i> Las contraseñas coinciden.';
+                feedback.style.display = 'block';
                 this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
             }
         });
 
@@ -221,15 +317,70 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
 
         // Validar en tiempo real mientras se escribe
         document.getElementById('new_password').addEventListener('input', function() {
-            const password = this.value;
-            const feedback = document.getElementById('passwordLengthFeedback');
+            const pwd = this.value;
+            const lengthValid = pwd.length >= 6 && pwd.length <= 12;
+            const upperValid = /[A-Z]/.test(pwd);
+            const numberValid = /[0-9]/.test(pwd);
+            const specialValid = /[^A-Za-z0-9]/.test(pwd);
 
-            if (password.length > 12) {
+            // Update dots
+            document.getElementById('reqLength').className = lengthValid ? 'valid' : '';
+            document.getElementById('reqUpper').className = upperValid ? 'valid' : '';
+            document.getElementById('reqNumber').className = numberValid ? 'valid' : '';
+            document.getElementById('reqSpecial').className = specialValid ? 'valid' : '';
+
+            // Calculate strength
+            let strength = 0;
+            if (lengthValid) strength += 25;
+            if (upperValid) strength += 25;
+            if (numberValid) strength += 25;
+            if (specialValid) strength += 25;
+
+            const bar = document.getElementById('passwordStrengthBar');
+            const text = document.getElementById('passwordStrengthText');
+
+            bar.style.width = strength + '%';
+            if (pwd.length === 0) {
+                bar.className = 'progress-bar bg-danger';
+                bar.style.backgroundColor = '';
+                bar.style.width = '0%';
+                text.textContent = '';
+                text.style.color = '#dc3545';
+            } else if (strength <= 25) {
+                bar.className = 'progress-bar bg-danger';
+                bar.style.backgroundColor = '';
+                text.textContent = 'Débil';
+                text.style.color = '#dc3545';
+            } else if (strength <= 50) {
+                bar.className = 'progress-bar bg-warning';
+                bar.style.backgroundColor = '';
+                text.textContent = 'Regular';
+                text.style.color = '#ffc107'; // Bootstrap warning color
+            } else if (strength <= 75) {
+                bar.className = 'progress-bar';
+                bar.style.backgroundColor = '#fd7e14'; // Naranja
+                text.textContent = 'Buena';
+                text.style.color = '#fd7e14';
+            } else {
+                bar.className = 'progress-bar bg-success';
+                bar.style.backgroundColor = '';
+                text.textContent = 'Fuerte';
+                text.style.color = '#198754';
+            }
+
+            const feedback = document.getElementById('passwordLengthFeedback');
+            if (pwd.length > 12) {
                 feedback.style.display = 'block';
                 this.classList.add('is-invalid');
             } else {
                 feedback.style.display = 'none';
                 this.classList.remove('is-invalid');
+            }
+            
+            // Check match if confirm is already typed
+            const confirmPwd = document.getElementById('confirm_password').value;
+            if (confirmPwd) {
+                document.getElementById('confirm_password').dispatchEvent(new Event('input'));
             }
         });
     </script>

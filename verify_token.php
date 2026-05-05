@@ -21,6 +21,8 @@ if (empty($email)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificar Código</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
@@ -37,6 +39,50 @@ if (empty($email)) {
             font-size: 0.875em;
             color: #6c757d;
             text-align: center;
+        }
+
+        .code-input-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px dashed var(--gray-300);
+            border-radius: 8px;
+            background-color: var(--gray-50);
+        }
+
+        .code-input {
+            width: 45px;
+            height: 55px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            background: white;
+            color: var(--gray-800);
+            transition: all 0.2s ease;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: var(--p-500);
+            box-shadow: 0 0 0 3px rgba(17, 52, 86, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .code-input.filled {
+            border-color: var(--p-400);
+            background-color: #f8fafc;
+        }
+
+        .code-count {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-top: -10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -73,10 +119,18 @@ if (empty($email)) {
                     <form id="verifyTokenForm" class="auth-form">
                         <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
                         <div class="auth-form-group">
-                            <label for="token" class="auth-label">CÓDIGO DE VERIFICACIÓN</label>
-                            <input type="text" name="token" id="token" class="auth-control" required
-                                placeholder="000000" maxlength="6" pattern="[0-9]{6}"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <label class="auth-label text-center d-block">CÓDIGO DE VERIFICACIÓN</label>
+                            <div class="code-input-container">
+                                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" autocomplete="one-time-code">
+                                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric">
+                                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric">
+                                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric">
+                                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric">
+                                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric">
+                            </div>
+                            <div class="code-count"><span id="digitsCount">0</span>/6</div>
+                            <input type="hidden" name="token" id="token" required>
+                            <p class="form-text mt-2 text-start" style="font-size: 0.75rem;">Ingresa el código de 6 dígitos. Revisa también tu carpeta de spam.</p>
                         </div>
 
                         <button type="submit" class="auth-button" id="submitBtn">
@@ -95,6 +149,7 @@ if (empty($email)) {
             <!-- Panel de imagen con Carrusel -->
             <div class="col-lg-7 col-xl-8 d-none d-lg-block auth-image-panel">
                 <div class="auth-carousel">
+                    <!-- Slide 1 -->
                     <div class="carousel-slide active">
                         <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
@@ -106,22 +161,142 @@ if (empty($email)) {
                             </div>
                         </div>
                     </div>
+                    <!-- Slide 2 -->
+                    <div class="carousel-slide">
+                        <img src="<?= BASE_URL ?>/assets/img/slider3.png" alt="Industrial 2" class="carousel-img">
+                        <div class="carousel-overlay">
+                            <div class="carousel-quote">
+                                <blockquote class="quote-text">
+                                    "Tecnología de vanguardia para la industria nacional."
+                                </blockquote>
+                                <cite class="quote-author">PRODUCCIÓN, PROATAM</cite>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-dots">
+                        <span class="dot active" data-slide="0"></span>
+                        <span class="dot" data-slide="1"></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
     <script>
+        // Carrusel Lógica
+        const slides = document.querySelectorAll('.carousel-slide');
+        if (slides.length > 0) {
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            let slideInterval;
+
+            function showSlide(n) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                if(dots) dots.forEach(dot => dot.classList.remove('active'));
+                
+                currentSlide = (n + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+                if(dots[currentSlide]) dots[currentSlide].classList.add('active');
+            }
+
+            function nextSlide() {
+                showSlide(currentSlide + 1);
+            }
+
+            function startInterval() {
+                stopInterval();
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+
+            function stopInterval() {
+                if (slideInterval) clearInterval(slideInterval);
+            }
+
+            if(dots) {
+                dots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const index = parseInt(dot.getAttribute('data-slide'));
+                        showSlide(index);
+                        startInterval();
+                    });
+                });
+            }
+
+            startInterval();
+        }
+
+        // Lógica de Inputs de 6 dígitos
+        const codeInputs = document.querySelectorAll('.code-input');
+        const hiddenToken = document.getElementById('token');
+        const digitsCount = document.getElementById('digitsCount');
+
+        function updateTokenAndCount() {
+            let tokenValue = '';
+            let count = 0;
+            codeInputs.forEach(input => {
+                tokenValue += input.value;
+                if (input.value) {
+                    count++;
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            });
+            hiddenToken.value = tokenValue;
+            digitsCount.textContent = count;
+        }
+
+        codeInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                if (e.target.value && index < codeInputs.length - 1) {
+                    codeInputs[index + 1].focus();
+                }
+                updateTokenAndCount();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    codeInputs[index - 1].focus();
+                    codeInputs[index - 1].value = '';
+                    updateTokenAndCount();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+                if (pasteData) {
+                    codeInputs.forEach((input, i) => {
+                        if (i < pasteData.length) {
+                            input.value = pasteData[i];
+                        } else {
+                            input.value = '';
+                        }
+                    });
+                    if (pasteData.length < 6) {
+                        codeInputs[pasteData.length].focus();
+                    } else {
+                        codeInputs[5].focus();
+                    }
+                    updateTokenAndCount();
+                }
+            });
+        });
+
         document.getElementById('verifyTokenForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             UI.inline.clear('.auth-alert-container');
 
-            const token = document.getElementById('token').value;
+            const token = hiddenToken.value;
             const email = document.querySelector('input[name="email"]').value;
             const submitBtn = document.getElementById('submitBtn');
 
             if (token.length !== 6) {
-                UI.inline.show('.auth-alert-container', 'El código debe ser de 6 dígitos.', 'warning');
+                UI.inline.show('.auth-alert-container', 'El código debe tener exactamente 6 dígitos.', 'warning');
                 return;
             }
 
@@ -157,10 +332,11 @@ if (empty($email)) {
             }
         });
 
-        // Auto-enfocar el campo de token
-        document.getElementById('token').focus();
+        // Auto-enfocar el primer campo de token
+        if (codeInputs.length > 0) {
+            codeInputs[0].focus();
+        }
     </script>
-    <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
 </body>
 
 </html>
