@@ -127,86 +127,65 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<style>
+  .presupuesto-info {
+    background: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 0.85em;
+  }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nueva Orden de Compra</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-    crossorigin="anonymous" />
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
-  <style>
-    .presupuesto-info {
-      background: #f8f9fa;
-      border-radius: 5px;
-      padding: 10px;
-      margin-top: 5px;
-      font-size: 0.85em;
-    }
+  .presupuesto-alert {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 5px;
+  }
 
-    .presupuesto-alert {
-      padding: 8px 12px;
-      border-radius: 4px;
-      margin-top: 5px;
-    }
+  .progress {
+    height: 6px;
+    margin-top: 5px;
+  }
 
-    .progress {
-      height: 6px;
-      margin-top: 5px;
-    }
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
 
-    .btn-sm {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-    }
+  .producto-autocomplete {
+    position: relative;
+  }
 
-    .producto-autocomplete {
-      position: relative;
-    }
+  .autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+  }
 
-    .autocomplete-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border: 1px solid #ddd;
-      border-top: none;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1000;
-      display: none;
-    }
+  .autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
 
-    .autocomplete-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-    }
+  .autocomplete-item:hover {
+    background: #f8f9fa;
+  }
 
-    .autocomplete-item:hover {
-      background: #f8f9fa;
-    }
+  .autocomplete-item:last-child {
+    border-bottom: none;
+  }
+</style>
 
-    .autocomplete-item:last-child {
-      border-bottom: none;
-    }
-  </style>
-</head>
-
-<body>
-
-  <?php
-  include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
   <!-- HERO SECTION -->
   <div class="hero-section">
@@ -226,7 +205,6 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
       </div>
 
     </div>
-  </div>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -772,10 +750,6 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
     </a>
   </div>
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-    crossorigin="anonymous"></script>
 
   <!-- JavaScript Externo -->
   <script src="<?= BASE_URL ?>/assets/scripts/new_order.js"></script>
@@ -815,9 +789,4 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
     }
   </script>
 
-  <?php
-  include __DIR__ . "/../includes/footer.php"; ?>
-
-</body>
-
-</html>
+  <?php include __DIR__ . "/../includes/footer.php"; ?>

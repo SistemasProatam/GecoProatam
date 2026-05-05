@@ -48,24 +48,14 @@ $result = $stmt->get_result();
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Catálogo del Sistema</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <style>
+<style>
     .catalog-card { transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent; height: 100%; border-radius: 12px; }
     .catalog-card:hover { transform: translateY(-5px); border-color: #1a3a5c; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     .catalog-card.active { border-color: #1a3a5c; background-color: #f8fafc; box-shadow: inset 0 0 0 1px #1a3a5c; }
     .card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
     .badge-num { background: #1a3a5c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-  </style>
-</head>
-<body>
+</style>
+
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div class="hero-section">
@@ -151,7 +141,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
+
 <script>
   let entidadActual = '<?= $entidad_seleccionada ?>';
 
@@ -175,10 +166,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   function agregarItem() {
     UI.loading("Cargando formulario...");
     fetch(`edit_${entidadActual}.php`).then(r => {
-        // Fallback simple si no hay un endpoint de form vacío, pero usualmente edit_ con id=0 funciona
         return fetch(`insert_${entidadActual}.php?form_only=1`).catch(() => null);
     }).then(() => {
-        // Para simplificar, usamos modales dinámicos predefinidos si no hay un cargador de forms
         scGenerarModalForm();
     });
   }
@@ -274,5 +263,3 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     if (link) { e.preventDefault(); updateList(link.href); window.scrollTo({top:0, behavior:'smooth'}); }
   });
 </script>
-</body>
-</html>

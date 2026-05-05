@@ -21,11 +21,8 @@ if (empty($email)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificar Código</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
     <style>
         .button-57 i {
@@ -45,56 +42,91 @@ if (empty($email)) {
 </head>
 
 <body>
-    <div class="page-wrapper">
-        <div class="form-container">
+    <div class="auth-wrapper">
+        <div class="row g-0 auth-container">
+            <!-- Panel de formulario -->
+            <div class="col-lg-5 col-xl-4 auth-panel">
+                <div class="auth-form-wrapper">
+                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
+                    
+                    <!-- Progress Steps -->
+                    <div class="recovery-steps">
+                        <div class="step-item completed">
+                            <div class="step-number">1</div>
+                            <span class="step-label">Correo</span>
+                        </div>
+                        <div class="step-item active">
+                            <div class="step-number">2</div>
+                            <span class="step-label">Código</span>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <span class="step-label">Nueva clave</span>
+                        </div>
+                    </div>
 
-            <button class="btn-back-floating" onclick="history.back()" title="Regresar">
-                <i class="bi bi-arrow-left"></i>
-                <span>Regresar</span>
-            </button>
+                    <h1 class="auth-title">Verificar Código</h1>
+                    <p class="auth-subtitle">Ingresa el código de 6 dígitos enviado a:<br><strong><?= htmlspecialchars($email) ?></strong></p>
 
-            <a class="navbar-brand" href="<?= BASE_URL ?>/index.php">
-                <img
-                    src="<?= BASE_URL ?>/assets/img/proatam.png"
-                    alt="Logo PROATAM"
-                    width="200"
-                    height="auto"
-                    class="d-inline-block align-text-top" />
-            </a>
-            <h2>Verificar Código</h2>
-            <p>Ingresa el código de 6 dígitos que enviamos a:<br><strong>
-                    <form id="verifyTokenForm">
-                        <input type="hidden" name="email" value="<div class=" form-group">
-                        <label for="token" class="form-label">Código de Verificación <span class="required">*</span></label>
-                        <input type="text" name="token" id="token" class="form-control" required
-                            placeholder="000000" maxlength="6" pattern="[0-9]{6}"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <div class="form-text">Ingresa el código de 6 dígitos que recibiste por correo.</div>
+                    <div class="auth-alert-container"></div>
+
+                    <form id="verifyTokenForm" class="auth-form">
+                        <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
+                        <div class="auth-form-group">
+                            <label for="token" class="auth-label">CÓDIGO DE VERIFICACIÓN</label>
+                            <input type="text" name="token" id="token" class="auth-control" required
+                                placeholder="000000" maxlength="6" pattern="[0-9]{6}"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+
+                        <button type="submit" class="auth-button" id="submitBtn">
+                            <span>Verificar Código</span>
+                            <i class="bi bi-shield-check"></i>
+                        </button>
+                    </form>
+
+                    <a href="forgot_password.php" class="back-link" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 3vh; font-size: 0.8rem; font-weight: 600; color: var(--gray-400); text-decoration: none;">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Regresar</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Panel de imagen con Carrusel -->
+            <div class="col-lg-7 col-xl-8 d-none d-lg-block auth-image-panel">
+                <div class="auth-carousel">
+                    <div class="carousel-slide active">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <div class="carousel-overlay">
+                            <div class="carousel-quote">
+                                <blockquote class="quote-text">
+                                    "Seguridad de nivel corporativo en cada proceso."
+                                </blockquote>
+                                <cite class="quote-author">PROATAM</cite>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <button type="submit" class="button-57" id="submitBtn">
-            <i class="bi bi-shield-check"></i><span>Verificar Código</span>
-        </button>
-        </form>
-
-    </div>
     </div>
 
     <script>
         document.getElementById('verifyTokenForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            UI.inline.clear('.auth-alert-container');
 
-            const token = document.getElementById('token').value.trim();
+            const token = document.getElementById('token').value;
             const email = document.querySelector('input[name="email"]').value;
             const submitBtn = document.getElementById('submitBtn');
 
-            if (!token || token.length !== 6) {
-                UI.toast.warning('Ingresa un código de 6 dígitos.');
+            if (token.length !== 6) {
+                UI.inline.show('.auth-alert-container', 'El código debe ser de 6 dígitos.', 'warning');
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i><span>Verificando...</span>';
+            submitBtn.innerHTML = '<span>Verificando...</span><i class="bi bi-hourglass-split"></i>';
 
             try {
                 const formData = new FormData();
@@ -109,19 +141,19 @@ if (empty($email)) {
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    UI.toast.success(result.message, 2000);
+                    UI.toast.success(result.message, 3000);
                     setTimeout(() => {
-                        window.location.href = `reset_password.php?token=${result.reset_token}`;
+                        window.location.href = `reset_password.php?token=${result.reset_token}&email=${encodeURIComponent(email)}`;
                     }, 2000);
                 } else {
-                    UI.toast.error(result.message);
+                    UI.inline.show('.auth-alert-container', result.message, 'error');
                 }
 
             } catch (error) {
                 UI.toast.error('No se pudo conectar con el servidor.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="bi bi-shield-check"></i><span>Verificar Código</span>';
+                submitBtn.innerHTML = '<span>Verificar Código</span><i class="bi bi-shield-check"></i>';
             }
         });
 

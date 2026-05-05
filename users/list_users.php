@@ -73,19 +73,7 @@ while($dep = $departamentos->fetch_assoc()){
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Usuarios</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-</head>
-<body>
-<?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -93,13 +81,12 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <div class="breadcrumb-custom">
         <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
       <span>/</span>
-      <a href="<?= BASE_URL ?>/projects/list_project.php"> Registro de Usuarios</a>
+      <span>Registro de Usuarios</span>
     </div>
     
     <div class="row align-items-end">
       <div class="col-lg-8">
         <h1 class="hero-title">Registro de Usuarios</h1>
-        </div>
       </div>
     </div>
   </div>
@@ -209,10 +196,7 @@ endif; ?>
     </div>
   </div>
 </div>
-      </div>
 
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 function eliminarUsuario(id) {
@@ -334,10 +318,7 @@ function initAJAX() {
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
-<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-
-</body>
-</html>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
 
 
 

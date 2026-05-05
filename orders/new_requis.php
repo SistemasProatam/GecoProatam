@@ -60,16 +60,6 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Nueva Requisición</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-<link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
 <style>
    /* Overlay de carga pantalla completa */
 #loadingOverlay {
@@ -99,11 +89,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 }
 </style>
 
-</head>
-<body>
-
-<?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -119,9 +105,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
     <div class="row align-items-end">
       <div class="col-lg-8">
         <h1 class="hero-title">Nueva Requisición</h1>
-        </div>
       </div>
-      
     </div>
   </div>
 </div>
@@ -430,7 +414,7 @@ if ($result_productos_servicios && $result_productos_servicios->num_rows > 0): ?
                     </td>
                     <td>
                       <button type="button" class="btn btn-sm btn-primary" 
-                              onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
+                               onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
                         <i class="bi bi-plus"></i> Seleccionar
                       </button>
                     </td>
@@ -469,8 +453,6 @@ endif; ?>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
 <!-- Datos para JavaScript -->
 <script>
 // Datos de productos y unidades para el catálogo
@@ -502,11 +484,4 @@ document.getElementById('ordenCompraForm')?.addEventListener('submit', function(
 <!-- Script principal -->
 <script src="<?= BASE_URL ?>/assets/scripts/new_requis.js"></script>
 
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
-
-</body>
-</html>
-
-
-
+<?php include __DIR__ . "/../includes/footer.php"; ?>

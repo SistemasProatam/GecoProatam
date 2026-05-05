@@ -131,29 +131,16 @@ if ($obra_id > 0) {
   $obra_nombre = $stmt->get_result()->fetch_assoc()['nombre'] ?? "";
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Plan de Obra Premium</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/plan_obra.css">
-</head>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/plan_obra.css">
 
-<body>
-
-  <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
-
-  <div class="hero-section">
-    <div class="container hero-content">
-      <h1 class="hero-title">Plan de Obra</h1>
-      <p class="hero-sub"><?= htmlspecialchars($obra_nombre ?? '') ?: 'Control de avances y programación' ?></p>
-    </div>
+<div class="hero-section">
+  <div class="container hero-content">
+    <h1 class="hero-title">Plan de Obra</h1>
+    <p class="hero-sub"><?= htmlspecialchars($obra_nombre ?? '') ?: 'Control de avances y programación' ?></p>
   </div>
+</div>
 
   <div class="content-wrapper">
     <div class="ctrl-bar mb-4">
@@ -455,9 +442,7 @@ include __DIR__ . "/../includes/navbar.php"; ?>
       $('sel-pro').innerHTML = '<option value="">Proyecto...</option>' + r.proyectos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
     })();
   </script>
-</body>
-
-</html>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
 
 
 

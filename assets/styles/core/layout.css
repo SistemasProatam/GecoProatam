@@ -1,0 +1,393 @@
+/* ─── GLOBAL APP LAYOUT (SaaS Premium) ─────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0");
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #f3f6f9; /* Subtle off-white/gray for modern SaaS look */
+    font-family: var(--font-main, 'Inter', sans-serif);
+    color: var(--s-800, #1e293b);
+}
+
+/* ─── LAYOUT CONTAINERS ──────────────────────────────────────── */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-sidebar {
+    width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid var(--gray-200, #e2e8f0);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    z-index: 100;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+    overflow-x: hidden;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+/* Collapsed state for desktop */
+.app-sidebar.collapsed {
+    width: 80px;
+}
+
+.app-sidebar.collapsed .sidebar-label,
+.app-sidebar.collapsed .menu-text,
+.app-sidebar.collapsed .chevron,
+.app-sidebar.collapsed .submenu-container {
+    display: none !important;
+}
+
+.app-sidebar.collapsed .menu-item {
+    justify-content: center;
+    padding: 10px;
+}
+
+.app-sidebar.collapsed .menu-item .material-symbols-rounded {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100vh;
+}
+
+.app-header {
+    height: 70px;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--gray-200, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    flex-shrink: 0;
+    z-index: 90;
+    position: sticky;
+    top: 0;
+}
+
+.app-content {
+    flex: 1;
+    padding: 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─── SIDEBAR BRANDING & MENU ───────────────────────────────── */
+.sidebar-brand {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--gray-100, #f1f5f9);
+    gap: 12px;
+}
+
+.desktop-toggle {
+    background: none;
+    border: none;
+    color: var(--gray-500, #64748b);
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.desktop-toggle:hover {
+    background-color: var(--gray-100, #f1f5f9);
+    color: var(--s-800);
+}
+
+.brand-logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.brand-logo-link img {
+    height: 28px;
+    width: auto;
+}
+
+.brand-text {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--s-800, #1e293b);
+    letter-spacing: -0.02em;
+}
+
+/* Fix collapse behavior for brand */
+.app-sidebar.collapsed .sidebar-brand {
+    padding: 0;
+    justify-content: center;
+}
+
+.app-sidebar.collapsed .brand-logo-link {
+    display: none;
+}
+
+.sidebar-menu {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gray-400, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1rem 0 0.5rem 0.5rem;
+    white-space: nowrap;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: var(--s-600, #475569);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.menu-item .material-symbols-rounded {
+    font-size: 1.3rem;
+    color: var(--gray-400, #94a3b8);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.menu-item:hover {
+    background-color: var(--gray-50, #f8fafc);
+    color: var(--s-800, #1e293b);
+}
+
+.menu-item:hover .material-symbols-rounded {
+    color: var(--p-500, #407656);
+}
+
+.menu-item.active {
+    background-color: rgba(64, 118, 86, 0.08);
+    color: var(--p-600, #2f5a40);
+}
+
+.menu-item.active .material-symbols-rounded {
+    color: var(--p-500, #407656);
+    font-variation-settings: 'FILL' 1;
+}
+
+.logout-item .material-symbols-rounded {
+    color: inherit !important;
+}
+
+.submenu-container {
+    display: none;
+    flex-direction: column;
+    padding-left: 2.8rem;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.has-submenu.expanded .submenu-container {
+    display: flex;
+}
+
+.has-submenu.expanded .menu-item .chevron {
+    transform: rotate(180deg);
+}
+
+.submenu-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--gray-500, #64748b);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.submenu-item:hover {
+    color: var(--s-800, #1e293b);
+    background-color: var(--gray-50, #f8fafc);
+}
+
+.submenu-item.active {
+    color: var(--p-600, #2f5a40);
+    background-color: rgba(64, 118, 86, 0.05);
+    font-weight: 700;
+}
+
+/* ─── TOP HEADER ────────────────────────────────────────────── */
+
+.header-search {
+    display: flex;
+    align-items: center;
+    background-color: var(--gray-50, #f8fafc);
+    border: 1px solid var(--gray-200, #e2e8f0);
+    border-radius: 20px;
+    padding: 6px 16px;
+    width: 320px;
+    transition: all 0.3s;
+}
+
+.header-search:focus-within {
+    background-color: #ffffff;
+    border-color: var(--p-400, #5da67c);
+    box-shadow: 0 0 0 3px rgba(64, 118, 86, 0.1);
+}
+
+.header-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    color: var(--s-800, #1e293b);
+}
+
+.header-search .material-symbols-rounded {
+    color: var(--gray-400, #94a3b8);
+    font-size: 1.2rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--p-500), var(--p-600));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--s-800, #1e293b);
+    line-height: 1.2;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: var(--gray-500, #64748b);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--gray-500, #64748b);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background-color: var(--gray-100, #f1f5f9);
+    color: var(--s-800);
+}
+
+.btn-logout {
+    color: inherit;
+}
+
+.btn-logout:hover {
+    background-color: var(--gray-100, #f1f5f9);
+}
+
+/* Mobile Toggle */
+.mobile-toggle {
+    display: none;
+}
+
+/* ─── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 991px) {
+    .app-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        width: 260px; /* Always full width on mobile */
+        box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+    }
+
+    .app-sidebar.show {
+        transform: translateX(0);
+    }
+
+    .desktop-toggle {
+        display: none; /* Hide desktop toggle */
+    }
+
+    .mobile-toggle {
+        display: flex; /* Show mobile toggle */
+        background: none;
+        border: none;
+        color: var(--s-800);
+        padding: 0;
+        cursor: pointer;
+    }
+
+    .header-search {
+        display: none; /* Hide search on mobile for space */
+    }
+
+    .app-header {
+        padding: 0 1rem;
+    }
+
+    .user-info {
+        display: none; /* Hide name/role on mobile */
+    }
+}

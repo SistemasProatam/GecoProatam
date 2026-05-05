@@ -16,21 +16,7 @@
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
-}
-
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: var(--third-color);
-  font-family: "Montserrat", sans-serif;
-  overflow-x: hidden;
-}
+/* Styles for list views */
 
 .content-wrapper {
   max-width: 1400px;

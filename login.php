@@ -38,9 +38,9 @@ if (isset($_GET['error'])) {
     <title>Inicio de Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/login.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
     <script>
         window.BASE_URL = '<?= BASE_URL ?>';
     </script>
@@ -48,62 +48,93 @@ if (isset($_GET['error'])) {
 
 <body>
 
-    <div class="row login-container shadow-lg">
-        <!-- Panel de login -->
-        <div class="col-lg-6 col-md-12 login-panel d-flex align-items-center justify-content-center">
-            <div class="w-100 px-2 px-lg-2">
-                <div class="form-container">
-                    <a class="navbar-brand">
-                        <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" />
-                    </a>
-                    <h2>Inicio de Sesión</h2>
+    <div class="auth-wrapper">
+        <div class="row g-0 auth-container">
+            <!-- Panel de login -->
+            <div class="col-lg-5 col-xl-4 auth-panel">
+                <div class="auth-form-wrapper">
+                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
+                    <h1 class="auth-title">Acceso al Sistema.</h1>
+                    <p class="auth-subtitle">Gestión empresarial PROATAM. Control total de tus operaciones.</p>
 
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label for="email" class="form-label">Correo Corporativo</label>
-                            <input type="email"
-                                class="form-control custom-input"
-                                id="email" name="correo_corporativo"
-                                placeholder="usuario@proatam.com">
+                    <div id="loginAlertContainer"></div>
+
+                    <form id="loginForm" class="auth-form">
+                        <div class="auth-form-group">
+                            <label for="email" class="auth-label">CORREO CORPORATIVO</label>
+                            <input type="email" class="auth-control" id="email" name="correo_corporativo"
+                                placeholder="nombre@proatam.com" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control custom-input" id="password" name="password" placeholder="••••••••">
-                                <button type="button" class="btn btn-outline-secondary toggle-password">
+                        <div class="auth-form-group">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="password" class="auth-label mb-0">CONTRASEÑA</label>
+                                <a href="forgot_password.php" class="forgot-link" style="font-size: 0.65rem; color: var(--p-500); text-decoration: none; font-weight: 800;">¿OLVIDASTE TU CONTRASEÑA?</a>
+                            </div>
+                            <div class="position-relative">
+                                <input type="password" class="auth-control" id="password" name="password" placeholder="••••••••" required>
+                                <button type="button" class="toggle-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gray-400); cursor: pointer;">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="text-center mt-3 mb-3">
-                            <a href="forgot_password.php" class="forgot_pass">¿Olvidaste tu contraseña?</a>
-                        </div>
-
-                        <button type="submit" class="button-57">
-                            <i class="bi bi-key"></i><span>Iniciar Sesión</span>
+                        <button type="submit" class="auth-button">
+                            <span>Iniciar Sesión</span>
+                            <i class="bi bi-arrow-right"></i>
                         </button>
                     </form>
+
+                    <div class="auth-footer">
+                        <p>© 2026 PROATAM. Todos los derechos reservados.</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Panel de imagen -->
-        <div class="col-lg-6 d-none d-lg-flex image-panel p-0">
-            <div class="custom-carousel">
-                <div class="carousel-track">
+            <!-- Panel de imagen con Carrusel -->
+            <div class="col-lg-7 col-xl-8 d-none d-lg-block auth-image-panel">
+                <div class="auth-carousel">
+                    <!-- Slide 1 -->
                     <div class="carousel-slide active">
-                        <source srcset="<?= BASE_URL ?>/assets/img/slider1.webp" type="image/webp">
-                        <img src="<?= BASE_URL ?>/assets/img/slider1.png" alt="Imagen decorativa 1" class="img-fluid w-100 h-80 object-fit-cover">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <div class="carousel-overlay">
+                            <div class="carousel-quote">
+                                <blockquote class="quote-text">
+                                    "Infraestructura que transforma comunidades y construye legados."
+                                </blockquote>
+                                <cite class="quote-author">DIRECCIÓN GENERAL, PROATAM</cite>
+                            </div>
+                        </div>
                     </div>
+                    <!-- Slide 2 -->
                     <div class="carousel-slide">
-                        <source srcset="<?= BASE_URL ?>/assets/img/slider2.webp" type="image/webp">
-                        <img src="<?= BASE_URL ?>/assets/img/slider2.png" alt="Imagen decorativa 2" loading="lazy" class="img-fluid w-100 h-80 object-fit-cover">
+                        <img src="<?= BASE_URL ?>/assets/img/slider1.png" alt="Industrial 2" class="carousel-img">
+                        <div class="carousel-overlay">
+                            <div class="carousel-quote">
+                                <blockquote class="quote-text">
+                                    "La precisión en cada detalle define nuestra excelencia operativa."
+                                </blockquote>
+                                <cite class="quote-author">OPERACIONES, PROATAM</cite>
+                            </div>
+                        </div>
                     </div>
+                    <!-- Slide 3 -->
                     <div class="carousel-slide">
-                        <source srcset="<?= BASE_URL ?>/assets/img/slider3.webp" type="image/webp">
-                        <img src="<?= BASE_URL ?>/assets/img/slider3.png" alt="Imagen decorativa 3" loading="lazy" class="img-fluid w-100 h-80 object-fit-cover">
+                        <img src="<?= BASE_URL ?>/assets/img/slider2.png" alt="Industrial 3" class="carousel-img">
+                        <div class="carousel-overlay">
+                            <div class="carousel-quote">
+                                <blockquote class="quote-text">
+                                    "Innovación constante para los retos del mañana."
+                                </blockquote>
+                                <cite class="quote-author">INGENIERÍA, PROATAM</cite>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-dots">
+                        <span class="dot active" data-slide="0"></span>
+                        <span class="dot" data-slide="1"></span>
+                        <span class="dot" data-slide="2"></span>
                     </div>
                 </div>
             </div>
@@ -131,6 +162,7 @@ if (isset($_GET['error'])) {
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            UI.inline.clear('#loginAlertContainer');
 
             const formData = new FormData(this);
 
@@ -149,21 +181,11 @@ if (isset($_GET['error'])) {
                     }, 1200);
                 } else {
                     if (result.message === 'solo_correo_proatam') {
-                        UI.modal({
-                            title: 'Correo no permitido',
-                            icon: 'warning',
-                            html: `<p>Solo se permiten correos corporativos de Proatam.</p>
-                                   <p>Usa tu correo con dominio <strong>@proatam.com</strong></p>`,
-                        });
+                        UI.inline.show('#loginAlertContainer', 'Solo se permiten correos corporativos <strong>@proatam.com</strong>', 'warning');
                     } else if (result.message === 'correo_no_registrado') {
-                        UI.modal({
-                            title: 'Correo no registrado',
-                            icon: 'error',
-                            html: `<p class="mb-1"><strong>Este correo no está registrado en el sistema.</strong></p>
-                                   <p class="text-muted">Verifica que el correo esté correctamente escrito o contacta a Recursos Humanos.</p>`,
-                        });
+                        UI.inline.show('#loginAlertContainer', 'Este correo no está registrado en el sistema. Contacta a RRHH.', 'error');
                     } else {
-                        UI.toast.error(result.message);
+                        UI.inline.show('#loginAlertContainer', result.message, 'error');
                     }
                 }
             } catch (error) {
@@ -173,28 +195,44 @@ if (isset($_GET['error'])) {
     </script>
 
     <script>
-        // Carrusel personalizado automático
-        document.addEventListener('DOMContentLoaded', function() {
-            const slides = document.querySelectorAll('.carousel-slide');
-            let currentSlide = 0;
+        // Carrusel Lógica
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.dot');
+        let currentSlide = 0;
+        let slideInterval;
 
-            if (slides.length > 0) {
-                // Función para cambiar slides
-                function nextSlide() {
-                    // Remover clase active del slide actual
-                    slides[currentSlide].classList.remove('active');
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
 
-                    // Avanzar al siguiente slide
-                    currentSlide = (currentSlide + 1) % slides.length;
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
 
-                    // Agregar clase active al nuevo slide
-                    slides[currentSlide].classList.add('active');
-                }
+        function startInterval() {
+            stopInterval();
+            slideInterval = setInterval(nextSlide, 5000);
+        }
 
-                // Iniciar el carrusel automático
-                setInterval(nextSlide, 5000); // Cambiar cada 2 segundos
-            }
+        function stopInterval() {
+            if (slideInterval) clearInterval(slideInterval);
+        }
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.getAttribute('data-slide'));
+                showSlide(index);
+                startInterval();
+            });
         });
+
+        // Iniciar
+        startInterval();
     </script>
 </body>
 

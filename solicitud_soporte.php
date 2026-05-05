@@ -60,41 +60,27 @@ while ($row = $result_activos->fetch_assoc()) {
     $activos_array[] = $row;
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Mantenimiento</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <style>
-        /* Estilos personalizados */
-        .activo-autocomplete { position: relative; }
-        .autocomplete-list {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background: #fff; border: 1px solid #ddd; border-top: none;
-            max-height: 200px; overflow-y: auto; z-index: 1050;
-            display: none; border-radius: 0 0 6px 6px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
-        }
-        .autocomplete-item { padding: 9px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: .9rem; }
-        .autocomplete-item:hover { background: #f0f4f8; }
-        .activo-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: #e8f0fe; border: 1px solid #c5d8fd; border-radius: 8px;
-            padding: 8px 14px; font-size: .88rem; color: #113557; margin-top: 6px;
-        }
-        .activo-badge .remove-activo { cursor: pointer; color: #6c757d; }
-        .activo-badge .remove-activo:hover { color: #dc3545; }
-    </style>
-</head>
-
-<body>
-    <?php include __DIR__ . "/includes/navbar.php"; ?>
+<style>
+    /* Estilos personalizados */
+    .activo-autocomplete { position: relative; }
+    .autocomplete-list {
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: #fff; border: 1px solid #ddd; border-top: none;
+        max-height: 200px; overflow-y: auto; z-index: 1050;
+        display: none; border-radius: 0 0 6px 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    }
+    .autocomplete-item { padding: 9px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: .9rem; }
+    .autocomplete-item:hover { background: #f0f4f8; }
+    .activo-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: #e8f0fe; border: 1px solid #c5d8fd; border-radius: 8px;
+        padding: 8px 14px; font-size: .88rem; color: #113557; margin-top: 6px;
+    }
+    .activo-badge .remove-activo { cursor: pointer; color: #6c757d; }
+    .activo-badge .remove-activo:hover { color: #dc3545; }
+</style>
+<?php include __DIR__ . "/includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -306,7 +292,7 @@ while ($row = $result_activos->fetch_assoc()) {
         </a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <?php include __DIR__ . "/includes/footer.php"; ?>
 
     <script>
         // ----------------------------------------------------------------
@@ -535,8 +521,3 @@ while ($row = $result_activos->fetch_assoc()) {
             });
         });
     </script>
-
-    <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-</body>
-
-</html>

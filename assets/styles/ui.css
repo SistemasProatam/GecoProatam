@@ -1,8 +1,8 @@
+@import url("./core/tokens.css");
+
 /* ================================================================
    UI.CSS — Sistema de notificaciones y modales PROATAM
-   Tokens: Proatam Green #407656 | Proatam Blue #113557
-           White Background | Neutral Grays
-   Font: Montserrat / Outfit
+   Consumes PROATAM Design System Tokens
    ================================================================ */
 
 /* ─── TOASTS ────────────────────────────────────────────────────── */

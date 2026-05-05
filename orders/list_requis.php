@@ -118,7 +118,9 @@ $count_sql = "SELECT COUNT(*) AS total FROM requisiciones r
               $where_sql";
 $stmtTotal = $conn->prepare($count_sql);
 if ($where) {
-    $stmtTotal->bind_param(substr($types, 0, -2), ...array_slice($params, 0, -2));
+    $count_params = array_slice($params, 0, -2);
+    $count_types = substr($types, 0, -2);
+    $stmtTotal->bind_param($count_types, ...$count_params);
 }
 $stmtTotal->execute();
 $totalRegistros = $stmtTotal->get_result()->fetch_assoc()['total'];
@@ -133,121 +135,108 @@ while ($ent = $entidadesRes->fetch_assoc()) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
+<style>
+    /* CONTENEDOR CON SCROLL HORIZONTAL */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background: white;
+        margin-bottom: 1rem;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <title>Registro de Requisiciones</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-    <style>
-        /* CONTENEDOR CON SCROLL HORIZONTAL */
+    /* Asegurar que la tabla tenga un ancho mínimo */
+    .table {
+        min-width: 700px;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    /* Estilos para la tabla dentro del contenedor scrollable */
+    .table-container .table thead {
+        background: var(--light-bg);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table-container .table th {
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        background: var(--light-bg);
+    }
+
+    .table-container .table td {
+        border: none;
+        padding: 1rem;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .table-container .table tbody tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table-container .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Estilos personalizados para la scrollbar */
+    .table-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 4px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-color);
+    }
+
+    /* Para Firefox */
+    .table-container {
+        scrollbar-width: thin;
+        scrollbar-color: var(--secondary-color) #f1f1f1;
+    }
+
+    @media (max-width: 768px) {
         .table-container {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            background: white;
-            margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
 
-        /* Asegurar que la tabla tenga un ancho mínimo */
-        .table {
-            min-width: 700px;
-            margin: 0;
-            white-space: nowrap;
-        }
-
-        /* Estilos para la tabla dentro del contenedor scrollable */
-        .table-container .table thead {
-            background: var(--light-bg);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .table-container .table th {
-            border: none;
-            padding: 1rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            background: var(--light-bg);
-        }
-
+        .table-container .table th,
         .table-container .table td {
-            border: none;
-            padding: 1rem;
-            vertical-align: middle;
-            white-space: nowrap;
+            padding: 0.75rem 0.5rem;
         }
 
-        .table-container .table tbody tr {
-            border-bottom: 1px solid #e9ecef;
+        .btn-group button {
+            padding: 0.4rem;
+            font-size: 0.8rem;
         }
 
-        .table-container .table tbody tr:hover {
-            background-color: #f8f9fa;
+        .btn-group i {
+            font-size: 0.9rem;
         }
+    }
 
-        /* Estilos personalizados para la scrollbar */
-        .table-container::-webkit-scrollbar {
-            height: 8px;
+    @media (max-width: 576px) {
+        .table {
+            min-width: 600px;
         }
+    }
+</style>
 
-        .table-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background: var(--secondary-color);
-            border-radius: 4px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-
-        /* Para Firefox */
-        .table-container {
-            scrollbar-width: thin;
-            scrollbar-color: var(--secondary-color) #f1f1f1;
-        }
-
-        @media (max-width: 768px) {
-            .table-container {
-                font-size: 0.9rem;
-            }
-
-            .table-container .table th,
-            .table-container .table td {
-                padding: 0.75rem 0.5rem;
-            }
-
-            .btn-group button {
-                padding: 0.4rem;
-                font-size: 0.8rem;
-            }
-
-            .btn-group i {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .table {
-                min-width: 600px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <?php
-    include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
@@ -265,7 +254,6 @@ while ($ent = $entidadesRes->fetch_assoc()) {
             </div>
 
         </div>
-    </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -430,12 +418,6 @@ while ($ent = $entidadesRes->fetch_assoc()) {
             });
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-    <?php
-    include __DIR__ . "/../includes/footer.php"; ?>
-
     <script>
         // Función para actualizar la lista vía AJAX
         function initAJAX() {
@@ -521,7 +503,4 @@ while ($ent = $entidadesRes->fetch_assoc()) {
 
         document.addEventListener('DOMContentLoaded', initAJAX);
     </script>
-
-</body>
-
-</html>
+    <?php include __DIR__ . "/../includes/footer.php"; ?>

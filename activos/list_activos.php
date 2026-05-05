@@ -95,33 +95,17 @@ function urlFiltros(array $extras = []): string {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Activos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
+<style>
+    /* Badge estatus */
+    .badge-activo   { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 10px; font-size:.75rem; }
+    .badge-inactivo { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
+    /* Badge condición */
+    .badge-bueno    { background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 10px; font-size:.75rem; }
+    .badge-regular  { background:#fef9c3; color:#92400e; border-radius:20px; padding:3px 10px; font-size:.75rem; }
+    .badge-malo     { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
+</style>
 
-    <style>
-        /* Badge estatus */
-        .badge-activo   { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        .badge-inactivo { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        /* Badge condición */
-        .badge-bueno    { background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        .badge-regular  { background:#fef9c3; color:#92400e; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-        .badge-malo     { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-
-    </style>
-</head>
-<body>
-
-<?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -186,12 +170,12 @@ endif; ?>
                     <select name="tipo" class="form-select">
                         <option value="">-- Tipo --</option>
                         <?php
-while ($t = $tipos->fetch_assoc()): ?>
+                        while ($t = $tipos->fetch_assoc()): ?>
                             <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($t['nombre']) ?>
                             </option>
                         <?php
-endwhile; ?>
+                        endwhile; ?>
                     </select>
                 </div>
 
@@ -354,23 +338,7 @@ endif; ?>
     </div><!-- /form-container -->
 </div><!-- /content-wrapper -->
 
-<script>
-// Inicializar tooltips de Bootstrap
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous">
-</script>
-
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 // Función para actualizar la lista vía AJAX
@@ -454,9 +422,3 @@ function initAJAX() {
 
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
-
-</body>
-</html>
-
-
-
