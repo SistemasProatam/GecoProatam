@@ -35,7 +35,8 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
+    <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
 </head>
 
 <body>
@@ -141,20 +142,12 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
 
             // Validar longitud de contraseña
             if (newPassword.length < 6 || newPassword.length > 12) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Longitud incorrecta',
-                    text: 'La contraseña debe tener entre 6 y 12 caracteres.'
-                });
+                UI.toast.warning('La contraseña debe tener entre 6 y 12 caracteres.');
                 return;
             }
 
             if (newPassword !== confirmPassword) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Contraseñas no coinciden',
-                    text: 'Las contraseñas ingresadas no son iguales.'
-                });
+                UI.toast.warning('Las contraseñas ingresadas no son iguales.');
                 return;
             }
 
@@ -175,28 +168,14 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Contraseña Actualizada!',
-                        text: result.message,
-                        confirmButtonText: 'Ir al Login'
-                    }).then(() => {
-                        window.location.href = 'login.php';
-                    });
+                    UI.toast.success(result.message, 2000);
+                    setTimeout(() => { window.location.href = 'login.php'; }, 2000);
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: result.message
-                    });
+                    UI.toast.error(result.message);
                 }
 
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo conectar con el servidor.'
-                });
+                UI.toast.error('No se pudo conectar con el servidor.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="bi bi-key"></i><span>Cambiar Contraseña</span>';
@@ -218,7 +197,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
         });
     </script>
 
-    <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
 
 </body>
 

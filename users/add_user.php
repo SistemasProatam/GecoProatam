@@ -285,113 +285,73 @@ include __DIR__ . "/../includes/navbar.php"; ?>
 
                 </form>
             </div>
-        </div>
-    </div>
-
+        </div>
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesando… por favor espere</div>
+            <div class="mt-3">Procesando... por favor espere</div>
         </div>
     </div>
 
-    <?php
-include __DIR__ . "/../includes/footer.php"; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Manejar el envío del formulario - Versión consolidada
-        document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Mostrar overlay y deshabilitar botones
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) overlay.style.display = 'flex';
-            this.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
-
-            const formData = new FormData(this);
-
-            fetch('insert_user.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            html: data.message,
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            window.location.href = 'list_users.php';
-                        });
-                    } else {
-                        // Ocultar overlay en caso de error
-                        if (overlay) overlay.style.display = 'none';
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message,
-                            confirmButtonText: 'Aceptar'
-                        });
-                        // Habilitar botones nuevamente
-                        this.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = false);
-                    }
-                })
-                .catch(error => {
-                    // Ocultar overlay en caso de error
-                    if (overlay) overlay.style.display = 'none';
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        text: 'No se pudo conectar con el servidor',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    // Habilitar botones nuevamente
-                    this.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = false);
-                });
-        });
-    </script>
-    <script>
-        // Manejar contratos múltiples
-        document.getElementById('agregar-contrato').addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formAgregarUsuario');
+            const loadingOverlay = document.getElementById('loadingOverlay');
             const container = document.getElementById('contratos-container');
-            const newItem = document.createElement('div');
-            newItem.className = 'contrato-item mb-2';
-            newItem.innerHTML = `
-            <div class="input-group">
-                <input type="file" name="contratos[]" class="form-control" accept=".pdf">
-                <select name="tipos_contrato[]" class="form-select">
-                    <option value="">-- Tipo --</option>
-                    <option value="Indeterminado">Tiempo Indeterminado</option>
-                    <option value="Determinado">Tiempo Determinado</option>
-                    <option value="Prueba">Periodo de Prueba</option>
-                    <option value="Obra">Obra Determinada</option>
-                    <option value="Otro">Otro</option>
-                </select>
-                <button type="button" class="btn btn-danger btn-remove-contrato">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-        `;
-            container.appendChild(newItem);
+            const btnAgregar = document.getElementById('agregar-contrato');
 
-            // Habilitar botón de eliminar en todos menos el primero
-            const removeBtns = document.querySelectorAll('.btn-remove-contrato');
-            removeBtns[0].disabled = removeBtns.length <= 1;
-        });
+            // Manejo de overlay al enviar
+            if (form) {
+                form.addEventListener('submit', function() {
+                    loadingOverlay.style.setProperty('display', 'flex', 'important');
+                });
+            }
 
-        // Delegar evento para eliminar contratos
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.btn-remove-contrato')) {
-                const item = e.target.closest('.contrato-item');
-                item.remove();
+            // Agregar nuevo contrato
+            if (btnAgregar && container) {
+                btnAgregar.addEventListener('click', function() {
+                    const newItem = document.createElement('div');
+                    newItem.className = 'contrato-item mb-2';
+                    newItem.innerHTML = `
+                        <div class="input-group">
+                            <input type="file" name="contratos[]" class="form-control" accept=".pdf">
+                            <select name="tipos_contrato[]" class="form-select">
+                                <option value="">-- Tipo --</option>
+                                <option value="Indeterminado">Tiempo Indeterminado</option>
+                                <option value="Determinado">Tiempo Determinado</option>
+                                <option value="Prueba">Periodo de Prueba</option>
+                                <option value="Obra">Obra Determinada</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <button type="button" class="btn btn-danger btn-remove-contrato">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(newItem);
 
-                // Si solo queda uno, deshabilitar su botón de eliminar
+                    // Habilitar botón de eliminar en todos menos el primero
+                    actualizarBotonesEliminar();
+                });
+            }
+
+            // Delegar evento para eliminar contratos
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-remove-contrato')) {
+                    const item = e.target.closest('.contrato-item');
+                    if (item) {
+                        item.remove();
+                        actualizarBotonesEliminar();
+                    }
+                }
+            });
+
+            function actualizarBotonesEliminar() {
                 const removeBtns = document.querySelectorAll('.btn-remove-contrato');
                 if (removeBtns.length === 1) {
                     removeBtns[0].disabled = true;
+                } else {
+                    removeBtns.forEach(btn => btn.disabled = false);
                 }
             }
         });

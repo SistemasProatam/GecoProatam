@@ -20,13 +20,10 @@ $sqlBase = "WHERE 1=1";
 $params = [];
 $types = "";
 
-// Busqueda
 if (!empty($busqueda)) {
     $sqlBase .= " AND (p.numero_licitacion LIKE ? OR p.numero_contrato LIKE ? OR p.nombre_proyecto LIKE ?)";
     $like = "%$busqueda%";
-    $params[] = $like;
-    $params[] = $like;
-    $params[] = $like;
+    $params[] = $like; $params[] = $like; $params[] = $like;
     $types .= "sss";
 }
 
@@ -37,12 +34,12 @@ $stmtTotal->execute();
 $totalRegistros = $stmtTotal->get_result()->fetch_assoc()['total'] ?? 0;
 
 // ====== Datos paginados ======
-$stmt = $conn->prepare("SELECT p.id, p.numero_licitacion, p.numero_contrato, p.nombre_proyecto, 
+$stmt = $conn->prepare("SELECT p.id, p.numero_licitacion, p.numero_contrato, p.nombre_proyecto,
                         p.fecha_inicio, p.fecha_fin, p.monto_designado, p.monto_con_iva, p.costo_directo,
                         (SELECT COUNT(*) FROM obras WHERE proyecto_id = p.id) as total_obras,
-                        (SELECT COALESCE(SUM(costo_directo_utilizado), 0) FROM presupuesto_control 
+                        (SELECT COALESCE(SUM(costo_directo_utilizado), 0) FROM presupuesto_control
                          WHERE proyecto_id = p.id AND obra_id IS NULL) as costo_directo_utilizado
-                        FROM proyectos p 
+                        FROM proyectos p
                         $sqlBase
                         ORDER BY p.fecha_inicio DESC
                         LIMIT ? OFFSET ?");
@@ -54,10 +51,8 @@ $stmt->bind_param($typesPag, ...$paramsPag);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Total páginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -67,32 +62,16 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
   <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    .badge-presupuesto {
-        font-size: 0.75em;
-        padding: 0.25em 0.5em;
-    }
-    .presupuesto-info {
-        font-size: 0.85em;
-        line-height: 1.4;
-    }
-    .text-warning {
-        color: #ffc107 !important;
-    }
-    .progress {
-        height: 6px;
-        margin-top: 5px;
-    }
-    .progress-bar {
-        transition: width 0.3s ease;
-    }
+    .badge-presupuesto { font-size: 0.75em; padding: 0.25em 0.5em; }
+    .presupuesto-info  { font-size: 0.85em; line-height: 1.4; }
+    .progress          { height: 6px; margin-top: 5px; }
+    .progress-bar      { transition: width 0.3s ease; }
   </style>
 </head>
 <body>
-<?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -102,621 +81,322 @@ include __DIR__ . "/../includes/navbar.php"; ?>
       <span>/</span>
       <span>Registro de Proyectos</span>
     </div>
-    
     <div class="row align-items-end">
       <div class="col-lg-8">
         <h1 class="hero-title">Registro de Proyectos</h1>
-        </div>
       </div>
-      
     </div>
   </div>
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="content-wrapper">
-
   <div class="form-container">
-
     <div class="form-body">
       <!-- Buscador -->
       <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
         <input class="form-control w-100" type="search" name="q" placeholder="Buscar proyecto..." value="<?= htmlspecialchars($busqueda) ?>">
-        <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
+        <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
       </form>
 
       <div id="table-container-wrapper">
+        <div class="d-flex justify-content-between mb-3">
+          <span class="badge-num"><?= $totalRegistros ?> proyectos</span>
+          <button class="button-56" type="button" onclick="agregarProyecto()">
+            <i class="bi bi-plus-circle"></i> Nuevo Proyecto
+          </button>
+        </div>
 
-      <!-- Botón de agregar proyecto -->
-      <div class="d-flex justify-content-between mb-3">
-        <span class="badge-num"><?= $totalRegistros ?> proyectos</span>
-        <button class="button-56" type="button" onclick="agregarProyecto()">
-          <i class="bi bi-plus-circle"></i> Nuevo Proyecto
-        </button>
-      </div>
-
-      <!-- Lista -->
-      <?php
-if($result && $result->num_rows>0): ?>
-      <ul class="list-group">
-        <?php
-while($row = $result->fetch_assoc()): 
-          $costo_disponible = $row['costo_directo'] - $row['costo_directo_utilizado'];
-          $porcentaje_utilizado = $row['costo_directo'] > 0 ? ($row['costo_directo_utilizado'] / $row['costo_directo']) * 100 : 0;
-          $progress_class = $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
-        ?>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <strong><?= htmlspecialchars($row['nombre_proyecto']) ?></strong>
-                <div class="presupuesto-info mt-1">
-                  <?php
-if($row['total_obras'] > 0): ?>
-                    <div>
-                      <span class="badge bg-info badge-presupuesto">
-                        <i class="bi bi-tools"></i> <?= $row['total_obras'] ?> obra(s)
-                      </span>
-                    </div>
-                  <?php
-else: ?>
-                    <div>
-                      <span class="badge bg-secondary badge-presupuesto">
-                        <i class="bi bi-building"></i> Sin obras
-                      </span>
-                    </div>
-                  <?php
-endif; ?>
+        <?php if($result && $result->num_rows > 0): ?>
+        <ul class="list-group">
+          <?php while($row = $result->fetch_assoc()):
+            $costo_disponible = $row['costo_directo'] - $row['costo_directo_utilizado'];
+            $porcentaje_utilizado = $row['costo_directo'] > 0 ? ($row['costo_directo_utilizado'] / $row['costo_directo']) * 100 : 0;
+            $progress_class = $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
+          ?>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <strong><?= htmlspecialchars($row['nombre_proyecto']) ?></strong>
+                  <div class="presupuesto-info mt-1">
+                    <?php if($row['total_obras'] > 0): ?>
+                    <span class="badge bg-info badge-presupuesto"><i class="bi bi-tools"></i> <?= $row['total_obras'] ?> obra(s)</span>
+                    <?php else: ?>
+                    <span class="badge bg-secondary badge-presupuesto"><i class="bi bi-building"></i> Sin obras</span>
+                    <?php endif; ?>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="btn-group" style="gap:5px;">
-            <a href="list_obras.php?proyecto_id=<?= $row['id'] ?>" class="btn-add-oc" 
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Gestionar Obras">
+            <div class="btn-group" style="gap:5px;">
+              <a href="list_obras.php?proyecto_id=<?= $row['id'] ?>" class="btn-add-oc"
+                 data-bs-toggle="tooltip" data-bs-placement="top" title="Gestionar Obras">
                 <i class="bi bi-cone-striped"></i>
-            </a>
-            <a href="details_project.php?id=<?= $row['id'] ?>" class="btn-inf" 
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles del Proyecto">
+              </a>
+              <a href="details_project.php?id=<?= $row['id'] ?>" class="btn-inf"
+                 data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles del Proyecto">
                 <i class="bi bi-info-circle"></i>
-            </a>
-            <button class="btn-del" onclick="eliminarProyecto(<?= $row['id'] ?>)"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Proyecto">
+              </a>
+              <button class="btn-del" onclick="eliminarProyecto(<?= $row['id'] ?>)"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Proyecto">
                 <i class="bi bi-trash3"></i>
-            </button>
-          </div>
-        </li>
-        <?php
-endwhile; ?>
-      </ul>
-
-      <!-- Paginación -->
-      <?php
-if($totalPaginas>1): ?>
-      <nav aria-label="Paginación">
-        <ul class="pagination justify-content-center mt-3">
-          <?php
-for($i=1;$i<=$totalPaginas;$i++): ?>
-          <li class="page-item <?= $i==$pagina?'active':'' ?>">
-            <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>">
-              <?= $i ?>
-            </a>
+              </button>
+            </div>
           </li>
-          <?php
-endfor; ?>
+          <?php endwhile; ?>
         </ul>
-      </nav>
-      <?php
-endif; ?>
-      <?php
-else: ?>
-      <div class="text-center text-muted py-4">
-        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-        <p class="mt-2">No hay proyectos registrados</p>
-      </div>
-      <?php
-endif; ?>
-      </div> <!-- /table-container-wrapper -->
+
+        <?php if($totalPaginas > 1): ?>
+        <nav aria-label="Paginación">
+          <ul class="pagination justify-content-center mt-3">
+            <?php for($i=1; $i<=$totalPaginas; $i++): ?>
+            <li class="page-item <?= $i==$pagina?'active':'' ?>">
+              <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>"><?= $i ?></a>
+            </li>
+            <?php endfor; ?>
+          </ul>
+        </nav>
+        <?php endif; ?>
+
+        <?php else: ?>
+        <div class="text-center text-muted py-4">
+          <i class="bi bi-inbox" style="font-size:3rem;"></i>
+          <p class="mt-2">No hay proyectos registrados</p>
+        </div>
+        <?php endif; ?>
+      </div><!-- /table-container-wrapper -->
     </div>
   </div>
 </div>
 
-<script>
-// Inicializar tooltips de Bootstrap
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+});
+
+// ── Agregar Proyecto ──────────────────────────────────────────────────────────
 function agregarProyecto() {
-    // Obtener lista de clientes activos
     fetch('get_clientes.php')
         .then(res => res.json())
         .then(clientes => {
-            let clientesOptions = '<option value="">-- Seleccionar Cliente --</option>';
-            clientes.forEach(cliente => {
-                clientesOptions += `<option value="${cliente.id}">${cliente.nombre_abreviado || cliente.nombre}</option>`;
+            let opts = '<option value="">-- Seleccionar Cliente --</option>';
+            clientes.forEach(c => { opts += `<option value="${c.id}">${c.nombre_abreviado||c.nombre}</option>`; });
+
+            UI.modal({
+                title: 'Nuevo Proyecto',
+                size: 'lg',
+                html: `<form id="fmProyecto">
+                  <div class="mb-2"><label class="form-label">Cliente</label>
+                    <select name="cliente_id" class="form-select">${opts}</select></div>
+                  <div class="mb-2"><label class="form-label">Nº Licitación *</label>
+                    <input name="numero_licitacion" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Nº Contrato *</label>
+                    <input name="numero_contrato" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Nombre del Proyecto *</label>
+                    <input name="nombre_proyecto" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="2"></textarea></div>
+                  <div class="row">
+                    <div class="col-6 mb-2"><label class="form-label">Fecha Inicio *</label>
+                      <input type="date" name="fecha_inicio" class="form-control" required></div>
+                    <div class="col-6 mb-2"><label class="form-label">Fecha Fin *</label>
+                      <input type="date" name="fecha_fin" class="form-control" required></div>
+                  </div>
+                  <div class="mb-2"><label class="form-label">Monto Designado *</label>
+                    <input type="number" step="0.01" name="monto_designado" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Monto Anticipo *</label>
+                    <input type="number" step="0.01" name="monto_anticipo" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Monto con IVA *</label>
+                    <input type="number" step="0.01" name="monto_con_iva" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Costo Directo *</label>
+                    <input type="number" step="0.01" name="costo_directo" class="form-control" required>
+                    <small class="text-muted">Presupuesto disponible para OCs</small></div>
+                  <button type="submit" class="btn btn-success w-100 mt-2">
+                    <i class="bi bi-floppy me-1"></i>Guardar Proyecto</button>
+                </form>`,
             });
-
-    Swal.fire({
-    title: "Nuevo Proyecto",
-    html: `
-      <form id="formAgregarProyecto" class="swal-form">
-        <div class="mb-2">
-          <label class="form-label">Cliente</label>
-          <select name="cliente_id" class="form-select">${clientesOptions}</select>
-        </div>
-        <div class="mb-2">
-          <label class="form-label">Número de Licitación <span class="required">*</span></label>
-          <input type="text" name="numero_licitacion" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Número de Contrato <span class="required">*</span></label>
-          <input type="text" name="numero_contrato" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Nombre del Proyecto <span class="required">*</span></label>
-          <input type="text" name="nombre_proyecto" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Descripción del Proyecto</label>
-          <textarea name="descripcion" class="form-control" rows="3"></textarea>
-        </div>
-
-        <div class="row">
-          <div class="col-6 mb-2">
-            <label class="form-label">Fecha Inicio <span class="required">*</span></label>
-            <input type="date" name="fecha_inicio" class="form-control" required>
-          </div>
-          <div class="col-6 mb-2">
-            <label class="form-label">Fecha Fin <span class="required">*</span></label>
-            <input type="date" name="fecha_fin" class="form-control" required>
-          </div>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Monto Designado <span class="required">*</span></label>
-          <input type="number" step="0.01" name="monto_designado" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Monto de Anticipo <span class="required">*</span></label>
-          <input type="number" step="0.01" name="monto_anticipo" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Monto con IVA <span class="required">*</span></label>
-          <input type="number" step="0.01" name="monto_con_iva" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label">Costo Directo <span class="required">*</span></label>
-          <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-          <small class="text-muted">Este será el presupuesto disponible para órdenes de compra</small>
-        </div>
-      </form>
-    `,
-     width: 600,
-                showCancelButton: true,
-                confirmButtonText: "Guardar",
-                cancelButtonText: "Cancelar",
-                focusConfirm: false,
-                preConfirm: () => {
-                    const form = document.getElementById("formAgregarProyecto");
-                    const formData = new FormData(form);
-                    
-                    return fetch("insert_project.php", { 
-                        method: "POST", 
-                        body: formData 
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if(data.status === 'success'){
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Proyecto creado',
-                                text: data.message,
-                                confirmButtonText: 'Aceptar'
-                            }).then(() => location.reload());
-                        } else {
-                            Swal.showValidationMessage(data.message || "Error al guardar el proyecto");
-                        }
-                    })
-                    .catch((error) => {
-                        Swal.showValidationMessage("Error de conexión: " + error.message);
-                    });
-                }
+            document.getElementById('fmProyecto').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const r = await fetch('insert_project.php', { method:'POST', body: new FormData(this) });
+                    const d = await r.json();
+                    UI.modal.close();
+                    if (d.status === 'success') { UI.toast.success(d.message||'Proyecto creado.'); setTimeout(()=>location.reload(),1200); }
+                    else UI.toast.error(d.message||'Error al guardar.');
+                } catch(err) { UI.toast.error('Error de conexión: '+err.message); }
             });
         })
-        .catch(error => {
-            console.error('Error al cargar clientes:', error);
-            Swal.fire('Error', 'No se pudieron cargar los clientes', 'error');
-        });
+        .catch(() => UI.toast.error('No se pudieron cargar los clientes.'));
 }
 
-function verObras(proyectoId) {
-  fetch(`list_obras.php?proyecto_id=${proyectoId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        Swal.fire("Error", data.error, "error");
-        return;
-      }
-
-      let obrasHtml = `
-        <div class="mb-3 d-flex justify-content-between align-items-center">
-          <button class="btn btn-success btn-sm" onclick="agregarObra(${proyectoId})">
-            <i class="bi bi-plus-circle"></i> Agregar Obra
-          </button>
-          <button class="btn btn-secondary btn-sm" onclick="Swal.close()">
-            <i class="bi bi-arrow-left"></i> Volver a Proyectos
-          </button>
-        </div>
-        <div class="alert alert-info">
-          <small><i class="bi bi-info-circle"></i> Las obras tienen su propio presupuesto de costo directo para órdenes de compra.</small>
-        </div>
-      `;
-
-      if (data.obras.length > 0) {
-        obrasHtml += '<div class="list-group text-start">';
-        data.obras.forEach(obra => {
-          const costo_disponible = obra.costo_directo - (obra.costo_directo_utilizado || 0);
-          const porcentaje_utilizado = obra.costo_directo > 0 ? ((obra.costo_directo_utilizado || 0) / obra.costo_directo) * 100 : 0;
-          const progress_class = porcentaje_utilizado > 90 ? 'bg-danger' : (porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
-          
-          obrasHtml += `
-            <div class="list-group-item">
-              <div class="d-flex justify-content-between align-items-start">
-                <div class="flex-grow-1">
-                  <strong>${obra.nombre_obra}</strong><br>
-                  <small>Número: ${obra.numero_obra}</small><br>
-                  <small>Inicio: ${obra.fecha_inicio}</small><br>
-                  <small>Fin: ${obra.fecha_fin}</small><br>
-                  <small>${obra.descripcion || 'Sin descripción'}</small><br>
-                  <small><strong>Monto:</strong> ${parseFloat(obra.monto_designado).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small><br>
-                  <small><strong>Costo directo:</strong> ${parseFloat(obra.costo_directo).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small><br>
-                  <small><strong>Disponible:</strong> ${parseFloat(costo_disponible).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small>
-                  <div class="progress" style="max-width: 150px; height: 4px;">
-                    <div class="progress-bar ${progress_class}" style="width: ${Math.min(porcentaje_utilizado, 100)}%"></div>
-                  </div>
-                </div>
-                <div class="btn-group-vertical" style="gap:5px;">
-                  <button class="btn btn-sm btn-info" onclick="gestionarCatalogos(${obra.id}, '${obra.nombre_obra.replace(/'/g, "\\'")}', ${proyectoId})" title="Catálogos">
-                    <i class="bi bi-folder"></i>
-                  </button>
-                  <button class="btn btn-sm btn-warning" onclick="editarObra(${obra.id}, ${proyectoId})" title="Editar">
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger" onclick="eliminarObra(${obra.id}, ${proyectoId})" title="Eliminar">
-                    <i class="bi bi-trash3"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        });
-        obrasHtml += '</div>';
-      } else {
-        obrasHtml += '<p class="text-muted">No hay obras registradas para este proyecto</p>';
-      }
-
-      Swal.fire({
-        title: `Obras del Proyecto: ${data.proyecto_nombre}`,
-        html: obrasHtml,
-        width: 800,
-        showCloseButton: true,
-        showConfirmButton: false
-      });
-    });
-}
-
+// ── Agregar Obra ──────────────────────────────────────────────────────────────
 function agregarObra(proyectoId) {
-    // Primero obtener información del proyecto para validaciones
     fetch(`get_info_proyecto.php?id=${proyectoId}`)
         .then(res => res.json())
         .then(proyecto => {
-            Swal.fire({
-                title: "Nueva Obra",
-                html: `
-                    <form id="formAgregarObra" class="swal-form">
-                        <input type="hidden" name="proyecto_id" value="${proyectoId}">
-                        
-                        <div class="mb-2">
-                            <label class="form-label">Número de Obra <span class="required">*</span></label>
-                            <input type="text" name="numero_obra" class="form-control" required>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Nombre de Obra <span class="required">*</span></label>
-                            <input type="text" name="nombre_obra" class="form-control" required>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Descripción de la Obra</label>
-                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles y características de la obra..."></textarea>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-2">
-                                <label class="form-label">Fecha Inicio <span class="required">*</span></label>
-                                <input type="date" name="fecha_inicio" class="form-control" required>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <label class="form-label">Fecha Fin <span class="required">*</span></label>
-                                <input type="date" name="fecha_fin" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Monto Designado <span class="required">*</span></label>
-                            <input type="number" step="0.01" name="monto_designado" class="form-control" required>
-                            <small class="text-muted">Parte del monto total del proyecto: $${parseFloat(proyecto.monto_designado).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Costo Directo <span class="required">*</span></label>
-                            <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-                            <small class="text-muted">Presupuesto para órdenes de compra de esta obra</small>
-                        </div>
-                    </form>
-                `,
-                width: 600,
-                showCancelButton: true,
-                confirmButtonText: "Guardar",
-                cancelButtonText: "Cancelar",
-                focusConfirm: false,
-                preConfirm: () => {
-                    const form = document.getElementById("formAgregarObra");
-                    const formData = new FormData(form);
-
-                    return fetch("insert_obra.php", { method: "POST", body: formData })
-                        .then(res => res.json())
-                        .then(data => {
-                            if(data.status === 'success'){
-                                Swal.fire("¡Éxito!", "Obra creada correctamente", "success")
-                                    .then(() => verObras(proyectoId));
-                            } else {
-                                Swal.showValidationMessage(data.message || "Error al guardar la obra");
-                            }
-                        })
-                        .catch(() => Swal.showValidationMessage("Error de conexión"));
-                }
+            UI.modal({
+                title: 'Nueva Obra',
+                size: 'lg',
+                html: `<form id="fmObra">
+                  <input type="hidden" name="proyecto_id" value="${proyectoId}">
+                  <div class="mb-2"><label class="form-label">Nº Obra *</label>
+                    <input name="numero_obra" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Nombre Obra *</label>
+                    <input name="nombre_obra" class="form-control" required></div>
+                  <div class="mb-2"><label class="form-label">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="2" placeholder="Detalles de la obra..."></textarea></div>
+                  <div class="row">
+                    <div class="col-6 mb-2"><label class="form-label">Fecha Inicio *</label>
+                      <input type="date" name="fecha_inicio" class="form-control" required></div>
+                    <div class="col-6 mb-2"><label class="form-label">Fecha Fin *</label>
+                      <input type="date" name="fecha_fin" class="form-control" required></div>
+                  </div>
+                  <div class="mb-2"><label class="form-label">Monto Designado *</label>
+                    <input type="number" step="0.01" name="monto_designado" class="form-control" required>
+                    <small class="text-muted">Del total del proyecto: $${parseFloat(proyecto.monto_designado||0).toLocaleString('es-MX',{minimumFractionDigits:2})}</small></div>
+                  <div class="mb-2"><label class="form-label">Costo Directo *</label>
+                    <input type="number" step="0.01" name="costo_directo" class="form-control" required>
+                    <small class="text-muted">Presupuesto para OCs de esta obra</small></div>
+                  <button type="submit" class="btn btn-success w-100 mt-2">
+                    <i class="bi bi-floppy me-1"></i>Guardar Obra</button>
+                </form>`,
+            });
+            document.getElementById('fmObra').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const r = await fetch('insert_obra.php', { method:'POST', body: new FormData(this) });
+                    const d = await r.json();
+                    UI.modal.close();
+                    if (d.status === 'success') { UI.toast.success('Obra creada correctamente.'); setTimeout(()=>location.reload(),1200); }
+                    else UI.toast.error(d.message||'Error al guardar la obra.');
+                } catch(err) { UI.toast.error('Error de conexión.'); }
             });
         });
 }
 
+// ── Editar Obra ───────────────────────────────────────────────────────────────
 function editarObra(obraId) {
     fetch(`edit_obra.php?id=${obraId}`)
         .then(res => res.json())
         .then(data => {
-            if (data.error) {
-                Swal.fire("Error", data.error, "error");
-                return;
-            }
-
-            Swal.fire({
-                title: "Editar Obra",
-                html: `
-                    <form id="formEditarObra" class="swal-form">
-                        <input type="hidden" name="id" value="${data.id}">
-                        
-                        <div class="mb-2">
-                            <label class="form-label">Número de Obra</label>
-                            <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Nombre de Obra</label>
-                            <input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Descripción de la Obra</label>
-                            <textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-2">
-                                <label class="form-label">Fecha Inicio</label>
-                                <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <label class="form-label">Fecha Fin</label>
-                                <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Monto Designado</label>
-                            <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Costo Directo</label>
-                            <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-                            <small class="text-muted">Presupuesto para órdenes de compra</small>
-                        </div>
-                    </form>
-                `,
-                width: 600,
-                showCancelButton: true,
-                confirmButtonText: "Actualizar",
-                cancelButtonText: "Cancelar",
-                focusConfirm: false,
-                preConfirm: () => {
-                    const form = document.getElementById("formEditarObra");
-                    const formData = new FormData(form);
-
-                    return fetch("update_obra.php", { method: "POST", body: formData })
-                        .then(res => res.json())
-                        .then(resp => {
-                            if (resp.status === "success") {
-                                Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
-                                    .then(() => verObras(data.proyecto_id));
-                            } else {
-                                Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
-                            }
-                        })
-                        .catch(() => Swal.showValidationMessage("Error de conexión"));
-                }
+            if (data.error) { UI.toast.error(data.error); return; }
+            UI.modal({
+                title: 'Editar Obra',
+                size: 'lg',
+                html: `<form id="fmEditObra">
+                  <input type="hidden" name="id" value="${data.id}">
+                  <div class="mb-2"><label class="form-label">Nº Obra</label>
+                    <input name="numero_obra" class="form-control" value="${data.numero_obra}" required></div>
+                  <div class="mb-2"><label class="form-label">Nombre Obra</label>
+                    <input name="nombre_obra" class="form-control" value="${data.nombre_obra}" required></div>
+                  <div class="mb-2"><label class="form-label">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="2">${data.descripcion||''}</textarea></div>
+                  <div class="row">
+                    <div class="col-6 mb-2"><label class="form-label">Fecha Inicio</label>
+                      <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required></div>
+                    <div class="col-6 mb-2"><label class="form-label">Fecha Fin</label>
+                      <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required></div>
+                  </div>
+                  <div class="mb-2"><label class="form-label">Monto Designado</label>
+                    <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required></div>
+                  <div class="mb-2"><label class="form-label">Costo Directo</label>
+                    <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required></div>
+                  <button type="submit" class="btn btn-warning w-100 mt-2">
+                    <i class="bi bi-pencil me-1"></i>Actualizar Obra</button>
+                </form>`,
+            });
+            document.getElementById('fmEditObra').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const r = await fetch('update_obra.php', { method:'POST', body: new FormData(this) });
+                    const resp = await r.json();
+                    UI.modal.close();
+                    if (resp.status === 'success') { UI.toast.success('Obra actualizada.'); setTimeout(()=>location.reload(),1200); }
+                    else UI.toast.error(resp.message||'Error al actualizar.');
+                } catch(err) { UI.toast.error('Error de conexión.'); }
             });
         });
 }
 
+// ── Eliminar Obra ─────────────────────────────────────────────────────────────
 function eliminarObra(obraId, proyectoId) {
-  Swal.fire({
-    title: '¿Seguro que deseas eliminar esta obra?',
-    text: "Esta acción no se puede deshacer. Las órdenes de compra asociadas quedarán sin obra asignada.",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#525252',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if(result.isConfirmed){
-      fetch(`delete_obra.php?id=${obraId}`, { method: "GET" })
-        .then(res => res.json())
-        .then(resp => {
-          if(resp.status === "success"){
-            Swal.fire('¡Eliminada!', 'Obra eliminada correctamente', 'success')
-              .then(() => verObras(proyectoId));
-          } else {
-            Swal.fire('Error', resp.message || 'No se pudo eliminar la obra', 'error');
-          }
-        });
-    }
-  });
-}
-
-function mostrarProyecto(id) {
-  fetch(`details_project.php?id=${id}`)
-    .then(res => res.text())
-    .then(data => {
-      Swal.fire({
-        title: 'Información del Proyecto',
-        html: `<div class="swal-info-card">${data}</div>`,
-        width: 700,
-        showCloseButton: true,
-        focusConfirm: false
-      });
+    UI.confirm({
+        title: '¿Eliminar esta obra?',
+        message: 'Esta acción no se puede deshacer. Las OCs asociadas quedarán sin obra.',
+        danger: true, confirmText: 'Sí, eliminar'
+    }).then(ok => {
+        if (!ok) return;
+        fetch(`delete_obra.php?id=${obraId}`)
+            .then(r => r.json())
+            .then(resp => {
+                if (resp.status === 'success') { UI.toast.success('Obra eliminada.'); setTimeout(()=>location.reload(),1200); }
+                else UI.toast.error(resp.message||'No se pudo eliminar la obra.');
+            });
     });
 }
 
+// ── Eliminar Proyecto ─────────────────────────────────────────────────────────
 function eliminarProyecto(id) {
-  Swal.fire({
-    title: '¿Seguro que deseas eliminar este proyecto?',
-    text: "Esto eliminará también todas las obras asociadas y su historial",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#525252',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if(result.isConfirmed){
-      fetch(`delete_project.php?id=${id}`, { method: "GET" })
-        .then(res => res.json())
-        .then(resp => {
-          if(resp.status === "success"){
-            Swal.fire('Eliminado!', 'Proyecto eliminado correctamente', 'success')
-              .then(() => location.reload());
-          } else {
-            Swal.fire('Error', resp.message || 'No se pudo eliminar el proyecto', 'error');
-          }
-        });
-    }
-  });
+    UI.confirm({
+        title: '¿Eliminar este proyecto?',
+        message: 'Esto eliminará también todas las obras asociadas y su historial.',
+        danger: true, confirmText: 'Sí, eliminar'
+    }).then(ok => {
+        if (!ok) return;
+        fetch(`delete_project.php?id=${id}`)
+            .then(r => r.json())
+            .then(resp => {
+                if (resp.status === 'success') { UI.toast.success('Proyecto eliminado.'); setTimeout(()=>location.reload(),1200); }
+                else UI.toast.error(resp.message||'No se pudo eliminar el proyecto.');
+            });
+    });
 }
-</script>
 
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
-
-<script>
-// Función para actualizar la lista vía AJAX
+// ── AJAX Search ───────────────────────────────────────────────────────────────
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
-    const container = document.getElementById('table-container-wrapper');
-
+    const container  = document.getElementById('table-container-wrapper');
     if (!searchForm || !container) return;
 
     function updateList(url, pushState = true) {
         container.style.opacity = '0.5';
         container.style.pointerEvents = 'none';
-
         fetch(url)
-            .then(response => response.text())
+            .then(r => r.text())
             .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
+                const doc = new DOMParser().parseFromString(html, 'text/html');
                 const newContent = doc.getElementById('table-container-wrapper');
-                
-                if (newContent) {
-                    container.innerHTML = newContent.innerHTML;
+                if (newContent) container.innerHTML = newContent.innerHTML;
+                const src = doc.getElementById('search-form');
+                if (src) {
+                    const ti = searchForm.querySelector('input[name="q"]');
+                    const si = src.querySelector('input[name="q"]');
+                    if (ti && si) ti.value = si.value;
                 }
-
-                const newSearch = doc.getElementById('search-form');
-                if (newSearch) {
-                    const targetInput = searchForm.querySelector('input[name="q"]');
-                    const sourceInput = newSearch.querySelector('input[name="q"]');
-                    if (targetInput && sourceInput) targetInput.value = sourceInput.value;
-                }
-
                 container.style.opacity = '1';
                 container.style.pointerEvents = 'auto';
-
                 if (pushState) window.history.pushState({}, '', url);
-                
-                // Reinicializar tooltips
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
+                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
             })
-            .catch(err => {
-                console.error('Error:', err);
-                container.style.opacity = '1';
-                container.style.pointerEvents = 'auto';
-            });
+            .catch(() => { container.style.opacity='1'; container.style.pointerEvents='auto'; });
     }
 
     document.addEventListener('click', function(e) {
-        const pageLink = e.target.closest('.page-link');
-        if (pageLink) {
-            e.preventDefault();
-            updateList(pageLink.href);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        const pl = e.target.closest('.page-link');
+        if (pl) { e.preventDefault(); updateList(pl.href); window.scrollTo({top:0,behavior:'smooth'}); }
     });
-
     searchForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const params = new URLSearchParams(new FormData(searchForm));
-        params.set('page', '1');
-        updateList('?' + params.toString());
+        const p = new URLSearchParams(new FormData(searchForm));
+        p.set('page','1');
+        updateList('?'+p.toString());
     });
 }
-
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
-<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-
 </body>
 </html>
-
-
-

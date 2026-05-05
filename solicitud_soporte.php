@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/config.php";
 require_once __DIR__ . "/includes/session_manager.php";
 require_once __DIR__ . "/includes/check_session.php";
 
@@ -28,7 +29,6 @@ if ($user_id) {
     if ($result->num_rows > 0) {
         $user_data = $result->fetch_assoc();
         $_SESSION['user_email'] = $user_data['correo_corporativo'];
-        $_SESSION['user_id']    = $user_id;
     }
     $stmt->close();
 }
@@ -69,78 +69,38 @@ while ($row = $result_activos->fetch_assoc()) {
     <title>Solicitud de Mantenimiento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/styles/new_order.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .activo-autocomplete {
-            position: relative;
-        }
-
+        /* Estilos personalizados */
+        .activo-autocomplete { position: relative; }
         .autocomplete-list {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-top: none;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1050;
-            display: none;
-            border-radius: 0 0 6px 6px;
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: #fff; border: 1px solid #ddd; border-top: none;
+            max-height: 200px; overflow-y: auto; z-index: 1050;
+            display: none; border-radius: 0 0 6px 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
         }
-
-        .autocomplete-item {
-            padding: 9px 14px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: .9rem;
-        }
-
-        .autocomplete-item:hover {
-            background: #f0f4f8;
-        }
-
-        .autocomplete-item:last-child {
-            border-bottom: none;
-        }
-
+        .autocomplete-item { padding: 9px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: .9rem; }
+        .autocomplete-item:hover { background: #f0f4f8; }
         .activo-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #e8f0fe;
-            border: 1px solid #c5d8fd;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: .88rem;
-            color: #113456;
-            margin-top: 6px;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #e8f0fe; border: 1px solid #c5d8fd; border-radius: 8px;
+            padding: 8px 14px; font-size: .88rem; color: #113557; margin-top: 6px;
         }
-
-        .activo-badge .remove-activo {
-            cursor: pointer;
-            color: #6c757d;
-            font-size: 1rem;
-            line-height: 1;
-        }
-
-        .activo-badge .remove-activo:hover {
-            color: #dc3545;
-        }
+        .activo-badge .remove-activo { cursor: pointer; color: #6c757d; }
+        .activo-badge .remove-activo:hover { color: #dc3545; }
     </style>
 </head>
 
 <body>
+    <?php include __DIR__ . "/includes/navbar.php"; ?>
 
     <!-- HERO SECTION -->
     <div class="hero-section">
         <div class="container hero-content">
             <div class="breadcrumb-custom">
-                <a href="index.php"><i class="bi bi-house-door"></i> Inicio</a>
+                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
                 <span>/</span>
                 <span>Solicitud de Mantenimiento</span>
             </div>
@@ -205,48 +165,42 @@ while ($row = $result_activos->fetch_assoc()) {
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Buscar Activo</label>
+                        <label class="form-label">Activo</label>
 
-                        <!-- Activo pre-seleccionado desde la vista de detalle -->
-                        <div id="activoBadge" class="activo-badge">
+                        <!-- Badge para el activo seleccionado -->
+                        <div id="activoBadge" class="activo-badge" style="<?= $activo_pre ? 'display: inline-flex;' : 'display: none;' ?>">
                             <i class="bi bi-box-seam"></i>
                             <span id="activoBadgeText">
-                                <strong><?= htmlspecialchars($activo_pre['codigo']) ?></strong>
-                                – <?= htmlspecialchars($activo_pre['nombre']) ?>
-                                <small class="text-muted">(<?= htmlspecialchars($activo_pre['tipo']) ?>)</small>
+                                <?php if ($activo_pre): ?>
+                                    <strong><?= htmlspecialchars($activo_pre['codigo']) ?></strong>
+                                    – <?= htmlspecialchars($activo_pre['nombre']) ?>
+                                    <small class="text-muted">(<?= htmlspecialchars($activo_pre['tipo']) ?>)</small>
+                                <?php endif; ?>
                             </span>
                             <span class="remove-activo" onclick="limpiarActivo()" title="Quitar activo">
                                 <i class="bi bi-x-circle"></i>
                             </span>
                         </div>
-                        <input type="hidden" name="activo_id" id="activoId" value="<?= $activo_pre['id'] ?>">
-                        <input type="hidden" name="activo_codigo" id="activoCodigo" value="<?= htmlspecialchars($activo_pre['codigo']) ?>">
-                        <input type="hidden" name="activo_nombre" id="activoNombre" value="<?= htmlspecialchars($activo_pre['nombre']) ?>">
-                        <input type="hidden" name="activo_tipo" id="activoTipo" value="<?= htmlspecialchars($activo_pre['tipo']) ?>">
-                        <div id="activoSearchWrap" style="display:none;">
-                            <div id="activoBadge" class="activo-badge" style="display:none;">
-                                <i class="bi bi-box-seam"></i>
-                                <span id="activoBadgeText"></span>
-                                <span class="remove-activo" onclick="limpiarActivo()" title="Quitar activo">
-                                    <i class="bi bi-x-circle"></i>
-                                </span>
+
+                        <!-- Campos ocultos para el activo -->
+                        <input type="hidden" name="activo_id" id="activoId" value="<?= $activo_pre['id'] ?? '' ?>">
+                        <input type="hidden" name="activo_codigo" id="activoCodigo" value="<?= htmlspecialchars($activo_pre['codigo'] ?? '') ?>">
+                        <input type="hidden" name="activo_nombre" id="activoNombre" value="<?= htmlspecialchars($activo_pre['nombre'] ?? '') ?>">
+                        <input type="hidden" name="activo_tipo" id="activoTipo" value="<?= htmlspecialchars($activo_pre['tipo'] ?? '') ?>">
+
+                        <!-- Buscador (se oculta si hay un activo seleccionado) -->
+                        <div id="activoSearchWrap" style="<?= $activo_pre ? 'display: none;' : 'display: block;' ?>">
+                            <div class="activo-autocomplete">
+                                <input type="text" id="activoBusqueda" class="form-control"
+                                    placeholder="Escriba código o nombre del activo...">
+                                <div class="autocomplete-list" id="autocompleteList"></div>
                             </div>
-                            <input type="hidden" name="activo_id" id="activoId" value="">
-                            <input type="hidden" name="activo_codigo" id="activoCodigo" value="">
-                            <input type="hidden" name="activo_nombre" id="activoNombre" value="">
-                            <input type="hidden" name="activo_tipo" id="activoTipo" value="">
-                            <div id="activoSearchWrap">
-                                <div class="activo-autocomplete">
-                                    <input type="text" id="activoBusqueda" class="form-control"
-                                        placeholder="Escriba código o nombre del activo...">
-                                    <div class="autocomplete-list" id="autocompleteList"></div>
-                                </div>
-                                <small class="text-muted">
-                                    <i class="bi bi-info-circle"></i>
-                                    Si el problema está relacionado con un activo registrado, selecciónelo aquí.
-                                </small>
-                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i>
+                                Si el problema está relacionado con un activo registrado, selecciónelo aquí.
+                            </small>
                         </div>
+                    </div>
 
                         <!-- ===== DETALLES DEL PROBLEMA ===== -->
                         <div class="section-title">
@@ -306,7 +260,7 @@ while ($row = $result_activos->fetch_assoc()) {
                                 <input type="file" class="form-control" id="singleFileInput"
                                     accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
                                 <button class="btn btn-primary" type="button" onclick="agregarAdjunto()"
-                                    style="background:#113456; transform:none;">
+                                    style="background:#113557; transform:none;">
                                     <i class="bi bi-plus-circle"></i> Agregar
                                 </button>
                             </div>
@@ -447,17 +401,17 @@ while ($row = $result_activos->fetch_assoc()) {
         function agregarAdjunto() {
             const input = document.getElementById('singleFileInput');
             if (!input.files.length) {
-                alert('Seleccione un archivo primero.');
+                UI.toast.warning('Seleccione un archivo primero.');
                 return;
             }
 
             const file = input.files[0];
             if (adjuntosSeleccionados.length >= MAX_ADJ) {
-                Swal.fire('Límite alcanzado', 'Solo puedes agregar hasta ' + MAX_ADJ + ' archivos.', 'warning');
+                UI.toast.warning(`Solo puedes agregar hasta ${MAX_ADJ} archivos.`);
                 return;
             }
             if (file.size > MAX_SIZE * 1024 * 1024) {
-                Swal.fire('Archivo muy grande', `"${file.name}" supera el límite de ${MAX_SIZE} MB.`, 'warning');
+                UI.toast.warning(`"${file.name}" supera el límite de ${MAX_SIZE} MB.`);
                 return;
             }
             adjuntosSeleccionados.push(file);
@@ -516,11 +470,7 @@ while ($row = $result_activos->fetch_assoc()) {
             });
 
             if (!valido) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Campos requeridos',
-                    text: 'Por favor, completa todos los campos obligatorios.'
-                });
+                UI.toast.warning('Por favor, completa todos los campos obligatorios.');
                 return;
             }
 
@@ -528,11 +478,7 @@ while ($row = $result_activos->fetch_assoc()) {
             const email = document.getElementById('correo_corporativo').value.trim();
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 document.getElementById('correo_corporativo').classList.add('is-invalid');
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Email inválido',
-                    text: 'Ingresa un correo electrónico válido.'
-                });
+                UI.toast.error('Ingresa un correo electrónico válido.');
                 return;
             }
 
@@ -563,30 +509,19 @@ while ($row = $result_activos->fetch_assoc()) {
                 }
 
                 if (result.success) {
-                    Swal.fire({
-                        icon: 'success',
+                    UI.modal({
                         title: '¡Solicitud Enviada!',
-                        html: `<div style="text-align:left;">
-                            <p><strong>${result.message}</strong></p>
-                            ${result.ticket ? `<p><strong>Ticket:</strong> ${result.ticket}</p>` : ''}
-                            <p>Hemos enviado una confirmación a tu correo corporativo.</p>
-                        </div>`,
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#3085d6'
-                    }).then(() => window.location.href = 'index.php');
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error al enviar',
-                        html: `<p>${result.message}</p><small>Por favor, intenta nuevamente.</small>`
+                        icon: 'success',
+                        html: `<p><strong>${result.message}</strong></p>
+                               ${result.ticket ? `<p><strong>Ticket:</strong> ${result.ticket}</p>` : ''}
+                               <p>Hemos enviado una confirmación a tu correo corporativo.</p>`,
                     });
+                    setTimeout(() => window.location.href = 'index.php', 3500);
+                } else {
+                    UI.toast.error(result.message);
                 }
             } catch (err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo conectar con el servidor.'
-                });
+                UI.toast.error('No se pudo conectar con el servidor.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = textoOriginal;

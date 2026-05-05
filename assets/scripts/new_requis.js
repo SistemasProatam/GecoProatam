@@ -14,16 +14,53 @@ const catalogoSelect = document.getElementById('catalogo');
 // CATÁLOGO DE PRODUCTOS
 // ====================================
 function mostrarCatalogoProductos() {
+  const rows = productosServiciosData.map(p => `
+    <tr>
+      <td>${p.nombre}</td>
+      <td><small>${p.descripcion || ''}</small></td>
+      <td><span class="badge bg-${p.tipo === 'producto' ? 'primary' : 'success'}">${p.tipo}</span></td>
+      <td>
+        <button type="button" class="btn btn-sm btn-primary" onclick="seleccionarProducto(${p.id})">
+          <i class="bi bi-plus"></i> Seleccionar
+        </button>
+      </td>
+    </tr>
+  `).join('');
 
-    const modalElement = document.getElementById('modalCatalogo');
-    let modal = bootstrap.Modal.getInstance(modalElement);
-
-    if (!modal) {
-        modal = new bootstrap.Modal(modalElement);
-    }
-
-    modal.show();
+  UI.modal({
+    title: 'Catálogo de Productos y Servicios',
+    size: 'lg',
+    html: `
+      <div class="mb-3">
+        <input type="text" class="form-control" id="buscarCatalogoModal" placeholder="Buscar producto o servicio..." onkeyup="filtrarCatalogoModal(this.value)">
+      </div>
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover align-middle" id="tablaCatalogoModal">
+          <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Tipo</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows || '<tr><td colspan="4" class="text-center">No hay productos disponibles</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `
+  });
 }
+
+window.filtrarCatalogoModal = function(val) {
+  const q = val.toLowerCase();
+  const rows = document.querySelectorAll('#tablaCatalogoModal tbody tr');
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+};
 
 function seleccionarProducto(productoId) {
     addItem();
@@ -42,9 +79,7 @@ function seleccionarProducto(productoId) {
         }
     }
     
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCatalogo'));
-    modal.hide();
-
+    UI.modal.hide();
 }
 
 // ====================================
@@ -439,23 +474,10 @@ function eliminarArchivo(index) {
 }
 
 function mostrarAlerta(msg, tipo = 'info') {
-    const alertContainer = document.getElementById('alertContainer');
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${tipo} alert-dismissible fade show`;
-    alert.role = 'alert';
-    alert.innerHTML = `
-        ${msg}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    alertContainer.innerHTML = '';
-    alertContainer.appendChild(alert);
-    
-    setTimeout(() => {
-        if (alert.parentElement) {
-            alert.remove();
-        }
-    }, 4000);
+    if (tipo === 'danger') UI.toast.error(msg);
+    else if (tipo === 'warning') UI.toast.warning(msg);
+    else if (tipo === 'success') UI.toast.success(msg);
+    else UI.toast.info(msg);
 }
 
 // ====================================
@@ -475,15 +497,11 @@ document.getElementById('buscarCatalogo').addEventListener('input', function() {
 // ENVÍO DEL FORMULARIO
 // ====================================
 function showOverlay() {
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) overlay.style.display = 'flex';
-    document.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
+    UI.loading('Procesando requisición...');
 }
 
 function hideOverlay() {
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) overlay.style.display = 'none';
-    document.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = false);
+    UI.loading.hide();
 }
 
 document.addEventListener('DOMContentLoaded', function() {

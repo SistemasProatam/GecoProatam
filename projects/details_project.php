@@ -287,7 +287,7 @@ endif; ?>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <script>
     // Inicializar tooltips de Bootstrap
     document.addEventListener('DOMContentLoaded', function() {
@@ -298,7 +298,7 @@ endif; ?>
     });
 
     function editarProyecto(id) {
-      // Obtener lista de clientes activos
+      UI.loading("Cargando clientes...");
       fetch('get_clientes.php')
         .then(res => res.json())
         .then(clientes => {
@@ -310,169 +310,159 @@ endif; ?>
           fetch(`edit_project.php?id=${id}`)
             .then(res => res.json())
             .then(data => {
+              UI.loading.hide();
               if (data.error) {
-                Swal.fire("Error", data.error, "error");
+                UI.toast.error(data.error);
                 return;
               }
 
-              Swal.fire({
+              UI.modal({
                 title: "Editar Proyecto",
+                size: "lg",
                 html: `
-          <form id="formEditarProyecto" class="swal-form">
-            <input type="hidden" name="id" value="${data.id}">
+                  <form id="formEditarProyecto">
+                    <input type="hidden" name="id" value="${data.id}">
+                    <div class="mb-3">
+                      <label class="form-label">Cliente</label>
+                      <select name="cliente_id" class="form-select" id="selectCliente">${clientesOptions}</select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Número de Licitación</label>
+                      <input type="text" name="numero_licitacion" class="form-control" value="${data.numero_licitacion}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Número de Contrato</label>
+                      <input type="text" name="numero_contrato" class="form-control" value="${data.numero_contrato}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Nombre del Proyecto</label>
+                      <input type="text" name="nombre_proyecto" class="form-control" value="${data.nombre_proyecto}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Descripción del Proyecto</label>
+                      <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles del proyecto...">${data.descripcion || ''}</textarea>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 mb-3">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required>
+                      </div>
+                      <div class="col-6 mb-3">
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Monto Designado</label>
+                      <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Monto de Anticipo</label>
+                      <input type="number" step="0.01" name="monto_anticipo" class="form-control" value="${data.monto_anticipo}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Monto con IVA</label>
+                      <input type="number" step="0.01" name="monto_con_iva" class="form-control" value="${data.monto_con_iva}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Costo Directo</label>
+                      <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
+                      <small class="text-muted">Presupuesto disponible para órdenes de compra</small>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                      <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                      <button type="submit" class="btn btn-warning">Actualizar Proyecto</button>
+                    </div>
+                  </form>
+                `
+              });
 
-            <div class="mb-2">
-              <label class="form-label">Cliente</label>
-              <select name="cliente_id" class="form-select" id="selectCliente">${clientesOptions}</select>
-            </div>
+              if (data.cliente_id) {
+                document.getElementById('selectCliente').value = data.cliente_id;
+              }
 
-            <div class="mb-2">
-              <label class="form-label">Número de Licitación</label>
-              <input type="text" name="numero_licitacion" class="form-control" value="${data.numero_licitacion}" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Número de Contrato</label>
-              <input type="text" name="numero_contrato" class="form-control" value="${data.numero_contrato}" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Nombre del Proyecto</label>
-              <input type="text" name="nombre_proyecto" class="form-control" value="${data.nombre_proyecto}" required>
-            </div>
-
-            <!-- Descripción del Proyecto -->
-            <div class="mb-2">
-              <label class="form-label">Descripción del Proyecto</label>
-              <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos, alcance y características principales del proyecto...">${data.descripcion || ''}</textarea>
-            </div>
-
-            <div class="row">
-              <div class="col-6 mb-2">
-                <label class="form-label">Fecha Inicio</label>
-                <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required>
-              </div>
-              <div class="col-6 mb-2">
-                <label class="form-label">Fecha Fin</label>
-                <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Monto Designado</label>
-              <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Monto de Anticipo</label>
-              <input type="number" step="0.01" name="monto_anticipo" class="form-control" value="${data.monto_anticipo}" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Monto con IVA</label>
-              <input type="number" step="0.01" name="monto_con_iva" class="form-control" value="${data.monto_con_iva}" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Costo Directo</label>
-              <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-              <small class="text-muted">Presupuesto disponible para órdenes de compra cuando no hay obras</small>
-            </div>
-          </form>
-        `,
-                width: 600,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonText: "Actualizar",
-                cancelButtonText: "Cancelar",
-                didOpen: () => {
-                  // Seleccionar el cliente actual después de que el modal se abra
-                  if (data.cliente_id) {
-                    document.getElementById('selectCliente').value = data.cliente_id;
-                  }
-                },
-                preConfirm: () => {
-                  const form = document.getElementById("formEditarProyecto");
-                  const formData = new FormData(form);
-
-                  return fetch("update_project.php", {
-                      method: "POST",
-                      body: formData
-                    })
-                    .then(res => res.json())
-                    .then(resp => {
-                      if (resp.status === "success") {
-                        Swal.fire("¡Éxito!", "Proyecto actualizado correctamente", "success")
-                          .then(() => location.reload());
-                      } else {
-                        Swal.showValidationMessage(resp.message || "Error al actualizar el proyecto");
-                      }
-                    })
-                    .catch(() => Swal.showValidationMessage("Error de conexión"));
-                }
+              document.getElementById("formEditarProyecto").addEventListener("submit", function(e) {
+                e.preventDefault();
+                UI.loading("Actualizando...");
+                fetch("update_project.php", { method: "POST", body: new FormData(this) })
+                  .then(res => res.json())
+                  .then(resp => {
+                    UI.loading.hide();
+                    if (resp.status === "success") {
+                      UI.modal.close();
+                      UI.toast.success("Proyecto actualizado correctamente");
+                      setTimeout(() => location.reload(), 1500);
+                    } else {
+                      UI.toast.error(resp.message || "Error al actualizar");
+                    }
+                  })
+                  .catch(() => {
+                    UI.loading.hide();
+                    UI.toast.error("Error de conexión");
+                  });
               });
             });
         })
-        .catch(error => {
-          console.error('Error al cargar clientes:', error);
-          Swal.fire('Error', 'No se pudieron cargar los clientes', 'error');
+        .catch(() => {
+          UI.loading.hide();
+          UI.toast.error("No se pudieron cargar los clientes");
         });
     }
 
     function gestionarArchivos(proyectoId) {
+      UI.loading("Obteniendo archivos...");
       fetch(`get_archivos.php?proyecto_id=${proyectoId}`)
         .then(res => res.json())
         .then(data => {
+          UI.loading.hide();
           let archivosHtml = `
-        <div class="mb-3">
-          <form id="formSubirArchivo" enctype="multipart/form-data">
-            <input type="hidden" name="proyecto_id" value="${proyectoId}">
-            <div class="mb-2">
-              <label class="form-label">Subir archivo PDF (Máximo 5 archivos)</label>
-              <input type="file" name="archivo" class="form-control" accept=".pdf" required>
-              <small class="text-muted">Tamaño máximo: 10MB</small>
+            <div class="mb-4">
+              <form id="formSubirArchivo" enctype="multipart/form-data">
+                <input type="hidden" name="proyecto_id" value="${proyectoId}">
+                <div class="mb-3">
+                  <label class="form-label">Subir archivo PDF (Máximo 5 archivos)</label>
+                  <input type="file" name="archivo" class="form-control" accept=".pdf" required>
+                  <small class="text-muted">Tamaño máximo: 10MB</small>
+                </div>
+                <button type="button" class="btn btn-primary w-100" onclick="subirArchivo()">
+                  <i class="bi bi-upload"></i> Subir PDF
+                </button>
+              </form>
             </div>
-            <button type="button" class="btn btn-primary btn-sm" onclick="subirArchivo()">
-              <i class="bi bi-upload"></i> Subir PDF
-            </button>
-          </form>
-        </div>
-        <hr>
-      `;
+            <hr>
+          `;
 
-          if (data.archivos.length > 0) {
-            archivosHtml += '<div class="list-group">';
+          if (data.archivos && data.archivos.length > 0) {
+            archivosHtml += '<div class="list-group mt-3">';
             data.archivos.forEach(archivo => {
               archivosHtml += `
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <i class="bi bi-file-pdf text-danger"></i>
-                ${archivo.nombre_archivo}
-                <br>
-                <small class="text-muted">Subido: ${archivo.fecha_subida}</small>
-              </div>
-              <div>
-                <button class="btn btn-sm btn-info" onclick="verPDF('${archivo.ruta_archivo}')">
-                  <i class="bi bi-eye"></i> Ver
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="eliminarArchivo(${archivo.id}, ${proyectoId})">
-                  <i class="bi bi-trash"></i> Eliminar
-                </button>
-              </div>
-            </div>
-          `;
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <i class="bi bi-file-pdf text-danger me-2"></i>
+                    <strong>${archivo.nombre_archivo}</strong>
+                    <br>
+                    <small class="text-muted">Subido: ${archivo.fecha_subida}</small>
+                  </div>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-info" onclick="verPDF('${archivo.ruta_archivo}')">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarArchivo(${archivo.id}, ${proyectoId})">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              `;
             });
             archivosHtml += '</div>';
           } else {
-            archivosHtml += '<p class="text-muted">No hay archivos adjuntos</p>';
+            archivosHtml += '<div class="text-center py-4 text-muted"><i class="bi bi-folder2-open d-block mb-2" style="font-size: 2rem;"></i> No hay archivos adjuntos</div>';
           }
 
-          Swal.fire({
+          UI.modal({
             title: 'Gestión de Archivos PDF',
-            html: archivosHtml,
-            width: 700,
-            showCloseButton: true,
-            showConfirmButton: false
+            size: 'lg',
+            html: archivosHtml
           });
         });
     }
@@ -481,74 +471,63 @@ endif; ?>
       window.location.href = `list_obras.php?proyecto_id=${proyectoId}`;
     }
 
-    // Función para subir archivo 
     function subirArchivo() {
       const form = document.getElementById('formSubirArchivo');
       const formData = new FormData(form);
 
-      fetch('upload_archivo.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(res => {
-          if (!res.ok) throw new Error('Error HTTP: ' + res.status);
-          return res.json();
-        })
+      UI.loading("Subiendo...");
+      fetch('upload_archivo.php', { method: 'POST', body: formData })
+        .then(res => res.json())
         .then(data => {
+          UI.loading.hide();
           if (data.status === 'success') {
-            Swal.fire('Éxito', 'Archivo subido correctamente', 'success')
-              .then(() => gestionarArchivos(formData.get('proyecto_id')));
+            UI.toast.success('Archivo subido correctamente');
+            gestionarArchivos(formData.get('proyecto_id'));
           } else {
-            Swal.fire('Error', data.message, 'error');
+            UI.toast.error(data.message);
           }
         })
         .catch(error => {
-          console.error('Error:', error);
-          Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
+          UI.loading.hide();
+          UI.toast.error('Error de conexión');
         });
     }
 
-    // Función para eliminar archivo
     function eliminarArchivo(archivoId, proyectoId) {
-      Swal.fire({
+      UI.confirm({
         title: '¿Eliminar archivo?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
+        message: 'Esta acción no se puede deshacer',
+        danger: true
+      }).then((confirmed) => {
+        if (confirmed) {
+          UI.loading("Eliminando...");
           fetch(`delete_archivo.php?id=${archivoId}`)
-            .then(res => {
-              if (!res.ok) throw new Error('Error HTTP: ' + res.status);
-              return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
+              UI.loading.hide();
               if (data.status === 'success') {
-                Swal.fire('Éxito', 'Archivo eliminado', 'success')
-                  .then(() => gestionarArchivos(proyectoId));
+                UI.toast.success('Archivo eliminado');
+                gestionarArchivos(proyectoId);
               } else {
-                Swal.fire('Error', data.message, 'error');
+                UI.toast.error(data.message);
               }
             })
-            .catch(error => {
-              console.error('Error:', error);
-              Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
+            .catch(() => {
+              UI.loading.hide();
+              UI.toast.error('Error de conexión');
             });
         }
       });
     }
 
-    // Función para ver PDF
     function verPDF(ruta) {
       if (ruta && ruta.startsWith('uploads/')) {
         window.open(ruta, '_blank');
       } else {
-        console.error('Ruta de archivo no válida:', ruta);
-        Swal.fire('Error', 'Ruta de archivo no válida', 'error');
+        UI.toast.error('Ruta de archivo no válida');
       }
     }
+
     // --- EXPORTACIÓN A EXCEL POR PROYECTO ---
     function exportarExcelProyecto() {
       const wb = XLSX.utils.book_new();
@@ -595,7 +574,7 @@ $obras_data = [];
       foreach ($obras_list as $obra) {
         $oid = $obra['id'];
 
-        // Conceptos de esta obra (Jerárquicos - Construcción idéntica a la UI)
+        // Conceptos de esta obra
         $catalogo_id = 0;
         $st_cat = $conn->prepare("SELECT id FROM catalogos WHERE obra_id = ?");
         $st_cat->bind_param("i", $oid);
@@ -608,7 +587,6 @@ $obras_data = [];
         $conceptos_raw = [];
 
         if ($catalogo_id > 0) {
-          // 1. Obtener nodos
           $sn = $conn->prepare("SELECT id, parent_id, clave, titulo as descripcion, nivel, sort_path FROM concepto_nodos WHERE catalogo_id = ? ORDER BY sort_path ASC");
           $sn->bind_param("i", $catalogo_id);
           $sn->execute();
@@ -618,7 +596,6 @@ $obras_data = [];
             $nodos_por_id[(int)$n['id']] = $n + ['hijos' => [], 'conceptos' => []];
           }
 
-          // 2. Obtener conceptos
           $sc = $conn->prepare("SELECT id as id_obj, codigo_concepto as clave, descripcion, numero_original as numero, unidad_medida as unidad, cantidad as cant, precio_unitario as pu, importe as imp, nodo_id FROM conceptos WHERE catalogo_id = ? ORDER BY CAST(NULLIF(numero_original, '') AS UNSIGNED) ASC, clave ASC");
           $sc->bind_param("i", $catalogo_id);
           $sc->execute();
@@ -634,7 +611,6 @@ $obras_data = [];
             }
           }
 
-          // 3. Construir árbol
           $raices = [];
           foreach ($nodos_por_id as $id => &$nodo) {
             $pid = $nodo['parent_id'] ? (int)$nodo['parent_id'] : null;
@@ -646,9 +622,7 @@ $obras_data = [];
           }
           unset($nodo);
 
-          // 4. Aplanar recursivamente
           $flattenTree = function ($nodo) use (&$flattenTree, &$conceptos_raw) {
-            // Agregar el nodo
             $conceptos_raw[] = [
               'tipo' => 'NODO',
               'clave' => $nodo['clave'],
@@ -661,12 +635,10 @@ $obras_data = [];
               'nivel' => $nodo['nivel'],
               'id_obj' => 0
             ];
-            // Agregar sus conceptos
             foreach ($nodo['conceptos'] as $c) {
-              $c['nivel'] = $nodo['nivel'] + 1; // Para indentación visual
+              $c['nivel'] = $nodo['nivel'] + 1;
               $conceptos_raw[] = $c;
             }
-            // Recorrer hijos
             foreach ($nodo['hijos'] as $hijo) {
               $flattenTree($hijo);
             }
@@ -676,14 +648,12 @@ $obras_data = [];
             $flattenTree($raiz);
           }
 
-          // Conceptos huérfanos al final
           foreach ($conceptos_sin_nodo as $c) {
             $c['nivel'] = 1;
             $conceptos_raw[] = $c;
           }
         }
 
-        // 5. Vincular compras
         $conceptos_procesados = [];
         foreach ($conceptos_raw as $c) {
           $compras = [];
@@ -715,7 +685,6 @@ $obras_data = [];
       dataObras.forEach(obra => {
         const sheetName = (obra.info.nombre_obra.substring(0, 25) || "Obra") + " (" + obra.info.numero_obra + ")";
 
-        // Cabeceras
         const rows = [
           ["DETALLE INTEGRAL: " + obra.info.nombre_obra.toUpperCase() + " (#" + obra.info.numero_obra + ")"],
           [""],
@@ -726,10 +695,8 @@ $obras_data = [];
         obra.data.forEach(c => {
           let indent = "";
           if (c.tipo === 'NODO') {
-            // Negritas para nodos (simulado con prefijo visual más fuerte)
             indent = " ".repeat((c.nivel - 1) * 2) + " ";
           } else {
-            // Indentación para conceptos basada en el nivel de su nodo padre
             indent = " ".repeat((c.nivel - 1) * 2) + "   ";
           }
 
@@ -762,58 +729,26 @@ $obras_data = [];
               if (idx === 0) {
                 rows.push(baseRow.concat(compraData));
               } else {
-                // Filas adicionales para el mismo concepto (columnas A-G vacías)
                 const emptyBase = ["", "", "", "", "", "", "", "|"];
                 rows.push(emptyBase.concat(compraData));
               }
             });
           }
 
-          if (c.tipo === 'NODO') rows.push([""]); // Espacio después de categorías
+          if (c.tipo === 'NODO') rows.push([""]);
         });
 
         const ws = XLSX.utils.aoa_to_sheet(rows);
 
-        ws['!cols'] = [{
-            wch: 8
-          }, {
-            wch: 15
-          }, {
-            wch: 50
-          }, {
-            wch: 10
-          }, {
-            wch: 10
-          }, {
-            wch: 12
-          }, {
-            wch: 15
-          }, {
-            wch: 3
-          },
-          {
-            wch: 12
-          }, {
-            wch: 25
-          }, {
-            wch: 40
-          }, {
-            wch: 10
-          }, {
-            wch: 12
-          }, {
-            wch: 15
-          }, {
-            wch: 12
-          }
+        ws['!cols'] = [
+          { wch: 8 }, { wch: 15 }, { wch: 50 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 15 }, { wch: 3 },
+          { wch: 12 }, { wch: 25 }, { wch: 40 }, { wch: 10 }, { wch: 12 }, { wch: 15 }, { wch: 12 }
         ];
         let safeSheetName = sheetName.replace(/[\[\]\*\?\/\\]/g, '').replace(/:/g, '-');
         safeSheetName = safeSheetName.substring(0, 31);
         XLSX.utils.book_append_sheet(wb, ws, safeSheetName);
       });
 
-
-      // Descargar
       const pName = <?= json_encode($proyecto['nombre_proyecto']) ?>.substring(0, 30).replace(/[^a-z0-9]/gi, '_');
       const dStr = new Date().toISOString().slice(0, 10);
       XLSX.writeFile(wb, `Reporte_Proyecto_${pName}_${dStr}.xlsx`);
@@ -826,5 +761,3 @@ include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 
 </html>
-
-

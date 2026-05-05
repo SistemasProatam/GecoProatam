@@ -74,14 +74,9 @@ class CatalogosManager {
         return await this.makeRequest(formData);
     }
 
-
-
     async importarConceptosDesdeExcel(catalogoId, file) {
         try {
             const datosExcel = await this.procesarArchivoExcel(file);
-
-            console.log(`Conceptos originales: ${datosExcel.length}`);
-
             const formData = new FormData();
             formData.append('action', 'importar_conceptos_excel');
             formData.append('catalogo_id', catalogoId);
@@ -144,60 +139,58 @@ class CatalogosManager {
     }
 }
 
-// Instancia global
 const catalogosManager = new CatalogosManager();
 
 // ====================================
 // GESTIÓN DE CATÁLOGOS
 // ====================================
 function mostrarFormularioCatalogo(obraId, obraNombre) {
-    Swal.fire({
+    UI.modal({
         title: "Nuevo Catálogo",
         html: `
-        <form id="formNuevoCatalogo" class="swal-form">
-                    <div class="mb-3">
-                        <label class="form-label text-start d-block">Nombre del Catálogo <span class="text-danger">*</span></label>
-                        <input type="text" name="nombre_catalogo" class="form-control" placeholder="Ej: Catálogo Principal" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-start d-block">Descripción</label>
-                        <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe el propósito de este catálogo..."></textarea>
-                    </div>
-                </form>
-        `,
-        width: 500,
-        showCancelButton: true,
-        confirmButtonText: "Crear",
-        cancelButtonText: "Cancelar",
-        preConfirm: () => {
-            const form = document.getElementById("formNuevoCatalogo");
-            const nombre = form.nombre_catalogo.value;
-            const descripcion = form.descripcion.value;
+            <form id="formNuevoCatalogo">
+                <div class="mb-3">
+                    <label class="form-label">Nombre del Catálogo <span class="text-danger">*</span></label>
+                    <input type="text" name="nombre_catalogo" class="form-control" placeholder="Ej: Catálogo Principal" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe el propósito de este catálogo..."></textarea>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Catálogo</button>
+                </div>
+            </form>
+        `
+    });
 
-            if (!nombre.trim()) {
-                Swal.showValidationMessage('El nombre del catálogo es obligatorio');
-                return false;
-            }
+    document.getElementById("formNuevoCatalogo").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const nombre = this.nombre_catalogo.value.trim();
+        const descripcion = this.descripcion.value.trim();
 
-            return catalogosManager.crearCatalogo(obraId, nombre, descripcion);
+        if (!nombre) {
+            UI.toast.error('El nombre es obligatorio');
+            return;
         }
-    }).then((result) => {
-        if (result.isConfirmed && result.value) {
-            if (result.value.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: result.value.message,
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    // Recargar la página para ver la lista actualizada
-                    location.reload();
-                });
-            } else {
-                Swal.fire('Error', result.value.error, 'error');
-            }
-        }
+
+        UI.loading("Creando catálogo...");
+        catalogosManager.crearCatalogo(obraId, nombre, descripcion)
+            .then(result => {
+                UI.loading.hide();
+                if (result.success) {
+                    UI.modal.close();
+                    UI.toast.success('Catálogo creado correctamente');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    UI.toast.error(result.error || 'Error al crear catálogo');
+                }
+            })
+            .catch(err => {
+                UI.loading.hide();
+                UI.toast.error(err.message);
+            });
     });
 }
 
@@ -206,22 +199,23 @@ function mostrarFormularioCatalogo(obraId, obraNombre) {
 // ====================================
 
 function mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
-    Swal.fire({
+    UI.modal({
         title: "Nuevo Concepto",
+        size: "lg",
         html: `
-            <form id="formNuevoConcepto" class="swal-form text-start">
+            <form id="formNuevoConcepto" class="text-start">
                 <div class="row">
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-3">
                         <label class="form-label">Código <span class="text-danger">*</span></label>
                         <input type="text" name="codigo_concepto" class="form-control" placeholder="Ej: CONC-001" required>
                     </div>
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-3">
                         <label class="form-label">Núm. Original</label>
                         <input type="text" name="numero_original" class="form-control" placeholder="Ej: 1, 2, 3">
                     </div>
                 </div>
                 
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label">Nombre <span class="text-danger">*</span></label>
                     <input type="text" name="nombre_concepto" class="form-control" placeholder="Ej: Excavación manual" required>
                 </div>
@@ -232,82 +226,84 @@ function mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId = null, ob
                     <div class="form-text small">Nivel detectado: <strong id="swalNivelPreview">—</strong></div>
                 </div>
 
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label">Descripción</label>
                     <textarea name="descripcion" class="form-control" rows="2" placeholder="Descripción del concepto..."></textarea>
                 </div>
 
                 <hr>
                 <div class="row">
-                    <div class="col-4 mb-2">
+                    <div class="col-4 mb-3">
                         <label class="form-label">Unidad</label>
                         <input type="text" name="unidad_medida" class="form-control" placeholder="Ej: m³, kg">
                     </div>
-                    <div class="col-4 mb-2">
+                    <div class="col-4 mb-3">
                         <label class="form-label">Cantidad</label>
                         <input type="number" step="0.001" name="cantidad" class="form-control" placeholder="0.000">
                     </div>
-                    <div class="col-4 mb-2">
+                    <div class="col-4 mb-3">
                         <label class="form-label">P. Unitario</label>
                         <input type="number" step="0.01" name="precio_unitario" class="form-control" placeholder="0.00">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-3">
                         <label class="form-label">Importe Total</label>
                         <input type="number" step="0.01" name="importe" class="form-control" placeholder="0.00">
                     </div>
-                    <div class="col-3 mb-2">
+                    <div class="col-3 mb-3">
                         <label class="form-label">Inicio</label>
                         <input type="date" name="fecha_inicio" class="form-control">
                     </div>
-                    <div class="col-3 mb-2">
+                    <div class="col-3 mb-3">
                         <label class="form-label">Fin</label>
                         <input type="date" name="fecha_fin" class="form-control">
                     </div>
                 </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Concepto</button>
+                </div>
             </form>
-        `,
-        width: 750,
-        showCancelButton: true,
-        confirmButtonText: "Crear",
-        cancelButtonText: "Cancelar",
-        didOpen: () => {
-            const input = document.getElementById('swalNodoClave');
-            const preview = document.getElementById('swalNivelPreview');
-            input.addEventListener('input', () => {
-                const val = input.value.trim();
-                preview.textContent = val === '' ? '—' : val.split('.').length;
-            });
-        },
-        preConfirm: () => {
-            const form = document.getElementById("formNuevoConcepto");
-            return catalogosManager.crearConcepto(
-                catalogoId,
-                form.codigo_concepto.value.trim(),
-                form.nombre_concepto.value.trim(),
-                form.descripcion.value.trim(),
-                form.unidad_medida.value.trim(),
-                form.nodo_clave.value.trim(),
-                form.numero_original.value.trim(),
-                form.cantidad.value.trim(),
-                form.precio_unitario.value.trim(),
-                form.importe.value.trim(),
-                form.fecha_inicio.value.trim(),
-                form.fecha_fin.value.trim()
-            );
-        }
-    }).then((result) => {
-        if (result.isConfirmed && result.value) {
-            if (result.value.success) {
-                Swal.fire({
-                    icon: 'success', title: 'Concepto creado', text: 'El concepto se ha creado correctamente',
-                    timer: 1800, showConfirmButton: false
-                }).then(() => location.reload());
+        `
+    });
+
+    const input = document.getElementById('swalNodoClave');
+    const preview = document.getElementById('swalNivelPreview');
+    input.addEventListener('input', () => {
+        const val = input.value.trim();
+        preview.textContent = val === '' ? '—' : val.split('.').length;
+    });
+
+    document.getElementById("formNuevoConcepto").addEventListener("submit", function(e) {
+        e.preventDefault();
+        UI.loading("Guardando concepto...");
+        catalogosManager.crearConcepto(
+            catalogoId,
+            this.codigo_concepto.value.trim(),
+            this.nombre_concepto.value.trim(),
+            this.descripcion.value.trim(),
+            this.unidad_medida.value.trim(),
+            this.nodo_clave.value.trim(),
+            this.numero_original.value.trim(),
+            this.cantidad.value.trim(),
+            this.precio_unitario.value.trim(),
+            this.importe.value.trim(),
+            this.fecha_inicio.value.trim(),
+            this.fecha_fin.value.trim()
+        ).then(result => {
+            UI.loading.hide();
+            if (result.success) {
+                UI.modal.close();
+                UI.toast.success('Concepto creado correctamente');
+                setTimeout(() => location.reload(), 1500);
             } else {
-                Swal.fire('Error', result.value.error, 'error');
+                UI.toast.error(result.error || 'Error al crear concepto');
             }
-        }
+        }).catch(err => {
+            UI.loading.hide();
+            UI.toast.error(err.message);
+        });
     });
 }
 
@@ -316,12 +312,13 @@ function mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId = null, ob
 // ====================================
 
 function mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
-    Swal.fire({
+    UI.modal({
         title: "Importar Conceptos desde Excel",
+        size: "lg",
         html: `
-            <div class="alert alert-info text-start">
-                <small><i class="bi bi-info-circle"></i> 
-                Columnas requeridas: CLAVE, DESCRIPCIÓN, NUMERO, UNIDAD, PRECIO UNITARIO, IMPORTE, FECHA INICIO, FECHA FIN
+            <div class="alert alert-info text-start mb-3">
+                <small><i class="bi bi-info-circle me-1"></i> 
+                Columnas requeridas: CLAVE, DESCRIPCIÓN. Opcionales: NUMERO, UNIDAD, P.U., IMPORTE, FECHAS.
                 </small>
             </div>
             <div class="mb-3">
@@ -329,206 +326,106 @@ function mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId = null
                 <input type="file" id="archivoExcelConceptos" class="form-control" accept=".xlsx, .xls" required>
             </div>
             <div id="vistaPrevia" style="display: none;">
-                <h6>Vista previa:</h6>
-                <div id="listaPrevia" class="small" style="max-height: 200px; overflow-y: auto;"></div>
+                <h6 class="mb-2">Vista previa:</h6>
+                <div id="listaPrevia" class="small overflow-auto" style="max-height: 300px;"></div>
             </div>
-        `,
-        width: 800,
-        showCancelButton: true,
-        confirmButtonText: "Importar",
-        cancelButtonText: "Cancelar",
-        didOpen: () => {
-            const fileInput = document.getElementById('archivoExcelConceptos');
-            fileInput.addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) mostrarVistaPrevia(file);
-            });
-        },
-        preConfirm: () => {
-            const fileInput = document.getElementById('archivoExcelConceptos');
-            if (!fileInput.files[0]) {
-                Swal.showValidationMessage('Selecciona un archivo');
-                return false;
-            }
-            return catalogosManager.importarConceptosDesdeExcel(catalogoId, fileInput.files[0])
-                .then(result => {
-                    console.log('RESPUESTA SERVIDOR:', JSON.stringify(result));
-                    return result;
-                });
-        }
-    }).then((result) => {
-        if (result.isConfirmed && result.value && result.value.success) {
-            let mensaje = `
-                <div class="alert alert-success">
-                    <h5><i class="bi bi-check-circle"></i> Importación completada</h5>
-                    <p class="mb-0"><strong>${result.value.conceptos_importados}</strong> conceptos importados</p>
-                </div>
-            `;
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                <button type="button" id="btnConfirmarImport" class="btn btn-primary" disabled>Importar</button>
+            </div>
+        `
+    });
 
-            if (result.value.errores && result.value.errores.length > 0) {
-                mensaje += `
-                    <div class="alert alert-warning">
-                        <h6><i class="bi bi-exclamation-triangle"></i> Errores (${result.value.errores.length})</h6>
-                        <div class="text-start small" style="max-height: 200px; overflow-y: auto;">
-                            <ul class="mb-0">${result.value.errores.map(e => `<li>${e}</li>`).join('')}</ul>
-                        </div>
-                    </div>
-                `;
-            }
+    const fileInput = document.getElementById('archivoExcelConceptos');
+    const btnImport = document.getElementById('btnConfirmarImport');
 
-            Swal.fire({
-                title: 'Resultado',
-                html: mensaje,
-                icon: result.value.errores.length > 0 ? 'warning' : 'success',
-                confirmButtonText: 'Cerrar'
-            }).then(() => {
-                // Recargar la página para ver la lista actualizada
-                location.reload();
-            });
+    fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            btnImport.disabled = false;
+            mostrarVistaPrevia(file);
+        } else {
+            btnImport.disabled = true;
         }
     });
-}
 
-function esCategoriaNivel1(clave) {
-    if (!clave) return false;
-    const valor = clave.toString().trim().toUpperCase();
-    // Nivel 1: I, II, III... o números pequeños (1, 2, 3...)
-    // Evitamos números largos que suelen ser códigos de concepto (ej: 502302279)
-    if (/^\d+$/.test(valor)) {
-        return parseInt(valor) < 1000;
-    }
-    return /^[IVXLCDM]+$/.test(valor);
-}
-
-// Alias para compatibilidad con código existente
-function esCategoria(clave) {
-    return esCategoriaNivel1(clave);
-}
-
-function esCategoriaNivel2(clave) {
-    if (!clave) return false;
-    const valor = clave.toString().trim();
-    // Nivel 2: 1.2, 1.3, 2.1, etc. (número.número - solo dos partes)
-    return /^\d+\.\d+$/.test(valor);
-}
-
-function esCategoriaNivel3(clave) {
-    if (!clave) return false;
-    const valor = clave.toString().trim().toUpperCase();
-    // Nivel 3: I.1.1 o 1.1.1 (tres partes)
-    return /^[A-Z0-9]+\.[0-9]+\.[0-9]+$/.test(valor);
-}
-
-function esSubcategoria(clave) {
-    if (!clave) return false;
-    const valor = clave.toString().trim().toUpperCase();
-    // Subcategoría estilo romano o decimal: I.1 o 1.1 (dos partes)
-    return /^[A-Z0-9]+\.[0-9]+$/.test(valor);
+    btnImport.addEventListener('click', () => {
+        if (!fileInput.files[0]) return;
+        UI.loading("Importando conceptos...");
+        catalogosManager.importarConceptosDesdeExcel(catalogoId, fileInput.files[0])
+            .then(result => {
+                UI.loading.hide();
+                if (result.success) {
+                    let resHtml = `
+                        <div class="alert alert-success">
+                            <h6><i class="bi bi-check-circle me-1"></i> Importación completada</h6>
+                            <p class="mb-0"><strong>${result.conceptos_importados}</strong> conceptos importados.</p>
+                        </div>
+                    `;
+                    if (result.errores && result.errores.length > 0) {
+                        resHtml += `
+                            <div class="alert alert-warning mt-2 small overflow-auto" style="max-height:150px;">
+                                <strong>Avisos (${result.errores.length}):</strong>
+                                <ul class="mb-0 mt-1">${result.errores.map(e => `<li>${e}</li>`).join('')}</ul>
+                            </div>
+                        `;
+                    }
+                    UI.modal({
+                        title: "Resultado de Importación",
+                        html: resHtml + '<div class="text-end mt-3"><button class="btn btn-primary" onclick="location.reload()">Cerrar</button></div>'
+                    });
+                } else {
+                    UI.toast.error(result.error || 'Error en la importación');
+                }
+            })
+            .catch(err => {
+                UI.loading.hide();
+                UI.toast.error(err.message);
+            });
+    });
 }
 
 async function mostrarVistaPrevia(file) {
     try {
-        console.log('Iniciando vista previa del archivo:', file.name);
-
         const conceptos = await catalogosManager.procesarArchivoExcel(file);
-
-        console.log('Total conceptos procesados:', conceptos.length);
-        console.log('Muestra de conceptos:', conceptos.slice(0, 5));
-
-        // Analizar categorías
         const categorias = {};
         conceptos.forEach(c => {
-            const cat = c.categoria || 'Sin categoría';
+            const cat = c.categoria || (c.es_nodo ? 'Nodo' : 'Sin categoría');
             if (!categorias[cat]) categorias[cat] = 0;
             categorias[cat]++;
         });
 
-        console.log('Distribución por categorías:', categorias);
-
         const vistaPrevia = document.getElementById('vistaPrevia');
         const listaPrevia = document.getElementById('listaPrevia');
-
         vistaPrevia.style.display = 'block';
 
         if (conceptos.length > 0) {
             let html = `
-                <div class="alert alert-success mb-3">
-                    <strong>${conceptos.length} conceptos encontrados</strong>
+                <div class="alert alert-success py-2 px-3 mb-3 small">
+                    <strong>${conceptos.length} registros encontrados.</strong>
                 </div>
-                
-                <!-- Resumen por categorías -->
-                <div class="card mb-3">
-                    <div class="card-header bg-primary text-white">
-                        <strong>Distribución por Categorías</strong>
-                    </div>
-                    <div class="card-body">
-                        ${Object.entries(categorias).map(([cat, count]) => `
-                            <div class="d-flex justify-content-between mb-1">
-                                <span>${cat}</span>
-                                <span class="badge bg-info">${count} conceptos</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <!-- Lista de conceptos -->
-                <div class="card">
-                    <div class="card-header">
-                        <strong>Vista Previa (primeros 10)</strong>
-                    </div>
-                    <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush border rounded">
             `;
-
-            conceptos.slice(0, 10).forEach((concepto, idx) => {
+            conceptos.slice(0, 15).forEach((concepto) => {
                 html += `
-                    <div class="list-group-item">
+                    <div class="list-group-item py-2">
                         <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">
-                                    <span class="badge bg-info">${concepto.codigo_concepto}</span>
-                                    ${concepto.nombre_concepto}
-                                </h6>
-                                <small class="text-muted">
-                                    ${concepto.categoria ? `${concepto.categoria}` : ''}
-                                    ${concepto.subcategoria ? ` ›${concepto.subcategoria}` : ''}
-                                    ${concepto.unidad_medida ? ` | ${concepto.unidad_medida}` : ''}
-                                    ${concepto.numero_original ? ` | #${concepto.numero_original}` : ''}
-                                </small>
+                            <div>
+                                <span class="badge bg-light text-dark border me-2">${concepto.codigo_concepto || 'NODO'}</span>
+                                <span class="small">${(concepto.nombre_concepto || concepto.nombre || '').substring(0, 80)}...</span>
                             </div>
                         </div>
                     </div>
                 `;
             });
-
-            if (conceptos.length > 10) {
-                html += `
-                    <div class="list-group-item text-center text-muted">
-                        ... y ${conceptos.length - 10} más
-                    </div>
-                `;
-            }
-
-            html += `
-                    </div>
-                </div>
-            `;
-
+            if (conceptos.length > 15) html += `<div class="list-group-item text-center text-muted small">... y ${conceptos.length - 15} más</div>`;
+            html += `</div>`;
             listaPrevia.innerHTML = html;
         } else {
-            listaPrevia.innerHTML = `
-                <div class="alert alert-warning">
-                    <strong>No se encontraron conceptos válidos</strong><br>
-                    Verifica que el archivo tenga columnas CLAVE y DESCRIPCIÓN con datos.
-                </div>
-            `;
+            listaPrevia.innerHTML = `<div class="alert alert-warning small">No se encontraron conceptos válidos.</div>`;
         }
     } catch (error) {
-        console.error('Error en vista previa:', error);
-        document.getElementById('listaPrevia').innerHTML =
-            `<div class="alert alert-danger">
-                <strong>Error:</strong> ${error.message}
-                <br><small>Revisa la consola (F12) para más detalles</small>
-            </div>`;
+        document.getElementById('listaPrevia').innerHTML = `<div class="alert alert-danger small">Error: ${error.message}</div>`;
     }
 }
 
@@ -536,321 +433,145 @@ async function mostrarVistaPrevia(file) {
 // FUNCIONES DE DETALLE Y ELIMINACIÓN
 // ====================================
 
-function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
+function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre) {
+    UI.loading("Cargando detalle...");
     catalogosManager.obtenerDetalleConcepto(conceptoId)
         .then(resp => {
-            // Normalizar respuesta
-            let concepto = resp;
-            if (resp && typeof resp === 'object' && ('success' in resp)) {
-                if (resp.success === false) {
-                    Swal.fire('Error', resp.error || resp.message || 'Error al cargar concepto', 'error');
-                    return;
-                }
-                if (resp.concepto) {
-                    concepto = resp.concepto;
-                }
-            }
+            UI.loading.hide();
+            let concepto = (resp && resp.concepto) ? resp.concepto : resp;
+            if (resp.success === false) { UI.toast.error(resp.error); return; }
 
-            const montoTotal = parseFloat(concepto.monto_total) || 0;
-            const totalItems = parseInt(concepto.total_items) || 0;
+            const fmtNum = (v, d = 2) => isNaN(parseFloat(v)) ? 'N/A' : parseFloat(v).toLocaleString('es-MX', { minimumFractionDigits: d, maximumFractionDigits: d });
+            const fmtDate = (f) => (!f || f === '0000-00-00') ? 'N/A' : f.split('-').reverse().join('/');
 
-            // Formatear fechas correctamente (YYYY-MM-DD a DD/MM/YYYY)
-            const formatearFecha = (fecha) => {
-                if (!fecha || fecha === '0000-00-00') return 'N/A';
-                const partes = fecha.split('-');
-                if (partes.length === 3) {
-                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-                }
-                return fecha;
-            };
-
-            // Formatear números
-            const formatearNumero = (valor, decimales = 2, moneda = false) => {
-                if (!valor || isNaN(valor)) return 'N/A';
-                const num = parseFloat(valor);
-                if (moneda) {
-                    return '$' + num.toLocaleString('es-MX', { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
-                }
-                return num.toLocaleString('es-MX', { minimumFractionDigits: decimales, maximumFractionDigits: 3 });
-            };
-
-            // Escapar correctamente los valores
-            const nombreConcepto = String(concepto.nombre_concepto || '').replace(/'/g, "\\'");
-            const catalogoNombreEscaped = String(catalogoNombre || '').replace(/'/g, "\\'");
-
-            let detalleHtml = `
-                <div class="concepto-simple">
-                    <!-- Información principal -->
-                    <div class="mb-3 text-center">
-                        <h5 class="text-primary">${concepto.codigo_concepto || 'N/A'}</h5>
-                    </div>
-
-                    <!-- Datos básicos -->
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Unidad:</span>
-                            <strong>${concepto.unidad_medida || 'N/A'}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Categoría:</span>
-                            <strong>${concepto.categoria || 'N/A'}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Subcategoría:</span>
-                            <strong>${concepto.subcategoria || 'N/A'}</strong>
-                        </div>
-                        ${concepto.numero_original ? `
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Número:</span>
-                            <strong>${concepto.numero_original}</strong>
-                        </div>
-                        ` : ''}
-                    </div>
-
-                    <!-- Descripción si existe -->
-                    ${concepto.descripcion ? `
-                    <div class="mb-3">
-                        <strong class="text-muted d-block">Descripción:</strong>
-                        <div class="bg-light p-2 rounded small">${concepto.descripcion}</div>
-                    </div>
-                    ` : ''}
-
-                    <!-- ===== NUEVA SECCIÓN: CAMPOS ADICIONALES ===== -->
-                    <div class="mb-3">
-                        <h6 class="text-primary border-bottom pb-2">Detalles del Concepto</h6>
-                        
-                        <!-- Cantidad (NUEVO) -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-sort-numeric-up me-1"></i>Cantidad:</span>
-                            <strong class="text-dark">${formatearNumero(concepto.cantidad, 3)}</strong>
-                        </div>
-                        
-                        <!-- Precio Unitario -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-tag me-1"></i>Precio Unitario:</span>
-                            <strong class="text-success">${formatearNumero(concepto.precio_unitario, 2, true)}</strong>
-                        </div>
-                        
-                        <!-- Importe -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-currency-dollar me-1"></i>Importe:</span>
-                            <strong class="text-success">${formatearNumero(concepto.importe, 2, true)}</strong>
-                        </div>
-                        
-                        <!-- Fecha Inicio -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-calendar me-1"></i>Fecha Inicio:</span>
-                            <strong>${formatearFecha(concepto.fecha_inicio)}</strong>
-                        </div>
-                        
-                        <!-- Fecha Fin -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-calendar me-1"></i>Fecha Fin:</span>
-                            <strong>${formatearFecha(concepto.fecha_fin)}</strong>
-                        </div>
-                        
-                    </div>
-
-                    <!-- Estadísticas de items -->
-                    <div class="row text-center mb-3">
-                        <div class="col-6">
-                            <div class="border rounded p-2">
-                                <div class="text-primary fw-bold">${totalItems}</div>
-                                <small class="text-muted">Items</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="border rounded p-2">
-                                <div class="text-success fw-bold">$${montoTotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</div>
-                                <small class="text-muted">Total en items</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="gap-2 d-flex justify-content-center">
-                        <button class="btn btn-sm" style="background-color:#17a2b8;color:white;border:none;"
-                            onclick="verItemsConcepto(${conceptoId}, '${nombreConcepto}', ${catalogoId}, '${catalogoNombreEscaped}')">
-                            <i class="bi bi-list-ul me-1"></i>Ver Items
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="Swal.close()">
-                            <i class="bi bi-x-circle me-1"></i>Cerrar
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            Swal.fire({
+            UI.modal({
                 title: 'Detalle del Concepto',
-                html: detalleHtml,
-                width: '90%',
-                maxWidth: '450px',
-                showCloseButton: true,
-                showConfirmButton: false
+                size: 'lg',
+                html: `
+                    <div class="p-2">
+                        <div class="row mb-4 text-center">
+                            <div class="col-12"><h4 class="text-primary mb-1">${concepto.codigo_concepto}</h4><p class="text-muted small">${concepto.nombre_concepto}</p></div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0"><div class="card-body p-3">
+                                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2"><span>Unidad</span><strong>${concepto.unidad_medida || 'N/A'}</strong></div>
+                                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2"><span>Categoría</span><strong>${concepto.categoria || 'N/A'}</strong></div>
+                                    <div class="d-flex justify-content-between"><span>Subcategoría</span><strong>${concepto.subcategoria || 'N/A'}</strong></div>
+                                </div></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0"><div class="card-body p-3">
+                                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2"><span>Cantidad</span><strong>${fmtNum(concepto.cantidad, 3)}</strong></div>
+                                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2"><span>P. Unitario</span><strong class="text-success">$${fmtNum(concepto.precio_unitario)}</strong></div>
+                                    <div class="d-flex justify-content-between"><span>Importe</span><strong class="text-success">$${fmtNum(concepto.importe)}</strong></div>
+                                </div></div>
+                            </div>
+                        </div>
+                        <div class="mt-3 card bg-light border-0"><div class="card-body p-3">
+                            <div class="d-flex justify-content-between mb-2"><span>Periodo</span><strong>${fmtDate(concepto.fecha_inicio)} - ${fmtDate(concepto.fecha_fin)}</strong></div>
+                            <div class="small text-muted border-top pt-2">${concepto.descripcion || 'Sin descripción adicional'}</div>
+                        </div></div>
+                        <div class="row mt-3 text-center">
+                            <div class="col-6"><div class="border rounded p-2"><div class="h5 mb-0 text-primary">${concepto.total_items || 0}</div><small class="text-muted">Items OC</small></div></div>
+                            <div class="col-6"><div class="border rounded p-2"><div class="h5 mb-0 text-success">$${fmtNum(concepto.monto_total)}</div><small class="text-muted">Monto total items</small></div></div>
+                        </div>
+                        <div class="d-flex justify-content-center gap-2 mt-4">
+                            <button class="btn btn-info" onclick="verItemsConcepto(${conceptoId}, '${concepto.nombre_concepto.replace(/'/g, "\\'")}')"><i class="bi bi-list-ul me-1"></i> Ver Items OC</button>
+                            <button class="btn btn-secondary" onclick="UI.modal.close()">Cerrar</button>
+                        </div>
+                    </div>
+                `
             });
         })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudo cargar el detalle del concepto', 'error');
-        });
+        .catch(() => { UI.loading.hide(); UI.toast.error("Error al cargar detalle"); });
 }
 
-// Función para eliminar catálogo con confirmación
-function eliminarCatalogo(catalogoId, obraId, obraNombre) {
-    Swal.fire({
-        title: '¿Eliminar catálogo?',
-        html: `
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i>
-                <strong>Esta acción no se puede deshacer</strong><br>
-                Se eliminarán todos los conceptos y items asociados a este catálogo.
-            </div>
-            <p class="text-muted small">¿Estás seguro de que deseas continuar?</p>
-        `,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Mostrar loading
-            Swal.fire({
-                title: 'Eliminando catálogo...',
-                text: 'Por favor espere',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            catalogosManager.eliminarCatalogo(catalogoId)
-                .then(result => {
-                    if (result.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Catálogo eliminado',
-                            text: result.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Recargar la página para ver la lista actualizada
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', result.error, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Error al eliminar el catálogo: ' + error.message, 'error');
+function verItemsConcepto(conceptoId, conceptoNombre) {
+    UI.loading("Buscando items...");
+    fetch(`/api/get_concepto_items.php?concepto_id=${conceptoId}`)
+        .then(r => r.json())
+        .then(data => {
+            UI.loading.hide();
+            if (data.success && data.items && data.items.length > 0) {
+                let tableHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light"><tr><th>Descripción</th><th class="text-center">Cant.</th><th class="text-end">P.U.</th><th class="text-end">Subtotal</th><th class="text-center">Orden</th></tr></thead>
+                            <tbody>
+                `;
+                let total = 0;
+                data.items.forEach(it => {
+                    const sub = (parseFloat(it.cantidad) || 0) * (parseFloat(it.precio_unitario) || 0);
+                    total += sub;
+                    tableHtml += `
+                        <tr>
+                            <td class="small">${escapeHtml(it.descripcion)}</td>
+                            <td class="text-center">${parseFloat(it.cantidad).toFixed(3)}</td>
+                            <td class="text-end">$${parseFloat(it.precio_unitario).toLocaleString()}</td>
+                            <td class="text-end fw-bold">$${sub.toLocaleString()}</td>
+                            <td class="text-center"><span class="badge bg-success">${it.folio_oc || 'OC-'+it.orden_compra_id}</span></td>
+                        </tr>
+                    `;
                 });
+                tableHtml += `</tbody><tfoot class="table-light fw-bold"><tr><td colspan="3" class="text-end">Total:</td><td class="text-end text-success">$${total.toLocaleString()}</td><td></td></tr></tfoot></table></div>`;
+                
+                UI.modal({
+                    title: `Items de OC: ${conceptoNombre}`,
+                    size: 'xl',
+                    html: tableHtml + '<div class="text-end mt-3"><button class="btn btn-secondary" onclick="UI.modal.close()">Cerrar</button></div>'
+                });
+            } else {
+                UI.modal({
+                    title: "Sin items",
+                    html: '<div class="text-center py-4"><i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>No hay items asignados en órdenes de compra para este concepto.</div>'
+                });
+            }
+        })
+        .catch(() => { UI.loading.hide(); UI.toast.error("Error al obtener items"); });
+}
+
+function eliminarCatalogo(catalogoId) {
+    UI.confirm({
+        title: '¿Eliminar catálogo?',
+        message: 'Esta acción eliminará todos los conceptos y items asociados permanentemente.',
+        danger: true
+    }).then(conf => {
+        if (conf) {
+            UI.loading("Eliminando...");
+            catalogosManager.eliminarCatalogo(catalogoId)
+                .then(r => {
+                    UI.loading.hide();
+                    if (r.success) { UI.toast.success("Catálogo eliminado"); setTimeout(() => location.reload(), 1500); }
+                    else UI.toast.error(r.error);
+                }).catch(() => { UI.loading.hide(); UI.toast.error("Error de red"); });
         }
     });
 }
 
-// Función para eliminar concepto con confirmación
-function eliminarConcepto(conceptoId, catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
-    // Primero obtener información del concepto para mostrar en la confirmación
-    catalogosManager.obtenerDetalleConcepto(conceptoId)
-        .then(resp => {
-            // Normalizar respuesta: manejar { success, concepto } o el objeto directamente
-            let concepto = resp;
-            if (resp && typeof resp === 'object' && ('success' in resp)) {
-                if (resp.success === false) {
-                    Swal.fire('Error', resp.error || resp.message || 'Error al cargar concepto', 'error');
-                    return;
-                }
-                if (resp.concepto) concepto = resp.concepto;
-            }
-
-            const totalItems = parseInt(concepto.total_items) || 0;
-            const tieneItems = totalItems > 0;
-
-            Swal.fire({
-                title: '¿Eliminar concepto?',
-                html: `
-                    <div class="text-start">
-                        <p><strong>${concepto.codigo_concepto}</strong> - ${concepto.nombre_concepto}</p>
-                        ${tieneItems ? `
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <strong>Este concepto tiene ${totalItems} items vinculados</strong><br>
-                            Todos los items asociados también serán eliminados.
-                        </div>
-                        ` : `
-                        <div class="alert alert-warning">
-                            <i class="bi bi-info-circle"></i>
-                            Este concepto no tiene items vinculados.
-                        </div>
-                        `}
-                        <p class="text-muted small">¿Estás seguro de que deseas continuar?</p>
-                    </div>
-                `,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Mostrar loading
-                    Swal.fire({
-                        title: 'Eliminando concepto...',
-                        text: 'Por favor espere',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    catalogosManager.eliminarConcepto(conceptoId)
-                        .then(result => {
-                            if (result.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Concepto eliminado',
-                                    text: result.message,
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    // Recargar la página para ver la lista actualizada
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire('Error', result.error, 'error');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire('Error', 'Error al eliminar el concepto: ' + error.message, 'error');
-                        });
-                }
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudo cargar la información del concepto', 'error');
-        });
-}
-
-
-// Función para editar concepto (placeholder)
-function editarConcepto(conceptoId) {
-    if (typeof abrirModalEditar === 'function') {
-        abrirModalEditar(conceptoId);
-    } else {
-        Swal.fire('Info', 'Usa el botón de edición en la lista de conceptos.', 'info');
-    }
+function eliminarConcepto(conceptoId) {
+    UI.confirm({
+        title: '¿Eliminar concepto?',
+        message: 'Se eliminarán también todos los items vinculados en el presupuesto de control.',
+        danger: true
+    }).then(conf => {
+        if (conf) {
+            UI.loading("Eliminando...");
+            catalogosManager.eliminarConcepto(conceptoId)
+                .then(r => {
+                    UI.loading.hide();
+                    if (r.success) { UI.toast.success("Concepto eliminado"); setTimeout(() => location.reload(), 1500); }
+                    else UI.toast.error(r.error);
+                }).catch(() => { UI.loading.hide(); UI.toast.error("Error de red"); });
+        }
+    });
 }
 
 function editarCatalogo(catalogoId, nombreActual = '', descActual = '') {
-    Swal.fire({
+    UI.modal({
         title: "Editar Catálogo",
         html: `
-            <form id="formEditCatalogo" class="swal-form text-start">
+            <form id="formEditCatalogo">
                 <div class="mb-3">
                     <label class="form-label">Nombre del Catálogo <span class="text-danger">*</span></label>
                     <input type="text" name="nombre_catalogo" class="form-control" value="${nombreActual}" required>
@@ -859,788 +580,139 @@ function editarCatalogo(catalogoId, nombreActual = '', descActual = '') {
                     <label class="form-label">Descripción</label>
                     <textarea name="descripcion" class="form-control" rows="3">${descActual}</textarea>
                 </div>
-            </form>
-        `,
-        showCancelButton: true,
-        confirmButtonText: "Guardar Cambios",
-        cancelButtonText: "Cancelar",
-        preConfirm: () => {
-            const form = document.getElementById("formEditCatalogo");
-            const fd = new FormData();
-            fd.append('action', 'actualizar_catalogo');
-            fd.append('catalogo_id', catalogoId);
-            fd.append('nombre_catalogo', form.nombre_catalogo.value.trim());
-            fd.append('descripcion', form.descripcion.value.trim());
-
-            return fetch('catalogos_manager.php', { method: 'POST', body: fd })
-                .then(r => r.json());
-        }
-    }).then(result => {
-        if (result.isConfirmed && result.value) {
-            if (result.value.success) {
-                Swal.fire({
-                    icon: 'success', title: 'Actualizado', text: result.value.message,
-                    timer: 1500, showConfirmButton: false
-                }).then(() => location.reload());
-            } else {
-                Swal.fire('Error', result.value.error, 'error');
-            }
-        }
-    });
-}
-
-// Función para abrir vista completa de conceptos
-function abrirVistaConceptos(catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
-    let url = `conceptos_view.php?catalogo_id=${catalogoId}&catalogo_nombre=${encodeURIComponent(catalogoNombre)}`;
-
-    if (obraId) {
-        url += `&obra_id=${obraId}&obra_nombre=${encodeURIComponent(obraNombre)}`;
-    }
-
-    window.location.href = url;
-}
-
-// ====================================
-// PROCESAMIENTO DE DATOS EXCEL
-// ====================================
-
-function procesarDatosCatalogoFlexible(jsonData) {
-    const conceptos = [];
-
-    // Paso 1: Buscar la fila de encabezados
-    let filaEncabezados = -1;
-    let mapeoColumnas = {};
-
-    for (let i = 0; i < Math.min(jsonData.length, 20); i++) {
-        const fila = jsonData[i];
-        if (!fila || fila.length === 0) continue;
-
-        const encabezadosEncontrados = detectarEncabezados(fila);
-
-        if (encabezadosEncontrados.valido) {
-            filaEncabezados = i;
-            mapeoColumnas = encabezadosEncontrados.mapeo;
-            console.log('Encabezados encontrados en fila', i, mapeoColumnas);
-            break;
-        }
-    }
-
-    if (filaEncabezados === -1) {
-        throw new Error('No se encontraron los encabezados requeridos. Mínimo necesario: CLAVE y DESCRIPCIÓN');
-    }
-
-    // Paso 2: Procesar los datos
-    let nodoActualClave = '';
-    let numeroSecuencial = 1;
-
-    for (let i = filaEncabezados + 1; i < jsonData.length; i++) {
-        const fila = jsonData[i];
-        if (!fila || fila.length === 0) continue;
-
-        const numero = obtenerValorColumna(fila, mapeoColumnas.numero);
-        const clave = obtenerValorColumna(fila, mapeoColumnas.clave);
-        const descripcion = obtenerValorColumna(fila, mapeoColumnas.descripcion);
-        const unidad = obtenerValorColumna(fila, mapeoColumnas.unidad);
-        const cantidad = obtenerValorColumna(fila, mapeoColumnas.cantidad);
-        const pu = obtenerValorColumna(fila, mapeoColumnas.precio_unitario);
-        const importe = obtenerValorColumna(fila, mapeoColumnas.importe);
-        const fechaIni = obtenerValorColumna(fila, mapeoColumnas.fecha_inicio);
-        const fechaFin = obtenerValorColumna(fila, mapeoColumnas.fecha_fin);
-
-        if (!numero && !clave && !descripcion) continue;
-
-        const descUpper = descripcion.toUpperCase();
-        if (descUpper.includes('IMPORTE TOTAL') || descUpper.includes('TOTAL GENERAL') ||
-            descUpper.includes('SUBTOTAL') || descUpper === 'TOTAL') continue;
-
-        const claveStr = clave.toString().trim();
-        const claveUpper = claveStr.toUpperCase();
-
-        // Un concepto suele tener cantidad o precio. Un nodo casi nunca.
-        const tieneMetrica = (cantidad && !isNaN(parseFloat(cantidad))) ||
-            (pu && !isNaN(parseFloat(pu)));
-
-        // Detección de Nodos (Categorías)
-        // Se considera nodo si cumple el patrón Y NO tiene métricas (cantidad/precio)
-        const esNodo = !tieneMetrica && (
-            esCategoriaNivel1(claveUpper) ||
-            esSubcategoria(claveUpper) ||
-            esCategoriaNivel2(claveStr) ||
-            esCategoriaNivel3(claveStr)
-        );
-
-        if (esNodo && descripcion) {
-            nodoActualClave = claveStr;
-            console.log(`NODO DETECTADO: ${nodoActualClave} - ${descripcion}`);
-            // Pushing node as a special row to capture its descriptive name
-            conceptos.push({
-                es_nodo: true,
-                nodo_clave: claveStr,
-                nombre: descripcion.trim()
-            });
-            continue;
-        }
-
-        // Si tiene clave y descripción y no es nodo, es concepto
-        if (clave && descripcion) {
-            console.log(`CONCEPTO DETECTADO: ${claveStr} - ${descripcion.substring(0, 50)}...`);
-            conceptos.push({
-                codigo_concepto: claveStr,
-                nombre_concepto: generarNombreConcepto(descripcion),
-                descripcion: descripcion.trim(),
-                unidad_medida: unidad || obtenerUnidadDesdeDescripcion(descripcion),
-                nodo_clave: nodoActualClave, // El nivel N3 queda aquí (ej: I.1.1)
-                numero_original: numero || String(numeroSecuencial),
-                cantidad: cantidad || '',
-                precio_unitario: pu || '',
-                importe: importe || '',
-                fecha_inicio: fechaIni ? normalizarFecha(fechaIni) : '',
-                fecha_fin: fechaFin ? normalizarFecha(fechaFin) : ''
-            });
-            numeroSecuencial++;
-        }
-    }
-
-    console.log(`Total de conceptos procesados: ${conceptos.length}`);
-
-    if (conceptos.length === 0) {
-        throw new Error('No se encontraron conceptos válidos. Verifica que las columnas CLAVE y DESCRIPCIÓN tengan datos.');
-    }
-
-    return conceptos;
-}
-
-function detectarEncabezados(fila) {
-    const mapeo = {
-        numero: -1,
-        clave: -1,
-        descripcion: -1,
-        unidad: -1,
-        cantidad: -1,
-        precio_unitario: -1,
-        importe: -1,
-        fecha_inicio: -1,
-        fecha_fin: -1,
-    };
-
-    fila.forEach((celda, index) => {
-        if (!celda) return;
-
-        const valorNormalizado = String(celda).toUpperCase().trim().toString()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remover acentos
-
-        // Detectar NUMERO (OPCIONAL)
-        if (valorNormalizado.includes('NUMERO') ||
-            valorNormalizado === 'NO.' ||
-            valorNormalizado === 'NUM' ||
-            valorNormalizado === '#') {
-            mapeo.numero = index;
-        }
-
-        // Detectar CLAVE (REQUERIDO)
-        if (valorNormalizado.includes('CLAVE') ||
-            valorNormalizado.includes('CODIGO') ||
-            valorNormalizado === 'CVE' ||
-            valorNormalizado === 'COD' ||
-            valorNormalizado === 'KEY') {
-            mapeo.clave = index;
-        }
-
-        // Detectar DESCRIPCIÓN (REQUERIDO)
-        if (valorNormalizado.includes('DESCRIPCION') ||
-            valorNormalizado.includes('CONCEPTO') ||
-            valorNormalizado.includes('NOMBRE') ||
-            valorNormalizado === 'DESC') {
-            mapeo.descripcion = index;
-        }
-
-        // Detectar UNIDAD (OPCIONAL)
-        if (valorNormalizado.includes('UNIDAD') ||
-            valorNormalizado.includes('U.M') ||
-            valorNormalizado === 'UM' ||
-            valorNormalizado === 'UNI' ||
-            valorNormalizado === 'MEDIDA') {
-            mapeo.unidad = index;
-        }
-
-        // Detectar CANTIDAD (OPCIONAL)
-        if (valorNormalizado === 'CANTIDAD' ||
-            valorNormalizado === 'CANT' ||
-            valorNormalizado === 'QTY' ||
-            valorNormalizado === 'QUANTITY') {
-            mapeo.cantidad = index;
-        }
-
-        // Detectar PRECIO UNITARIO (OPCIONAL) — soporta P.U., P.U, PRECIO UNITARIO
-        if (valorNormalizado === 'P.U.' ||
-            valorNormalizado === 'P.U' ||
-            valorNormalizado === 'PU' ||
-            valorNormalizado.includes('PRECIO UNITARIO') ||
-            valorNormalizado === 'P.UNITARIO' ||
-            valorNormalizado === 'PRECIO' ||
-            valorNormalizado === 'UNIT PRICE') {
-            mapeo.precio_unitario = index;
-        }
-
-        // Detectar IMPORTE (OPCIONAL)
-        if (valorNormalizado === 'IMPORTE' ||
-            valorNormalizado.includes('MONTO') ||
-            valorNormalizado === 'AMOUNT') {
-            mapeo.importe = index;
-        }
-
-        // Detectar FECHA INICIO (OPCIONAL)
-        if (valorNormalizado.includes('FECHA DE INICIO') ||
-            valorNormalizado.includes('FECHA INICIO') ||
-            valorNormalizado.includes('F.INICIO') ||
-            valorNormalizado === 'INICIO' ||
-            valorNormalizado === 'START DATE') {
-            mapeo.fecha_inicio = index;
-        }
-
-        // Detectar FECHA FIN (OPCIONAL)
-        if (valorNormalizado.includes('FECHA DE FINALIZACION') ||
-            valorNormalizado.includes('FECHA FINALIZACION') ||
-            valorNormalizado.includes('FECHA FIN') ||
-            valorNormalizado.includes('FECHA TERMINO') ||
-            valorNormalizado.includes('F.FIN') ||
-            valorNormalizado === 'FIN' ||
-            valorNormalizado === 'TERMINO' ||
-            valorNormalizado === 'END DATE') {
-            mapeo.fecha_fin = index;
-        }
-
-    });
-
-    // SOLO requiere CLAVE y DESCRIPCIÓN
-    // El resto son opcionales
-    const valido = mapeo.clave !== -1 && mapeo.descripcion !== -1;
-
-    if (valido) {
-        console.log('Encabezados detectados:', {
-            NUMERO: mapeo.numero !== -1 ? `Columna ${mapeo.numero}` : 'No encontrado (opcional)',
-            CLAVE: `Columna ${mapeo.clave} ✓`,
-            DESCRIPCION: `Columna ${mapeo.descripcion} ✓`,
-            UNIDAD: mapeo.unidad !== -1 ? `Columna ${mapeo.unidad}` : 'No encontrado (opcional)',
-            CANTIDAD: mapeo.cantidad !== -1 ? `Columna ${mapeo.cantidad}` : 'No encontrado (opcional)',
-            PRECIO_UNITARIO: mapeo.precio_unitario !== -1 ? `Columna ${mapeo.precio_unitario}` : 'No encontrado (opcional)',
-            IMPORTE: mapeo.importe !== -1 ? `Columna ${mapeo.importe}` : 'No encontrado (opcional)',
-            FECHA_INICIO: mapeo.fecha_inicio !== -1 ? `Columna ${mapeo.fecha_inicio}` : 'No encontrado (opcional)',
-            FECHA_FIN: mapeo.fecha_fin !== -1 ? `Columna ${mapeo.fecha_fin}` : 'No encontrado (opcional)',
-        });
-    }
-
-    return {
-        valido: valido,
-        mapeo: mapeo
-    };
-}
-
-function obtenerValorColumna(fila, indice) {
-    if (indice === -1 || indice >= fila.length) return '';
-    const valor = fila[indice];
-    return valor ? String(valor).trim() : '';
-}
-
-function generarNombreConcepto(descripcion) {
-    // Extraer el nombre principal de la descripción
-    if (!descripcion) return 'Concepto sin nombre';
-
-    // Limitar a 200 caracteres máximo
-    let nombre = descripcion.substring(0, 200);
-
-    // Si es muy largo, tomar solo la primera parte
-    if (nombre.length > 100) {
-        const primeraOracion = nombre.split('.')[0];
-        if (primeraOracion.length > 50) {
-            nombre = primeraOracion.substring(0, 100) + '...';
-        } else {
-            nombre = primeraOracion;
-        }
-    }
-
-    return nombre.trim();
-}
-
-function obtenerUnidadDesdeDescripcion(descripcion) {
-    // Intentar extraer unidad de la descripción
-    if (!descripcion) return '';
-
-    const unidades = ['m³', 'm2', 'kg', 'pza', 'm', 'lts', 'hr', 'día', 'mes'];
-    for (const unidad of unidades) {
-        if (descripcion.toLowerCase().includes(unidad.toLowerCase())) {
-            return unidad;
-        }
-    }
-
-    return '';
-}
-
-/**
- * Normaliza fechas que pueden venir como serial de Excel o como string
- * Retorna 'YYYY-MM-DD' que es lo que acepta MySQL DATE
- */
-function normalizarFecha(valor) {
-    if (!valor) return '';
-
-    // Si es número, es un serial de Excel (días desde 1900-01-01)
-    const num = parseFloat(valor);
-    if (!isNaN(num) && num > 1000) {
-        // Excel serial: epoch es 1899-12-30
-        const fecha = new Date(Math.round((num - 25569) * 86400 * 1000));
-        if (!isNaN(fecha.getTime())) {
-            return fecha.toISOString().split('T')[0];
-        }
-    }
-
-    // Si ya es string con formato reconocible, intentar parsearlo
-    const str = String(valor).trim();
-
-    // dd/mm/yyyy o dd-mm-yyyy
-    const matchDMY = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-    if (matchDMY) {
-        return `${matchDMY[3]}-${matchDMY[2].padStart(2, '0')}-${matchDMY[1].padStart(2, '0')}`;
-    }
-
-    // yyyy-mm-dd (ya en formato correcto)
-    const matchYMD = str.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-    if (matchYMD) {
-        return `${matchYMD[1]}-${matchYMD[2].padStart(2, '0')}-${matchYMD[3].padStart(2, '0')}`;
-    }
-
-    // Intentar con Date nativo como último recurso
-    const d = new Date(str);
-    if (!isNaN(d.getTime())) {
-        return d.toISOString().split('T')[0];
-    }
-
-    return '';
-}
-
-// ====================================
-// FUNCIONES PARA VER DETALLES, ITEMS Y ELIMINAR CONCEPTOS
-// ====================================
-
-function verDetalleConcepto(conceptoId, codigoClave, catalogoId, catalogoNombre, obraId = null, obraNombre = null) {
-    catalogosManager.obtenerDetalleConcepto(conceptoId)
-        .then(resp => {
-            // Normalizar respuesta
-            let concepto = resp;
-            if (resp && typeof resp === 'object' && ('success' in resp)) {
-                if (resp.success === false) {
-                    Swal.fire('Error', resp.error || resp.message || 'Error al cargar concepto', 'error');
-                    return;
-                }
-                if (resp.concepto) {
-                    concepto = resp.concepto;
-                }
-            }
-
-            const montoTotal = parseFloat(concepto.monto_total) || 0;
-            const totalItems = parseInt(concepto.total_items) || 0;
-
-            // Formatear fechas correctamente (YYYY-MM-DD a DD/MM/YYYY)
-            const formatearFecha = (fecha) => {
-                if (!fecha || fecha === '0000-00-00') return 'N/A';
-                const partes = fecha.split('-');
-                if (partes.length === 3) {
-                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-                }
-                return fecha;
-            };
-
-            // Formatear números
-            const formatearNumero = (valor, decimales = 2, moneda = false) => {
-                if (!valor || isNaN(valor)) return 'N/A';
-                const num = parseFloat(valor);
-                if (moneda) {
-                    return '$' + num.toLocaleString('es-MX', { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
-                }
-                return num.toLocaleString('es-MX', { minimumFractionDigits: decimales, maximumFractionDigits: 3 });
-            };
-
-            // Escapar correctamente los valores
-            const nombreConcepto = String(concepto.nombre_concepto || '').replace(/'/g, "\\'");
-            const catalogoNombreEscaped = String(catalogoNombre || '').replace(/'/g, "\\'");
-
-            let detalleHtml = `
-                <div class="concepto-simple">
-                    <!-- Información principal -->
-                    <div class="mb-3 text-center">
-                        <h5 class="text-primary">${concepto.codigo_concepto || 'N/A'}</h5>
-                    </div>
-
-                    <!-- Datos básicos -->
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Unidad:</span>
-                            <strong>${concepto.unidad_medida || 'N/A'}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Categoría:</span>
-                            <strong>${concepto.categoria || 'N/A'}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Subcategoría:</span>
-                            <strong>${concepto.subcategoria || 'N/A'}</strong>
-                        </div>
-                        ${concepto.numero_original ? `
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span>Número:</span>
-                            <strong>${concepto.numero_original}</strong>
-                        </div>
-                        ` : ''}
-                    </div>
-
-                    <!-- Descripción si existe -->
-                    ${concepto.descripcion ? `
-                    <div class="mb-3">
-                        <strong class="text-muted d-block">Descripción:</strong>
-                        <div class="bg-light p-2 rounded small">${concepto.descripcion}</div>
-                    </div>
-                    ` : ''}
-
-                    <!-- ===== NUEVA SECCIÓN: CAMPOS ADICIONALES ===== -->
-                    <div class="mb-3">
-                        <h6 class="text-primary border-bottom pb-2">Detalles del Concepto</h6>
-                        
-                        <!-- Cantidad (NUEVO) -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-sort-numeric-up me-1"></i>Cantidad:</span>
-                            <strong class="text-dark">${formatearNumero(concepto.cantidad, 3)}</strong>
-                        </div>
-                        
-                        <!-- Precio Unitario -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-tag me-1"></i>Precio Unitario:</span>
-                            <strong class="text-success">${formatearNumero(concepto.precio_unitario, 2, true)}</strong>
-                        </div>
-                        
-                        <!-- Importe -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-currency-dollar me-1"></i>Importe:</span>
-                            <strong class="text-success">${formatearNumero(concepto.importe, 2, true)}</strong>
-                        </div>
-                        
-                        <!-- Fecha Inicio -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-calendar me-1"></i>Fecha Inicio:</span>
-                            <strong>${formatearFecha(concepto.fecha_inicio)}</strong>
-                        </div>
-                        
-                        <!-- Fecha Fin -->
-                        <div class="d-flex justify-content-between border-bottom py-1">
-                            <span><i class="bi bi-calendar me-1"></i>Fecha Fin:</span>
-                            <strong>${formatearFecha(concepto.fecha_fin)}</strong>
-                        </div>
-                        
-                    </div>
-
-                    <!-- Estadísticas de items -->
-                    <div class="row text-center mb-3">
-                        <div class="col-6">
-                            <div class="border rounded p-2">
-                                <div class="text-primary fw-bold">${totalItems}</div>
-                                <small class="text-muted">Items</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="border rounded p-2">
-                                <div class="text-success fw-bold">$${montoTotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</div>
-                                <small class="text-muted">Total en items</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="gap-2 d-flex justify-content-center">
-                        <button class="btn btn-sm" style="background-color:#17a2b8;color:white;border:none;" 
-                            onclick="verItemsConcepto(${conceptoId}, '${nombreConcepto}', ${catalogoId}, '${catalogoNombreEscaped}')">
-                            <i class="bi bi-list-ul me-1"></i>Ver Items
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="Swal.close()">
-                            <i class="bi bi-x-circle me-1"></i>Cerrar
-                        </button>
-                    </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">Guardar Cambios</button>
                 </div>
-            `;
-
-            Swal.fire({
-                title: 'Detalle del Concepto',
-                html: detalleHtml,
-                width: '90%',
-                maxWidth: '450px',
-                showCloseButton: true,
-                showConfirmButton: false
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudo cargar el detalle del concepto', 'error');
-        });
-}
-
-/**
- * Mostrar items del concepto desde orden_compra_items
- */
-// ====================================
-// FUNCIÓN CORREGIDA - VER ITEMS
-// ====================================
-function verItemsConcepto(conceptoId, conceptoNombre, catalogoId, catalogoNombre) {
-    // Mostrar loading
-    Swal.fire({
-        title: 'Cargando items...',
-        html: '<div class="text-center"><div class="spinner-border text-primary"></div><p class="mt-2">Por favor espere</p></div>',
-        allowOutsideClick: false,
-        showConfirmButton: false
+            </form>
+        `
     });
 
-    // CORRECCIÓN: Ruta absoluta desde la raíz
-    fetch(`/api/get_concepto_items.php?concepto_id=${conceptoId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            Swal.close();
+    document.getElementById("formEditCatalogo").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const fd = new FormData(this);
+        fd.append('action', 'actualizar_catalogo');
+        fd.append('catalogo_id', catalogoId);
 
-            if (data.success && data.items && data.items.length > 0) {
-                let itemsHtml = `
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Descripción</th>
-                                    <th class="text-center">Cantidad</th>
-                                    <th class="text-center">Unidad</th>
-                                    <th class="text-end">Precio Unitario</th>
-                                    <th class="text-end">Subtotal</th>
-                                    <th class="text-center">Orden</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-
-                let totalGeneral = 0;
-
-                data.items.forEach(item => {
-                    const cantidad = parseFloat(item.cantidad) || 0;
-                    const precio = parseFloat(item.precio_unitario) || 0;
-                    const subtotal = cantidad * precio;
-                    totalGeneral += subtotal;
-
-                    itemsHtml += `
-                        <tr>
-                            <td>${escapeHtml(item.descripcion || '')}</td>
-                            <td class="text-center">${cantidad.toFixed(3)}</td>
-                            <td class="text-center">${escapeHtml(item.unidad_medida || 'N/A')}</td>
-                            <td class="text-end">$${precio.toFixed(2)}</td>
-                            <td class="text-end fw-bold">$${subtotal.toFixed(2)}</td>
-                            <td class="text-center">
-                                <span class="badge bg-success">${item.folio_oc || 'OC-' + item.orden_compra_id}</span>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                itemsHtml += `
-                            </tbody>
-                            <tfoot class="table-light fw-bold">
-                                <tr>
-                                    <td colspan="4" class="text-end">Total:</td>
-                                    <td class="text-end">$${totalGeneral.toFixed(2)}</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                `;
-
-                Swal.fire({
-                    title: `Items de: ${conceptoNombre}`,
-                    html: itemsHtml,
-                    width: '90%',
-                    maxWidth: '1000px',
-                    confirmButtonText: 'Cerrar',
-                    confirmButtonColor: '#0d6efd'
-                });
-            } else {
-                Swal.fire({
-                    title: 'Sin items',
-                    html: `
-                        <div class="text-center py-4">
-                            <i class="bi bi-inbox display-1 text-muted"></i>
-                            <p class="mt-3">No hay items asignados a este concepto</p>
-                            <small class="text-muted">Los items aparecen cuando se aprueban órdenes de compra</small>
-                        </div>
-                    `,
-                    icon: 'info',
-                    confirmButtonText: 'Cerrar'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.close();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                html: `
-                    <p>No se pudieron cargar los items</p>
-                    <small class="text-muted">${error.message}</small>
-                    <p class="mt-3"><strong>Verifica:</strong> El archivo API debe existir en la lista de conceptos.</p>
-                `,
-                confirmButtonText: 'Cerrar'
-            });
-        });
+        UI.loading("Actualizando...");
+        fetch('catalogos_manager.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(res => {
+                UI.loading.hide();
+                if (res.success) {
+                    UI.modal.close();
+                    UI.toast.success("Catálogo actualizado");
+                    setTimeout(() => location.reload(), 1500);
+                } else UI.toast.error(res.error);
+            }).catch(() => { UI.loading.hide(); UI.toast.error("Error de conexión"); });
+    });
 }
 
-
-/**
- * Función helper para escapar HTML
- */
+// Helpers
 function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
     return String(text || '').replace(/[&<>"']/g, m => map[m]);
 }
 
-function renderizarConceptosAgrupados(conceptos, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
+function esCategoriaNivel1(clave) {
+    if (!clave) return false;
+    const v = clave.toString().trim().toUpperCase();
+    if (/^\d+$/.test(v)) return parseInt(v) < 1000;
+    return /^[IVXLCDM]+$/.test(v);
+}
+function esSubcategoria(clave) {
+    if (!clave) return false;
+    return /^[A-Z0-9]+\.[0-9]+$/.test(clave.toString().trim().toUpperCase());
+}
+function esCategoriaNivel2(clave) { return /^\d+\.\d+$/.test(clave.toString().trim()); }
+function esCategoriaNivel3(clave) { return /^[A-Z0-9]+\.[0-9]+\.[0-9]+$/.test(clave.toString().trim().toUpperCase()); }
 
-    // Agrupar por categoría y subcategoría
-    const grupos = {};
-    let sinCategoria = [];
+function procesarDatosCatalogoFlexible(jsonData) {
+    const conceptos = [];
+    let filaEnc = -1;
+    let mapeo = {};
 
-    conceptos.forEach(c => {
-        const cat = c.categoria?.trim() || '';
-        const sub = c.subcategoria?.trim() || '';
-
-        if (!cat) {
-            sinCategoria.push(c);
-            return;
-        }
-
-        if (!grupos[cat]) grupos[cat] = { nombre: cat, subs: {}, directos: [] };
-
-        if (sub) {
-            if (!grupos[cat].subs[sub]) grupos[cat].subs[sub] = [];
-            grupos[cat].subs[sub].push(c);
-        } else {
-            grupos[cat].directos.push(c);
-        }
-    });
-
-    // Renderizar HTML
-    let html = '';
-
-    // Ordenar categorías (I, II, III, etc.)
-    const ordenRomano = { 'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10 };
-    const catsOrdenadas = Object.keys(grupos).sort((a, b) => (ordenRomano[a] || 999) - (ordenRomano[b] || 999));
-
-    catsOrdenadas.forEach(catKey => {
-        const cat = grupos[catKey];
-        html += `
-            <div class="mb-4 border rounded">
-                <div class="bg-primary text-white p-3 fw-bold">
-                    ${cat.nombre}
-                </div>
-                <div class="p-3">
-        `;
-
-        // Subcategorías
-        const subsOrdenadas = Object.keys(cat.subs).sort((a, b) => {
-            const [, numA] = a.split('.');
-            const [, numB] = b.split('.');
-            return (parseInt(numA) || 0) - (parseInt(numB) || 0);
-        });
-
-        subsOrdenadas.forEach(subKey => {
-            html += `
-                <div class="mb-3 ms-3">
-                    <div class="bg-light p-2 rounded border-start border-3 border-secondary">
-                        <strong>${subKey}</strong>
-                    </div>
-                    <div class="ms-4 mt-2">
-                        ${renderConceptosList(cat.subs[subKey])}
-                    </div>
-                </div>
-            `;
-        });
-
-        // Conceptos directos
-        if (cat.directos.length > 0) {
-            html += renderConceptosList(cat.directos);
-        }
-
-        html += '</div></div>';
-    });
-
-    // Sin categoría
-    if (sinCategoria.length > 0) {
-        html += `
-            <div class="mb-4 border rounded">
-                <div class="bg-secondary text-white p-3 fw-bold">
-                    Sin Categoría
-                </div>
-                <div class="p-3">
-                    ${renderConceptosList(sinCategoria)}
-                </div>
-            </div>
-        `;
+    for (let i = 0; i < Math.min(jsonData.length, 20); i++) {
+        const det = detectarEncabezados(jsonData[i]);
+        if (det.valido) { filaEnc = i; mapeo = det.mapeo; break; }
     }
+    if (filaEnc === -1) throw new Error('No se encontraron los encabezados (CLAVE, DESCRIPCIÓN).');
 
-    container.innerHTML = html;
+    let nodoActual = '';
+    let seq = 1;
+    for (let i = filaEnc + 1; i < jsonData.length; i++) {
+        const f = jsonData[i];
+        if (!f || f.length === 0) continue;
+        const num = obtenerValorColumna(f, mapeo.numero);
+        const cve = obtenerValorColumna(f, mapeo.clave);
+        const desc = obtenerValorColumna(f, mapeo.descripcion);
+        if (!cve && !desc) continue;
+        const cant = obtenerValorColumna(f, mapeo.cantidad);
+        const pu = obtenerValorColumna(f, mapeo.precio_unitario);
+        const hasM = (cant && !isNaN(parseFloat(cant))) || (pu && !isNaN(parseFloat(pu)));
+        const cveU = cve.toUpperCase();
+
+        if (!hasM && (esCategoriaNivel1(cveU) || esSubcategoria(cveU) || esCategoriaNivel2(cve) || esCategoriaNivel3(cve))) {
+            nodoActual = cve;
+            conceptos.push({ es_nodo: true, nodo_clave: cve, nombre: desc.trim() });
+            continue;
+        }
+        if (cve && desc) {
+            conceptos.push({
+                codigo_concepto: cve,
+                nombre_concepto: desc.substring(0, 100).trim(),
+                descripcion: desc.trim(),
+                unidad_medida: obtenerValorColumna(f, mapeo.unidad) || obtenerUnidadDesdeDescripcion(desc),
+                nodo_clave: nodoActual,
+                numero_original: num || String(seq),
+                cantidad: cant,
+                precio_unitario: pu,
+                importe: obtenerValorColumna(f, mapeo.importe),
+                fecha_inicio: normalizarFecha(obtenerValorColumna(f, mapeo.fecha_inicio)),
+                fecha_fin: normalizarFecha(obtenerValorColumna(f, mapeo.fecha_fin))
+            });
+            seq++;
+        }
+    }
+    return conceptos;
 }
 
-function renderConceptosList(conceptos) {
-    if (!conceptos || conceptos.length === 0) return '<p class="text-muted">Sin conceptos</p>';
+function detectarEncabezados(f) {
+    const m = { numero: -1, clave: -1, descripcion: -1, unidad: -1, cantidad: -1, precio_unitario: -1, importe: -1, fecha_inicio: -1, fecha_fin: -1 };
+    f.forEach((c, i) => {
+        if (!c) return;
+        const v = String(c).toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (v.includes('NUMERO') || v === 'NO.' || v === '#') m.numero = i;
+        if (v.includes('CLAVE') || v.includes('CODIGO') || v === 'CVE') m.clave = i;
+        if (v.includes('DESCRIPCION') || v.includes('CONCEPTO') || v === 'DESC') m.descripcion = i;
+        if (v.includes('UNIDAD') || v === 'U.M' || v === 'UM') m.unidad = i;
+        if (v === 'CANTIDAD' || v === 'CANT') m.cantidad = i;
+        if (v === 'P.U.' || v === 'PU' || v.includes('UNITARIO')) m.precio_unitario = i;
+        if (v === 'IMPORTE' || v.includes('MONTO')) m.importe = i;
+        if (v.includes('FECHA INICIO') || v === 'INICIO') m.fecha_inicio = i;
+        if (v.includes('FECHA FIN') || v === 'FIN' || v.includes('TERMINO')) m.fecha_fin = i;
+    });
+    return { valido: (m.clave !== -1 && m.descripcion !== -1), mapeo: m };
+}
 
-    return conceptos.map(c => {
-        const monto = parseFloat(c.monto_total || 0);
-        const items = parseInt(c.total_items || 0);
-
-        return `
-            <div class="card mb-2 shadow-sm">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">
-                                <span class="badge bg-info">${c.codigo_concepto}</span>
-                                ${c.nombre_concepto}
-                            </h6>
-                            ${c.descripcion ? `<p class="mb-1 small text-muted">${c.descripcion.substring(0, 80)}...</p>` : ''}
-                            <small class="text-muted">
-                                ${c.unidad_medida ? ` ${c.unidad_medida}` : ''}
-                                ${c.numero_original ? ` | #${c.numero_original}` : ''}
-                            </small>
-                        </div>
-                        <div class="text-end">
-                            <div class="badge bg-success mb-2">$${monto.toLocaleString('es-MX')}</div>
-                            <br>
-                            <small class="text-muted">${items} items</small>
-                            <div class="btn-group btn-group-sm mt-2">
-                                <button class="btn btn-sm btn-outline-primary" 
-                                    onclick="verDetalleConcepto(${c.id}, '${c.codigo_concepto}', ${c.catalogo_id}, '')">
-                                    
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" 
-                                    onclick="eliminarConcepto(${c.id}, ${c.catalogo_id}, '')">
-                                    
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
+function obtenerValorColumna(f, i) { return (i === -1 || i >= f.length) ? '' : (f[i] ? String(f[i]).trim() : ''); }
+function obtenerUnidadDesdeDescripcion(d) {
+    const u = ['m³', 'm2', 'kg', 'pza', 'm', 'lts', 'hr', 'día', 'mes'];
+    for (const x of u) if (d.toLowerCase().includes(x)) return x;
+    return '';
+}
+function normalizarFecha(v) {
+    if (!v) return '';
+    const n = parseFloat(v);
+    if (!isNaN(n) && n > 1000) {
+        const d = new Date(Math.round((n - 25569) * 86400 * 1000));
+        return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0];
+    }
+    const s = String(v).trim();
+    const m1 = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (m1) return `${m1[3]}-${m1[2].padStart(2, '0')}-${m1[1].padStart(2, '0')}`;
+    const m2 = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+    if (m2) return `${m2[1]}-${m2[2].padStart(2, '0')}-${m2[3].padStart(2, '0')}`;
+    const d2 = new Date(s);
+    return isNaN(d2.getTime()) ? '' : d2.toISOString().split('T')[0];
 }

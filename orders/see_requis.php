@@ -828,7 +828,7 @@ function generarTextoUbicacion($requisicion_data)
       if (tiposVisualizables.includes(tipoMime)) {
         window.open('/orders/view_archivo.php?id=' + archivoId, '_blank');
       } else {
-        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
+        UI.toast.info('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
         window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
       }
     }

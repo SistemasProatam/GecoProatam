@@ -317,7 +317,7 @@ while ($archivo = $archivos->fetch_assoc()) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <style>
         .form-body {
             padding-top: 0;
@@ -962,7 +962,6 @@ while ($archivo = $archivos->fetch_assoc()) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
         /* ══════════════════════════════════════════════════════════════
    DATOS DESDE PHP  →  JS  (sin mezclar PHP dentro de funciones)
@@ -1221,13 +1220,18 @@ while ($archivo = $archivos->fetch_assoc()) {
 
             const rows = document.querySelectorAll('#itemsTableBody .item-row');
             if (rows.length <= 1) {
-                showAlert('Debe haber al menos un item en la orden de compra.', 'warning');
+            showAlert('Debe haber al menos un item en la orden de compra.', 'warning');
                 return;
             }
 
             const row = btn.closest('.item-row');
-            showConfirm('¿Eliminar este item de la orden de compra?', '¿Eliminar item?').then(result => {
-                if (result.isConfirmed) {
+            UI.confirm({
+                title: '¿Eliminar item?',
+                message: '¿Eliminar este item de la orden de compra?',
+                danger: true,
+                confirmText: 'Eliminar',
+            }).then(ok => {
+                if (ok) {
                     row.remove();
                     recalcularIndices();
                     calculateTotals();
@@ -1414,71 +1418,37 @@ while ($archivo = $archivos->fetch_assoc()) {
                 }
             }
 
-            // 4. Confirmación con SweetAlert
-            showConfirm(
-                'La orden de compra será enviada nuevamente para revisión.',
-                '¿Guardar cambios y reenviar?'
-            ).then(result => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Guardando cambios...',
-                        text: 'Por favor espere.',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-                    // Activar el hidden para que PHP detecte isset($_POST['actualizar_oc'])
+            // 4. Confirmación
+            UI.confirm({
+                title: '¿Guardar cambios y reenviar?',
+                message: 'La orden de compra será enviada nuevamente para revisión.',
+                confirmText: 'Sí, guardar y reenviar',
+            }).then(ok => {
+                if (ok) {
+                    UI.loading('Guardando cambios...');
                     document.getElementById('input_actualizar_oc').value = '1';
                     document.getElementById('formEditarOC').submit();
                 }
             });
         });
 
-        /* ══════════════════════════════════════════════════════════════
-           ALERTAS CON SWEETALERT2
-           ══════════════════════════════════════════════════════════════ */
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3500,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-
         function showToast(msg, type = 'info') {
-            // type puede ser: 'success', 'error', 'warning', 'info'
-            const iconMap = {
-                danger: 'error'
-            };
-            Toast.fire({
-                icon: iconMap[type] || type,
-                title: msg
-            });
+            if (type === 'danger') type = 'error';
+            UI.toast[type] ? UI.toast[type](msg) : UI.toast.info(msg);
         }
 
         function showAlert(msg, type = 'info') {
-            return Swal.fire({
-                icon: type === 'danger' ? 'error' : type,
-                title: type === 'warning' ? 'Atención' : type === 'danger' ? 'Error' : 'Información',
-                text: msg,
-                confirmButtonColor: '#113456'
+            return UI.modal({
+                title: type === 'danger' ? 'Error' : type === 'warning' ? 'Atención' : 'Información',
+                html: `<div class="p-3">${msg}</div>`
             });
         }
 
         function showConfirm(msg, title = '¿Confirmar acción?') {
-            return Swal.fire({
+            return UI.confirm({
                 title: title,
-                text: msg,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#113456',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, continuar',
-                cancelButtonText: 'Cancelar'
+                message: msg,
+                danger: msg.toLowerCase().includes('eliminar')
             });
         }
 

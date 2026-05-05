@@ -226,7 +226,7 @@ endif; ?>
         console.error('html2canvas error:', err);
         btn.classList.remove('btn-png-loading');
         btn.innerHTML = '<i class="bi bi-file-image"></i> Descargar PNG';
-        alert('No se pudo generar la imagen. Intenta de nuevo.');
+        UI.toast.error('No se pudo generar la imagen. Intenta de nuevo.');
       });
     }
   </script>

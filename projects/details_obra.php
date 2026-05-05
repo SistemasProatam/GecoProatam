@@ -12,7 +12,7 @@ require_once __DIR__ . "/../conexion.php";
 $obra_id = $_GET['id'] ?? 0;
 
 if ($obra_id <= 0) {
-  header("Location: list_obras_view.php");
+  header("Location: list_obras.php"); // Corregido el nombre del archivo si es necesario
   exit;
 }
 
@@ -33,7 +33,7 @@ $stmt->execute();
 $obra = $stmt->get_result()->fetch_assoc();
 
 if (!$obra) {
-  header("Location: list_obras_view.php");
+  header("Location: list_obras.php");
   exit;
 }
 
@@ -48,13 +48,13 @@ $stmt_catalogos = $conn->prepare($sql_catalogos);
 $stmt_catalogos->bind_param("i", $obra_id);
 $stmt_catalogos->execute();
 $catalogos = $stmt_catalogos->get_result();
-// AJAX
+
+// AJAX handler
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   header('Content-Type: application/json');
   $action = $_POST['action'] ?? '';
   try {
     switch ($action) {
-
       case 'obtener_subcontratos':
         $oid = (int)($_POST['obra_id'] ?? 0);
         $sql = "SELECT sc.id, sc.proveedor_id, p.nombre AS proveedor_nombre,
@@ -86,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       case 'obtener_conceptos_obra':
         $oid = (int)($_POST['obra_id'] ?? 0);
         $sql = "SELECT c.id, c.codigo_concepto, c.nombre_concepto, c.cantidad, c.unidad_medida, c.categoria, c.subcategoria,
-                               GROUP_CONCAT(DISTINCT scc.subcontrato_id ORDER BY scc.subcontrato_id) AS subcontratos_ids,
-                               GROUP_CONCAT(DISTINCT COALESCE(pr_a.nombre,'') ORDER BY scc.subcontrato_id) AS proveedores_asignados
+                                GROUP_CONCAT(DISTINCT scc.subcontrato_id ORDER BY scc.subcontrato_id) AS subcontratos_ids,
+                                GROUP_CONCAT(DISTINCT COALESCE(pr_a.nombre,'') ORDER BY scc.subcontrato_id) AS proveedores_asignados
                         FROM conceptos c
                         JOIN catalogos cat ON cat.id=c.catalogo_id AND cat.obra_id=?
                         LEFT JOIN subcontrato_conceptos scc ON scc.concepto_id=c.id
@@ -107,12 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         break;
 
       case 'crear_subcontrato':
-        $oid         = $obra_id;
+        $oid = $obra_id;
         $proveedor_id = (int)($_POST['proveedor_id'] ?? 0) ?: null;
-        $total       = (float)($_POST['total_estimado'] ?? 0);
-        $pct         = (float)($_POST['anticipo_pct'] ?? 0);
-        $ant         = round($total * $pct / 100, 2);
-        $desc        = trim($_POST['descripcion'] ?? '');
+        $total = (float)($_POST['total_estimado'] ?? 0);
+        $pct = (float)($_POST['anticipo_pct'] ?? 0);
+        $ant = round($total * $pct / 100, 2);
+        $desc = trim($_POST['descripcion'] ?? '');
         $stmt = $conn->prepare("INSERT INTO subcontratos (obra_id,proveedor_id,total_estimado,anticipo_pct,anticipo_monto,descripcion) VALUES (?,?,?,?,?,?)");
         $stmt->bind_param("iiddds", $oid, $proveedor_id, $total, $pct, $ant, $desc);
         if ($stmt->execute())
@@ -122,12 +122,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         break;
 
       case 'actualizar_subcontrato':
-        $id          = (int)($_POST['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? 0);
         $proveedor_id = (int)($_POST['proveedor_id'] ?? 0) ?: null;
-        $total       = (float)($_POST['total_estimado'] ?? 0);
-        $pct         = (float)($_POST['anticipo_pct'] ?? 0);
-        $ant         = round($total * $pct / 100, 2);
-        $desc        = trim($_POST['descripcion'] ?? '');
+        $total = (float)($_POST['total_estimado'] ?? 0);
+        $pct = (float)($_POST['anticipo_pct'] ?? 0);
+        $ant = round($total * $pct / 100, 2);
+        $desc = trim($_POST['descripcion'] ?? '');
         $stmt = $conn->prepare("UPDATE subcontratos SET proveedor_id=?,total_estimado=?,anticipo_pct=?,anticipo_monto=?,descripcion=? WHERE id=?");
         $stmt->bind_param("idddsi", $proveedor_id, $total, $pct, $ant, $desc, $id);
         if ($stmt->execute())
@@ -217,81 +217,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       case 'notificar_exceso_subcontratos':
         $oid = (int)($_POST['obra_id'] ?? 0);
-
-        // Obtener datos actuales de la obra y suma de subcontratos
         $stmt = $conn->prepare("SELECT o.id, o.nombre_obra, o.costo_directo,
         COALESCE(SUM(sc.total_estimado), 0) + COALESCE(SUM(ext.total_ext), 0) AS suma_subcontratos
         FROM obras o
         LEFT JOIN subcontratos sc ON sc.obra_id = o.id
-        LEFT JOIN (SELECT subcontrato_id, SUM(monto) AS total_ext
-                   FROM subcontrato_extraordinarios GROUP BY subcontrato_id) ext
-               ON ext.subcontrato_id = sc.id
-        WHERE o.id = ?
-        GROUP BY o.id");
+        LEFT JOIN (SELECT subcontrato_id, SUM(monto) AS total_ext FROM subcontrato_extraordinarios GROUP BY subcontrato_id) ext ON ext.subcontrato_id = sc.id
+        WHERE o.id = ? GROUP BY o.id");
         $stmt->bind_param("i", $oid);
         $stmt->execute();
         $info = $stmt->get_result()->fetch_assoc();
-
-        if (!$info) {
-          echo json_encode(['success' => false, 'error' => 'Obra no encontrada']);
-          break;
-        }
-
-        // Nombre del usuario en sesión (ajusta según tu sistema de sesiones)
-        $usuarioNombre = $_SESSION['nombre_completo']
-          ?? ($_SESSION['nombres'] ?? 'Usuario del sistema');
-
+        if (!$info) { echo json_encode(['success' => false, 'error' => 'Obra no encontrada']); break; }
+        $usuarioNombre = $_SESSION['nombre_completo'] ?? ($_SESSION['nombres'] ?? 'Usuario del sistema');
         $datosAlerta = [
-          'obra_id'          => $oid,
-          'obra_nombre'      => $info['nombre_obra'],
-          'costo_directo'    => number_format($info['costo_directo'], 2),
-          'suma_subcontratos' => number_format($info['suma_subcontratos'], 2),
-          'exceso'           => number_format($info['suma_subcontratos'] - $info['costo_directo'], 2),
-          'usuario'          => $usuarioNombre,
+          'obra_id' => $oid, 'obra_nombre' => $info['nombre_obra'], 'costo_directo' => number_format($info['costo_directo'], 2),
+          'suma_subcontratos' => number_format($info['suma_subcontratos'], 2), 'exceso' => number_format($info['suma_subcontratos'] - $info['costo_directo'], 2),
+          'usuario' => $usuarioNombre
         ];
-
         $enviado = false;
-
         try {
-          $sql_subdirector = "SELECT u.correo_corporativo,
-                                   CONCAT(u.nombres, ' ', u.apellidos) AS nombre_completo
-                            FROM usuarios u
-                            INNER JOIN departamentos d ON u.departamento_id = d.id
-                            WHERE d.nombre LIKE '%Subdirec%'
-                            AND u.activo = 1
-                            AND u.correo_corporativo IS NOT NULL
-                            AND u.correo_corporativo != ''";
+          $sql_subdirector = "SELECT u.correo_corporativo, CONCAT(u.nombres, ' ', u.apellidos) AS nombre_completo FROM usuarios u INNER JOIN departamentos d ON u.departamento_id = d.id WHERE d.nombre LIKE '%Subdirec%' AND u.activo = 1 AND u.correo_corporativo IS NOT NULL AND u.correo_corporativo != ''";
           $result_subdirector = $conn->query($sql_subdirector);
-
           if ($result_subdirector && $result_subdirector->num_rows > 0) {
             $emailHandler = new EmailHandler();
             while ($subdirector = $result_subdirector->fetch_assoc()) {
-              $emailHandler->enviarAlertaExcesoSubcontratos(
-                $subdirector['correo_corporativo'],
-                $subdirector['nombre_completo'],
-                $datosAlerta
-              );
+              $emailHandler->enviarAlertaExcesoSubcontratos($subdirector['correo_corporativo'], $subdirector['nombre_completo'], $datosAlerta);
             }
             $enviado = true;
-            error_log("Alerta de exceso enviada a Subdirección - Obra ID: {$oid}");
-          } else {
-            error_log("No se encontró Subdirector activo con correo - Obra ID: {$oid}");
           }
-        } catch (Exception $e) {
-          error_log("Error al enviar alerta de exceso: " . $e->getMessage());
-        }
-
-        echo json_encode([
-          'success' => true,
-          'enviado' => $enviado,
-          'message' => $enviado
-            ? 'Notificación enviada a Subdirección'
-            : 'Subcontrato guardado. No se encontró Subdirector con correo registrado.'
-        ]);
+        } catch (Exception $e) {}
+        echo json_encode(['success' => true, 'enviado' => $enviado, 'message' => $enviado ? 'Notificación enviada' : 'No se encontró subdirector']);
         break;
 
       default:
-        echo json_encode(['success' => false, 'error' => 'Accion no valida']);
+        echo json_encode(['success' => false, 'error' => 'Acción no válida']);
     }
   } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -303,2274 +261,589 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <title>Detalles de Obra - <?= htmlspecialchars($obra['nombre_obra']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
   <style>
-    .sc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px
-    }
-
-    .sc-card {
-      border: 1px solid rgba(0, 0, 0, .09);
-      border-radius: 12px;
-      overflow: hidden;
-      background: #fff;
-      transition: box-shadow .2s, transform .2s;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .05)
-    }
-
-    .sc-card:hover {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .10);
-      transform: translateY(-2px)
-    }
-
-    .sc-card-head {
-      padding: 14px 16px 12px;
-      border-bottom: 1px solid rgba(0, 0, 0, .06);
-      display: flex;
-      align-items: flex-start;
-      gap: 10px
-    }
-
-    .sc-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 9px;
-      background: rgba(63, 117, 85, .12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #3f7555;
-      font-size: 16px;
-      flex-shrink: 0
-    }
-
-    .sc-name {
-      font-size: .88rem;
-      font-weight: 700;
-      color: #0f172a;
-      line-height: 1.3
-    }
-
-    .sc-sub {
-      font-size: .72rem;
-      color: #8fa3b8;
-      margin-top: 2px
-    }
-
-    .sc-body {
-      padding: 12px 16px
-    }
-
-    .sc-foot {
-      padding: 9px 16px;
-      background: rgba(0, 0, 0, .02);
-      border-top: 1px solid rgba(0, 0, 0, .05);
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
-      flex-wrap: wrap
-    }
-
-    .monto-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 10px
-    }
-
-    .monto-item {
-      text-align: center
-    }
-
-    .monto-lbl {
-      font-size: .62rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #0f172a;
-      margin-bottom: 2px
-    }
-
-    .monto-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: .88rem;
-      font-weight: 700;
-      color: #0f172a
-    }
-
-    .mv-blue {
-      color: #1a60a8
-    }
-
-    .mv-amber {
-      color: #b47800
-    }
-
-    .mv-green {
-      color: #1a7555
-    }
-
-    .mv-red {
-      color: #c0392b
-    }
-
-    .mv-purple {
-      color: #6d28d9
-    }
-
-    .prog-wrap {
-      height: 5px;
-      background: rgba(0, 0, 0, .07);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-top: 4px
-    }
-
-    .prog-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, #3f7555, #5fbe8a);
-      transition: width .6s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .tag-cnt {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: .68rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(63, 117, 85, .1);
-      color: #3f7555;
-      border: 1px solid rgba(63, 117, 85, .2)
-    }
-
-    .tag-ext {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: .68rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(109, 40, 217, .08);
-      color: #6d28d9;
-      border: 1px solid rgba(109, 40, 217, .2);
-      cursor: pointer;
-      transition: background .15s
-    }
-
-    .tag-ext:hover {
-      background: rgba(109, 40, 217, .15)
-    }
-
-    /* editor */
-    .sc-editor-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .52);
-      z-index: 1060;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px)
-    }
-
-    .sc-editor-overlay.open {
-      display: flex
-    }
-
-    .sc-editor-box {
-      background: #fff;
-      border-radius: 16px;
-      width: 96%;
-      max-width: 940px;
-      max-height: 88vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .22);
-      animation: scFadeUp .28s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    @keyframes scFadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(14px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    .sc-editor-head {
-      padding: 18px 22px 14px;
-      border-bottom: 1px solid rgba(0, 0, 0, .07);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0
-    }
-
-    .sc-editor-body {
-      flex: 1;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr 1fr
-    }
-
-    .sc-editor-col {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 14px
-    }
-
-    .sc-editor-col:first-child {
-      border-right: 1px solid rgba(0, 0, 0, .07)
-    }
-
-    .sc-editor-foot {
-      padding: 12px 22px;
-      border-top: 1px solid rgba(0, 0, 0, .07);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-      font-size: .75rem;
-      color: #8fa3b8
-    }
-
-    .dd-head {
-      font-size: .72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: #8fa3b8;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px
-    }
-
-    .dd-cnt {
-      background: rgba(0, 0, 0, .07);
-      padding: 1px 7px;
-      border-radius: 20px;
-      font-size: .68rem;
-      font-weight: 600
-    }
-
-    .dd-cnt.green {
-      background: rgba(63, 117, 85, .15);
-      color: #3f7555
-    }
-
-    .dd-search {
-      width: 100%;
-      padding: 6px 10px;
-      border: 1px solid rgba(0, 0, 0, .1);
-      border-radius: 7px;
-      font-size: .8rem;
-      background: #f8f9fa;
-      margin-bottom: 7px;
-      font-family: inherit
-    }
-
-    .dd-search:focus {
-      outline: none;
-      border-color: #3f7555
-    }
-
-    .dd-zone {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px;
-      border-radius: 8px;
-      min-height: 260px;
-      max-height: 340px;
-      transition: background .15s
-    }
-
-    .dd-zone.drag-over {
-      background: rgba(63, 117, 85, .06);
-      outline: 2px dashed rgba(63, 117, 85, .35);
-      outline-offset: -3px
-    }
-
-    .concept-chip {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 9px;
-      border-radius: 7px;
-      border: 1px solid rgba(0, 0, 0, .07);
-      background: #fff;
-      cursor: grab;
-      margin-bottom: 4px;
-      transition: box-shadow .15s, border-color .15s;
-      user-select: none;
-      font-size: .78rem
-    }
-
-    .concept-chip:hover {
-      border-color: rgba(63, 117, 85, .35);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
-    }
-
-    .concept-chip.dragging {
-      opacity: .4
-    }
-
-    .concept-chip.already {
-      border-color: rgba(109, 40, 217, .25);
-      background: rgba(109, 40, 217, .04)
-    }
-
-    .chip-cat {
-      flex-shrink: 0;
-      font-size: .6rem;
-      font-weight: 700;
-      padding: 2px 5px;
-      border-radius: 4px;
-      background: rgba(63, 117, 85, .12);
-      color: #3f7555;
-      white-space: nowrap
-    }
-
-    .chip-cod {
-      font-size: .65rem;
-      color: #8fa3b8;
-      font-weight: 600;
-      white-space: nowrap;
-      flex-shrink: 0
-    }
-
-    .chip-nom {
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 500;
-      color: #0f172a
-    }
-
-    .chip-um {
-      font-size: .62rem;
-      color: #8fa3b8;
-      flex-shrink: 0
-    }
-
-    .chip-also {
-      font-size: .62rem;
-      color: #6d28d9;
-      flex-shrink: 0;
-      font-style: italic;
-      white-space: nowrap
-    }
-
-    .dd-empty {
-      text-align: center;
-      padding: 30px 10px;
-      color: #8fa3b8;
-      font-size: .78rem
-    }
-
-    .dd-empty i {
-      font-size: 1.6rem;
-      display: block;
-      margin-bottom: 6px;
-      opacity: .4
-    }
-
-    /* modal sc */
-    .sc-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .5);
-      z-index: 1070;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(3px)
-    }
-
-    .sc-modal-overlay.open {
-      display: flex
-    }
-
-    .sc-modal-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 26px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, .18);
-      position: relative;
-      animation: scFadeUp .25s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .sc-modal-title {
-      font-size: .98rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #3f7555
-    }
-
-    .sc-mc {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: none;
-      border: none;
-      color: #8fa3b8;
-      font-size: 17px;
-      cursor: pointer
-    }
-
-    .sc-mc:hover {
-      color: #e8445a
-    }
-
-    .sc-fg {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px
-    }
-
-    .sc-fgi {
-      display: flex;
-      flex-direction: column;
-      gap: 3px
-    }
-
-    .sc-fgi.full {
-      grid-column: 1/-1
-    }
-
-    .sc-lbl {
-      font-size: .7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #8fa3b8;
-      margin-bottom: 3px
-    }
-
-    .sc-inp {
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, .12);
-      border-radius: 7px;
-      color: #0f172a;
-      padding: 7px 11px;
-      font-family: inherit;
-      font-size: .84rem;
-      transition: border-color .2s;
-      width: 100%
-    }
-
-    .sc-inp:focus {
-      outline: none;
-      border-color: #3f7555
-    }
-
-    .sc-fa {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px
-    }
-
-    .anticipo-preview {
-      background: rgba(63, 117, 85, .07);
-      border: 1px solid rgba(63, 117, 85, .2);
-      border-radius: 7px;
-      padding: 8px 12px;
-      font-size: .8rem;
-      color: #3f7555;
-      font-weight: 600;
-      margin-top: 4px;
-      display: none
-    }
-
-    /* extraordinarios */
-    .ext-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .5);
-      z-index: 1080;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(3px)
-    }
-
-    .ext-overlay.open {
-      display: flex
-    }
-
-    .ext-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 0;
-      width: 100%;
-      max-width: 580px;
-      max-height: 85vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, .18);
-      animation: scFadeUp .25s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .ext-head {
-      padding: 18px 22px 14px;
-      border-bottom: 1px solid rgba(0, 0, 0, .07);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0
-    }
-
-    .ext-head-title {
-      font-size: .95rem;
-      font-weight: 700;
-      color: #0f172a
-    }
-
-    .ext-head-sub {
-      font-size: .74rem;
-      color: #8fa3b8;
-      margin-top: 2px
-    }
-
-    .ext-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px 22px
-    }
-
-    .ext-foot {
-      padding: 14px 22px;
-      border-top: 1px solid rgba(0, 0, 0, .07);
-      flex-shrink: 0
-    }
-
-    .ext-form {
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, .08);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 18px
-    }
-
-    .ext-form-title {
-      font-size: .74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #3f7555;
-      margin-bottom: 10px
-    }
-
-    .ext-fg {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px
-    }
-
-    .ext-fgi {
-      display: flex;
-      flex-direction: column;
-      gap: 3px
-    }
-
-    .ext-fgi.full {
-      grid-column: 1/-1
-    }
-
-    .ext-list-title {
-      font-size: .74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #8fa3b8;
-      margin-bottom: 10px
-    }
-
-    .ext-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(0, 0, 0, .07);
-      background: #fff;
-      margin-bottom: 8px
-    }
-
-    .ext-item-monto {
-      font-family: 'Outfit', sans-serif;
-      font-size: .92rem;
-      font-weight: 700;
-      color: #6d28d9;
-      white-space: nowrap;
-      flex-shrink: 0;
-      min-width: 90px
-    }
-
-    .ext-item-info {
-      flex: 1;
-      min-width: 0
-    }
-
-    .ext-item-desc {
-      font-size: .82rem;
-      font-weight: 500;
-      color: #0f172a;
-      margin-bottom: 2px
-    }
-
-    .ext-item-fecha {
-      font-size: .72rem;
-      color: #8fa3b8
-    }
-
-    .ext-item-del {
-      background: none;
-      border: none;
-      color: #8fa3b8;
-      cursor: pointer;
-      font-size: .9rem;
-      padding: 2px 6px;
-      border-radius: 5px;
-      transition: color .15s, background .15s;
-      flex-shrink: 0
-    }
-
-    .ext-item-del:hover {
-      color: #e8445a;
-      background: rgba(232, 68, 90, .08)
-    }
-
-    .ext-total-bar {
-      background: rgba(109, 40, 217, .07);
-      border: 1px solid rgba(109, 40, 217, .2);
-      border-radius: 8px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .ext-total-lbl {
-      font-size: .8rem;
-      font-weight: 600;
-      color: #6d28d9
-    }
-
-    .ext-total-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #6d28d9
-    }
-
-    /* extraordinarios inline en card */
-    .sc-ext-panel {
-      margin-top: 10px;
-      border-top: 1px solid rgba(109, 40, 217, .12);
-      padding-top: 10px;
-      display: none
-    }
-
-    .sc-ext-panel.open {
-      display: block
-    }
-
-    .sc-ext-toggle {
-      width: 100%;
-      background: rgba(109, 40, 217, .06);
-      border: 1px solid rgba(109, 40, 217, .15);
-      border-radius: 7px;
-      padding: 6px 10px;
-      font-size: .72rem;
-      font-weight: 600;
-      color: #6d28d9;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background .15s;
-      font-family: inherit
-    }
-
-    .sc-ext-toggle:hover {
-      background: rgba(109, 40, 217, .12)
-    }
-
-    .sc-ext-toggle i.arrow {
-      transition: transform .2s
-    }
-
-    .sc-ext-toggle.open i.arrow {
-      transform: rotate(180deg)
-    }
-
-    .sc-ext-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(0, 0, 0, .05);
-      font-size: .78rem
-    }
-
-    .sc-ext-row:last-child {
-      border-bottom: none
-    }
-
-    .sc-ext-monto {
-      font-weight: 700;
-      color: #6d28d9;
-      white-space: nowrap;
-      min-width: 80px;
-      font-family: 'Outfit', sans-serif
-    }
-
-    .sc-ext-info {
-      flex: 1;
-      min-width: 0
-    }
-
-    .sc-ext-desc {
-      color: #0f172a;
-      font-weight: 500
-    }
-
-    .sc-ext-fecha {
-      color: #8fa3b8;
-      font-size: .68rem;
-      margin-top: 1px
-    }
-
-    .sc-ext-del {
-      background: none;
-      border: none;
-      color: #ccc;
-      cursor: pointer;
-      padding: 2px 5px;
-      border-radius: 4px;
-      transition: color .15s, background .15s;
-      font-size: .78rem
-    }
-
-    .sc-ext-del:hover {
-      color: #e8445a;
-      background: rgba(232, 68, 90, .08)
-    }
-
-    .sc-total-real {
-      margin-top: 10px;
-      background: linear-gradient(90deg, rgba(26, 96, 168, .07), rgba(63, 117, 85, .07));
-      border: 1px solid rgba(63, 117, 85, .18);
-      border-radius: 8px;
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .sc-total-real-lbl {
-      font-size: .68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #1a7555
-    }
-
-    .sc-total-real-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: .95rem;
-      font-weight: 800;
-      color: #1a7555
-    }
-
-    .sc-desc-badge {
-      margin-top: 6px;
-      font-size: .73rem;
-      color: #475569;
-      line-height: 1.4;
-      padding: 5px 8px;
-      background: rgba(0, 0, 0, .03);
-      border-radius: 6px;
-      border-left: 2px solid #cbd5e1;
-      white-space: pre-wrap;
-      word-break: break-word
-    }
-
-    /* botones */
-    .btn-sc-p {
-      background: #3f7555;
-      border: none;
-      border-radius: 7px;
-      color: #fff;
-      padding: 8px 18px;
-      font-family: inherit;
-      font-size: .82rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: opacity .2s
-    }
-
-    .btn-sc-p:hover {
-      opacity: .88
-    }
-
-    .btn-sc-p.purple {
-      background: #6d28d9
-    }
-
-    .btn-sc-s {
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, .13);
-      border-radius: 7px;
-      color: #0f172a;
-      padding: 8px 18px;
-      font-family: inherit;
-      font-size: .82rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all .2s
-    }
-
-    .btn-sc-s:hover {
-      border-color: #3f7555;
-      color: #3f7555
-    }
-
-    .btn-sc-icon {
-      background: none;
-      border: 1px solid rgba(0, 0, 0, .11);
-      border-radius: 6px;
-      color: #8fa3b8;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-size: .8rem;
-      transition: all .15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px
-    }
-
-    .btn-sc-icon:hover {
-      border-color: #3f7555;
-      color: #3f7555
-    }
-
-    .btn-sc-icon.danger:hover {
-      border-color: #e8445a;
-      color: #e8445a
-    }
-
-    .btn-sc-icon.purple:hover {
-      border-color: #6d28d9;
-      color: #6d28d9
-    }
-
-    #sc-toast {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      background: #fff;
-      border-left: 4px solid #3f7555;
-      border-radius: 9px;
-      padding: 11px 16px;
-      font-size: .82rem;
-      font-weight: 500;
-      max-width: 320px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, .14);
-      z-index: 9999;
-      transform: translateY(60px);
-      opacity: 0;
-      transition: all .3s cubic-bezier(.16, 1, .3, 1);
-      pointer-events: none;
-      color: #0f172a
-    }
-
-    #sc-toast.show {
-      transform: translateY(0);
-      opacity: 1
-    }
-
-    #sc-toast.error {
-      border-color: #e8445a
-    }
-
-    #sc-toast.success {
-      border-color: #3f7555
-    }
-
-    #sc-toast.info {
-      border-color: #6d28d9
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg)
-      }
-    }
+    /* Estilos específicos para subcontratos en esta página */
+    .sc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .sc-card { border: 1px solid rgba(0,0,0,.09); border-radius: 12px; overflow: hidden; background: #fff; transition: box-shadow .2s, transform .2s; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
+    .sc-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
+    .sc-card-head { padding: 14px 16px 12px; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; align-items: flex-start; gap: 10px; }
+    .sc-avatar { width: 38px; height: 38px; border-radius: 9px; background: rgba(63, 117, 85, .12); display: flex; align-items: center; justify-content: center; color: #3f7555; font-size: 16px; flex-shrink: 0; }
+    .sc-name { font-size: .88rem; font-weight: 700; color: #0f172a; line-height: 1.3; }
+    .sc-sub { font-size: .72rem; color: #8fa3b8; margin-top: 2px; }
+    .sc-body { padding: 12px 16px; }
+    .sc-foot { padding: 9px 16px; background: rgba(0,0,0,.02); border-top: 1px solid rgba(0,0,0,.05); display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+    .monto-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+    .monto-item { text-align: center; }
+    .monto-lbl { font-size: .62rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #0f172a; margin-bottom: 2px; }
+    .monto-val { font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 700; color: #0f172a; }
+    .mv-blue { color: #1a60a8; } .mv-amber { color: #b47800; } .mv-green { color: #1a7555; } .mv-red { color: #c0392b; }
+    .mv-purple { color: #6d28d9; }
+    .tag-cnt { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: rgba(63,117,85,.1); color: #3f7555; border: 1px solid rgba(63,117,85,.2); }
+    .tag-ext { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: rgba(109,40,217,.08); color: #6d28d9; border: 1px solid rgba(109,40,217,.2); cursor: pointer; transition: background .15s; }
+    .tag-ext:hover { background: rgba(109,40,217,.15); }
+    .sc-total-real { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(63,117,85,.05); border-radius: 8px; margin-top: 4px; font-size: .85rem; font-weight: 700; color: #3f7555; }
+    .sc-ext-panel { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,.1); }
+    .sc-ext-panel.open { display: block; }
+    .ext-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.03); }
+    .ext-item:last-child { border-bottom: none; }
+    .ext-item-monto { font-weight: 700; font-size: .8rem; color: #6d28d9; }
+    .ext-item-info { flex: 1; margin-left: 10px; }
+    .ext-item-desc { font-size: .72rem; color: #475569; }
+    .ext-item-fecha { font-size: .62rem; color: #94a3b8; }
+    .ext-item-del { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 2px 6px; }
+    .ext-item-del:hover { color: #e8445a; }
+    
+    /* Drag & Drop Editor */
+    .sc-editor-col { display: flex; flex-direction: column; height: 100%; min-height: 400px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
+    .dd-head { font-size: .75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; color: #64748b; display: flex; align-items: center; justify-content: space-between; }
+    .dd-zone { flex: 1; overflow-y: auto; background: #fff; border-radius: 6px; padding: 8px; min-height: 300px; }
+    .dd-zone.drag-over { background: rgba(63,117,85,.05); border: 2px dashed #3f7555; }
+    .concept-chip { padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 6px; background: #fff; cursor: grab; font-size: .8rem; display: flex; align-items: center; gap: 8px; transition: transform .1s; }
+    .concept-chip:hover { border-color: #3f7555; transform: scale(1.02); }
+    .chip-cod { font-family: monospace; font-weight: 700; color: #334155; }
+    .chip-um { font-size: .7rem; color: #94a3b8; }
+    .chip-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip-also { font-size: .65rem; color: #6d28d9; font-style: italic; }
+    .already { background: rgba(109,40,217,.05); border-color: rgba(109,40,217,.2); }
+    .dd-empty { text-align: center; padding: 40px 10px; color: #94a3b8; font-size: .8rem; }
+    .dd-search { margin-bottom: 8px; }
   </style>
 </head>
-
 <body>
-  <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-  <!-- HERO SECTION -->
-  <div class="hero-section">
-    <div class="container hero-content">
-      <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-        <span>/</span>
-        <a href="list_obras.php">Registro de Obras</a>
-        <span>/</span>
-        <span>Detalles de Obra</span>
-      </div>
-
-      <div class="row align-items-end">
-        <div class="col-lg-8">
-          <h3 class="hero-title" style="font-size: 18px"><?= htmlspecialchars($obra['nombre_obra']) ?></h3>
-          <div style="color: #ddd; font-size: 14px; margin-top: -5px;">
-            <p>Periodo:
-              <?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?>
-              -
-              <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?>
-            </p>
-            <p class="hero-subtitle">#<?= htmlspecialchars($obra['numero_obra']) ?>
-              -
-              <?= htmlspecialchars($obra['nombre_proyecto']) ?>
-            </p>
-          </div>
+<div class="hero-section">
+  <div class="container hero-content">
+    <div class="breadcrumb-custom">
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <span>/</span>
+      <a href="list_project.php">Proyectos</a>
+      <span>/</span>
+      <a href="details_project.php?id=<?= $obra['proyecto_id'] ?>">Detalles del Proyecto</a>
+      <span>/</span>
+      <span>Detalles de Obra</span>
+    </div>
+    
+    <div class="row align-items-end">
+      <div class="col-lg-8">
+        <h3 class="hero-title" style="font-size: 20px"><?= htmlspecialchars($obra['nombre_obra']) ?></h3>
+        <div style="color: #ddd; font-size: 14px;">
+          <p>Proyecto: <?= htmlspecialchars($obra['nombre_proyecto']) ?> | #<?= htmlspecialchars($obra['numero_obra']) ?></p>
         </div>
-        <!-- ACTION BUTTONS -->
-        <div class="btn-group" style="gap:5px;">
-          <button class="btn-ed" onclick="editarObra(<?= $obra_id ?>)"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Obra">
-            <i class="bi bi-pencil"></i>
-          </button>
-
-          <button class="btn-inf" onclick="gestionarArchivos(<?= $obra_id ?>)"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="Archivos PDF">
-            <i class="bi bi-paperclip"></i>
-          </button>
+      </div>
+      <div class="col-lg-4 text-end">
+        <div class="btn-group gap-1">
+          <button class="btn btn-sm btn-outline-light" onclick="editarObra(<?= $obra_id ?>)"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-light" onclick="gestionarArchivos(<?= $obra_id ?>)"><i class="bi bi-paperclip"></i></button>
+          <button class="btn btn-sm btn-outline-light" onclick="window.location.reload()"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content-wrapper">
+<div class="content-wrapper">
+  <div class="budget-dashboard mb-4">
+    <div class="dashboard-header"><div class="dashboard-title"><div class="title-icon"><i class="bi bi-pie-chart"></i></div><h3>Control de Obra</h3></div></div>
+    <div class="budget-stats">
+      <div class="budget-stat"><div class="budget-stat-label">Costo Directo</div><div class="budget-stat-value">$<?= number_format($obra['costo_directo'], 2) ?></div></div>
+      <div class="budget-stat"><div class="budget-stat-label">Utilizado</div><div class="budget-stat-value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></div></div>
+      <div class="budget-stat"><div class="budget-stat-label">Disponible</div><div class="budget-stat-value <?= $costo_disponible < 0 ? 'danger' : 'success' ?>">$<?= number_format($costo_disponible, 2) ?></div></div>
+      <div class="budget-stat"><div class="budget-stat-label">Progreso Financiero</div><div class="budget-stat-value"><?= number_format($porcentaje_utilizado, 1) ?>%</div></div>
+    </div>
+  </div>
 
-    <!-- BUDGET DASHBOARD -->
-    <div class="budget-dashboard">
-      <div class="dashboard-header">
-        <div class="dashboard-title">
-          <div class="title-icon">
-            <i class="bi bi-pie-chart"></i>
-          </div>
-          <h3>Control de Presupuesto</h3>
-        </div>
+  <!-- TAB NAVIGATION -->
+  <ul class="nav nav-pills mb-3 gap-2" id="obraTabs" role="tablist">
+    <li class="nav-item" role="presentation"><button class="nav-link active" id="catalogos-tab" data-bs-toggle="pill" data-bs-target="#catalogos-pane" type="button" role="tab">Catálogos (<?= $obra['total_catalogos'] ?>)</button></li>
+    <li class="nav-item" role="presentation"><button class="nav-link" id="subcontratos-tab" data-bs-toggle="pill" data-bs-target="#subcontratos-pane" type="button" role="tab">Subcontratos</button></li>
+  </ul>
+
+  <div class="tab-content" id="obraTabsContent">
+    <!-- TAB CATALOGOS -->
+    <div class="tab-pane fade show active" id="catalogos-pane" role="tabpanel" tabindex="0">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Catálogos de Conceptos</h5>
+        <button class="btn btn-primary btn-sm" onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= addslashes($obra['nombre_obra']) ?>')"><i class="bi bi-plus-circle me-1"></i>Nuevo Catálogo</button>
       </div>
-
-      <!-- Estadísticas de Presupuesto -->
-      <div class="budget-stats">
-        <div class="budget-stat">
-          <div class="budget-stat-label">Costo Directo</div>
-          <div class="budget-stat-value">$<?= number_format($obra['costo_directo'], 2) ?></div>
-        </div>
-
-        <div class="budget-stat">
-          <div class="budget-stat-label">Utilizado</div>
-          <div class="budget-stat-value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></div>
-        </div>
-
-        <div class="budget-stat">
-          <div class="budget-stat-label">Disponible</div>
-          <div class="budget-stat-value" style="color: <?= $costo_disponible < 0 ? '#dc3545' : '#198754' ?>">
-            $<?= number_format($costo_disponible, 2) ?>
-          </div>
-        </div>
-      </div>
-
-      <!-- INFO PANELS -->
-      <div class="info-grid gap-4">
-
-        <!-- Información General -->
-        <div class="info-panel">
-          <div class="panel-header">
-            <div class="panel-icon">
-              <i class="bi bi-info-circle"></i>
-            </div>
-            <h4>Información General</h4>
-          </div>
-
-          <ul class="info-list">
-            <li class="info-item">
-              <span class="info-label">Número de Obra</span>
-              <span class="info-value"><?= htmlspecialchars($obra['numero_obra']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Proyecto</span>
-              <span class="info-value"><?= htmlspecialchars($obra['nombre_proyecto']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Licitación</span>
-              <span class="info-value"><?= htmlspecialchars($obra['numero_licitacion']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Contrato</span>
-              <span class="info-value"><?= htmlspecialchars($obra['numero_contrato']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Periodo</span>
-              <span class="info-value"><?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Descripción</span>
-              <span class="info-value"><?= htmlspecialchars($obra['descripcion']) ?></span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Información Financiera -->
-        <div class="info-panel">
-          <div class="panel-header">
-            <div class="panel-icon">
-              <i class="bi bi-cash-stack"></i>
-            </div>
-            <h4>Información Financiera</h4>
-          </div>
-
-          <ul class="info-list">
-            <li class="info-item">
-              <span class="info-label">Monto Desginado</span>
-              <span class="info-value">$<?= number_format($obra['monto_designado'], 2) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Costo Directo</span>
-              <span class="info-value">$<?= number_format($obra['costo_directo'], 2) ?></span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Catálogos -->
-      <div class="works-section">
-
-        <div class="section-header">
-          <div class="section-title-group">
-            <h4>Catálogo</h4>
-          </div>
-        </div>
-
-        <div class="card-body">
-          <?php
-if ($catalogos->num_rows > 0): ?>
-            <div class="list-group">
-              <?php
-while ($catalogo = $catalogos->fetch_assoc()): ?>
-                <div class="list-group-item">
+      <?php if ($catalogos->num_rows > 0): ?>
+        <div class="row g-3">
+          <?php while ($cat = $catalogos->fetch_assoc()): ?>
+            <div class="col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                  <h6 class="card-title fw-bold text-primary mb-1"><?= htmlspecialchars($cat['nombre_catalogo']) ?></h6>
+                  <p class="text-muted small mb-3"><?= htmlspecialchars($cat['descripcion'] ?: 'Sin descripción') ?></p>
                   <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1">
-                      <strong><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></strong>
-                      <?php
-if ($catalogo['descripcion']): ?>
-                        <br><small class="text-muted"><?= htmlspecialchars($catalogo['descripcion']) ?></small>
-                      <?php
-endif; ?>
-                      <br><small class="text-muted">Creado: <?= date('d/m/Y', strtotime($catalogo['fecha_creacion'])) ?></small>
-                    </div>
-                    <div class="btn-group" style="gap:5px;">
-                      <a href="conceptos_view.php?catalogo_id=<?= $catalogo['id'] ?>&catalogo_nombre=<?= urlencode($catalogo['nombre_catalogo']) ?>&obra_id=<?= $obra_id ?>&obra_nombre=<?= urlencode($obra['nombre_obra']) ?>"
-                        class="btn-inf"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Gestionar Conceptos">
-                        <i class="bi bi-folder2-open"></i>
-                      </a>
-                      <button class="btn-ed"
-                        onclick="editarCatalogo(<?= $catalogo['id'] ?>)"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Catálogo">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <button class="btn-del"
-                        onclick="eliminarCatalogo(<?= $catalogo['id'] ?>, <?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Catálogo">
-                        <i class="bi bi-trash3"></i>
-                      </button>
+                    <span class="badge bg-light text-dark border">Creado: <?= date('d/m/Y', strtotime($cat['fecha_creacion'])) ?></span>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" onclick="abrirVistaConceptos(<?= $cat['id'] ?>, '<?= addslashes($cat['nombre_catalogo']) ?>', <?= $obra_id ?>, '<?= addslashes($obra['nombre_obra']) ?>')"><i class="bi bi-eye"></i></button>
+                      <button class="btn btn-sm btn-outline-warning" onclick="editarCatalogo(<?= $cat['id'] ?>, '<?= addslashes($cat['nombre_catalogo']) ?>', '<?= addslashes($cat['descripcion']) ?>')"><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" onclick="eliminarCatalogo(<?= $cat['id'] ?>)"><i class="bi bi-trash"></i></button>
                     </div>
                   </div>
                 </div>
-              <?php
-endwhile; ?>
+              </div>
             </div>
-          <?php
-else: ?>
-            <div class="text-center text-muted py-4">
-              <i class="bi bi-folder" style="font-size: 3rem;"></i>
-              <p class="mt-2">No hay catálogos registrados</p>
-              <button class="btn btn-success"
-                onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')">
-                <i class="bi bi-plus-circle"></i> Crear Primer Catálogo
-              </button>
-            </div>
-          <?php
-endif; ?>
+          <?php endwhile; ?>
         </div>
-      </div>
-
-      <!-- SUBCONTRATOS -->
-      <div class="works-section" style="margin-top:24px;">
-        <div class="section-header">
-          <div class="section-title-group">
-            <h4>Subcontratos</h4>
-          </div>
-          <button class="btn-sc-p" onclick="scAbrirModal()"><i class="bi bi-plus-lg"></i> Nuevo subcontrato</button>
-        </div>
-        <div class="row g-2 mb-3" id="sc-stats" style="display:none!important">
-          <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Subcontratos</div>
-              <div class="budget-stat-value" id="sc-stat-total">0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Total Monto Contratos</div>
-              <div class="budget-stat-value" id="sc-stat-est">$0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Total Anticipos</div>
-              <div class="budget-stat-value" id="sc-stat-ant">$0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Total Pagado</div>
-              <div class="budget-stat-value" id="sc-stat-real">$0</div>
-            </div>
-          </div>
-        </div>
-        <div id="sc-grid">
-          <div class="text-center text-muted py-4">
-            <i class="bi bi-arrow-clockwise" style="font-size:1.6rem;display:block;margin-bottom:8px;animation:spin 1s linear infinite;"></i>
-            Cargando subcontratos...
-          </div>
-        </div>
-      </div>
-
+      <?php else: ?>
+        <div class="text-center py-5 bg-white rounded border mt-2"><i class="bi bi-folder2-open display-4 text-muted mb-3 d-block"></i><p>No hay catálogos registrados para esta obra.</p></div>
+      <?php endif; ?>
     </div>
-  </div>
 
-  <!-- FLOATING ACTION BUTTONS -->
-  <div class="fab-container-backbtn">
-    <a onclick="history.back()" class="fab-button-backbtn">
-      <i class="bi bi-arrow-left"></i>
-      <span class="fab-tooltip-backbtn">Volver</span>
-    </a>
-  </div>
-
-  <div id="sc-toast"></div>
-
-  <!-- MODAL Subcontrato -->
-  <div class="sc-modal-overlay" id="sc-modal">
-    <div class="sc-modal-box">
-      <button class="sc-mc" onclick="scCerrarModal()"><i class="bi bi-x-lg"></i></button>
-      <div class="sc-modal-title" id="sc-modal-title">Nuevo subcontrato</div>
-      <input type="hidden" id="sc-m-id">
-      <div class="sc-fg">
-        <div class="sc-fgi full">
-          <div class="sc-lbl">Proveedor</div><select id="sc-m-proveedor" class="sc-inp">
-            <option value="">Selecciona proveedor</option>
-          </select>
+    <!-- TAB SUBCONTRATOS -->
+    <div class="tab-pane fade" id="subcontratos-pane" role="tabpanel" tabindex="0">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div id="sc-stats" class="d-flex gap-3 align-items-center small text-muted">
+          <span><i class="bi bi-people me-1"></i>Subcontratos: <strong id="sc-stat-total">0</strong></span>
+          <span><i class="bi bi-cash me-1"></i>Estimado: <strong id="sc-stat-est">$0</strong></span>
+          <span><i class="bi bi-check2-circle me-1"></i>Real: <strong id="sc-stat-real">$0</strong></span>
         </div>
-        <div class="sc-fgi">
-          <div class="sc-lbl">Total monto de contrato</div><input type="number" id="sc-m-total" class="sc-inp" placeholder="0.00" step="0.01" min="0" oninput="scCalcAnticipo()">
-        </div>
-        <div class="sc-fgi">
-          <div class="sc-lbl">Anticipo (%)</div><input type="number" id="sc-m-pct" class="sc-inp" placeholder="0" step="0.1" min="0" max="100" oninput="scCalcAnticipo()">
-        </div>
-        <div class="sc-fgi full">
-          <div class="anticipo-preview" id="sc-ant-preview"><i class="bi bi-arrow-right-circle me-1"></i>Anticipo en pesos: <strong id="sc-ant-monto">$0.00</strong></div>
-        </div>
-        <div class="sc-fgi full">
-          <div class="sc-lbl">Descripcion del subcontrato</div><textarea id="sc-m-desc" class="sc-inp" rows="2" placeholder="Descripcion general del alcance o trabajos..."></textarea>
-        </div>
+        <button class="btn btn-success btn-sm" onclick="scAbrirNuevoModal()"><i class="bi bi-plus-circle me-1"></i>Nuevo Subcontrato</button>
       </div>
-      <div class="sc-fa"><button class="btn-sc-s" onclick="scCerrarModal()">Cancelar</button><button class="btn-sc-p" onclick="scGuardar()"><i class="bi bi-check2"></i> Guardar</button></div>
-    </div>
-  </div>
-
-  <!-- OVERLAY Editor drag & drop -->
-  <div class="sc-editor-overlay" id="sc-editor">
-    <div class="sc-editor-box">
-      <div class="sc-editor-head">
-        <div>
-          <div style="font-size:.98rem;font-weight:700;color:#0f172a;" id="sc-ed-title">Asignar conceptos</div>
-          <div style="font-size:.76rem;color:#8fa3b8;margin-top:2px;" id="sc-ed-sub">Un concepto puede estar en varios subcontratos de la misma obra</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <span class="tag-cnt" id="sc-ed-cnt">0 asignados</span>
-          <button class="btn-sc-p" onclick="scGuardarConceptos()" id="sc-btn-guardar-conc"><i class="bi bi-check2"></i> Guardar</button>
-          <button class="sc-mc" style="position:relative;top:auto;right:auto;font-size:17px;" onclick="scCerrarEditor()"><i class="bi bi-x-lg"></i></button>
-        </div>
-      </div>
-      <div class="sc-editor-body">
-        <div class="sc-editor-col">
-          <div class="dd-head"><i class="bi bi-grid-3x3-gap"></i> Conceptos del catalogo <span class="dd-cnt" id="sc-cnt-disp">0</span></div>
-          <input class="dd-search" id="sc-search-disp" placeholder="Buscar..." oninput="scFiltrarDisp()">
-          <div class="dd-zone" id="sc-zone-disp" ondragover="scOnDragOver(event)" ondrop="scOnDrop(event,'disp')" ondragleave="scOnDragLeave(event)"></div>
-        </div>
-        <div class="sc-editor-col">
-          <div class="dd-head" style="color:#3f7555;"><i class="bi bi-person-check"></i> Asignados al proveedor <span class="dd-cnt green" id="sc-cnt-asig">0</span></div>
-          <input class="dd-search" id="sc-search-asig" placeholder="Buscar..." oninput="scFiltrarAsig()">
-          <div class="dd-zone" id="sc-zone-asig" ondragover="scOnDragOver(event)" ondrop="scOnDrop(event,'asig')" ondragleave="scOnDragLeave(event)">
-            <div class="dd-empty"><i class="bi bi-inbox"></i>Arrastra conceptos aqui</div>
-          </div>
-        </div>
-      </div>
-      <div class="sc-editor-foot">
-        <span><i class="bi bi-info-circle me-1"></i>Violeta = ya asignado a otro subcontrato de esta obra (puede repetirse)</span>
-        <button class="btn-sc-s" onclick="scCerrarEditor()">Cancelar</button>
+      <div id="sc-grid">
+        <div class="text-center py-5"><div class="spinner-border text-success"></div><p class="mt-2">Cargando subcontratos...</p></div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- MODAL Extraordinarios -->
-  <div class="ext-overlay" id="ext-modal">
-    <div class="ext-box">
-      <div class="ext-head">
-        <div>
-          <div class="ext-head-title" id="ext-modal-title">Valores extraordinarios</div>
-          <div class="ext-head-sub" id="ext-modal-sub"></div>
-        </div>
-        <button class="sc-mc" style="position:relative;top:auto;right:auto;" onclick="extCerrar()"><i class="bi bi-x-lg"></i></button>
-      </div>
-      <div class="ext-body">
-        <div class="ext-form">
-          <div class="ext-form-title"><i class="bi bi-plus-circle me-1"></i>Agregar valor extraordinario</div>
-          <div class="ext-fg">
-            <div class="ext-fgi">
-              <div class="sc-lbl">Monto</div><input type="number" id="ext-monto" class="sc-inp" placeholder="0.00" step="0.01">
+<div class="fab-container-backbtn">
+  <a href="details_project.php?id=<?= $obra['proyecto_id'] ?>" class="fab-button-backbtn gray">
+    <i class="bi bi-arrow-left"></i>
+    <span class="fab-tooltip-backbtn">Volver al Proyecto</span>
+  </a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
+
+<script>
+  var SC_OBRA_ID = <?= (int)$obra_id ?>;
+  var COSTO_DIRECTO_OBRA = <?= (float)$obra['costo_directo'] ?>;
+  var scLista = [], scProveedores = [], scTodosConc = [], scEditorId = null, scDisp = [], scAsig = [], scDragId = null;
+  var extScId = null, extLista = [];
+
+  const scFmt = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n || 0);
+  const scEl = id => document.getElementById(id);
+
+  function scAjax(data, cb) {
+    const fd = new FormData();
+    Object.keys(data).forEach(k => fd.append(k, data[k] ?? ''));
+    fetch('details_obra.php?id=' + SC_OBRA_ID, { method: 'POST', body: fd })
+      .then(r => r.json()).then(r => cb(null, r)).catch(() => cb(null, { success: false, error: 'Error de red' }));
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    scAjax({ action: 'obtener_proveedores' }, (e, rP) => {
+      if (rP.success) scProveedores = rP.proveedores;
+      scCargar();
+    });
+  });
+
+  function scCargar() {
+    scAjax({ action: 'obtener_subcontratos', obra_id: SC_OBRA_ID }, (e, r) => {
+      if (r.success) { scLista = r.subcontratos; scRender(); scStats(); }
+      else UI.toast.error("Error al cargar subcontratos");
+    });
+  }
+
+  function scStats() {
+    scEl('sc-stat-total').textContent = scLista.length;
+    scEl('sc-stat-est').textContent = scFmt(scLista.reduce((s, x) => s + (parseFloat(x.total_estimado) || 0) + (parseFloat(x.total_extraordinarios) || 0), 0));
+    scEl('sc-stat-real').textContent = scFmt(scLista.reduce((s, x) => s + parseFloat(x.monto_real || 0), 0));
+  }
+
+  function scRender() {
+    const wrap = scEl('sc-grid');
+    if (!scLista.length) { wrap.innerHTML = '<div class="text-center py-5 bg-white border rounded"><i class="bi bi-people display-4 text-muted mb-3 d-block"></i><p>Sin subcontratos registrados.</p></div>'; return; }
+    let html = '<div class="sc-grid">';
+    scLista.forEach(sc => {
+      const numExt = parseInt(sc.num_extraordinarios) || 0;
+      const totalReal = parseFloat(sc.monto_real || 0);
+      const estimado = parseFloat(sc.total_estimado || 0);
+      const ext = parseFloat(sc.total_extraordinarios || 0);
+      const totalConExt = estimado + ext;
+      const porPagar = totalConExt - totalReal;
+      html += `
+        <div class="sc-card">
+          <div class="sc-card-head"><div class="sc-avatar"><i class="bi bi-person-gear"></i></div>
+            <div style="flex:1;min-width:0"><div class="sc-name">${sc.proveedor_nombre || 'Sin proveedor'}</div>
+            <div class="sc-sub"><span class="tag-cnt"><i class="bi bi-list-check"></i> ${sc.total_conceptos} conceptos</span>
+            ${numExt > 0 ? `<span class="tag-ext" onclick="scToggleExt(${sc.id})"><i class="bi bi-star-fill"></i> ${numExt} extra</span>` : ''}</div></div></div>
+          <div class="sc-body">
+            <div class="monto-grid">
+              <div class="monto-item"><div class="monto-lbl">Contrato</div><div class="monto-val mv-blue">${scFmt(estimado)}</div></div>
+              <div class="monto-item"><div class="monto-lbl">Extra</div><div class="monto-val mv-purple">${scFmt(ext)}</div></div>
+              <div class="monto-item"><div class="monto-lbl">Utilizado</div><div class="monto-val mv-red">${scFmt(totalReal)}</div></div>
+              <div class="monto-item"><div class="monto-lbl">Importe Total</div><div class="monto-val mv-green">${scFmt(totalConExt)}</div></div>
             </div>
-            <div class="ext-fgi">
-              <div class="sc-lbl">Fecha</div><input type="date" id="ext-fecha" class="sc-inp">
-            </div>
-            <div class="ext-fgi full">
-              <div class="sc-lbl">Descripcion</div><input type="text" id="ext-desc" class="sc-inp" placeholder="Ej: Trabajos adicionales...">
-            </div>
+            <div class="sc-total-real"><span><i class="bi bi-sigma me-1"></i>Por pagar</span><span>${scFmt(porPagar)}</span></div>
+            <div class="sc-ext-panel" id="sc-ext-${sc.id}"><div class="small fw-bold text-muted mb-2">Detalle Extraordinarios</div><div id="sc-ext-rows-${sc.id}"></div></div>
           </div>
-          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-            <button class="btn-sc-p purple" onclick="extAgregar()"><i class="bi bi-plus-lg"></i> Agregar</button>
+          <div class="sc-foot">
+            <button class="btn btn-sm btn-outline-primary" onclick="extAbrir(${sc.id})"><i class="bi bi-star"></i></button>
+            <button class="btn btn-sm btn-outline-info" onclick="scAbrirEditor(${sc.id})"><i class="bi bi-list-check"></i></button>
+            <button class="btn btn-sm btn-outline-warning" onclick="scEditar(${sc.id})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="scEliminar(${sc.id})"><i class="bi bi-trash"></i></button>
           </div>
-        </div>
-        <div class="ext-list-title">Registros</div>
-        <div id="ext-lista">
-          <div class="dd-empty"><i class="bi bi-inbox"></i>Sin registros extraordinarios</div>
-        </div>
-      </div>
-      <div class="ext-foot">
-        <div class="ext-total-bar">
-          <span class="ext-total-lbl"><i class="bi bi-sigma me-1"></i>Total extraordinarios</span>
-          <span class="ext-total-val" id="ext-total">$0.00</span>
-        </div>
-      </div>
-    </div>
-  </div>
+        </div>`;
+    });
+    wrap.innerHTML = html + '</div>';
+    scLista.forEach(sc => { if (parseInt(sc.num_extraordinarios) > 0) scCargarExtInline(sc.id); });
+  }
 
-  <!-- MODAL Exceso de costo directo -->
-  <div class="sc-modal-overlay" id="sc-modal-exceso">
-    <div class="sc-modal-box" style="max-width:520px;">
-      <div class="sc-modal-title" style="border-color:#e8445a;color:#c0392b;">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>Subcontratos superan el costo directo
-      </div>
-      <div style="font-size:.85rem;color:#475569;margin-bottom:14px;" id="sc-exceso-detalle"></div>
-      <div style="background:rgba(232,68,90,.06);border:1px solid rgba(232,68,90,.2);border-radius:8px;padding:12px 14px;font-size:.82rem;color:#c0392b;margin-bottom:16px;">
-        <i class="bi bi-envelope me-1"></i>
-        Se notificará a <strong>Subdirección</strong> por correo electrónico sobre este aumento en el valor de los subcontratos.
-      </div>
-      <div class="sc-fa">
-        <button class="btn-sc-s" onclick="scCancelarExceso()">Cancelar</button>
-        <button class="btn-sc-p" style="background:#e8445a;" onclick="scConfirmarExceso()">
-          <i class="bi bi-send me-1"></i>Notificar y guardar
-        </button>
-      </div>
-    </div>
-  </div>
+  function scToggleExt(id) { scEl('sc-ext-' + id).classList.toggle('open'); }
+  function scCargarExtInline(scId) {
+    scAjax({ action: 'obtener_extraordinarios', subcontrato_id: scId }, (e, r) => {
+      const rows = scEl('sc-ext-rows-' + scId); if (!rows) return;
+      if (!r.success || !r.extraordinarios.length) { rows.innerHTML = '<div class="small text-muted">Sin registros</div>'; return; }
+      rows.innerHTML = r.extraordinarios.map(x => `
+        <div class="ext-item">
+          <div class="ext-item-monto">${scFmt(x.monto)}</div>
+          <div class="ext-item-info"><div class="ext-item-desc text-truncate" style="max-width:140px;">${x.descripcion}</div><div class="ext-item-fecha">${x.fecha}</div></div>
+          <button class="ext-item-del" onclick="extEliminarInline(${x.id},${scId})"><i class="bi bi-trash3"></i></button>
+        </div>`).join('');
+    });
+  }
 
-  <!-- MODAL Exceso de costo directo -->
-  <script>
-    var scExcesoCallback = null;
-
-    function scMostrarModalExceso(nuevaSuma, costoDirecto, callback) {
-      scExcesoCallback = callback;
-      var exceso = nuevaSuma - costoDirecto;
-      scEl('sc-exceso-detalle').innerHTML =
-        '<p>La suma total de subcontratos (<strong>' + scFmt(nuevaSuma) + '</strong>) superará el costo directo de la obra (<strong>' + scFmt(costoDirecto) + '</strong>).</p>' +
-        '<p>Exceso: <strong style="color:#c0392b">' + scFmt(exceso) + '</strong></p>';
-      scEl('sc-modal-exceso').classList.add('open');
-    }
-
-    function scCancelarExceso() {
-      scEl('sc-modal-exceso').classList.remove('open');
-      scExcesoCallback = null;
-    }
-
-    function scConfirmarExceso() {
-      scEl('sc-modal-exceso').classList.remove('open');
-      // Enviar notificación por correo
-      scAjax({
-        action: 'notificar_exceso_subcontratos',
-        obra_id: SC_OBRA_ID
-      }, function(e, r) {
-        if (!r.success) scToast('Aviso: no se pudo enviar el correo a subdirección', 'error');
-        else scToast('Notificación enviada a subdirección', 'info');
-      });
-      // Ejecutar el guardado
-      if (scExcesoCallback) scExcesoCallback();
-      scExcesoCallback = null;
-    }
-  </script>
-
-  <script>
-    // Inicializar tooltips de Bootstrap
-    document.addEventListener('DOMContentLoaded', function() {
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+  function extEliminarInline(id, scId) {
+    UI.confirm({ title: '¿Eliminar extraordinario?', danger: true }).then(conf => {
+      if (!conf) return;
+      scAjax({ action: 'eliminar_extraordinario', id: id, subcontrato_id: scId }, (e, r) => {
+        if (r.success) { UI.toast.success("Eliminado"); scCargar(); } else UI.toast.error(r.error);
       });
     });
+  }
 
-    // Función para editar obra
-    function editarObra(id) {
-      fetch(`edit_obra.php?id=${id}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Error al cargar datos de la obra');
-          return res.json();
-        })
-        .then(data => {
-          if (data.error) {
-            Swal.fire("Error", data.error, "error");
-            return;
-          }
+  // Modales de Subcontrato centralizados
+  function scAbrirNuevoModal() { scFormSubcontrato(); }
+  function scEditar(id) {
+    const sc = scLista.find(x => x.id == id); if (!sc) return;
+    scFormSubcontrato(sc);
+  }
 
-          Swal.fire({
-            title: "Editar Obra",
-            html: `
-                  <form id="formEditarObra" class="swal-form">
-                    <input type="hidden" name="id" value="${data.id}">
+  function scFormSubcontrato(sc = null) {
+    let proveedoresOptions = '<option value="">Selecciona proveedor</option>';
+    scProveedores.forEach(p => { proveedoresOptions += `<option value="${p.id}" ${sc && sc.proveedor_id == p.id ? 'selected' : ''}>${p.nombre}</option>`; });
 
-                    <div class="mb-2">
-                      <label class="form-label">Proyecto</label>
-                      <textarea class="form-control" style="height: auto; min-height: 38px; resize: none;" readonly 
-                      >${data.nombre_proyecto || 'Proyecto no disponible'}</textarea>
-                      <input type="hidden" name="proyecto_id" value="${data.proyecto_id}">
-                    </div>
+    UI.modal({
+      title: sc ? "Editar Subcontrato" : "Nuevo Subcontrato",
+      html: `
+        <form id="formSC">
+          <input type="hidden" name="id" value="${sc ? sc.id : ''}">
+          <div class="mb-3"><label class="form-label">Proveedor</label><select name="proveedor_id" class="form-select" required>${proveedoresOptions}</select></div>
+          <div class="row">
+            <div class="col-6 mb-3"><label class="form-label">Monto Contrato</label><input type="number" step="0.01" name="total_estimado" class="form-control" value="${sc ? sc.total_estimado : ''}" required oninput="scModalCalcAnt()"></div>
+            <div class="col-6 mb-3"><label class="form-label">Anticipo (%)</label><input type="number" step="0.1" name="anticipo_pct" class="form-control" value="${sc ? sc.anticipo_pct : ''}" oninput="scModalCalcAnt()"></div>
+          </div>
+          <div class="mb-3 text-muted small" id="scAntMontoPreview"></div>
+          <div class="mb-3"><label class="form-label">Descripción</label><textarea name="descripcion" class="form-control" rows="2">${sc ? sc.descripcion : ''}</textarea></div>
+          <div class="d-flex justify-content-end gap-2 mt-4"><button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-primary">${sc ? 'Actualizar' : 'Crear'}</button></div>
+        </form>`
+    });
+    if (sc) scModalCalcAnt();
 
-                    <div class="mb-2">
-                      <label class="form-label">Número de Obra</label>
-                      <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
-                    </div>
-
-                    <div class="mb-2">
-                      <label class="form-label">Nombre de la Obra</label>
-                      <input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required>
-                    </div>
-
-                    <div class="mb-2">
-                      <label class="form-label">Descripción</label>
-                      <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los objetivos y características de la obra...">${data.descripcion || ''}</textarea>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-6 mb-2">
-                        <label class="form-label">Fecha Inicio</label>
-                        <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required>
-                      </div>
-                      <div class="col-6 mb-2">
-                        <label class="form-label">Fecha Fin</label>
-                        <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required>
-                      </div>
-                    </div>
-
-                    <div class="mb-2">
-                      <label class="form-label">Monto Designado</label>
-                      <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
-                    </div>
-
-                    <div class="mb-2">
-                      <label class="form-label">Costo Directo</label>
-                      <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-                      <small class="text-muted">Presupuesto disponible para esta obra</small>
-                    </div>
-                  </form>
-                `,
-            width: 600,
-            focusConfirm: false,
-            showCancelButton: true,
-            confirmButtonText: "Actualizar",
-            cancelButtonText: "Cancelar",
-            preConfirm: () => {
-              const form = document.getElementById("formEditarObra");
-              const formData = new FormData(form);
-
-              return fetch("update_obra.php", {
-                  method: "POST",
-                  body: formData
-                })
-                .then(res => res.json())
-                .then(resp => {
-                  if (resp.status === "success") {
-                    Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
-                      .then(() => location.reload());
-                  } else {
-                    Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
-                  }
-                })
-                .catch(() => Swal.showValidationMessage("Error de conexión"));
-            }
-          });
-        })
-        .catch(error => {
-          console.error('Error al cargar datos de la obra:', error);
-          Swal.fire('Error', 'No se pudieron cargar los datos de la obra', 'error');
-        });
-    }
-
-    // Función para gestionar archivos de obra
-    function gestionarArchivos(obraId) {
-      fetch(`get_archivos_obra.php?obra_id=${obraId}`)
-        .then(res => res.json())
-        .then(data => {
-          let archivosHtml = `
-                <div class="mb-3">
-                  <form id="formSubirArchivo" enctype="multipart/form-data">
-                    <input type="hidden" name="obra_id" value="${obraId}">
-                    <div class="mb-2">
-                      <label class="form-label">Subir archivo PDF (Máximo 5 archivos)</label>
-                      <input type="file" name="archivo" class="form-control" accept=".pdf" required>
-                      <small class="text-muted">Tamaño máximo: 10MB</small>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="subirArchivoObra()">
-                      <i class="bi bi-upload"></i> Subir PDF
-                    </button>
-                  </form>
-                </div>
-                <hr>
-            `;
-
-          if (data.archivos.length > 0) {
-            archivosHtml += '<div class="list-group">';
-            data.archivos.forEach(archivo => {
-              archivosHtml += `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                          <div>
-                            <i class="bi bi-file-pdf text-danger"></i>
-                            ${archivo.nombre_archivo}
-                            <br>
-                            <small class="text-muted">Subido: ${archivo.fecha_subida}</small>
-                          </div>
-                          <div>
-                            <button class="btn btn-sm btn-info" onclick="verPDF('${archivo.ruta_archivo}')">
-                              <i class="bi bi-eye"></i> Ver
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarArchivoObra(${archivo.id}, ${obraId})">
-                              <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                          </div>
-                        </div>
-                    `;
+    document.getElementById('formSC').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      const total = parseFloat(fd.get('total_estimado')) || 0;
+      const sumaActual = scLista.reduce((s, x) => (sc && x.id == sc.id) ? s : s + (parseFloat(x.total_estimado) || 0) + (parseFloat(x.total_extraordinarios) || 0), 0);
+      
+      if (sumaActual + total > COSTO_DIRECTO_OBRA) {
+        UI.confirm({
+          title: 'Exceso de Costo Directo',
+          message: `La suma de subcontratos (${scFmt(sumaActual + total)}) supera el costo directo (${scFmt(COSTO_DIRECTO_OBRA)}). ¿Deseas notificar a Subdirección y continuar?`,
+          danger: true
+        }).then(conf => {
+          if (conf) {
+            UI.loading("Notificando y guardando...");
+            scAjax({ action: 'notificar_exceso_subcontratos', obra_id: SC_OBRA_ID }, () => {
+              scEjecutarGuardar(fd);
             });
-            archivosHtml += '</div>';
-          } else {
-            archivosHtml += '<p class="text-muted">No hay archivos adjuntos</p>';
           }
-
-          Swal.fire({
-            title: 'Gestión de Archivos PDF',
-            html: archivosHtml,
-            width: 700,
-            showCloseButton: true,
-            showConfirmButton: false
-          });
-        })
-        .catch(error => {
-          console.error('Error al cargar archivos:', error);
-          Swal.fire('Error', 'No se pudieron cargar los archivos', 'error');
         });
-    }
-
-    // Función para subir archivo de obra
-    function subirArchivoObra() {
-      const form = document.getElementById('formSubirArchivo');
-      const formData = new FormData(form);
-
-      fetch('upload_archivo_obra.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 'success') {
-            Swal.fire('¡Éxito!', data.message, 'success')
-              .then(() => {
-                const obraId = formData.get('obra_id');
-                gestionarArchivos(obraId);
-              });
-          } else {
-            Swal.fire('Error', data.message, 'error');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          Swal.fire('Error', 'Error al subir el archivo', 'error');
-        });
-    }
-
-    // Función para eliminar archivo de obra
-    function eliminarArchivoObra(archivoId, obraId) {
-      Swal.fire({
-        title: '¿Eliminar archivo?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#dc3545'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          fetch('delete_archivo_obra.php', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                id: archivoId
-              })
-            })
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === 'success') {
-                Swal.fire('¡Eliminado!', data.message, 'success')
-                  .then(() => gestionarArchivos(obraId));
-              } else {
-                Swal.fire('Error', data.message, 'error');
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              Swal.fire('Error', 'Error al eliminar el archivo', 'error');
-            });
-        }
-      });
-    }
-
-    // Función para ver PDF
-    function verPDF(rutaArchivo) {
-      window.open(rutaArchivo, '_blank');
-    }
-
-    // Función para gestionar catálogos (necesaria para el botón)
-    function gestionarCatalogos(obraId, obraNombre) {
-      // Esta función debe estar definida en catalogo-obras.js
-      if (typeof gestionarCatalogos === 'function') {
-        gestionarCatalogos(obraId, obraNombre);
       } else {
-        console.error('Función gestionarCatalogos no disponible');
-        // Recargar la página como fallback
-        location.reload();
+        scEjecutarGuardar(fd);
       }
-    }
-  </script>
+    });
+  }
 
-  <!-- Cargar subcontratos al cargar la página -->
-  <script>
-    var SC_OBRA_ID = <?= (int)$obra_id ?>;
-    var scLista = [],
-      scProveedores = [],
-      scTodosConc = [],
-      scEditorId = null,
-      scDisp = [],
-      scAsig = [],
-      scDragId = null;
-    var extScId = null,
-      extLista = [];
-    var scFmt = function(n) {
-      return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'MXN'
-      }).format(n || 0);
-    };
-    var scEl = function(id) {
-      return document.getElementById(id);
-    };
+  function scModalCalcAnt() {
+    const f = document.getElementById('formSC');
+    const t = parseFloat(f.total_estimado.value) || 0;
+    const p = parseFloat(f.anticipo_pct.value) || 0;
+    const pre = document.getElementById('scAntMontoPreview');
+    if (t > 0 && p > 0) pre.innerHTML = `Anticipo en pesos: <strong>${scFmt(t * p / 100)}</strong>`;
+    else pre.innerHTML = '';
+  }
 
-    function scToast(msg, type) {
-      type = type || 'success';
-      var t = scEl('sc-toast');
-      t.textContent = msg;
-      t.className = 'show ' + type;
-      clearTimeout(t._t);
-      t._t = setTimeout(function() {
-        t.classList.remove('show');
-      }, 3200);
-    }
+  function scEjecutarGuardar(fd) {
+    const data = {}; fd.forEach((v, k) => data[k] = v);
+    data.action = data.id ? 'actualizar_subcontrato' : 'crear_subcontrato';
+    if (!data.id) data.obra_id = SC_OBRA_ID;
+    UI.loading("Guardando...");
+    scAjax(data, (e, r) => {
+      UI.loading.hide();
+      if (r.success) { UI.modal.close(); UI.toast.success("Subcontrato guardado"); scCargar(); }
+      else UI.toast.error(r.error);
+    });
+  }
 
-    function scAjax(data, cb) {
-      var fd = new FormData();
-      Object.keys(data).forEach(function(k) {
-        fd.append(k, data[k] != null ? data[k] : '');
-      });
-      fetch('details_obra.php?id=' + SC_OBRA_ID, {
-          method: 'POST',
-          body: fd
-        })
-        .then(function(r) {
-          return r.json();
-        }).then(function(r) {
-          cb(null, r);
-        })
-        .catch(function() {
-          cb(null, {
-            success: false,
-            error: 'Error de red'
-          });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      if (!SC_OBRA_ID) return;
-      scEl('ext-fecha').value = new Date().toISOString().split('T')[0];
-      scAjax({
-        action: 'obtener_proveedores'
-      }, function(e, rP) {
-        if (rP.success) {
-          scProveedores = rP.proveedores;
-          scPoblarSelect();
-        }
-        scAjax({
-          action: 'obtener_conceptos_obra',
-          obra_id: SC_OBRA_ID
-        }, function(e2, rC) {
-          if (rC.success) scTodosConc = rC.conceptos;
-          scCargar();
-        });
+  function scEliminar(id) {
+    UI.confirm({ title: '¿Eliminar subcontrato?', message: 'Se borrarán conceptos y extraordinarios asociados.', danger: true }).then(conf => {
+      if (!conf) return;
+      UI.loading("Eliminando...");
+      scAjax({ action: 'eliminar_subcontrato', id: id }, (e, r) => {
+        UI.loading.hide();
+        if (r.success) { UI.toast.success("Subcontrato eliminado"); scCargar(); } else UI.toast.error("Error al eliminar");
       });
     });
+  }
 
-    function scPoblarSelect() {
-      var sel = scEl('sc-m-proveedor');
-      sel.innerHTML = '<option value="">Selecciona proveedor</option>';
-      scProveedores.forEach(function(p) {
-        var o = document.createElement('option');
-        o.value = p.id;
-        o.textContent = p.nombre;
-        sel.appendChild(o);
+  // Editor de Conceptos centralizado
+  function scAbrirEditor(id) {
+    const sc = scLista.find(x => x.id == id); if (!sc) return;
+    scEditorId = id;
+    UI.loading("Cargando conceptos...");
+    scAjax({ action: 'obtener_conceptos_obra', obra_id: SC_OBRA_ID }, (e, r) => {
+      UI.loading.hide();
+      if (!r.success) { UI.toast.error("Error al cargar conceptos"); return; }
+      scTodosConc = r.conceptos;
+      scAsig = scTodosConc.filter(c => c.subcontratos_ids && c.subcontratos_ids.split(',').includes(String(id)));
+      scDisp = scTodosConc.filter(c => !c.subcontratos_ids || !c.subcontratos_ids.split(',').includes(String(id)));
+      
+      UI.modal({
+        title: "Asignar Conceptos - " + (sc.proveedor_nombre || 'Sin proveedor'),
+        size: "xl",
+        html: `
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="sc-editor-col">
+                <div class="dd-head">Disponibles <span class="badge bg-secondary" id="sc-cnt-disp">0</span></div>
+                <input class="form-control form-control-sm mb-2" id="sc-search-disp" placeholder="Buscar..." oninput="scFiltrarZonas()">
+                <div class="dd-zone" id="sc-zone-disp" ondragover="scOnDragOver(event)" ondrop="scOnDrop(event,'disp')" ondragleave="scOnDragLeave(event)"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="sc-editor-col">
+                <div class="dd-head" style="color:#3f7555;">Asignados <span class="badge bg-success" id="sc-cnt-asig">0</span></div>
+                <input class="form-control form-control-sm mb-2" id="sc-search-asig" placeholder="Buscar..." oninput="scFiltrarZonas()">
+                <div class="dd-zone" id="sc-zone-asig" ondragover="scOnDragOver(event)" ondrop="scOnDrop(event,'asig')" ondragleave="scOnDragLeave(event)"></div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Doble clic para mover o arrastra los conceptos.</small>
+            <div class="gap-2 d-flex">
+              <button class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+              <button class="btn btn-primary" onclick="scGuardarConceptos()">Guardar Cambios</button>
+            </div>
+          </div>`
       });
-    }
-
-    function scCargar() {
-      scAjax({
-        action: 'obtener_subcontratos',
-        obra_id: SC_OBRA_ID
-      }, function(e, r) {
-        if (!r.success) {
-          scToast('Error al cargar subcontratos', 'error');
-          return;
-        }
-        scLista = r.subcontratos;
-        scRender();
-        scStats();
-      });
-    }
-
-    function scRender() {
-      var wrap = scEl('sc-grid');
-      if (!scLista.length) {
-        wrap.innerHTML = '<div class="text-center text-muted py-4"><i class="bi bi-people" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.3"></i><p>Sin subcontratos registrados.</p></div>';
-        return;
-      }
-      var html = '<div class="sc-grid">';
-      scLista.forEach(function(sc) {
-        var numExt = parseInt(sc.num_extraordinarios) || 0;
-        var totalReal = parseFloat(sc.monto_real || 0);
-        var anticipo = parseFloat(sc.anticipo_monto || 0);
-        var totalEstimado = parseFloat(sc.total_estimado || 0);
-        var extraordinarios = parseFloat(sc.total_extraordinarios || 0);
-        // Importe Total = (Monto de contrato + total extraordinarios)
-        var totalConExtraordinarios = (totalEstimado + extraordinarios) || 0;
-        // Monto por pagar = Importe total - monto_real (OC)
-        var porPagar = totalConExtraordinarios - totalReal;
-        var descHtml = sc.descripcion ? '<div class="sc-desc-badge"><i class="bi bi-chat-left-text me-1" style="opacity:.5"></i>' + escHtml(sc.descripcion) + '</div>' : '';
-        html += '<div class="sc-card" id="sc-card-' + sc.id + '">';
-        html += '<div class="sc-card-head"><div class="sc-avatar"><i class="bi bi-person-gear"></i></div>';
-        html += '<div style="flex:1;min-width:0"><div class="sc-name">' + (sc.proveedor_nombre || '<em style="opacity:.5">Sin proveedor</em>') + '</div>';
-        html += '<div class="sc-sub" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">';
-        html += '<span class="tag-cnt"><i class="bi bi-list-check"></i> ' + sc.total_conceptos + ' conceptos</span>';
-        if (numExt > 0) html += '<span class="tag-ext" onclick="scToggleExt(' + sc.id + ')"><i class="bi bi-star-fill"></i> ' + numExt + ' extraordinario' + (numExt > 1 ? 's' : '') + '</span>';
-        html += '</div></div></div>';
-        html += '<div class="sc-body">';
-        if (descHtml) html += descHtml;
-        html += '<div class="monto-grid" style="margin-top:8px;">';
-        html += '<div class="monto-item"><div class="monto-lbl">Monto de contrato</div><div class="monto-val mv-blue">' + scFmt(totalEstimado) + '</div></div>';
-        html += '<div class="monto-item"><div class="monto-lbl">Anticipo ' + sc.anticipo_pct + '%</div><div class="monto-val mv-amber">' + scFmt(anticipo) + '</div></div>';
-        html += '<div class="monto-item"><div class="monto-lbl">Total extraordinarios</div><div class="ext-total-val">' + scFmt(extraordinarios) + '</div></div>';
-        html += '<div class="monto-item"><div class="monto-lbl">Utilizado</div><div class="monto-val mv-red">' + scFmt(totalReal) + '</div></div>';
-        html += '<div class="monto-item"><div class="monto-lbl">Importe total</div><div class="sc-total-real-val">' + scFmt(totalConExtraordinarios) + '</div></div>';
-        html += '</div>';
-        html += '<div class="sc-total-real"><span class="monto-lbl"><i class="bi bi-sigma me-1"></i>Por pagar</span><span>' + scFmt(porPagar) + '</span></div>';
-        if (numExt > 0) {
-          html += '<div class="sc-ext-panel" id="sc-ext-' + sc.id + '">';
-          html += '<div class="ext-list-title" style="margin-bottom:6px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8fa3b8;">Detalle extraordinarios</div>';
-          html += '<div id="sc-ext-rows-' + sc.id + '"><div class="dd-empty" style="padding:12px;font-size:.75rem;"><i class="bi bi-arrow-clockwise"></i> Cargando...</div></div>';
-          html += '</div>';
-        }
-        html += '</div>';
-        html += '<div class="sc-foot">';
-        html += '<button class="btn-sc-icon purple" onclick="extAbrir(' + sc.id + ')" title="Agregar/gestionar extraordinarios"><i class="bi bi-star"></i> Extraordinarios</button>';
-        html += '<button class="btn-sc-icon" onclick="scAbrirEditor(' + sc.id + ')" title="Conceptos"><i class="bi bi-list-check"></i> Conceptos</button>';
-        html += '<button class="btn-sc-icon" onclick="scEditar(' + sc.id + ')" title="Editar"><i class="bi bi-pencil"></i></button>';
-        html += '<button class="btn-sc-icon danger" onclick="scEliminar(' + sc.id + ')" title="Eliminar"><i class="bi bi-trash3"></i></button>';
-        html += '</div></div>';
-      });
-      html += '</div>';
-      wrap.innerHTML = html;
-      scLista.forEach(function(sc) {
-        if (parseInt(sc.num_extraordinarios) > 0) scCargarExtInline(sc.id);
-      });
-    }
-
-    function escHtml(s) {
-      var d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
-    }
-
-    function scToggleExt(scId) {
-      var panel = scEl('sc-ext-' + scId);
-      if (!panel) return;
-      panel.classList.toggle('open');
-    }
-
-    function scCargarExtInline(scId) {
-      scAjax({
-        action: 'obtener_extraordinarios',
-        subcontrato_id: scId
-      }, function(e, r) {
-        var rows = scEl('sc-ext-rows-' + scId);
-        if (!rows) return;
-        if (!r.success || !r.extraordinarios.length) {
-          rows.innerHTML = '<div style="font-size:.75rem;color:#8fa3b8;padding:4px 0;">Sin registros aun</div>';
-          return;
-        }
-        rows.innerHTML = r.extraordinarios.map(function(x) {
-          var fd = x.fecha ? new Date(x.fecha + 'T00:00:00').toLocaleDateString('es-MX', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          }) : '';
-          return '<div class="sc-ext-row">' +
-            '<div class="sc-ext-monto">+' + scFmt(x.monto) + '</div>' +
-            '<div class="sc-ext-info"><div class="sc-ext-desc">' + escHtml(x.descripcion) + '</div><div class="sc-ext-fecha">' + fd + '</div></div>' +
-            '<button class="sc-ext-del" onclick="extEliminarInline(' + x.id + ',' + scId + ')" title="Eliminar"><i class="bi bi-trash3"></i></button>' +
-            '</div>';
-        }).join('');
-      });
-    }
-
-    function extEliminarInline(id, scId) {
-      if (!confirm('Eliminar este extraordinario?')) return;
-      scAjax({
-        action: 'eliminar_extraordinario',
-        id: id,
-        subcontrato_id: scId
-      }, function(e, r) {
-        if (!r.success) {
-          scToast(r.error || 'Error', 'error');
-          return;
-        }
-        scToast('Extraordinario eliminado');
-        var sc = scLista.find(function(x) {
-          return x.id == scId;
-        });
-        if (sc) {
-          sc.total_extraordinarios = r.total_extraordinarios;
-          sc.num_extraordinarios = r.num_extraordinarios;
-        }
-        scRender();
-      });
-    }
-
-    function scStats() {
-      var wrap = scEl('sc-stats');
-      if (!scLista.length) {
-        wrap.style.setProperty('display', 'none', 'important');
-        return;
-      }
-      wrap.style.setProperty('display', 'flex', 'important');
-      scEl('sc-stat-total').textContent = scLista.length;
-      scEl('sc-stat-est').textContent = scFmt(scLista.reduce(function(s, x) {
-        return s + (parseFloat(x.total_estimado) || 0) + (parseFloat(x.total_extraordinarios) || 0);
-      }, 0));
-      scEl('sc-stat-ant').textContent = scFmt(scLista.reduce(function(s, x) {
-        return s + parseFloat(x.anticipo_monto || 0);
-      }, 0));
-      scEl('sc-stat-real').textContent = scFmt(scLista.reduce(function(s, x) {
-        return s + parseFloat(x.monto_real || 0);
-      }, 0));
-    }
-
-    function scAbrirModal() {
-      scEl('sc-m-id').value = '';
-      scEl('sc-modal-title').textContent = 'Nuevo subcontrato';
-      scEl('sc-m-proveedor').value = '';
-      scEl('sc-m-total').value = '';
-      scEl('sc-m-pct').value = '';
-      scEl('sc-m-desc').value = '';
-      scEl('sc-ant-preview').style.display = 'none';
-      scEl('sc-modal').classList.add('open');
-    }
-
-    function scEditar(id) {
-      var sc = scLista.find(function(x) {
-        return x.id == id;
-      });
-      if (!sc) return;
-      scEl('sc-m-id').value = sc.id;
-      scEl('sc-modal-title').textContent = 'Editar subcontrato';
-      scEl('sc-m-proveedor').value = sc.proveedor_id || '';
-      scEl('sc-m-total').value = sc.total_estimado;
-      scEl('sc-m-pct').value = sc.anticipo_pct;
-      scEl('sc-m-desc').value = sc.descripcion || '';
-      scCalcAnticipo();
-      scEl('sc-modal').classList.add('open');
-    }
-
-    function scCerrarModal() {
-      scEl('sc-modal').classList.remove('open');
-    }
-
-    function scCalcAnticipo() {
-      var total = parseFloat(scEl('sc-m-total').value) || 0;
-      var pct = parseFloat(scEl('sc-m-pct').value) || 0;
-      var prev = scEl('sc-ant-preview');
-      if (total > 0 && pct > 0) {
-        prev.style.display = 'block';
-        scEl('sc-ant-monto').textContent = scFmt(total * pct / 100);
-      } else prev.style.display = 'none';
-    }
-
-    function scGuardar() {
-      var id = scEl('sc-m-id').value;
-      var proveedor_id = scEl('sc-m-proveedor').value;
-      var total = parseFloat(scEl('sc-m-total').value) || 0;
-      var pct = parseFloat(scEl('sc-m-pct').value) || 0;
-      var desc = scEl('sc-m-desc').value;
-
-      // Calcular suma total de subcontratos existentes (excluyendo el que se edita)
-      var sumaActual = scLista.reduce(function(s, x) {
-        if (id && x.id == id) return s; // excluir el que se está editando
-        return s + parseFloat(x.total_estimado || 0) + parseFloat(x.total_extraordinarios || 0);
-      }, 0);
-
-      var nuevaSuma = sumaActual + total;
-      var costoDirecto = <?= (float)$obra['costo_directo'] ?>;
-
-      if (nuevaSuma > costoDirecto) {
-        // Mostrar modal de notificación antes de guardar
-        scMostrarModalExceso(nuevaSuma, costoDirecto, function() {
-          // El usuario confirmó, continuar guardando
-          scEjecutarGuardar(id, proveedor_id, total, pct, desc);
-        });
-      } else {
-        scEjecutarGuardar(id, proveedor_id, total, pct, desc);
-      }
-    }
-
-    function scEjecutarGuardar(id, proveedor_id, total, pct, desc) {
-      var payload = id ?
-        {
-          action: 'actualizar_subcontrato',
-          id: id,
-          proveedor_id: proveedor_id,
-          total_estimado: total,
-          anticipo_pct: pct,
-          descripcion: desc
-        } :
-        {
-          action: 'crear_subcontrato',
-          obra_id: SC_OBRA_ID,
-          proveedor_id: proveedor_id,
-          total_estimado: total,
-          anticipo_pct: pct,
-          descripcion: desc
-        };
-      scAjax(payload, function(e, r) {
-        if (!r.success) {
-          scToast(r.error || 'Error al guardar', 'error');
-          return;
-        }
-        scToast(id ? 'Subcontrato actualizado' : 'Subcontrato creado');
-        scCerrarModal();
-        scCargar();
-      });
-    }
-
-    function scEliminar(id) {
-      var sc = scLista.find(function(x) {
-        return x.id == id;
-      });
-      if (!sc) return;
-      Swal.fire({
-          title: 'Eliminar subcontrato?',
-          text: 'Se eliminaran los conceptos asignados y los valores extraordinarios.',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Si, eliminar',
-          cancelButtonText: 'Cancelar',
-          confirmButtonColor: '#dc3545'
-        })
-        .then(function(conf) {
-          if (!conf.isConfirmed) return;
-          scAjax({
-            action: 'eliminar_subcontrato',
-            id: id
-          }, function(e, r) {
-            if (r.success) {
-              scToast('Subcontrato eliminado');
-              scCargar();
-            } else scToast(r.error || 'Error al eliminar', 'error');
-          });
-        });
-    }
-
-    /* EDITOR */
-    function scAbrirEditor(id) {
-      var sc = scLista.find(function(x) {
-        return x.id == id;
-      });
-      if (!sc) return;
-      scEditorId = id;
-      scEl('sc-ed-title').textContent = 'Conceptos - ' + (sc.proveedor_nombre || 'Sin proveedor');
-      scAjax({
-        action: 'obtener_conceptos_obra',
-        obra_id: SC_OBRA_ID
-      }, function(e, r) {
-        if (!r.success) {
-          scToast('Error al cargar conceptos', 'error');
-          return;
-        }
-        scTodosConc = r.conceptos;
-        scAsig = scTodosConc.filter(function(c) {
-          if (!c.subcontratos_ids) return false;
-          return c.subcontratos_ids.split(',').indexOf(String(id)) !== -1;
-        });
-        scDisp = scTodosConc.filter(function(c) {
-          if (!c.subcontratos_ids) return true;
-          return c.subcontratos_ids.split(',').indexOf(String(id)) === -1;
-        });
-        scEl('sc-search-disp').value = '';
-        scEl('sc-search-asig').value = '';
-        scRenderZonas();
-        scEl('sc-editor').classList.add('open');
-      });
-    }
-
-    function scCerrarEditor() {
-      scEl('sc-editor').classList.remove('open');
-      scEditorId = null;
-    }
-
-    function scRenderZonas() {
-      scRenderZona('sc-zone-disp', scDisp, scEl('sc-search-disp').value, false);
-      scRenderZona('sc-zone-asig', scAsig, scEl('sc-search-asig').value, true);
-      scEl('sc-cnt-disp').textContent = scDisp.length;
-      scEl('sc-cnt-asig').textContent = scAsig.length;
-      scEl('sc-ed-cnt').textContent = scAsig.length + ' asignados';
-    }
-
-    function scRenderZona(zoneId, lista, filtro, esAsig) {
-      var zone = scEl(zoneId);
-      var q = filtro.toLowerCase().trim();
-      var vis = q ? lista.filter(function(c) {
-        return c.nombre_concepto.toLowerCase().indexOf(q) !== -1 || c.codigo_concepto.toLowerCase().indexOf(q) !== -1;
-      }) : lista;
-      if (!vis.length) {
-        zone.innerHTML = '<div class="dd-empty"><i class="bi bi-' + (esAsig ? 'inbox' : 'check2-all') + '"></i>' + (esAsig ? 'Arrastra conceptos aqui' : 'Sin conceptos disponibles') + '</div>';
-        return;
-      }
-      zone.innerHTML = vis.map(function(c) {
-        var enOtro = !esAsig && c.subcontratos_ids && c.subcontratos_ids.split(',').some(function(sid) {
-          return sid !== '' && parseInt(sid) !== scEditorId;
-        });
-        var alsoLabel = enOtro ? '<span class="chip-also"><i class="bi bi-diagram-2"></i> tambien en otro</span>' : '';
-        return '<div class="concept-chip' + (enOtro ? ' already' : '') + '" draggable="true" data-id="' + c.id + '"' +
-          ' ondragstart="scOnDragStart(event,' + c.id + ')" ondragend="scOnDragEnd(event)"' +
-          ' ondblclick="scMoverConcepto(' + c.id + ',\'' + (esAsig ? 'disp' : 'asig') + '\')" title="Doble clic para mover">' +
-          '<span class="chip-cod">' + c.codigo_concepto + '</span>' +
-          '<span class="chip-um">' + (c.unidad_medida || '') + '</span>' +
-          '<span class="chip-name">' + c.cantidad + '</span>' +
-          alsoLabel + '</div>';
-      }).join('');
-    }
-
-    function scOnDragStart(e, id) {
-      scDragId = id;
-      e.target.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
-
-    function scOnDragEnd(e) {
-      e.target.classList.remove('dragging');
-      scDragId = null;
-    }
-
-    function scOnDragOver(e) {
-      e.preventDefault();
-      e.currentTarget.classList.add('drag-over');
-    }
-
-    function scOnDragLeave(e) {
-      e.currentTarget.classList.remove('drag-over');
-    }
-
-    function scOnDrop(e, destino) {
-      e.preventDefault();
-      e.currentTarget.classList.remove('drag-over');
-      if (!scDragId) return;
-      scMoverConcepto(scDragId, destino);
-    }
-
-    function scMoverConcepto(id, destino) {
-      id = parseInt(id);
-      if (destino === 'asig') {
-        var idx = scDisp.findIndex(function(c) {
-          return c.id === id;
-        });
-        if (idx === -1) return;
-        var m = scDisp.splice(idx, 1)[0];
-        scAsig.push(m);
-      } else {
-        var idx2 = scAsig.findIndex(function(c) {
-          return c.id === id;
-        });
-        if (idx2 === -1) return;
-        var m2 = scAsig.splice(idx2, 1)[0];
-        scDisp.push(m2);
-      }
       scRenderZonas();
-    }
+    });
+  }
 
-    function scFiltrarDisp() {
-      scRenderZona('sc-zone-disp', scDisp, scEl('sc-search-disp').value, false);
-    }
+  function scRenderZonas() {
+    scRenderZona('sc-zone-disp', scDisp, scEl('sc-search-disp').value, false);
+    scRenderZona('sc-zone-asig', scAsig, scEl('sc-search-asig').value, true);
+    scEl('sc-cnt-disp').textContent = scDisp.length;
+    scEl('sc-cnt-asig').textContent = scAsig.length;
+  }
 
-    function scFiltrarAsig() {
-      scRenderZona('sc-zone-asig', scAsig, scEl('sc-search-asig').value, true);
-    }
+  function scRenderZona(zoneId, lista, filtro, esAsig) {
+    const zone = scEl(zoneId);
+    const q = filtro.toLowerCase().trim();
+    const vis = q ? lista.filter(c => c.nombre_concepto.toLowerCase().includes(q) || c.codigo_concepto.toLowerCase().includes(q)) : lista;
+    if (!vis.length) { zone.innerHTML = `<div class="dd-empty"><i class="bi bi-${esAsig ? 'inbox' : 'check2-all'}"></i> ${esAsig ? 'Vacio' : 'Sin disponibles'}</div>`; return; }
+    zone.innerHTML = vis.map(c => {
+      const enOtro = !esAsig && c.subcontratos_ids && c.subcontratos_ids.split(',').some(sid => sid !== '' && parseInt(sid) !== scEditorId);
+      return `
+        <div class="concept-chip ${enOtro ? 'already' : ''}" draggable="true" ondragstart="scDragId=${c.id}" ondragend="scDragId=null" ondblclick="scMoverConcepto(${c.id},'${esAsig ? 'disp' : 'asig'}')">
+          <span class="chip-cod">${c.codigo_concepto}</span>
+          <span class="chip-um">${c.unidad_medida || ''}</span>
+          <span class="chip-name">${c.cantidad}</span>
+          ${enOtro ? '<span class="chip-also">otro</span>' : ''}
+        </div>`;
+    }).join('');
+  }
 
-    function scGuardarConceptos() {
-      if (!scEditorId) {
-        scToast('Sin subcontrato activo', 'error');
-        return;
-      }
-      var btn = scEl('sc-btn-guardar-conc');
-      btn.disabled = true;
-      scAjax({
-          action: 'guardar_conceptos',
-          subcontrato_id: scEditorId,
-          concepto_ids: JSON.stringify(scAsig.map(function(c) {
-            return c.id;
-          }))
-        },
-        function(e, r) {
-          btn.disabled = false;
-          if (r.success) {
-            scToast(r.total + ' conceptos guardados');
-            scCerrarEditor();
-            scCargar();
-          } else scToast(r.error || 'Error al guardar', 'error');
-        });
-    }
+  function scOnDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+  function scOnDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+  function scOnDrop(e, dest) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); if (scDragId) scMoverConcepto(scDragId, dest); }
+  function scMoverConcepto(id, dest) {
+    if (dest === 'asig') { const i = scDisp.findIndex(c => c.id == id); if (i !== -1) scAsig.push(scDisp.splice(i, 1)[0]); }
+    else { const i = scAsig.findIndex(c => c.id == id); if (i !== -1) scDisp.push(scAsig.splice(i, 1)[0]); }
+    scRenderZonas();
+  }
+  function scFiltrarZonas() { scRenderZonas(); }
 
-    /* EXTRAORDINARIOS */
-    function extAbrir(scId) {
-      extScId = scId;
-      var sc = scLista.find(function(x) {
-        return x.id == scId;
+  function scGuardarConceptos() {
+    UI.loading("Guardando...");
+    scAjax({ action: 'guardar_conceptos', subcontrato_id: scEditorId, concepto_ids: JSON.stringify(scAsig.map(c => c.id)) }, (e, r) => {
+      UI.loading.hide();
+      if (r.success) { UI.modal.close(); UI.toast.success("Conceptos asignados"); scCargar(); } else UI.toast.error("Error al guardar");
+    });
+  }
+
+  function extAbrir(scId) {
+    extScId = scId;
+    UI.loading("Cargando extraordinarios...");
+    scAjax({ action: 'obtener_extraordinarios', subcontrato_id: scId }, (e, r) => {
+      UI.loading.hide();
+      if (!r.success) { UI.toast.error("Error"); return; }
+      extLista = r.extraordinarios;
+      UI.modal({
+        title: "Gestión de Extraordinarios",
+        size: "lg",
+        html: `
+          <div class="row">
+            <div class="col-md-5">
+              <div class="card p-3 bg-light border-0 mb-3">
+                <h6 class="fw-bold small mb-3">Agregar Nuevo</h6>
+                <div class="mb-2"><label class="small text-muted">Monto</label><input type="number" step="0.01" id="ext-m-monto" class="form-control form-control-sm"></div>
+                <div class="mb-2"><label class="small text-muted">Fecha</label><input type="date" id="ext-m-fecha" class="form-control form-control-sm"></div>
+                <div class="mb-3"><label class="small text-muted">Descripción</label><input type="text" id="ext-m-desc" class="form-control form-control-sm"></div>
+                <button class="btn btn-primary btn-sm w-100" onclick="extAgregar()"><i class="bi bi-plus-lg me-1"></i>Agregar</button>
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div id="ext-m-lista" style="max-height:300px;overflow-y:auto;"></div>
+              <div class="mt-3 text-end fw-bold" id="ext-m-total">Total: $0.00</div>
+            </div>
+          </div>`
       });
-      scEl('ext-modal-title').textContent = 'Extraordinarios - ' + (sc ? (sc.proveedor_nombre || 'Sin proveedor') : '');
-      scEl('ext-modal-sub').textContent = sc && sc.descripcion ? sc.descripcion : '';
-      scEl('ext-monto').value = '';
-      scEl('ext-desc').value = '';
-      scEl('ext-fecha').value = new Date().toISOString().split('T')[0];
-      extCargar();
-      scEl('ext-modal').classList.add('open');
-    }
+      scEl('ext-m-fecha').value = new Date().toISOString().split('T')[0];
+      extRender();
+    });
+  }
 
-    function extCerrar() {
-      scEl('ext-modal').classList.remove('open');
-      extScId = null;
-    }
+  function extRender() {
+    const list = scEl('ext-m-lista');
+    const total = extLista.reduce((s, x) => s + parseFloat(x.monto || 0), 0);
+    scEl('ext-m-total').textContent = 'Total: ' + scFmt(total);
+    if (!extLista.length) { list.innerHTML = '<div class="text-center py-4 text-muted">Sin registros</div>'; return; }
+    list.innerHTML = extLista.map(x => `
+      <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+        <div><div class="small fw-bold">${scFmt(x.monto)}</div><div class="text-muted" style="font-size:10px;">${x.descripcion} - ${x.fecha}</div></div>
+        <button class="btn btn-sm text-danger" onclick="extEliminar(${x.id})"><i class="bi bi-trash"></i></button>
+      </div>`).join('');
+  }
 
-    function extCargar() {
-      scAjax({
-        action: 'obtener_extraordinarios',
-        subcontrato_id: extScId
-      }, function(e, r) {
-        if (!r.success) {
-          scToast('Error al cargar', 'error');
-          return;
-        }
-        extLista = r.extraordinarios;
-        extRender();
+  function extAgregar() {
+    const m = parseFloat(scEl('ext-m-monto').value) || 0;
+    const d = scEl('ext-m-desc').value.trim();
+    const f = scEl('ext-m-fecha').value;
+    if (!m || !d) { UI.toast.error("Datos incompletos"); return; }
+    scAjax({ action: 'agregar_extraordinario', subcontrato_id: extScId, monto: m, descripcion: d, fecha: f }, (e, r) => {
+      if (r.success) { UI.toast.success("Agregado"); extLista.unshift({ id: r.id, monto: m, descripcion: d, fecha: f }); extRender(); scCargar(); }
+      else UI.toast.error(r.error);
+    });
+  }
+
+  function extEliminar(id) {
+    UI.confirm({ title: '¿Eliminar?', danger: true }).then(conf => {
+      if (!conf) return;
+      scAjax({ action: 'eliminar_extraordinario', id: id, subcontrato_id: extScId }, (e, r) => {
+        if (r.success) { UI.toast.success("Eliminado"); extLista = extLista.filter(x => x.id != id); extRender(); scCargar(); }
       });
-    }
+    });
+  }
 
-    function extRender() {
-      var lista = scEl('ext-lista');
-      var total = extLista.reduce(function(s, x) {
-        return s + parseFloat(x.monto || 0);
-      }, 0);
-      scEl('ext-total').textContent = scFmt(total);
-      if (!extLista.length) {
-        lista.innerHTML = '<div class="dd-empty"><i class="bi bi-inbox"></i>Sin registros extraordinarios</div>';
-        return;
-      }
-      lista.innerHTML = extLista.map(function(x) {
-        var fd = x.fecha ? new Date(x.fecha + 'T00:00:00').toLocaleDateString('es-MX', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        }) : '';
-        return '<div class="ext-item">' +
-          '<div class="ext-item-monto">' + (parseFloat(x.monto) >= 0 ? '+' : '') + scFmt(x.monto) + '</div>' +
-          '<div class="ext-item-info"><div class="ext-item-desc">' + x.descripcion + '</div><div class="ext-item-fecha">' + fd + '</div></div>' +
-          '<button class="ext-item-del" onclick="extEliminar(' + x.id + ')" title="Eliminar"><i class="bi bi-trash3"></i></button>' +
-          '</div>';
-      }).join('');
-    }
-
-    function extAgregar() {
-      var monto = parseFloat(scEl('ext-monto').value) || 0;
-      var desc = scEl('ext-desc').value.trim();
-      var fecha = scEl('ext-fecha').value;
-      if (!monto) {
-        scToast('Ingresa un monto', 'error');
-        return;
-      }
-      if (!desc) {
-        scToast('Ingresa una descripcion', 'error');
-        return;
-      }
-      if (!fecha) {
-        scToast('Ingresa una fecha', 'error');
-        return;
-      }
-      scAjax({
-          action: 'agregar_extraordinario',
-          subcontrato_id: extScId,
-          monto: monto,
-          descripcion: desc,
-          fecha: fecha
-        },
-        function(e, r) {
-          if (!r.success) {
-            scToast(r.error || 'Error al agregar', 'error');
-            return;
-          }
-          scToast('Extraordinario registrado', 'success');
-          scEl('ext-monto').value = '';
-          scEl('ext-desc').value = '';
-          var sc = scLista.find(function(x) {
-            return x.id == extScId;
-          });
-          if (sc) {
-            sc.total_extraordinarios = r.total_extraordinarios;
-            sc.num_extraordinarios = r.num_extraordinarios;
-          }
-          extCargar();
-          scRender();
+  function editarObra(id) {
+    UI.loading("Cargando...");
+    fetch(`edit_obra.php?id=${id}`).then(r => r.json()).then(data => {
+      UI.loading.hide();
+      UI.modal({
+        title: "Editar Obra",
+        size: "lg",
+        html: `
+          <form id="formEditObra">
+            <input type="hidden" name="id" value="${data.id}"><input type="hidden" name="proyecto_id" value="${data.proyecto_id}">
+            <div class="mb-3"><label class="form-label">Nombre de la Obra</label><input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required></div>
+            <div class="mb-3"><label class="form-label">Número</label><input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required></div>
+            <div class="mb-3"><label class="form-label">Descripción</label><textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea></div>
+            <div class="row">
+              <div class="col-6 mb-3"><label class="form-label">Costo Directo</label><input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required></div>
+              <div class="col-6 mb-3"><label class="form-label">Monto Designado</label><input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required></div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4"><button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-warning">Actualizar</button></div>
+          </form>`
+      });
+      document.getElementById('formEditObra').addEventListener('submit', function(e) {
+        e.preventDefault();
+        UI.loading("Actualizando...");
+        fetch('update_obra.php', { method: 'POST', body: new FormData(this) }).then(r => r.json()).then(r => {
+          UI.loading.hide();
+          if (r.status === 'success') { UI.toast.success("Obra actualizada"); setTimeout(() => location.reload(), 1500); }
+          else UI.toast.error(r.message);
         });
-    }
+      });
+    });
+  }
 
-    function extEliminar(id) {
-      Swal.fire({
-          title: 'Eliminar este registro?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Si, eliminar',
-          confirmButtonColor: '#dc3545'
-        })
-        .then(function(conf) {
-          if (!conf.isConfirmed) return;
-          scAjax({
-            action: 'eliminar_extraordinario',
-            id: id,
-            subcontrato_id: extScId
-          }, function(e, r) {
-            if (!r.success) {
-              scToast(r.error || 'Error', 'error');
-              return;
-            }
-            scToast('Registro eliminado');
-            var sc = scLista.find(function(x) {
-              return x.id == extScId;
-            });
-            if (sc) {
-              sc.total_extraordinarios = r.total_extraordinarios;
-              sc.num_extraordinarios = r.num_extraordinarios;
-              scRender();
-            }
-            extCargar();
-          });
-        });
-    }
-  </script>
+  function gestionarArchivos(obraId) {
+    UI.loading("Cargando archivos...");
+    fetch(`get_archivos_obra.php?obra_id=${obraId}`).then(r => r.json()).then(data => {
+      UI.loading.hide();
+      let html = `
+        <div class="mb-4">
+          <form id="formFiles" enctype="multipart/form-data">
+            <input type="hidden" name="obra_id" value="${obraId}">
+            <div class="mb-3"><label class="form-label">Subir PDF</label><input type="file" name="archivo" class="form-control" accept=".pdf" required></div>
+            <button type="button" class="btn btn-primary w-100" onclick="subirArchivoObra()">Subir Archivo</button>
+          </form>
+        </div>
+        <hr><div class="list-group mt-3" id="fileList"></div>`;
+      UI.modal({ title: "Gestión de Archivos PDF", html: html });
+      renderFiles(data.archivos);
+    });
+  }
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
+  function renderFiles(files) {
+    const list = scEl('fileList');
+    if (!files || !files.length) { list.innerHTML = '<div class="text-center text-muted py-3">Sin archivos</div>'; return; }
+    list.innerHTML = files.map(f => `
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div class="text-truncate" style="max-width:250px;"><i class="bi bi-file-pdf text-danger me-2"></i>${f.nombre_archivo}</div>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-info" onclick="window.open('${f.ruta_archivo}','_blank')"><i class="bi bi-eye"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="eliminarArchivoObra(${f.id})"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
 
-  <?php
-include __DIR__ . "/../includes/footer.php"; ?>
+  function subirArchivoObra() {
+    const fd = new FormData(document.getElementById('formFiles'));
+    UI.loading("Subiendo...");
+    fetch('upload_archivo_obra.php', { method: 'POST', body: fd }).then(r => r.json()).then(r => {
+      UI.loading.hide();
+      if (r.status === 'success') { UI.toast.success("Archivo subido"); gestionarArchivos(fd.get('obra_id')); }
+      else UI.toast.error(r.message);
+    });
+  }
 
+  function eliminarArchivoObra(id) {
+    UI.confirm({ title: '¿Eliminar archivo?', danger: true }).then(conf => {
+      if (!conf) return;
+      fetch('delete_archivo_obra.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) })
+        .then(r => r.json()).then(r => { if (r.status === 'success') { UI.toast.success("Eliminado"); UI.modal.close(); } });
+    });
+  }
+
+  function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+</script>
+
+<?php include __DIR__ . "/../includes/footer.php"; ?>
 </body>
-
 </html>
-
-
-

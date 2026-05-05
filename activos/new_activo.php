@@ -1445,32 +1445,10 @@ $result_departamentos = $result;
     };
 
     function mostrarAlerta(msg, tipo = 'danger') {
-      const c = document.getElementById('toastContainer');
-      const id = 'toast_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5);
-      const cfg = TCFG[tipo] || TCFG.danger;
-      const el = document.createElement('div');
-      el.id = id;
-      el.className = `toast-notif t-${tipo}`;
-      el.innerHTML = `
-        <div class="t-icon"><i class="bi ${cfg.icon}"></i></div>
-        <div class="t-body">
-          <div class="t-title">${cfg.title}</div>
-          <div class="t-msg">${msg}</div>
-        </div>
-        <button class="t-close" onclick="cerrarAlerta('${id}')"><i class="bi bi-x-lg"></i></button>
-        <div class="t-progress"></div>`;
-      c.appendChild(el);
-      // max 5 toasts visibles
-      const all = c.querySelectorAll('.toast-notif');
-      if (all.length > 5) cerrarAlerta(all[0].id);
-      setTimeout(() => cerrarAlerta(id), 5000);
-    }
-
-    function cerrarAlerta(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.style.animation = 'tOut .3s ease forwards';
-      setTimeout(() => el?.remove(), 290);
+      if (tipo === 'success') UI.toast.success(msg);
+      else if (tipo === 'warning') UI.toast.warning(msg);
+      else if (tipo === 'info') UI.toast.info(msg);
+      else UI.toast.error(msg);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -1480,44 +1458,11 @@ $result_departamentos = $result;
       archivos,
       totalMB
     }) {
-      return new Promise(resolve => {
-        const ov = document.createElement('div');
-        ov.className = 'confirm-overlay';
-        ov.innerHTML = `
-          <div class="confirm-modal">
-            <div class="m-icon"><i class="bi bi-cloud-arrow-up" style="font-size:1.4rem;"></i></div>
-            <h5>¿Confirmar subida?</h5>
-            <p>Se guardarán los datos y se subirán los archivos adjuntos.</p>
-            <div class="m-stats">
-              <div class="m-stat">
-                <div class="val">${archivos}</div>
-                <div class="lbl">Archivo${archivos !== 1 ? 's' : ''}</div>
-              </div>
-              <div class="m-stat m-sep">
-                <div class="val">${totalMB}</div>
-                <div class="lbl">MB total</div>
-              </div>
-            </div>
-            <div class="m-actions">
-              <button class="btn-cancel" id="bCancel"><i class="bi bi-x-lg"></i> Cancelar</button>
-              <button class="btn-ok"     id="bOk"><i class="bi bi-floppy"></i> Guardar</button>
-            </div>
-          </div>`;
-        document.body.appendChild(ov);
-        ov.querySelector('#bOk').onclick = () => {
-          ov.remove();
-          resolve(true);
-        };
-        ov.querySelector('#bCancel').onclick = () => {
-          ov.remove();
-          resolve(false);
-        };
-        ov.addEventListener('click', e => {
-          if (e.target === ov) {
-            ov.remove();
-            resolve(false);
-          }
-        });
+      return UI.confirm({
+        title: '¿Confirmar subida?',
+        message: `Se guardarán los datos y se subirán <b>${archivos}</b> archivo${archivos !== 1 ? 's' : ''} (${totalMB} MB total).`,
+        confirmText: 'Guardar Activo',
+        icon: 'question'
       });
     }
 
@@ -1770,10 +1715,8 @@ $result_departamentos = $result;
         if (!confirmar) return;
       }
 
-      // 3. Deshabilitar botón
-      const btn = document.getElementById('btnGuardar');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+      // 3. Bloqueo de UI
+      UI.loading('Guardando activo...');
 
       // 4. Construir FormData
       const fd = new FormData(this);
@@ -1814,18 +1757,16 @@ $result_departamentos = $result;
           }
           return res.text().then(() => {
             if (res.status >= 400) {
+              UI.loading.hide();
               mostrarAlerta('Ocurrió un error al guardar. Revisa el log del servidor.', 'danger');
-              btn.disabled = false;
-              btn.innerHTML = '<i class="bi bi-floppy"></i> Guardar Activo';
             } else {
               window.location.href = res.url || 'list_activos.php';
             }
           });
         })
         .catch(err => {
+          UI.loading.hide();
           mostrarAlerta('Error de red: ' + err.message, 'danger');
-          btn.disabled = false;
-          btn.innerHTML = '<i class="bi bi-floppy"></i> Guardar Activo';
         });
     });
 

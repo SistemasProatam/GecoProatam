@@ -11,440 +11,189 @@ if (!$es_super_admin && !in_array($dep_id_sesion, [1, 2, 10, 16])) {
   exit;
 }
 
-// Generar folio por entidad
-function generarFolio(string $entidad = 'PROATAM'): string
-{
-  $prefijos = [
-    'PROATAM'     => 'CO-PRO',
-    'INGETAM'     => 'CO-ING',
-    'LUBYCOMP'    => 'CO-LUB',
-    'DAVID GOMEZ' => 'CO-DAG',
-  ];
-  $prefijo   = $prefijos[$entidad] ?? 'CO-PRO';
-  $dir       = __DIR__ . '/data';
-  $folioFile = "$dir/folio_{$entidad}.txt";
-  if (!is_dir($dir)) mkdir($dir, 0755, true);
-  if (!file_exists($folioFile)) file_put_contents($folioFile, '1');
-  $num = (int)file_get_contents($folioFile);
-  return $prefijo . '-' . str_pad($num, 4, '0', STR_PAD_LEFT);
-}
+require_once __DIR__ . "/../conexion.php";
 
 $entidadSel    = $_GET['entidad'] ?? 'PROATAM';
-$folioInicial  = generarFolio($entidadSel);
 $emisorNombre  = trim(($_SESSION['nombres'] ?? '') . ' ' . ($_SESSION['apellidos'] ?? ''));
 $emisorDepto   = $_SESSION['departamento'] ?? '';
 
-require_once __DIR__ . "/../conexion.php";
 $unidades = [];
 $resU = $conn->query("SELECT id, nombre FROM unidades WHERE activo = 1 ORDER BY nombre ASC");
 if ($resU) while ($rowU = $resU->fetch_assoc()) $unidades[] = $rowU;
 
-// Obtener datos de entidad
 $sql_entidades = "SELECT id, nombre FROM entidades ORDER BY nombre ASC";
 $result_entidades = $conn->query($sql_entidades);
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nueva Cotización — <?= htmlspecialchars($folioInicial) ?></title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/navbar.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/cotizaciones.css" />
+  <meta charset="UTF-8">
+  <title>Nueva Cotización</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/cotizaciones.css">
 </head>
-
 <body>
-  <?php
-require_once __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-  <!-- HERO SECTION -->
-  <div class="hero-section">
-    <div class="container hero-content">
-      <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-        <span>/</span>
-        <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php">Cotizaciones</a>
-        <span>/</span><span>Nueva</span>
-      </div>
-      <div class="row align-items-center">
-        <div class="col-lg-8">
-          <h1 class="hero-title">Generar Cotización</h1>
-          <p class="mt-2 text-white-50">Folio actual: <strong class="text-white" id="folioDisplay"><?= htmlspecialchars($folioInicial) ?></strong></p>
-        </div>
-        <div class="col-lg-4 text-lg-end d-none d-lg-block">
-          <img src="<?= BASE_URL ?>/assets/img/logo_proat.png" alt="Logo" style="max-height: 80px; filter: brightness(0) invert(1); opacity: 0.8;">
-        </div>
-      </div>
+<div class="hero-section">
+  <div class="container hero-content">
+    <div class="breadcrumb-custom">
+      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
+      <span>/</span><a href="list_cotizaciones.php">Cotizaciones</a>
+      <span>/</span><span>Nueva</span>
     </div>
+    <h1 class="hero-title">Generar Cotización</h1>
+    <p class="mt-2 text-white-50">Folio actual: <strong class="text-white" id="folioDisplay">...</strong></p>
   </div>
+</div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content-wrapper">
-    <div class="form-container">
-      <div class="form-body">
-
+<div class="content-wrapper">
+  <div class="container">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
         <form id="formCotizacion">
-          <!-- ENTIDAD EMISORA -->
-          <div class="section-title">
-            <i class="bi bi-building"></i> Entidad Emisora
-          </div>
-          <div class="row">
+          <div class="row g-3 mb-4">
             <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Empresa emisora <span class="text-danger">*</span></label>
-                <select name="entidad" id="entidadSelect" class="form-select" onchange="actualizarFolio()">
-                  <?php
-while ($row = $result_entidades->fetch_assoc()): ?>
-                    <option value="<?= htmlspecialchars($row['id']) ?>" <?= $row['id'] === $entidadSel ? 'selected' : '' ?>>
-                      <?= htmlspecialchars($row['nombre']) ?>
-                    </option>
-                  <?php
-endwhile; ?>
-                </select>
-              </div>
+              <label class="form-label fw-bold">Empresa emisora</label>
+              <select name="entidad" id="entidadSelect" class="form-select" onchange="actualizarFolio()">
+                <?php while ($row = $result_entidades->fetch_assoc()): ?>
+                  <option value="<?= htmlspecialchars($row['nombre']) ?>" <?= $row['nombre'] === $entidadSel ? 'selected' : '' ?>><?= htmlspecialchars($row['nombre']) ?></option>
+                <?php endwhile; ?>
+              </select>
             </div>
           </div>
 
-          <!-- DATOS DEL CLIENTE -->
-          <div class="section-title">
-            <i class="bi bi-person-lines-fill"></i> Datos del Cliente
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Atención a <span class="text-danger">*</span></label>
-                <input type="text" name="atencion" class="form-control" placeholder="Nombre del contacto" required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Compañía / Empresa</label>
-                <input type="text" name="compania" class="form-control" placeholder="Razón social o nombre">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Fecha</label>
-                <input type="date" name="fecha" class="form-control" value="<?= date('Y-m-d') ?>" required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Lugar / Ciudad</label>
-                <input type="text" name="lugar" class="form-control" placeholder="Ciudad, Estado">
-              </div>
-            </div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6"><label class="form-label fw-bold">Atención a</label><input type="text" name="atencion" class="form-control" placeholder="Nombre del contacto" required></div>
+            <div class="col-md-6"><label class="form-label fw-bold">Compañía</label><input type="text" name="compania" class="form-control" placeholder="Empresa"></div>
+            <div class="col-md-6"><label class="form-label fw-bold">Fecha</label><input type="date" name="fecha" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+            <div class="col-md-6"><label class="form-label fw-bold">Lugar</label><input type="text" name="lugar" class="form-control" placeholder="Ciudad, Estado"></div>
           </div>
 
-          <!-- CONCEPTOS -->
-          <div class="section-title">
-            <i class="bi bi-table"></i> Conceptos de Obra / Servicios
-          </div>
-          <div class="table-responsive-custom">
-            <table class="table" id="tablaConceptos">
-              <thead>
-                <tr>
-                  <th style="width: 5%">#</th>
-                  <th style="width: 40%">Descripción</th>
-                  <th style="width: 10%">Unidad</th>
-                  <th style="width: 10%">Cant.</th>
-                  <th style="width: 15%">P. Unitario</th>
-                  <th style="width: 15%">Importe</th>
-                  <th style="width: 5%"></th>
-                </tr>
+          <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle" id="tablaConceptos">
+              <thead class="bg-light">
+                <tr><th style="width: 5%">#</th><th style="width: 45%">Descripción</th><th style="width: 10%">Unidad</th><th style="width: 10%">Cant.</th><th style="width: 15%">P. Unitario</th><th style="width: 15%">Importe</th><th style="width: 5%"></th></tr>
               </thead>
               <tbody id="tbodyConceptos"></tbody>
             </table>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="agregarFila()"><i class="bi bi-plus-lg me-1"></i> Agregar concepto</button>
           </div>
 
-          <div class="text-end mb-4">
-            <button type="button" class="button-56" onclick="agregarFila()">
-              <i class="bi bi-plus-lg"></i> Agregar concepto
-            </button>
-          </div>
-
-          <div class="total-section">
-            <div class="total-row">
-              <span>Subtotal:</span>
-              <span id="dispSubtotal">$0.00</span>
-            </div>
-            <div class="total-row align-items-center">
-              <span>IVA:</span>
-              <div class="d-flex align-items-center gap-2">
-                <select id="selectIva" class="form-select py-1" style="width: 80px;" onchange="recalcular()">
-                  <option value="16">16%</option>
-                  <option value="8">8%</option>
-                  <option value="0">0%</option>
-                </select>
-                <span id="dispIva">$0.00</span>
+          <div class="row justify-content-end mb-4">
+            <div class="col-md-4">
+              <div class="d-flex justify-content-between mb-2"><span>Subtotal:</span><span id="dispSubtotal" class="fw-bold">$0.00</span></div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span>IVA:</span>
+                <div class="d-flex gap-2 align-items-center">
+                  <select id="selectIva" class="form-select form-select-sm" style="width: 70px;" onchange="recalcular()"><option value="16">16%</option><option value="8">8%</option><option value="0">0%</option></select>
+                  <span id="dispIva" class="fw-bold">$0.00</span>
+                </div>
               </div>
-            </div>
-            <div class="total-row final">
-              <span>TOTAL:</span>
-              <span id="dispTotal">$0.00</span>
+              <div class="d-flex justify-content-between fs-4 text-primary pt-2 border-top"><span>TOTAL:</span><span id="dispTotal" class="fw-bold">$0.00</span></div>
             </div>
           </div>
 
-          <!-- Hidden fields -->
-          <input type="hidden" name="folio" id="folioInput" value="<?= htmlspecialchars($folioInicial) ?>">
-          <input type="hidden" name="folio_num" id="folioNum" value="">
-          <input type="hidden" name="subtotal" id="hSubtotal">
-          <input type="hidden" name="iva" id="hIva">
-          <input type="hidden" name="total" id="hTotal">
-          <input type="hidden" name="tasa_iva" id="hTasaIva">
-          <input type="hidden" name="emisor_nombre" value="<?= htmlspecialchars($emisorNombre) ?>">
-          <input type="hidden" name="emisor_depto" value="<?= htmlspecialchars($emisorDepto) ?>">
+          <input type="hidden" name="folio" id="folioInput">
+          <input type="hidden" name="subtotal" id="hSubtotal"><input type="hidden" name="iva" id="hIva"><input type="hidden" name="total" id="hTotal"><input type="hidden" name="tasa_iva" id="hTasaIva">
+          <input type="hidden" name="emisor_nombre" value="<?= htmlspecialchars($emisorNombre) ?>"><input type="hidden" name="emisor_depto" value="<?= htmlspecialchars($emisorDepto) ?>">
 
-          <!-- ALCANCES -->
-          <div class="section-title">
-            <i class="bi bi-check2-square"></i> Alcances Incluidos
-          </div>
-          <div class="checks-grid">
-            <?php
-$alcancesOpc = [
-              'ejecucion'   => 'Ejecución de trabajos',
-              'materiales'  => 'Materiales y mano de obra',
-              'supervision' => 'Supervisión técnica',
-              'limpieza'    => 'Limpieza final',
-              'garantia'    => 'Garantía de calidad',
-              'herramienta' => 'Herramienta y equipo',
-              'seguridad'   => 'Seguridad e higiene',
-              'entrega'     => 'Memoria fotográfica',
-            ];
-            foreach ($alcancesOpc as $key => $label): ?>
-              <label class="check-item">
-                <input type="checkbox" name="alcances[]" value="<?= $key ?>" checked>
-                <span><?= htmlspecialchars($label) ?></span>
-              </label>
-            <?php
-endforeach; ?>
-          </div>
-          <div class="form-group mt-3">
-            <label class="form-label">Otros alcances o precisiones</label>
-            <textarea name="alcances_extra" class="form-control" rows="3" placeholder="Opcional..."></textarea>
+          <div class="mb-4">
+            <label class="form-label fw-bold">Alcances Incluidos</label>
+            <div class="row g-2">
+              <?php $alcancesOpc = ['ejecucion'=>'Ejecución','materiales'=>'Materiales','supervision'=>'Supervisión','limpieza'=>'Limpieza','garantia'=>'Garantía','herramienta'=>'Herramienta','seguridad'=>'Seguridad','entrega'=>'Memoria fotog.'];
+              foreach ($alcancesOpc as $k => $v): ?>
+                <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" name="alcances[]" value="<?= $k ?>" id="chk_<?= $k ?>" checked><label class="form-check-label small" for="chk_<?= $k ?>"><?= $v ?></label></div></div>
+              <?php endforeach; ?>
+            </div>
+            <textarea name="alcances_extra" class="form-control mt-3" rows="2" placeholder="Otros alcances..."></textarea>
           </div>
 
-          <!-- CONDICIONES -->
-          <div class="section-title">
-            <i class="bi bi-file-text"></i> Condiciones Generales
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Tiempo de ejecución</label>
-                <input type="text" name="tiempo" class="form-control" placeholder="Ej: 15 días">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Forma de pago</label>
-                <input type="text" name="forma_pago" class="form-control" placeholder="Ej: 50% anticipo">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Moneda</label>
-                <select name="moneda" class="form-select">
-                  <option value="MXN">MXN — Pesos Mexicanos</option>
-                  <option value="USD">USD — Dólares Americanos</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Vigencia</label>
-                <input type="text" name="vigencia" class="form-control" value="30 días naturales">
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label class="form-label">Notas adicionales</label>
-                <textarea name="notas" class="form-control" rows="3" placeholder="Observaciones..."></textarea>
-              </div>
-            </div>
+          <div class="row g-3 mb-5">
+            <div class="col-md-4"><label class="form-label small fw-bold">Ejecución</label><input type="text" name="tiempo" class="form-control form-control-sm" placeholder="15 días"></div>
+            <div class="col-md-4"><label class="form-label small fw-bold">Forma de pago</label><input type="text" name="forma_pago" class="form-control form-control-sm" placeholder="50% anticipo"></div>
+            <div class="col-md-4"><label class="form-label small fw-bold">Vigencia</label><input type="text" name="vigencia" class="form-control form-control-sm" value="30 días naturales"></div>
+            <div class="col-12"><label class="form-label small fw-bold">Notas</label><textarea name="notas" class="form-control" rows="2"></textarea></div>
           </div>
 
-          <!-- BOTONES -->
-          <div class="d-flex justify-content-center gap-4 mt-5">
-            <a href="list_cotizaciones.php" class="button-cancel">
-              <i class="bi bi-arrow-left"></i> Volver
-            </a>
-            <button type="button" class="button-57" onclick="guardarYDescargar()">
-              <i class="bi bi-file-earmark-pdf"></i> Generar & Descargar PDF
-            </button>
+          <div class="text-center gap-3 d-flex justify-content-center">
+            <a href="list_cotizaciones.php" class="btn btn-lg btn-outline-secondary px-5">Cancelar</a>
+            <button type="button" class="btn btn-lg btn-primary px-5" onclick="guardarYDescargar()"><i class="bi bi-file-earmark-pdf me-2"></i> Generar Cotización</button>
           </div>
-
         </form>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const BASE_URL = '<?= BASE_URL ?>';
-    const opcionesUnidad = `<option value="">-- Unidad --</option><?php
-foreach ($unidades as $u)
-                                                                    echo '<option value="' . htmlspecialchars($u['nombre'], ENT_QUOTES) . '">' . htmlspecialchars($u['nombre']) . '</option>';
-                                                                  ?>`;
-    let filaCount = 0;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const BASE_URL = '<?= BASE_URL ?>';
+  let filaCount = 0;
+  const fmt = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n || 0);
 
-    function fmt(n) {
-      return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'MXN'
-      }).format(n);
-    }
-
-    function agregarFila() {
-      filaCount++;
-      const tbody = document.getElementById('tbodyConceptos');
-      const tr = document.createElement('tr');
-      tr.dataset.idx = filaCount;
-      tr.innerHTML = `
-    <td class="text-muted fw-bold">${filaCount}</td>
-    <td><textarea name="desc[]" class="form-control" rows="2" placeholder="Descripción del concepto..."></textarea></td>
-    <td><select name="unidad[]" class="form-select">${opcionesUnidad}</select></td>
-    <td><input type="number" name="cantidad[]" class="form-control text-center" min="0" step="any" value="1" oninput="recalcular()"></td>
-    <td><input type="number" name="precio[]" class="form-control text-end" min="0" step="any" value="0" oninput="recalcular()"></td>
-    <td class="fw-bold text-primary text-end" id="imp-${filaCount}">$0.00</td>
-    <td class="text-center">
-      <button type="button" class="btn btn-link text-danger p-0" onclick="eliminarFila(this)" title="Eliminar">
-        <i class="bi bi-trash3 fs-5"></i>
-      </button>
-    </td>
-  `;
-      tbody.appendChild(tr);
-      recalcular();
-    }
-
-    function eliminarFila(btn) {
-      btn.closest('tr').remove();
-      document.querySelectorAll('#tbodyConceptos tr').forEach((tr, i) => {
-        tr.cells[0].textContent = i + 1;
-      });
-      recalcular();
-    }
-
-    function recalcular() {
-      let subtotal = 0;
-      document.querySelectorAll('#tbodyConceptos tr').forEach(tr => {
-        const cant = parseFloat(tr.querySelector('input[name="cantidad[]"]')?.value) || 0;
-        const precio = parseFloat(tr.querySelector('input[name="precio[]"]')?.value) || 0;
-        const imp = cant * precio;
-        subtotal += imp;
-        const cell = document.getElementById('imp-' + tr.dataset.idx);
-        if (cell) cell.textContent = fmt(imp);
-      });
-      const tasaPct = parseFloat(document.getElementById('selectIva').value) || 0;
-      const iva = subtotal * (tasaPct / 100);
-      const total = subtotal + iva;
-      document.getElementById('dispSubtotal').textContent = fmt(subtotal);
-      document.getElementById('dispIva').textContent = fmt(iva);
-      document.getElementById('dispTotal').textContent = fmt(total);
-      // Actualizar hiddens
-      document.getElementById('hSubtotal').value = subtotal.toFixed(2);
-      document.getElementById('hIva').value = iva.toFixed(2);
-      document.getElementById('hTotal').value = total.toFixed(2);
-      document.getElementById('hTasaIva').value = tasaPct;
-    }
-
-    function validarFormulario() {
-      const atencion = document.querySelector('input[name="atencion"]').value.trim();
-      if (!atencion) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Campo obligatorio',
-          text: 'Debes especificar a quién va dirigida la cotización.'
-        });
-        return false;
-      }
-      let tieneConcepto = false;
-      document.querySelectorAll('textarea[name="desc[]"]').forEach(t => {
-        if (t.value.trim()) tieneConcepto = true;
-      });
-      if (!tieneConcepto) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Conceptos requeridos',
-          text: 'Agrega al menos un concepto con descripción.'
-        });
-        return false;
-      }
-      return true;
-    }
-
-    async function guardarYDescargar() {
-      if (!validarFormulario()) return;
-
-      // Mostrar loading
-      Swal.fire({
-        title: 'Guardando cotización...',
-        text: 'Por favor espera',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      const data = new FormData(document.getElementById('formCotizacion'));
-
-      try {
-        const resp = await fetch(BASE_URL + '/cotizaciones/save_cotizacion.php', {
-          method: 'POST',
-          body: data
-        });
-
-        // Verificar que la respuesta sea JSON
-        const text = await resp.text();
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch (e) {
-          console.error('Respuesta no-JSON:', text);
-          Swal.fire('Error', 'Respuesta inesperada del servidor. Revisa la consola.', 'error');
-          return;
-        }
-
-        if (result.status === 'success') {
-          Swal.close();
-          // Descargar PDF usando el ID guardado en BD
-          window.location.href = BASE_URL + '/cotizaciones/descargar_cotizacion.php?id=' + result.id;
-          // Redirigir a la lista tras 2s
-          setTimeout(() => {
-            window.location.href = BASE_URL + '/cotizaciones/list_cotizaciones.php';
-          }, 2500);
-        } else {
-          Swal.fire('Error al guardar', result.message || 'Error desconocido.', 'error');
-        }
-      } catch (err) {
-        console.error(err);
-        Swal.fire('Error de red', 'No se pudo conectar con el servidor.', 'error');
-      }
-    }
-
-    function actualizarFolio() {
-      const entidad = document.getElementById('entidadSelect').value;
-      fetch(BASE_URL + '/cotizaciones/generar_folio.php?entidad=' + encodeURIComponent(entidad))
-        .then(r => r.json())
-        .then(data => {
-          document.getElementById('folioDisplay').textContent = data.folio;
-          document.getElementById('folioInput').value = data.folio;
-          document.getElementById('folioNum').value = data.numero;
-        })
-        .catch(e => console.error('Error folio:', e));
-    }
-
-    // Inicializar
-    agregarFila();
+  function agregarFila() {
+    filaCount++;
+    const tr = document.createElement('tr');
+    tr.dataset.idx = filaCount;
+    tr.innerHTML = `
+      <td class="text-center small fw-bold text-muted">${filaCount}</td>
+      <td><textarea name="desc[]" class="form-control form-control-sm" rows="2" placeholder="Descripción..."></textarea></td>
+      <td><input type="text" name="unidad[]" class="form-control form-control-sm" placeholder="pza, m, etc"></td>
+      <td><input type="number" name="cantidad[]" class="form-control form-control-sm text-center" value="1" oninput="recalcular()"></td>
+      <td><input type="number" name="precio[]" class="form-control form-control-sm text-end" value="0" step="0.01" oninput="recalcular()"></td>
+      <td class="text-end fw-bold text-primary" id="imp-${filaCount}">$0.00</td>
+      <td class="text-center"><button type="button" class="btn btn-sm text-danger" onclick="this.closest('tr').remove(); recalcular()"><i class="bi bi-trash"></i></button></td>`;
+    document.getElementById('tbodyConceptos').appendChild(tr);
     recalcular();
-  </script>
+  }
 
-  <?php
-include __DIR__ . "/../includes/footer.php"; ?>
-  <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+  function recalcular() {
+    let subtotal = 0;
+    document.querySelectorAll('#tbodyConceptos tr').forEach(tr => {
+      const q = parseFloat(tr.querySelector('input[name="cantidad[]"]').value) || 0;
+      const p = parseFloat(tr.querySelector('input[name="precio[]"]').value) || 0;
+      const imp = q * p; subtotal += imp;
+      document.getElementById('imp-' + tr.dataset.idx).textContent = fmt(imp);
+    });
+    const ivaPct = parseFloat(document.getElementById('selectIva').value) || 0;
+    const iva = subtotal * (ivaPct / 100);
+    const total = subtotal + iva;
+    document.getElementById('dispSubtotal').textContent = fmt(subtotal);
+    document.getElementById('dispIva').textContent = fmt(iva);
+    document.getElementById('dispTotal').textContent = fmt(total);
+    document.getElementById('hSubtotal').value = subtotal.toFixed(2);
+    document.getElementById('hIva').value = iva.toFixed(2);
+    document.getElementById('hTotal').value = total.toFixed(2);
+    document.getElementById('hTasaIva').value = ivaPct;
+  }
+
+  function actualizarFolio() {
+    const ent = document.getElementById('entidadSelect').value;
+    fetch('generar_folio.php?entidad=' + encodeURIComponent(ent)).then(r => r.json()).then(d => {
+      document.getElementById('folioDisplay').textContent = d.folio;
+      document.getElementById('folioInput').value = d.folio;
+    });
+  }
+
+  function guardarYDescargar() {
+    const f = document.getElementById('formCotizacion');
+    if (!f.atencion.value.trim()) { UI.toast.error("Atención a es obligatorio"); return; }
+    
+    UI.loading("Generando cotización...");
+    fetch('save_cotizacion.php', { method: 'POST', body: new FormData(f) }).then(r => r.json()).then(r => {
+      UI.loading.hide();
+      if (r.status === 'success') {
+        UI.toast.success("Cotización generada");
+        window.location.href = 'descargar_cotizacion.php?id=' + r.id;
+        setTimeout(() => location.href = 'list_cotizaciones.php', 2000);
+      } else UI.toast.error(r.message);
+    });
+  }
+
+  agregarFila();
+  actualizarFolio();
+</script>
 </body>
-
 </html>
-
-

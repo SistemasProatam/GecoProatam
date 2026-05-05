@@ -53,59 +53,19 @@ class SessionManager {
 
     showWarning() {
         if (this.isWarningActive) return;
-        
+
         this.isWarningActive = true;
 
-        Swal.fire({
-            title: '¿Sigues ahí?',
-            html: `
-                <div class="text-center">
-                    <p class="mb-3">Tu sesión se cerrará automáticamente por inactividad en <strong id="countdown">${this.warningSeconds}</strong> segundos.</p>
-                    <small class="text-muted">¿Deseas mantener tu sesión activa?</small>
-                </div>
-            `,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, mantener sesión',
-            cancelButtonText: 'Cerrar sesión',
-            confirmButtonColor: '#0f172a',
-            cancelButtonColor: '#d33',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            allowEnterKey: true,
-            reverseButtons: true,
-            timer: this.warningSeconds * 1000,
-            timerProgressBar: true,
-            didOpen: () => {
-                // Contador regresivo
-                const timer = Swal.getTimerLeft();
-                let secondsLeft = Math.ceil(timer / 1000);
-                const countdownEl = document.getElementById('countdown');
-                
-                const countdownInterval = setInterval(() => {
-                    secondsLeft--;
-                    if (countdownEl) {
-                        countdownEl.textContent = secondsLeft;
-                    }
-                    if (secondsLeft <= 0) {
-                        clearInterval(countdownInterval);
-                    }
-                }, 1000);
-            },
-            willClose: () => {
+        UI.sessionWarning({
+            seconds: this.warningSeconds,
+            onExtend: () => {
                 this.isWarningActive = false;
-            }
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-                // Tiempo agotado - cerrar sesión
-                this.logout();
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Usuario eligió cerrar sesión
-                this.logout();
-            } else if (result.isConfirmed) {
-                // Usuario quiere mantener la sesión
                 this.extendSession();
-            }
+            },
+            onLogout: () => {
+                this.isWarningActive = false;
+                this.logout();
+            },
         });
 
         // Backup: cerrar sesión si el usuario no responde
@@ -139,34 +99,16 @@ class SessionManager {
     }
 
     showSuccessMessage() {
-        Swal.fire({
-            title: 'Sesión extendida',
-            text: 'Tu sesión se ha mantenido activa',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false,
-            timerProgressBar: true
-        });
+        UI.toast.success('Tu sesión se ha mantenido activa', 2500);
     }
 
     logout() {
         // Limpiar timeouts
         if (this.timeout) clearTimeout(this.timeout);
         if (this.warningTimeout) clearTimeout(this.warningTimeout);
-        
-        // Mostrar mensaje de cierre por timeout
-        Swal.fire({
-            title: 'Sesión cerrada',
-            text: 'Tu sesión ha expirado por inactividad',
-            icon: 'info',
-            timer: 3000,
-            showConfirmButton: false,
-            timerProgressBar: true,
-            willClose: () => {
-                // Redirigir al logout con razón de timeout
-                window.location.href = window.BASE_URL + '/logout.php?reason=timeout';
-            }
-        });
+
+        // Usar el sistema de logout inmersivo de UI
+        UI.logout('timeout');
     }
 
     checkInactivity() {

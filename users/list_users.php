@@ -82,7 +82,6 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
   <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <?php
@@ -217,65 +216,39 @@ include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
 function eliminarUsuario(id) {
-  Swal.fire({
-    title: '¿Seguro que deseas eliminar este usuario?',
-    text: "Esta acción no se puede deshacer",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#525252',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if(result.isConfirmed){
-      fetch(`delete_user.php?id=${id}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Error en la respuesta del servidor: ' + res.status);
-          }
-          return res.json();
-        })
-        .then(data => {
-          if(data.status === 'success'){
-            Swal.fire({
-              icon: 'success',
-              title: '¡Eliminado!',
-              text: data.message,
-              confirmButtonText: 'Aceptar'
-            }).then(() => {
-                if (typeof updateList === 'function') {
-                    updateList(window.location.href);
-                } else {
-                    location.reload();
-                }
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'No se puede eliminar',
-              html: `<div style="text-align: left;">
-                       <p><strong>Razón:</strong> ${data.message}</p>
-                       <hr>
-                       <small class="text-muted">
-                         <i class="bi bi-info-circle"></i> 
-                         Para eliminar este usuario, primero debe eliminar o reasignar los registros relacionados.
-                       </small>
-                     </div>`,
-              confirmButtonText: 'Entendido'
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          Swal.fire({
+  UI.confirm({
+    title: '¿Eliminar este usuario?',
+    message: 'Esta acción no se puede deshacer.',
+    danger: true,
+    confirmText: 'Sí, eliminar',
+  }).then(ok => {
+    if (!ok) return;
+    fetch(`delete_user.php?id=${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Error en la respuesta del servidor: ' + res.status);
+        return res.json();
+      })
+      .then(data => {
+        if (data.status === 'success') {
+          UI.toast.success(data.message);
+          setTimeout(() => {
+            if (typeof updateList === 'function') updateList(window.location.href);
+            else location.reload();
+          }, 1200);
+        } else {
+          UI.modal({
+            title: 'No se puede eliminar',
             icon: 'error',
-            title: 'Error de conexión',
-            html: `No se pudo conectar con el servidor.<br>
-                   <small>Detalle: ${error.message}</small>`,
-            confirmButtonText: 'Entendido'
+            html: `<p><strong>Razón:</strong> ${data.message}</p>
+                   <p class="text-muted small"><i class="bi bi-info-circle"></i>
+                   Para eliminar este usuario, primero debe eliminar o reasignar los registros relacionados.</p>`,
           });
-        });
-    }
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        UI.toast.error(`No se pudo conectar con el servidor. Detalle: ${error.message}`);
+      });
   });
 }
 

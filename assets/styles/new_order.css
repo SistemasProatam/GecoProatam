@@ -1,14 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap");
 
 :root {
-  --primary-color: #0f172a;
-  --primary-light: #1e293b;
-  --secondary-color: #3f7555;
-  --third-color: rgba(239, 239, 239, 0.909);
-  --accent-color: #4a9d6a;
-  --light-accent: rgba(63, 117, 85, 0.1);
-  --accent-color-light: #525252;
-  --dark-overlay: rgba(17, 52, 86, 0.9);
+  --primary-color: #113557;
+  --primary-light: #1d4a75;
+  --secondary-color: #407656;
+  --third-color: #f8fafc;
+  --accent-color: #407656;
+  --light-accent: rgba(64, 118, 86, 0.1);
+  --accent-color-light: #64748b;
+  --dark-overlay: rgba(17, 53, 87, 0.9);
   --text-light: rgba(255, 255, 255, 0.9);
   --text-muted: rgba(255, 255, 255, 0.7);
   --border-radius: 20px;

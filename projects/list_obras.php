@@ -92,7 +92,6 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
   <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .badge-presupuesto {
         font-size: 0.75em;
@@ -273,192 +272,186 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
-</script>
 
-<script>
 // Función para agregar obra
 function agregarObra(proyectoId) {
-    console.log("ID del proyecto:", proyectoId); // DEBUG
+    if (!proyectoId) {
+        UI.toast.error("No se especificó un ID de proyecto válido.");
+        return;
+    }
     
-    // Primero obtener información del proyecto para validaciones
+    UI.loading("Cargando información...");
     fetch(`get_info_proyecto.php?id=${proyectoId}`)
-        .then(res => {
-            console.log("Respuesta HTTP:", res.status); // DEBUG
-            return res.json();
-        })
+        .then(res => res.json())
         .then(proyecto => {
-            console.log("Datos del proyecto:", proyecto); // DEBUG
-            
+            UI.loading.hide();
             if (proyecto.error) {
-                console.error("Error del servidor:", proyecto.error);
-                Swal.fire("Error", proyecto.error, "error");
+                UI.toast.error(proyecto.error);
                 return;
             }
             
-            // Resto del código...
-            Swal.fire({
+            UI.modal({
                 title: "Nueva Obra",
+                size: "lg",
                 html: `
-                    <form id="formAgregarObra" class="swal-form">
+                    <form id="formAgregarObra">
                         <input type="hidden" name="proyecto_id" value="${proyectoId}">
-                        
-                        <div class="mb-2">
-                            <label class="form-label">Número de Obra <span class="required">*</span></label>
+                        <div class="mb-3">
+                            <label class="form-label">Número de Obra <span class="text-danger">*</span></label>
                             <input type="text" name="numero_obra" class="form-control" required>
                         </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Nombre de Obra <span class="required">*</span></label>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de Obra <span class="text-danger">*</span></label>
                             <input type="text" name="nombre_obra" class="form-control" required>
                         </div>
-
-                        <div class="mb-2">
+                        <div class="mb-3">
                             <label class="form-label">Descripción de la Obra</label>
-                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles y características de la obra..."></textarea>
+                            <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles de la obra..."></textarea>
                         </div>
-
                         <div class="row">
-                            <div class="col-6 mb-2">
-                                <label class="form-label">Fecha Inicio <span class="required">*</span></label>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Fecha Inicio <span class="text-danger">*</span></label>
                                 <input type="date" name="fecha_inicio" class="form-control" required>
                             </div>
-                            <div class="col-6 mb-2">
-                                <label class="form-label">Fecha Fin <span class="required">*</span></label>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Fecha Fin <span class="text-danger">*</span></label>
                                 <input type="date" name="fecha_fin" class="form-control" required>
                             </div>
                         </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Monto Designado <span class="required">*</span></label>
+                        <div class="mb-3">
+                            <label class="form-label">Monto Designado <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" name="monto_designado" class="form-control" required>
-                            <small class="text-muted">Parte del monto total del proyecto: $${parseFloat(proyecto.monto_designado).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small>
+                            <small class="text-muted">Parte del total: $${parseFloat(proyecto.monto_designado).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small>
                         </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Costo Directo <span class="required">*</span></label>
+                        <div class="mb-3">
+                            <label class="form-label">Costo Directo <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-                            <small class="text-muted">Presupuesto para órdenes de compra de esta obra</small>
+                            <small class="text-muted">Presupuesto para órdenes de compra</small>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Obra</button>
                         </div>
                     </form>
-                `,
-                width: 600,
-                showCancelButton: true,
-                confirmButtonText: "Guardar",
-                cancelButtonText: "Cancelar",
-                focusConfirm: false,
-                preConfirm: () => {
-                    const form = document.getElementById("formAgregarObra");
-                    const formData = new FormData(form);
+                `
+            });
 
-                    return fetch("insert_obra.php", { method: "POST", body: formData })
-                        .then(res => res.json())
-                        .then(data => {
-                            if(data.status === 'success'){
-                                Swal.fire("¡Éxito!", "Obra creada correctamente", "success")
-                                    .then(() => verObras(proyectoId));
-                            } else {
-                                Swal.showValidationMessage(data.message || "Error al guardar la obra");
-                            }
-                        })
-                        .catch(() => Swal.showValidationMessage("Error de conexión"));
-                }
+            document.getElementById("formAgregarObra").addEventListener("submit", function(e) {
+                e.preventDefault();
+                UI.loading("Guardando...");
+                fetch("insert_obra.php", { method: "POST", body: new FormData(this) })
+                    .then(res => res.json())
+                    .then(data => {
+                        UI.loading.hide();
+                        if(data.status === 'success'){
+                            UI.modal.close();
+                            UI.toast.success("Obra creada correctamente");
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            UI.toast.error(data.message || "Error al guardar la obra");
+                        }
+                    })
+                    .catch(() => {
+                        UI.loading.hide();
+                        UI.toast.error("Error de conexión");
+                    });
             });
         })
         .catch(error => {
-            console.error("Error en fetch:", error);
-            Swal.fire("Error", "No se pudo cargar la información del proyecto", "error");
+            UI.loading.hide();
+            UI.toast.error("No se pudo cargar la información del proyecto");
         });
 }
 
 // Función para editar obra
 function editarObra(obraId) {
+    UI.loading("Cargando datos...");
     fetch(`edit_obra.php?id=${obraId}`)
         .then(res => res.json())
         .then(data => {
             if (data.error) {
-                Swal.fire("Error", data.error, "error");
+                UI.loading.hide();
+                UI.toast.error(data.error);
                 return;
             }
 
-            // Obtener lista de proyectos
             fetch('get_proyectos.php')
                 .then(res => res.json())
                 .then(proyectos => {
+                    UI.loading.hide();
                     let proyectosOptions = '';
                     proyectos.forEach(proyecto => {
                         proyectosOptions += `<option value="${proyecto.id}" ${proyecto.id == data.proyecto_id ? 'selected' : ''}>${proyecto.nombre_proyecto}</option>`;
                     });
 
-                    Swal.fire({
+                    UI.modal({
                         title: "Editar Obra",
+                        size: "lg",
                         html: `
-                            <form id="formEditarObra" class="swal-form">
+                            <form id="formEditarObra">
                                 <input type="hidden" name="id" value="${data.id}">
-                                
-                                <div class="mb-2">
-                                    <label class="form-label">Proyecto</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Proyecto <span class="text-danger">*</span></label>
                                     <select name="proyecto_id" class="form-select" required>${proyectosOptions}</select>
                                 </div>
-
-                                <div class="mb-2">
-                                    <label class="form-label">Número de Obra</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Número de Obra <span class="text-danger">*</span></label>
                                     <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
                                 </div>
-
-                                <div class="mb-2">
-                                    <label class="form-label">Nombre de Obra</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre de Obra <span class="text-danger">*</span></label>
                                     <input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required>
                                 </div>
-
-                                <div class="mb-2">
+                                <div class="mb-3">
                                     <label class="form-label">Descripción de la Obra</label>
                                     <textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea>
                                 </div>
-
                                 <div class="row">
-                                    <div class="col-6 mb-2">
-                                        <label class="form-label">Fecha Inicio</label>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Fecha Inicio <span class="text-danger">*</span></label>
                                         <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required>
                                     </div>
-                                    <div class="col-6 mb-2">
-                                        <label class="form-label">Fecha Fin</label>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Fecha Fin <span class="text-danger">*</span></label>
                                         <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required>
                                     </div>
                                 </div>
-
-                                <div class="mb-2">
-                                    <label class="form-label">Monto Designado</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Monto Designado <span class="text-danger">*</span></label>
                                     <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
                                 </div>
-
-                                <div class="mb-2">
-                                    <label class="form-label">Costo Directo</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Costo Directo <span class="text-danger">*</span></label>
                                     <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
                                     <small class="text-muted">Presupuesto para órdenes de compra</small>
                                 </div>
+                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                    <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+                                    <button type="submit" class="btn btn-warning">Actualizar Obra</button>
+                                </div>
                             </form>
-                        `,
-                        width: 600,
-                        showCancelButton: true,
-                        confirmButtonText: "Actualizar",
-                        cancelButtonText: "Cancelar",
-                        focusConfirm: false,
-                        preConfirm: () => {
-                            const form = document.getElementById("formEditarObra");
-                            const formData = new FormData(form);
+                        `
+                    });
 
-                            return fetch("update_obra.php", { method: "POST", body: formData })
-                                .then(res => res.json())
-                                .then(resp => {
-                                    if (resp.status === "success") {
-                                        Swal.fire("¡Éxito!", "Obra actualizada correctamente", "success")
-                                            .then(() => location.reload());
-                                    } else {
-                                        Swal.showValidationMessage(resp.message || "Error al actualizar la obra");
-                                    }
-                                })
-                                .catch(() => Swal.showValidationMessage("Error de conexión"));
-                        }
+                    document.getElementById("formEditarObra").addEventListener("submit", function(e) {
+                        e.preventDefault();
+                        UI.loading("Actualizando...");
+                        fetch("update_obra.php", { method: "POST", body: new FormData(this) })
+                            .then(res => res.json())
+                            .then(resp => {
+                                UI.loading.hide();
+                                if (resp.status === "success") {
+                                    UI.modal.close();
+                                    UI.toast.success("Obra actualizada correctamente");
+                                    setTimeout(() => location.reload(), 1500);
+                                } else {
+                                    UI.toast.error(resp.message || "Error al actualizar la obra");
+                                }
+                            })
+                            .catch(() => {
+                                UI.loading.hide();
+                                UI.toast.error("Error de conexión");
+                            });
                     });
                 });
         });
@@ -466,26 +459,29 @@ function editarObra(obraId) {
 
 // Función para eliminar obra
 function eliminarObra(obraId) {
-    Swal.fire({
-        title: '¿Seguro que deseas eliminar esta obra?',
-        text: "Esta acción no se puede deshacer. Las órdenes de compra asociadas quedarán sin obra asignada.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#525252',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if(result.isConfirmed){
+    UI.confirm({
+        title: '¿Eliminar esta obra?',
+        message: 'Esta acción no se puede deshacer. Las órdenes de compra asociadas quedarán sin obra asignada.',
+        danger: true,
+        confirmText: 'Sí, eliminar',
+        cancelText: 'Cancelar'
+    }).then((confirmed) => {
+        if(confirmed){
+            UI.loading("Eliminando...");
             fetch(`delete_obra.php?id=${obraId}`, { method: "GET" })
                 .then(res => res.json())
                 .then(resp => {
+                    UI.loading.hide();
                     if(resp.status === "success"){
-                        Swal.fire('¡Eliminada!', 'Obra eliminada correctamente', 'success')
-                            .then(() => location.reload());
+                        UI.toast.success("Obra eliminada correctamente");
+                        setTimeout(() => location.reload(), 1500);
                     } else {
-                        Swal.fire('Error', resp.message || 'No se pudo eliminar la obra', 'error');
+                        UI.toast.error(resp.message || "No se pudo eliminar la obra");
                     }
+                })
+                .catch(() => {
+                    UI.loading.hide();
+                    UI.toast.error("Error de conexión");
                 });
         }
     });
@@ -496,23 +492,15 @@ function verProyecto(proyectoId) {
     window.location.href = `details_project.php?id=${proyectoId}`;
 }
 
-// Función para gestionar archivos de obra (similar a la de proyectos)
+// Función para gestionar archivos de obra
 function gestionarArchivosObra(obraId) {
-    // Implementar similar a gestionarArchivos() pero para obras
-    Swal.fire('En desarrollo', 'La gestión de archivos para obras estará disponible pronto', 'info');
+    UI.toast.info("La gestión de archivos para obras estará disponible pronto.");
 }
-</script>
 
-<script>
 function verObras(proyectoId) {
     window.location.href = `list_obras.php?proyecto_id=${proyectoId}`;
 }
-</script>
 
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
-
-<script>
 // Función para actualizar la lista vía AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
@@ -599,6 +587,3 @@ document.addEventListener('DOMContentLoaded', initAJAX);
 
 </body>
 </html>
-
-
-

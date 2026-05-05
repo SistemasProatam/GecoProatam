@@ -25,7 +25,8 @@ if (empty($email)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
+    <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
     <style>
         .button-57 i {
             display: block;
@@ -88,11 +89,7 @@ if (empty($email)) {
             const submitBtn = document.getElementById('submitBtn');
 
             if (!token || token.length !== 6) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Código inválido',
-                    text: 'Ingresa un código de 6 dígitos.'
-                });
+                UI.toast.warning('Ingresa un código de 6 dígitos.');
                 return;
             }
 
@@ -112,30 +109,16 @@ if (empty($email)) {
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Código Verificado',
-                        text: result.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        // Redirigir a la página de cambio de contraseña
+                    UI.toast.success(result.message, 2000);
+                    setTimeout(() => {
                         window.location.href = `reset_password.php?token=${result.reset_token}`;
-                    });
+                    }, 2000);
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: result.message
-                    });
+                    UI.toast.error(result.message);
                 }
 
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo conectar con el servidor.'
-                });
+                UI.toast.error('No se pudo conectar con el servidor.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="bi bi-shield-check"></i><span>Verificar Código</span>';
@@ -145,6 +128,7 @@ if (empty($email)) {
         // Auto-enfocar el campo de token
         document.getElementById('token').focus();
     </script>
+    <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
 </body>
 
 </html>

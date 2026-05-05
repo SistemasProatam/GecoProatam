@@ -762,66 +762,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
     </div>
   </div>
 
-  <!-- Modal para catálogo de productos -->
-  <div class="modal fade" id="modalCatalogo" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <input type="text" class="form-control" id="buscarCatalogo" placeholder="Buscar producto o servicio...">
-          </div>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Tipo</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyCatalogo">
-                <?php
-                if ($result_productos && $result_productos->num_rows > 0): ?>
-                  <?php
-                  while ($producto = $result_productos->fetch_assoc()): ?>
-                    <tr>
-                      <td><?= htmlspecialchars($producto['nombre']) ?></td>
-                      <td><?= htmlspecialchars($producto['descripcion'] ?? '') ?></td>
-                      <td>
-                        <span class="badge bg-<?= $producto['tipo'] == 'producto' ? 'primary' : 'success' ?>">
-                          <?= ucfirst($producto['tipo']) ?>
-                        </span>
-                      </td>
-                      <td>
-                        <button type="button" class="btn btn-sm btn-primary"
-                          onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars($producto['nombre']) ?>')">
-                          <i class="bi bi-plus"></i> Seleccionar
-                        </button>
-                      </td>
-                    </tr>
-                  <?php
-                  endwhile; ?>
-                <?php
-                else: ?>
-                  <tr>
-                    <td colspan="4" class="text-center text-muted">
-                      No hay productos o servicios registrados
-                    </td>
-                  </tr>
-                <?php
-                endif; ?>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Boton de regreso -->
   <div class="fab-container-backbtn">
@@ -868,7 +809,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
       if (tiposVisualizables.includes(tipoMime)) {
         window.open('/orders/view_archivo.php?id=' + archivoId, '_blank');
       } else {
-        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
+        UI.toast.info('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
         window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
       }
     }

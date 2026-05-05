@@ -27,6 +27,7 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/navbar.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css" />
   <script>
     window.BASE_URL = '<?= BASE_URL ?>';
   </script>
@@ -331,7 +332,7 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
         <div class="separator"></div>
 
         <ul class="menu-list">
-          <a href="<?= BASE_URL ?>/logout.php" class="text-decoration-none">
+          <a href="javascript:void(0)" onclick="UI.logout()" class="text-decoration-none">
             <li class="simple-menu-item logout">
               <i class="bi bi-box-arrow-left"></i>
               <p class="menu-label">Cerrar Sesión</p>
@@ -372,8 +373,8 @@ $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
     });
   </script>
 
-  <!-- Session Timeout Script -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Sistema UI + Session Timeout -->
+  <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
   <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
 </body>

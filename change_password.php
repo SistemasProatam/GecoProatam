@@ -14,6 +14,18 @@ preventCaching();
 <!DOCTYPE html>
 <html lang="es">
 <head>
+// Incluir el gestor de sesiones UNA sola vez
+require_once "includes/session_manager.php";
+require_once "includes/check_session.php";
+
+// Verificar sesión y prevenir caching
+checkSession();
+preventCaching();
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cambio de Contraseña</title>
@@ -21,9 +33,8 @@ preventCaching();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/change_pass.css"> 
-
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
+<script>window.BASE_URL = '<?= BASE_URL ?>';</script>
 
 <style>
     .button-57 i {
@@ -141,34 +152,25 @@ document.getElementById('changePassForm').addEventListener('submit', async funct
     const newPass = document.getElementById('new_password').value.trim();
     const confirmPass = document.getElementById('confirm_password').value.trim();
 
-    // Validación de campos vacíos
     if (newPass === '' || confirmPass === '') {
-        Swal.fire({ icon: 'warning', title: 'Campos vacíos', text: 'Debes completar ambos campos.' });
+        UI.toast.warning('Debes completar ambos campos.');
         return;
     }
 
     // Validación de longitud (6-12 caracteres)
     if (newPass.length < 6) {
-        Swal.fire({ 
-            icon: 'error', 
-            title: 'Contraseña muy corta', 
-            text: 'La contraseña debe tener al menos 6 caracteres.' 
-        });
+        UI.toast.error('La contraseña debe tener al menos 6 caracteres.');
         return;
     }
 
     if (newPass.length > 12) {
-        Swal.fire({ 
-            icon: 'error', 
-            title: 'Contraseña muy larga', 
-            text: 'La contraseña no puede tener más de 12 caracteres.' 
-        });
+        UI.toast.error('La contraseña no puede tener más de 12 caracteres.');
         return;
     }
 
     // Validación de coincidencia
     if (newPass !== confirmPass) {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Las contraseñas no coinciden.' });
+        UI.toast.error('Las contraseñas no coinciden.');
         return;
     }
 
@@ -185,34 +187,19 @@ document.getElementById('changePassForm').addEventListener('submit', async funct
         const result = await response.json();
 
         if (result.status === 'success') {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: result.message || 'Contraseña actualizada correctamente.',
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.href = 'index.php';
-            });
+            UI.toast.success(result.message || 'Contraseña actualizada correctamente.', 2000);
+            setTimeout(() => { window.location.href = 'index.php'; }, 2000);
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: result.message || 'Ocurrió un error, intenta nuevamente.'
-            });
+            UI.toast.error(result.message || 'Ocurrió un error, intenta nuevamente.');
         }
 
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo conectar con el servidor.'
-        });
+        UI.toast.error('No se pudo conectar con el servidor.');
     }
 });
 </script>
 
+<script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
+
 </body>
 </html>
-
-

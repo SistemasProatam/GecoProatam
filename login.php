@@ -24,12 +24,8 @@ if (isset($_GET['error'])) {
     $error_message = $error_messages[$_GET['error']] ?? 'Error desconocido';
 
     echo "<script>document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sesión Expirada',
-            text: '$error_message'
-        });
-    });</script>";
+        UI.toast.warning('$error_message');
+    });<\/script>";
 }
 ?>
 
@@ -44,7 +40,10 @@ if (isset($_GET['error'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/login.css">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
+    <script>
+        window.BASE_URL = '<?= BASE_URL ?>';
+    </script>
 </head>
 
 <body>
@@ -112,7 +111,7 @@ if (isset($_GET['error'])) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
 
     <script>
         // Mostrar/ocultar contraseña
@@ -144,80 +143,31 @@ if (isset($_GET['error'])) {
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    Swal.fire({
-                        title: '¡Bienvenido!',
-                        html: `
-            <div class="text-center">
-                <small class="text-muted">Redirigiendo...</small>
-            </div>
-        `,
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        background: '#f8f9fa',
-                        willClose: () => {
-                            window.location.href = result.redirect;
-                        }
-                    });
-
+                    UI.toast.success('¡Bienvenido! Redirigiendo...');
                     setTimeout(() => {
                         window.location.href = result.redirect;
-                    }, 2000);
+                    }, 1200);
                 } else {
-                    // Manejo de diferentes tipos de errores
                     if (result.message === 'solo_correo_proatam') {
-                        Swal.fire({
-                            icon: 'warning',
+                        UI.modal({
                             title: 'Correo no permitido',
-                            html: `
-                        <div class="text-center">
-                            <p>Solo se permiten correos corporativos de Proatam 
-                            <p class="mt-3">
-                                Por favor, utiliza tu correo corporativo con dominio <strong>@proatam.com</strong>
-                            </p>
-                        </div>
-                    `,
-                            confirmButtonText: 'Entendido',
-                            confirmButtonColor: '#3f7555',
-                            customClass: {
-                                popup: 'border-warning'
-                            }
+                            icon: 'warning',
+                            html: `<p>Solo se permiten correos corporativos de Proatam.</p>
+                                   <p>Usa tu correo con dominio <strong>@proatam.com</strong></p>`,
                         });
                     } else if (result.message === 'correo_no_registrado') {
-                        Swal.fire({
-                            icon: 'error',
+                        UI.modal({
                             title: 'Correo no registrado',
-                            html: `
-                        <div class="text-center">
-                            <h5 class="fw-bold">Este correo no está registrado en el sistema</h5>
-                            <p class="text-muted mt-3">
-                                Verifica que el correo esté correctamente escrito o contacta a Recursos Humanos.
-                            </p>
-                        </div>
-                    `,
-                            confirmButtonText: 'Entendido',
-                            confirmButtonColor: '#3f7555',
-                            customClass: {
-                                popup: 'border-danger'
-                            }
+                            icon: 'error',
+                            html: `<p class="mb-1"><strong>Este correo no está registrado en el sistema.</strong></p>
+                                   <p class="text-muted">Verifica que el correo esté correctamente escrito o contacta a Recursos Humanos.</p>`,
                         });
                     } else {
-                        // Mostrar otros errores normales
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: result.message,
-                            confirmButtonText: 'Intentar nuevamente'
-                        });
+                        UI.toast.error(result.message);
                     }
                 }
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo conectar con el servidor'
-                });
+                UI.toast.error('No se pudo conectar con el servidor');
             }
         });
     </script>

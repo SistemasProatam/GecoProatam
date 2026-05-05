@@ -1559,8 +1559,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
           ?>
 
           <?php if ($estado_permite_devolver && $puede_devolver): ?>
-            <form method="POST" class="d-inline"
-              onsubmit="return confirm('¿Está seguro de devolver esta orden al solicitante para que la edite? El estado volverá a devuelto.')">
+            <form method="POST" class="d-inline" onsubmit="handleDevolver(event)">
               <input type="hidden" name="nuevo_estado" value="devuelto">
               <textarea name="comentario" class="d-none" id="comentario_devolver"></textarea>
               <button type="submit" name="cambiar_estado" class="btn btn-warning">
@@ -1629,6 +1628,22 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
       }
     }
 
+    // Función para manejar la devolución con confirmación premium
+    function handleDevolver(e) {
+      e.preventDefault();
+      const form = e.target;
+      UI.confirm({
+        title: '¿Devolver Orden?',
+        message: '¿Está seguro de devolver esta orden al solicitante para que la edite? El estado volverá a devuelto.',
+        danger: true
+      }).then(confirmed => {
+        if (confirmed) {
+          document.getElementById("loadingOverlay").style.display = "flex";
+          form.submit();
+        }
+      });
+    }
+
     // Función para ver archivo
     function verArchivo(archivoId, tipoMime) {
       const tiposVisualizables = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
@@ -1636,7 +1651,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
       if (tiposVisualizables.includes(tipoMime)) {
         window.open('/orders/view_archivo_oc.php?id=' + archivoId, '_blank');
       } else {
-        alert('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
+        UI.toast.info('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
         window.open('/orders/download_archivo_oc.php?id=' + archivoId, '_blank');
       }
     }

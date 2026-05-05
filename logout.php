@@ -34,6 +34,17 @@ if (ini_get("session.use_cookies")) {
         $params["secure"], $params["httponly"]
     );
 }
+
+// Si se solicita logout silencioso (para UX inmersiva con AJAX o previo toast)
+if (isset($_GET['silent'])) {
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+    } else {
+        header("Location: " . BASE_URL . "/login.php");
+    }
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,29 +53,25 @@ if (ini_get("session.use_cookies")) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cerrando sesión...</title>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
+<script>window.BASE_URL = '<?= BASE_URL ?>';</script>
 </head>
 <body>
+<script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
 
 <script>
-const message = "<?php
+const reason = "<?php echo $reason; ?>";
+const message = "<?php echo $message; ?>";
 
-echo $message; ?>";
-const icon = "<?php
-
-echo ($reason === 'timeout') ? 'info' : 'success'; ?>";
-
-Swal.fire({
-    title: '¡Sesión cerrada!',
-    text: message,
-    icon: icon,
-    timer: 3000,
-    showConfirmButton: false,
-    timerProgressBar: true,
-    willClose: () => {
-        // Redirigir automáticamente al login al cerrar el modal
-        window.location.href = '<?= BASE_URL ?>/login.php';
-    }
+window.addEventListener('DOMContentLoaded', () => {
+  if (reason === 'timeout') {
+    UI.toast.info(message, 3000);
+  } else {
+    UI.toast.success(message, 3000);
+  }
+  setTimeout(() => {
+    window.location.href = '<?= BASE_URL ?>/login.php';
+  }, 3000);
 });
 </script>
 

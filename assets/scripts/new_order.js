@@ -140,23 +140,10 @@ function eliminarArchivo(index) {
 
 // Función para mostrar alertas de archivos
 function mostrarAlertaArchivos(msg, tipo = 'info') {
-  const alertContainer = document.getElementById('alertContainer');
-  const alert = document.createElement('div');
-  alert.className = `alert alert-${tipo} alert-dismissible fade show`;
-  alert.role = 'alert';
-  alert.innerHTML = `
-    ${msg}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
-  
-  alertContainer.innerHTML = '';
-  alertContainer.appendChild(alert);
-  
-  setTimeout(() => {
-    if (alert.parentElement) {
-      alert.remove();
-    }
-  }, 5000);
+  if (tipo === 'danger' || tipo === 'error') UI.toast.error(msg);
+  else if (tipo === 'warning') UI.toast.warning(msg);
+  else if (tipo === 'success') UI.toast.success(msg);
+  else UI.toast.info(msg);
 }
 
 // ===== FUNCIONES DE VALIDACIÓN =====
@@ -643,74 +630,33 @@ function handleObraChange() {
 
 // ===== FUNCIÓN PARA MOSTRAR MODAL DE FONDOS INSUFICIENTES =====
 function mostrarModalFondosInsuficientes(tipo, totalOrden, disponible) {
-    // Crear el modal si no existe
-    let modal = document.getElementById('modalFondosInsuficientes');
-    
-    if (!modal) {
-        // Crear estructura del modal
-        modal = document.createElement('div');
-        modal.className = 'modal fade';
-        modal.id = 'modalFondosInsuficientes';
-        modal.tabIndex = '-1';
-        modal.setAttribute('data-bs-backdrop', 'static');
-        modal.setAttribute('data-bs-keyboard', 'false');
-        
-        modal.innerHTML = `
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-danger">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title">
-                            Fondos Insuficientes
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    const faltante = totalOrden - disponible;
+    UI.modal({
+        title: 'Fondos Insuficientes',
+        icon: 'error',
+        html: `
+            <div style="text-align: left;">
+                <p>El total de la orden supera el presupuesto disponible del ${tipo}.</p>
+                <div style="background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Total de la orden:</span>
+                        <strong>${fmt(totalOrden)}</strong>
                     </div>
-                    <div class="modal-body">
-                        <div class="alert alert-danger mb-3">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <strong>No es posible generar esta orden de compra</strong>
-                        </div>
-                        <p>El total de la orden supera el presupuesto disponible.</p>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-bordered">
-                                <tr>
-                                    <th class="bg-light">Total de la orden:</th>
-                                    <td class="text-end fw-bold" id="modalTotalOrden">$0.00</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Presupuesto disponible:</th>
-                                    <td class="text-end text-danger fw-bold" id="modalDisponible">$0.00</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Faltante:</th>
-                                    <td class="text-end text-danger fw-bold" id="modalFaltante">$0.00</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <p class="mb-0 text-muted small">
-                            <i class="bi bi-info-circle"></i>
-                            Por favor, ajuste los montos o seleccione otra fuente de financiamiento.
-                        </p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #c53030;">
+                        <span>Presupuesto disponible:</span>
+                        <strong>${fmt(disponible)}</strong>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle"></i> Entendido
-                        </button>
+                    <div style="display: flex; justify-content: space-between; padding-top: 5px; border-top: 1px solid #feb2b2; color: #c53030; font-weight: bold;">
+                        <span>Faltante:</span>
+                        <span>${fmt(faltante)}</span>
                     </div>
                 </div>
+                <p style="font-size: 0.85rem; color: #718096;">
+                    <i class="bi bi-info-circle"></i> Por favor, ajuste los montos o seleccione otra fuente de financiamiento.
+                </p>
             </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    
-    // Actualizar valores en el modal
-    const faltante = totalOrden - disponible;
-    document.getElementById('modalTotalOrden').textContent = fmt(totalOrden);
-    document.getElementById('modalDisponible').textContent = fmt(disponible);
-    document.getElementById('modalFaltante').textContent = fmt(faltante);
-    
-    // Mostrar modal usando Bootstrap
-    const modalInstance = new bootstrap.Modal(modal);
-    modalInstance.show();
+        `
+    });
 }
 
 // ===== FUNCIÓN PARA MOSTRAR ALERTA EN EL CONTENEDOR =====
@@ -1147,15 +1093,9 @@ function validarPresupuesto(totalOrden, presupuesto, tipo) {
 }
 
 function mostrarAlerta(mensaje, tipo) {
-  const alertPresupuesto = document.getElementById('alertPresupuesto');
-  if (alertPresupuesto) {
-    alertPresupuesto.innerHTML = `
-      <div class="alert alert-${tipo}">
-        <i class="bi bi-exclamation-triangle"></i> ${mensaje}
-      </div>
-    `;
-    alertPresupuesto.style.display = 'block';
-  }
+  if (tipo === 'danger') UI.toast.error(mensaje);
+  else if (tipo === 'warning') UI.toast.warning(mensaje);
+  else UI.toast.info(mensaje);
 }
 
 // ===== ELIMINAR LA FUNCIÓN cargarObras() ANTIGUA Y REEMPLAZAR CON ESTO =====
@@ -1213,9 +1153,53 @@ function seleccionarProductoEnLista(productoId, nombre, elemento) {
 }
 
 function mostrarCatalogoProductos() {
-  const modal = new bootstrap.Modal(document.getElementById('modalCatalogo'));
-  modal.show();
+  const rows = productosCatalogo.map(p => `
+    <tr>
+      <td>${p.nombre}</td>
+      <td><small>${p.descripcion || ''}</small></td>
+      <td><span class="badge bg-${p.tipo === 'producto' ? 'primary' : 'success'}">${p.tipo}</span></td>
+      <td>
+        <button type="button" class="btn btn-sm btn-primary" onclick="seleccionarProducto(${p.id}, '${p.nombre.replace(/'/g, "\\'")}')">
+          <i class="bi bi-plus"></i> Seleccionar
+        </button>
+      </td>
+    </tr>
+  `).join('');
+
+  UI.modal({
+    title: 'Catálogo de Productos y Servicios',
+    size: 'lg',
+    html: `
+      <div class="mb-3">
+        <input type="text" class="form-control" id="buscarCatalogoModal" placeholder="Buscar producto o servicio..." onkeyup="filtrarCatalogoModal(this.value)">
+      </div>
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover align-middle" id="tablaCatalogoModal">
+          <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Tipo</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows || '<tr><td colspan="4" class="text-center">No hay productos disponibles</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `
+  });
 }
+
+window.filtrarCatalogoModal = function(val) {
+  const q = val.toLowerCase();
+  const rows = document.querySelectorAll('#tablaCatalogoModal tbody tr');
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+};
 
 function seleccionarProducto(productoId, nombre) {
   // Agregar a la primera fila vacía o crear nueva
@@ -1248,8 +1232,7 @@ function seleccionarProducto(productoId, nombre) {
   tipoInput.value = producto ? producto.tipo : '';
   
   // Cerrar modal
-  const modal = bootstrap.Modal.getInstance(document.getElementById('modalCatalogo'));
-  modal.hide();
+  UI.modal.hide();
 }
 
 function addItem(itemData = null) {
@@ -1506,31 +1489,35 @@ function calcularIVA() {
 
 // Funciones para archivos de requisición
 function eliminarArchivoTemporal(archivoId, btn) {
-  if(!confirm('¿Está seguro de que desea eliminar este archivo de la orden de compra?\n\nNota: El archivo permanecerá en la requisición original.')) {
-    return;
-  }
-  
-  archivosEliminados.push(archivoId);
-  const fila = btn.closest('tr');
-  fila.style.transition = 'opacity 0.3s';
-  fila.style.opacity = '0';
-  setTimeout(() => {
-    fila.remove();
-    const tbody = document.getElementById('tablaArchivos');
-    if(tbody.children.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="5" class="text-center text-muted">
-            <i class="bi bi-inbox"></i> No hay archivos seleccionados
-          </td>
-        </tr>
-      `;
-    } else {
-      Array.from(tbody.children).forEach((row, index) => {
-        row.children[0].textContent = index + 1;
-      });
-    }
-  }, 300);
+  UI.confirm({
+    title: 'Eliminar Archivo',
+    message: '¿Está seguro de que desea eliminar este archivo de la orden de compra?\n\nNota: El archivo permanecerá en la requisición original.',
+    danger: true
+  }).then(confirmed => {
+    if (!confirmed) return;
+    
+    archivosEliminados.push(archivoId);
+    const fila = btn.closest('tr');
+    fila.style.transition = 'opacity 0.3s';
+    fila.style.opacity = '0';
+    setTimeout(() => {
+      fila.remove();
+      const tbody = document.getElementById('tablaArchivos');
+      if(tbody.children.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center text-muted">
+              <i class="bi bi-inbox"></i> No hay archivos seleccionados
+            </td>
+          </tr>
+        `;
+      } else {
+        Array.from(tbody.children).forEach((row, index) => {
+          row.children[0].textContent = index + 1;
+        });
+      }
+    }, 300);
+  });
 }
 
 function descargarArchivo(archivoId) {
@@ -1569,9 +1556,10 @@ function sincronizarConceptosConFormulario() {
 
 // ===== MANEJO DEL ENVÍO DEL FORMULARIO =====
 function setupFormSubmit() {
-  document.getElementById('ordenCompraForm').addEventListener('submit', function(e) {
+  document.getElementById('ordenCompraForm').addEventListener('submit', async function(e) {
     // Prevenir envío por defecto
     e.preventDefault();
+    const form = this;
     
     console.log('=== INICIANDO ENVÍO DEL FORMULARIO ===');
 
@@ -1645,9 +1633,12 @@ function setupFormSubmit() {
     // ===========================================
     const totalOrden = parseFloat(totalLimpio) || 0;
     if (totalOrden === 0) {
-      if(!confirm('El total de la orden es $0.00. ¿Desea continuar?')) {
-        return;
-      }
+      const confirmed = await UI.confirm({
+        title: 'Monto en Cero',
+        message: 'El total de la orden es $0.00. ¿Desea continuar?',
+        danger: true
+      });
+      if (!confirmed) return;
     }
     
     // Deshabilitar botón para prevenir doble envío
@@ -1657,7 +1648,7 @@ function setupFormSubmit() {
     btnEnviar.disabled = true;
     
     // CREAR FORMDATA PRIMERO (antes de deshabilitar campos)
-    const formData = new FormData(this);
+    const formData = new FormData(form);
     
     // AHORA SÍ deshabilitar campos para prevenir edición durante envío
     const formElements = this.elements;
