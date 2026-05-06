@@ -54,10 +54,10 @@ function is_active($path) {
   <div class="app-layout">
     
     <!-- ─── SIDEBAR ──────────────────────────────────────────────────────────── -->
-    <aside class="app-sidebar" id="appSidebar">
+    <aside class="app-sidebar collapsed" id="appSidebar">
         <div class="sidebar-brand">
             <a href="<?= BASE_URL ?>/index.php" class="brand-logo-link">
-                <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo">
+                <img src="<?= BASE_URL ?>/assets/img/GECO.png" alt="Logo">
             </a>
             <button class="desktop-toggle btn-icon" onclick="toggleSidebar()">
                 <span class="material-symbols-rounded">menu</span>
@@ -66,7 +66,7 @@ function is_active($path) {
 
         <nav class="sidebar-menu">
             <!-- INICIO -->
-            <a href="<?= BASE_URL ?>/index.php" class="menu-item <?= is_active('index.php') ?>" title="Inicio">
+            <a href="<?= BASE_URL ?>/index.php" class="menu-item <?= is_active('index.php') ?>" data-tooltip="Inicio">
                 <span class="material-symbols-rounded">home</span>
                 <span class="menu-text">Inicio</span>
             </a>
@@ -75,13 +75,14 @@ function is_active($path) {
             <div class="sidebar-label">Operación</div>
             
             <?php if ($ver_proyectos): ?>
-            <div class="has-submenu <?= is_active(['list_project.php', 'plan_obra.php', 'add_project.php']) ? 'expanded' : '' ?>" id="menuProyectos">
-                <a href="#" class="menu-item <?= is_active(['list_project.php', 'plan_obra.php', 'add_project.php']) ?>" onclick="toggleSubmenu(event, 'menuProyectos')" title="Proyectos">
+            <div class="has-submenu <?= is_active(['list_project.php', 'plan_obra.php', 'add_project.php']) ? 'expanded' : '' ?>" id="menuProyectos" data-label="Proyectos">
+                <a href="#" class="menu-item <?= is_active(['list_project.php', 'plan_obra.php', 'add_project.php']) ?>" onclick="toggleSubmenu(event, 'menuProyectos')">
                     <span class="material-symbols-rounded">business_center</span>
                     <span class="menu-text">Proyectos</span>
                     <span class="material-symbols-rounded chevron" style="margin-left:auto;font-size:1.1rem;">expand_more</span>
                 </a>
                 <div class="submenu-container">
+                    <span class="flyout-header">Proyectos</span>
                     <?php if ($ver_plan_obra): ?>
                     <a href="<?= BASE_URL ?>/projects/plan_obra.php" class="submenu-item <?= is_active('plan_obra.php') ?>">Plan de Obra</a>
                     <?php endif; ?>
@@ -91,13 +92,14 @@ function is_active($path) {
             <?php endif; ?>
 
             <?php if ($ver_ordenes): ?>
-            <div class="has-submenu <?= is_active(['list_oc.php', 'new_order.php']) ? 'expanded' : '' ?>" id="menuOrdenes">
-                <a href="#" class="menu-item <?= is_active(['list_oc.php', 'new_order.php']) ?>" onclick="toggleSubmenu(event, 'menuOrdenes')" title="Órdenes de Compra">
+            <div class="has-submenu <?= is_active(['list_oc.php', 'new_order.php']) ? 'expanded' : '' ?>" id="menuOrdenes" data-label="Órdenes Compra">
+                <a href="#" class="menu-item <?= is_active(['list_oc.php', 'new_order.php']) ?>" onclick="toggleSubmenu(event, 'menuOrdenes')">
                     <span class="material-symbols-rounded">receipt_long</span>
                     <span class="menu-text">Órdenes Compra</span>
                     <span class="material-symbols-rounded chevron" style="margin-left:auto;font-size:1.1rem;">expand_more</span>
                 </a>
                 <div class="submenu-container">
+                    <span class="flyout-header">Órdenes de Compra</span>
                     <?php if ($crear_orden): ?>
                     <a href="<?= BASE_URL ?>/orders/new_order.php" class="submenu-item <?= is_active('new_order.php') ?>">Crear Nueva</a>
                     <?php endif; ?>
@@ -107,13 +109,14 @@ function is_active($path) {
             <?php endif; ?>
 
             <?php if ($ver_requisiciones): ?>
-            <div class="has-submenu <?= is_active(['list_requis.php', 'new_requis.php']) ? 'expanded' : '' ?>" id="menuRequis">
-                <a href="#" class="menu-item <?= is_active(['list_requis.php', 'new_requis.php']) ?>" onclick="toggleSubmenu(event, 'menuRequis')" title="Requisiciones">
+            <div class="has-submenu <?= is_active(['list_requis.php', 'new_requis.php']) ? 'expanded' : '' ?>" id="menuRequis" data-label="Requisiciones">
+                <a href="#" class="menu-item <?= is_active(['list_requis.php', 'new_requis.php']) ?>" onclick="toggleSubmenu(event, 'menuRequis')">
                     <span class="material-symbols-rounded">assignment</span>
                     <span class="menu-text">Requisiciones</span>
                     <span class="material-symbols-rounded chevron" style="margin-left:auto;font-size:1.1rem;">expand_more</span>
                 </a>
                 <div class="submenu-container">
+                    <span class="flyout-header">Requisiciones</span>
                     <?php if ($crear_orden): ?>
                     <a href="<?= BASE_URL ?>/orders/new_requis.php" class="submenu-item <?= is_active('new_requis.php') ?>">Crear Requisición</a>
                     <?php endif; ?>
@@ -126,14 +129,14 @@ function is_active($path) {
             <div class="sidebar-label">Recursos</div>
 
             <?php if ($ver_catalogo): ?>
-            <a href="<?= BASE_URL ?>/catalog/list_catalog.php" class="menu-item <?= is_active('list_catalog.php') ?>" title="Catálogo">
+            <a href="<?= BASE_URL ?>/catalog/list_catalog.php" class="menu-item <?= is_active('list_catalog.php') ?>" data-tooltip="Catálogo">
                 <span class="material-symbols-rounded">grid_view</span>
                 <span class="menu-text">Catálogo</span>
             </a>
             <?php endif; ?>
 
             <?php if ($ver_activos): ?>
-            <a href="<?= BASE_URL ?>/activos/list_activos.php" class="menu-item <?= is_active(['list_activos.php', 'add_activo.php', 'edit_activo.php']) ?>" title="Activos">
+            <a href="<?= BASE_URL ?>/activos/list_activos.php" class="menu-item <?= is_active(['list_activos.php', 'add_activo.php', 'edit_activo.php']) ?>" data-tooltip="Activos">
                 <span class="material-symbols-rounded">fact_check</span>
                 <span class="menu-text">Activos</span>
             </a>
@@ -143,29 +146,29 @@ function is_active($path) {
             <div class="sidebar-label">Administración</div>
 
             <?php if ($ver_admin_usuarios): ?>
-            <a href="<?= BASE_URL ?>/users/list_users.php" class="menu-item <?= is_active(['list_users.php', 'add_user.php', 'edit_user.php']) ?>" title="Usuarios">
-                <span class="material-symbols-rounded">badge</span>
+            <a href="<?= BASE_URL ?>/users/list_users.php" class="menu-item <?= is_active('list_users.php') ?>" data-tooltip="Usuarios">
+                <span class="material-symbols-rounded">person</span>
                 <span class="menu-text">Usuarios</span>
             </a>
             <?php endif; ?>
 
             <?php if ($ver_dash): ?>
-            <a href="<?= BASE_URL ?>/dashboard.php" class="menu-item <?= is_active('dashboard.php') ?>" title="Panel de Control">
+            <a href="<?= BASE_URL ?>/dashboard.php" class="menu-item <?= is_active('dashboard.php') ?>" data-tooltip="Panel de Control">
                 <span class="material-symbols-rounded">analytics</span>
                 <span class="menu-text">Panel de Control</span>
             </a>
             <?php endif; ?>
 
-            <!-- SOPORTE -->
-            <div class="sidebar-label">Soporte</div>
-            <a href="<?= BASE_URL ?>/solicitud_soporte.php" class="menu-item <?= is_active('solicitud_soporte.php') ?>" title="Soporte TI">
-                <span class="material-symbols-rounded">person</span>
-                <span class="menu-text">Soporte TI</span>
+            <!-- MANTENIMIENTO -->
+            <div class="sidebar-label">Mantenimiento</div>
+            <a href="<?= BASE_URL ?>/solicitud_soporte.php" class="menu-item <?= is_active('solicitud_soporte.php') ?>" data-tooltip="Solicitud de Mantenimiento">
+                <span class="material-symbols-rounded">engineering</span>
+                <span class="menu-text">Solicitud de Mantenimiento</span>
             </a>
 
             <!-- LOGOUT -->
             <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05);">
-                <a href="#" class="menu-item logout-item" onclick="UI.logout()" title="Cerrar Sesión" style="color: #ff5f5f;">
+                <a href="#" class="menu-item logout-item" onclick="UI.logout()" data-tooltip="Cerrar Sesión" style="color: #ff5f5f;">
                     <span class="material-symbols-rounded">logout</span>
                     <span class="menu-text">Cerrar Sesión</span>
                 </a>
@@ -187,8 +190,20 @@ function is_active($path) {
                 
                 <div class="header-search">
                     <span class="material-symbols-rounded">search</span>
-                    <input type="text" placeholder="Buscar módulos o registros...">
+                    <input type="text" id="globalSearchInput" placeholder="Buscar módulos o registros..." autocomplete="off">
+                    
+                    <!-- Dropdown de resultados -->
+                    <div id="search-results-dropdown" class="search-dropdown"></div>
                 </div>
+            </div>
+
+            <!-- ISOLOGO DECORATIVO CENTRAL -->
+            <div class="header-center-decoration">
+                <img src="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" 
+                     alt="GECO Isologo" 
+                     class="isologo-spin"
+                     onclick="this.classList.toggle('rotating')"
+                     style="height: 35px; opacity: 0.6; cursor: pointer; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
             </div>
 
             <div class="header-actions">
@@ -200,11 +215,97 @@ function is_active($path) {
                     <div class="avatar"><?= $inicial ?></div>
                 </div>
 
-                <button class="btn-icon" onclick="UI.logout()" title="Cerrar Sesión">
+                <button class="btn-icon btn-logout" onclick="UI.logout()" title="Cerrar Sesión">
                     <span class="material-symbols-rounded">logout</span>
                 </button>
             </div>
         </header>
+
+        <!-- Lógica de Búsqueda Global -->
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('globalSearchInput');
+            const resultsDropdown = document.getElementById('search-results-dropdown');
+            
+            // Lista exhaustiva de módulos y submenús basada en la navegación real
+            const searchableModules = [
+                { name: 'Inicio', parent: '', url: '<?= BASE_URL ?>/index.php', icon: 'home', visible: true },
+                
+                // Proyectos
+                { name: 'Plan de Obra', parent: 'Proyectos', url: '<?= BASE_URL ?>/projects/plan_obra.php', icon: 'business_center', visible: <?= $ver_plan_obra ? 'true' : 'false' ?> },
+                { name: 'Ver Proyectos', parent: 'Proyectos', url: '<?= BASE_URL ?>/projects/list_project.php', icon: 'business_center', visible: <?= $ver_proyectos ? 'true' : 'false' ?> },
+                
+                // Órdenes
+                { name: 'Crear Nueva Orden', parent: 'Órdenes Compra', url: '<?= BASE_URL ?>/orders/new_order.php', icon: 'receipt_long', visible: <?= $crear_orden ? 'true' : 'false' ?> },
+                { name: 'Ver Registros Órdenes', parent: 'Órdenes Compra', url: '<?= BASE_URL ?>/orders/list_oc.php', icon: 'receipt_long', visible: <?= $ver_ordenes ? 'true' : 'false' ?> },
+                
+                // Requisiciones
+                { name: 'Crear Requisición', parent: 'Requisiciones', url: '<?= BASE_URL ?>/orders/new_requis.php', icon: 'assignment', visible: <?= ($ver_requisiciones && $crear_orden) ? 'true' : 'false' ?> },
+                { name: 'Ver Registros Requisiciones', parent: 'Requisiciones', url: '<?= BASE_URL ?>/orders/list_requis.php', icon: 'assignment', visible: <?= $ver_requisiciones ? 'true' : 'false' ?> },
+                
+                // Recursos
+                { name: 'Catálogo', parent: '', url: '<?= BASE_URL ?>/catalog/list_catalog.php', icon: 'grid_view', visible: <?= $ver_catalogo ? 'true' : 'false' ?> },
+                { name: 'Activos', parent: '', url: '<?= BASE_URL ?>/activos/list_activos.php', icon: 'fact_check', visible: <?= $ver_activos ? 'true' : 'false' ?> },
+                
+                // Admin
+                { name: 'Usuarios', parent: '', url: '<?= BASE_URL ?>/users/list_users.php', icon: 'person', visible: <?= $ver_admin_usuarios ? 'true' : 'false' ?> },
+                { name: 'Panel de Control', parent: '', url: '<?= BASE_URL ?>/dashboard.php', icon: 'analytics', visible: <?= $ver_dash ? 'true' : 'false' ?> },
+                
+                // Otros
+                { name: 'Solicitud de Mantenimiento', parent: '', url: '<?= BASE_URL ?>/solicitud_soporte.php', icon: 'engineering', visible: true }
+            ].filter(m => m.visible);
+
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
+                resultsDropdown.innerHTML = '';
+                
+                if (term.length === 0) {
+                    resultsDropdown.style.display = 'none';
+                    return;
+                }
+
+                // Función para normalizar y quitar acentos
+                const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                const normalizedTerm = normalize(term);
+
+                const matches = searchableModules.filter(m => {
+                    const nameNorm = normalize(m.name);
+                    const parentNorm = m.parent ? normalize(m.parent) : '';
+                    return nameNorm.includes(normalizedTerm) || parentNorm.includes(normalizedTerm);
+                });
+
+                if (matches.length > 0) {
+                    matches.forEach(m => {
+                        const item = document.createElement('a');
+                        item.href = m.url;
+                        item.className = 'search-result-item';
+                        const parentTag = m.parent ? `<span class="res-parent">${m.parent}</span>` : '';
+                        item.innerHTML = `
+                            <div class="res-icon-box">
+                                <span class="material-symbols-rounded">${m.icon}</span>
+                            </div>
+                            <div class="res-info">
+                                <span class="res-name">${m.name}</span>
+                                ${parentTag}
+                            </div>
+                        `;
+                        resultsDropdown.appendChild(item);
+                    });
+                    resultsDropdown.style.display = 'block';
+                } else {
+                    resultsDropdown.innerHTML = '<div class="search-no-results">No se encontraron coincidencias</div>';
+                    resultsDropdown.style.display = 'block';
+                }
+            });
+
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !resultsDropdown.contains(e.target)) {
+                    resultsDropdown.style.display = 'none';
+                }
+            });
+        });
+        </script>
 
         <!-- MAIN CONTENT AREA -->
         <main class="app-content">

@@ -324,7 +324,19 @@ const UI = (() => {
   }
 
   /* ── LOGOUT ────────────────────────────────────────────────────── */
-  function _logout(reason = 'logout') {
+  async function _logout(reason = 'logout') {
+    if (reason === 'logout') {
+      const ok = await confirm({
+        title: '¿Cerrar sesión?',
+        message: '¿Estás seguro de que deseas salir del sistema GECO?',
+        danger: true,
+        confirmText: 'Sí, salir',
+        cancelText: 'Cancelar',
+        icon: 'logout'
+      });
+      if (!ok) return;
+    }
+
     const messages = {
       logout: 'Has salido de tu cuenta correctamente.',
       timeout: 'Tu sesión ha expirado por inactividad.',
@@ -344,7 +356,7 @@ const UI = (() => {
     // 3. Redirigir después del toast
     setTimeout(() => {
       window.location.href = `${window.BASE_URL}/login.php`;
-    }, 3000);
+    }, 1500); // Reducido un poco para que no se sienta tan lento después de confirmar
   }
 
   /* ── PUBLIC API ────────────────────────────────────────────────── */

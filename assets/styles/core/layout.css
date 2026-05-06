@@ -33,23 +33,111 @@ body, html {
 /* Collapsed state for desktop */
 .app-sidebar.collapsed {
     width: 80px;
+    overflow: visible;
+    z-index: 9000;
 }
 
-.app-sidebar.collapsed .sidebar-label,
 .app-sidebar.collapsed .menu-text,
-.app-sidebar.collapsed .chevron,
-.app-sidebar.collapsed .submenu-container {
+.app-sidebar.collapsed .chevron {
     display: none !important;
+}
+
+.app-sidebar.collapsed .sidebar-label {
+    font-size: 0;
+    height: 1px;
+    background: var(--gray-100, #f1f5f9);
+    margin: 0.6rem 0.8rem;
+    display: block !important;
 }
 
 .app-sidebar.collapsed .menu-item {
     justify-content: center;
     padding: 10px;
+    position: relative;
 }
 
 .app-sidebar.collapsed .menu-item .material-symbols-rounded {
     margin: 0;
     font-size: 1.5rem;
+}
+
+
+
+
+/* ── FLYOUT de submenús en collapsed ──────────────────────────── */
+.app-sidebar.collapsed .has-submenu {
+    position: relative;
+}
+
+.app-sidebar.collapsed .submenu-container {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+    min-width: 190px;
+    padding: 4px;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    transform: translateX(-6px);
+}
+
+/* Puente para evitar que se cierre el flyout al mover el mouse */
+.app-sidebar.collapsed .submenu-container::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 0;
+    bottom: 0;
+    width: 25px;
+    background: transparent;
+}
+
+.app-sidebar.collapsed .has-submenu:hover .submenu-container {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.flyout-header {
+    display: none;
+}
+
+.app-sidebar.collapsed .flyout-header {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+    padding: 6px 10px 4px;
+}
+
+.app-sidebar.collapsed .submenu-container .submenu-item {
+    padding: 8px 12px;
+    border-radius: 7px;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    text-decoration: none;
+    display: block;
+    transition: background 0.15s, color 0.15s;
+}
+
+.app-sidebar.collapsed .submenu-container .submenu-item:hover {
+    background: rgba(64,118,86,0.08);
+    color: #2f5a40;
+}
+
+.app-sidebar.collapsed .submenu-container .submenu-item.active {
+    background: rgba(64,118,86,0.12);
+    color: #2f5a40;
+    font-weight: 700;
 }
 
 .app-main {
@@ -74,12 +162,94 @@ body, html {
     top: 0;
 }
 
+.header-center-decoration {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.header-center-decoration img {
+    pointer-events: auto; /* Para permitir el clic */
+}
+
+.isologo-spin.rotating {
+    transform: rotate(360deg);
+}
+
+@media (max-width: 991px) {
+    .header-center-decoration {
+        display: none;
+    }
+}
+
 .app-content {
     flex: 1;
-    padding: 2rem;
+    padding: 1.5rem; /* Reduced padding for more compact look */
     position: relative;
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ─── PAGE HEADER & BREADCRUMBS ────────────────────────────── */
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--gray-400);
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: '/';
+    color: var(--gray-300);
+}
+
+.breadcrumb-item a {
+    color: var(--gray-500);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--p-600);
+}
+
+.breadcrumb-item.active {
+    color: var(--gray-400);
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--s-800);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.page-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 /* ─── SIDEBAR BRANDING & MENU ───────────────────────────────── */
@@ -148,6 +318,11 @@ body, html {
     margin-left: 0;
 }
 
+/* Ocultar logo cuando el sidebar está colapsado */
+.app-sidebar.collapsed .brand-logo-link {
+    display: none;
+}
+
 .sidebar-menu {
     flex: 1;
     overflow-y: auto;
@@ -179,6 +354,14 @@ body, html {
     font-size: 0.9rem;
     transition: all 0.2s ease;
     gap: 12px;
+    white-space: nowrap;
+    overflow: hidden; /* Evitar que el contenido se salga */
+}
+
+.menu-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -261,6 +444,85 @@ body, html {
     padding: 6px 16px;
     width: 320px;
     transition: all 0.3s;
+    position: relative; /* Para el dropdown */
+}
+
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    display: none;
+    z-index: 1000;
+    overflow: hidden;
+    padding: 6px;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: var(--s-700);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: var(--gray-50);
+    color: var(--p-600);
+}
+
+.res-icon-box {
+    width: 32px;
+    height: 32px;
+    background: var(--gray-50);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.search-result-item:hover .res-icon-box {
+    background: #ffffff;
+}
+
+.res-icon-box .material-symbols-rounded {
+    font-size: 1.1rem;
+    color: var(--gray-400);
+}
+
+.search-result-item:hover .material-symbols-rounded {
+    color: var(--p-500);
+}
+
+.res-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.res-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.res-parent {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    font-weight: 500;
+}
+
+.search-no-results {
+    padding: 12px;
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    text-align: center;
 }
 
 .header-search:focus-within {
@@ -346,11 +608,13 @@ body, html {
 }
 
 .btn-logout {
-    color: inherit;
+    color: #ff5f5f !important;
 }
 
-.btn-logout:hover {
-    background-color: var(--gray-100, #f1f5f9);
+.btn-logout:hover,
+.logout-item:hover {
+    background-color: rgba(255, 95, 95, 0.08) !important;
+    color: #ff4d4d !important;
 }
 
 /* Mobile Toggle */

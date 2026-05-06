@@ -6,6 +6,9 @@ require_once "includes/check_session.php";
 checkSession();
 preventCaching();
 
+// Ajustar zona horaria para saludos precisos (Reynosa/Matamoros)
+date_default_timezone_set('America/Matamoros');
+
 // Incluir navbar (Esto abre el app-layout y app-content)
 include 'includes/navbar.php'; 
 
@@ -22,277 +25,423 @@ if ($hora_actual >= 5 && $hora_actual < 12) {
 $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 ?>
 
+<div class="page-content-inner" style="gap: 0; margin-top: -1.5rem; margin-left: -1.5rem; margin-right: -1.5rem;">
+    
+    <!-- Hero Section: Full Visual Background -->
+    <div class="hero-overlay-card" style="border-radius: 0 0 28px 28px;">
+        <!-- Visual Layer -->
+        <div class="hero-bg-wrapper">
+            <video autoplay muted loop playsinline poster="<?= BASE_URL ?>/construction_machinery_artistic_3d_1778092529865.png">
+                <source src="<?= BASE_URL ?>/assets/video/hero_bg.mp4" type="video/mp4">
+                <img src="<?= BASE_URL ?>/construction_machinery_artistic_3d_1778092529865.png" alt="Background">
+            </video>
+            <div class="hero-darkener"></div>
+        </div>
+
+        <!-- Content Layer -->
+        <div class="hero-main-content">
+            <!-- Integrated Page Header -->
+            <div class="page-header" style="margin-bottom: auto;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" style="color: rgba(255,255,255,0.6);">Inicio</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title" style="color: #ffffff; font-size: 1.2rem;">Bienvenido</h1>
+            </div>
+
+            <div class="hero-top-info">
+                <span class="hero-date" id="realTimeDisplay"><?= mb_strtoupper(date('d M Y • h:i A')) ?></span>
+            </div>
+
+            <div class="hero-greeting-box">
+                <h2 class="h-greeting"><?= $saludo ?>,</h2>
+                <h2 class="h-name"><?= htmlspecialchars($primerNombre) ?></h2>
+                <p class="h-welcome-text">Bienvenido a <strong>GECO Proatam</strong>, tu Sistema de Gestión Integral.</p>
+
+            </div>
+
+            <!-- Floating Quote Card -->
+            <div class="floating-card quote-card">
+                <span class="material-symbols-rounded quote-icon">format_quote</span>
+                <p class="quote-text">Cada proyecto es una oportunidad para construir un futuro mejor.</p>
+            </div>
+
+            <!-- Floating Status Card -->
+            <div class="floating-card status-card">
+                <div class="status-info">
+                    <span class="material-symbols-rounded status-icon">wb_sunny</span>
+                    <div class="status-details">
+                        <span class="st-temp">26°C</span>
+                        <span class="st-desc">Despejado</span>
+                    </div>
+                </div>
+                <div class="status-location">
+                    <span class="material-symbols-rounded loc-icon">location_on</span>
+                    <span class="loc-text">Reynosa, MX</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access Section -->
+    <div class="quick-access-section">
+        <div class="qa-header">
+            <div class="qa-title-box">
+                <span class="material-symbols-rounded">apps</span>
+                <div class="qa-titles">
+                    <h3>Accesos Rápidos</h3>
+                    <p>Accede rápidamente a las áreas principales del sistema.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="qa-grid">
+            <?php if ($ver_dash): ?>
+            <a href="<?= BASE_URL ?>/dashboard.php" class="qa-card">
+                <div class="qa-icon-box blue"><span class="material-symbols-rounded">analytics</span></div>
+                <div class="qa-content">
+                    <h4>Panel de Control</h4>
+                    <p>Métricas y KPIs del sistema</p>
+                </div>
+                <span class="material-symbols-rounded qa-arrow">arrow_forward</span>
+            </a>
+            <?php endif; ?>
+
+            <?php if ($ver_proyectos): ?>
+            <a href="<?= BASE_URL ?>/projects/list_project.php" class="qa-card">
+                <div class="qa-icon-box purple"><span class="material-symbols-rounded">business_center</span></div>
+                <div class="qa-content">
+                    <h4>Proyectos</h4>
+                    <p>Gestión de obras y contratos</p>
+                </div>
+                <span class="material-symbols-rounded qa-arrow">arrow_forward</span>
+            </a>
+            <?php endif; ?>
+
+            <?php if ($ver_ordenes): ?>
+            <a href="<?= BASE_URL ?>/orders/list_oc.php" class="qa-card">
+                <div class="qa-icon-box green"><span class="material-symbols-rounded">receipt_long</span></div>
+                <div class="qa-content">
+                    <h4>Compras</h4>
+                    <p>Órdenes y requisiciones</p>
+                </div>
+                <span class="material-symbols-rounded qa-arrow">arrow_forward</span>
+            </a>
+            <?php endif; ?>
+
+            <a href="<?= BASE_URL ?>/solicitud_soporte.php" class="qa-card">
+                <div class="qa-icon-box orange"><span class="material-symbols-rounded">engineering</span></div>
+                <div class="qa-content">
+                    <h4>Solicitud de Mantenimiento</h4>
+                    <p>Solicitudes y reportes técnicos</p>
+                </div>
+                <span class="material-symbols-rounded qa-arrow">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+</div>
+
 <style>
-/* Estilos específicos para el Index Dashboard */
-.welcome-hero {
+/* ─── HERO OVERLAY DESIGN ───────────────────────────────────── */
+.hero-overlay-card {
     position: relative;
-    border-radius: 24px;
+    height: 480px;
+    border-radius: 28px;
     overflow: hidden;
-    padding: 3rem 2.5rem;
-    color: white;
+    background: #1e293b;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+.hero-bg-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.hero-bg-wrapper video,
+.hero-bg-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-darkener {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(30,41,59,0.4) 60%, transparent 100%);
+}
+
+.hero-main-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-date {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.1em;
+}
+
+.hero-greeting-box {
+    max-width: 450px;
+}
+
+.h-greeting {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1;
+}
+
+.h-name {
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: var(--p-400);
+    margin: 0 0 1rem 0;
+    line-height: 1;
+}
+
+.h-welcome-text {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.8);
     margin-bottom: 2rem;
-    background: linear-gradient(135deg, rgba(17,53,87,0.95) 0%, rgba(63,117,85,0.85) 100%), url('<?= BASE_URL ?>/assets/img/background.png') center/cover;
+}
+
+.h-divider {
+    width: 40px;
+    height: 4px;
+    background: var(--p-400);
+    border-radius: 2px;
+}
+
+/* Floating Cards (Glassmorphism) */
+.floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 1.25rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.quote-card {
+    right: 3rem;
+    bottom: 12rem;
+    width: 280px;
+}
+
+.quote-icon {
+    font-size: 2rem;
+    color: var(--p-500);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.quote-text {
+    font-size: 0.95rem;
+    color: var(--s-800);
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.status-card {
+    right: 3rem;
+    bottom: 3rem;
+    min-width: 240px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
 }
 
-.welcome-hero::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url('https://www.transparenttextures.com/patterns/cubes.png');
-    opacity: 0.1;
-    pointer-events: none;
-}
-
-.welcome-text {
-    position: relative;
-    z-index: 2;
-    max-width: 600px;
-}
-
-.welcome-greeting {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
-}
-
-.welcome-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    font-weight: 300;
-    line-height: 1.5;
-}
-
-.welcome-clock {
-    position: relative;
-    z-index: 2;
-    text-align: right;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem 2rem;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.clock-time {
-    font-size: 3rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    margin-bottom: 0.2rem;
-}
-
-.clock-date {
-    font-size: 0.95rem;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 500;
-}
-
-/* Quick Actions */
-.section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--s-800);
-    margin-bottom: 1.5rem;
+.status-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.75rem;
 }
 
-.shortcuts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+.status-icon {
+    font-size: 2rem;
+    color: #f59e0b;
 }
 
-.shortcut-card {
-    background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
+.status-details {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+}
+
+.st-temp {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--s-900);
+}
+
+.st-desc {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    font-weight: 600;
+}
+
+.status-location {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--gray-200);
+}
+
+.loc-icon { font-size: 1rem; color: var(--gray-400); }
+.loc-text { font-size: 0.8rem; font-weight: 700; color: var(--s-700); }
+
+/* ─── QUICK ACCESS SECTION ──────────────────────────────────── */
+.quick-access-section {
+    margin-top: 2.5rem;
+    padding: 0 1.5rem 2.5rem 1.5rem;
+}
+
+.qa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.qa-title-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.qa-title-box > span {
+    font-size: 1.8rem;
+    color: var(--p-500);
+}
+
+.qa-titles h3 { font-size: 1.1rem; font-weight: 800; color: var(--s-900); margin: 0; }
+.qa-titles p { font-size: 0.8rem; color: var(--gray-500); margin: 2px 0 0; }
+
+.btn-outline-sm {
+    background: transparent;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--s-700);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-outline-sm:hover {
+    background: var(--gray-50);
+    border-color: var(--p-300);
+    color: var(--p-600);
+}
+
+.qa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.qa-card {
+    background: #ffffff;
+    border: 1px solid var(--gray-100);
+    border-radius: 18px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
     gap: 1rem;
     text-decoration: none;
-    color: inherit;
-    border: 1px solid var(--gray-200);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    transition: all 0.3s;
 }
 
-.shortcut-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.06);
-    border-color: var(--gray-300);
-    color: inherit;
+.qa-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+    border-color: var(--p-200);
 }
 
-.shortcut-icon {
+.qa-icon-box {
     width: 48px;
     height: 48px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     flex-shrink: 0;
 }
 
-.shortcut-card.blue .shortcut-icon { background: rgba(77, 184, 255, 0.1); color: #2096e0; }
-.shortcut-card.green .shortcut-icon { background: rgba(0, 201, 167, 0.1); color: #00a383; }
-.shortcut-card.purple .shortcut-icon { background: rgba(167, 139, 250, 0.1); color: #7c5fe0; }
-.shortcut-card.gold .shortcut-icon { background: rgba(244, 185, 66, 0.1); color: #d49520; }
+.qa-icon-box.blue { background: #eff6ff; color: #2563eb; }
+.qa-icon-box.purple { background: #f5f3ff; color: #7c3aed; }
+.qa-icon-box.green { background: #f0fdf4; color: #16a34a; }
 
-.shortcut-info h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin: 0 0 4px 0;
-    color: var(--s-800);
-}
+.qa-content h4 { font-size: 0.95rem; font-weight: 700; color: var(--s-800); margin: 0; }
+.qa-content p { font-size: 0.8rem; color: var(--gray-500); margin: 2px 0 0; }
 
-.shortcut-info p {
-    font-size: 0.85rem;
-    color: var(--gray-500);
-    margin: 0;
-    line-height: 1.4;
-}
-
-/* Info Panel */
-.info-panel {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    border: 1px solid var(--gray-200);
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.info-panel img {
-    max-width: 150px;
-    opacity: 0.8;
-}
-
-.info-text h4 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-}
-
-.info-text p {
-    color: var(--gray-500);
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-@media (max-width: 768px) {
-    .welcome-hero {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2rem;
-        padding: 2rem 1.5rem;
-    }
-    .welcome-clock {
-        text-align: left;
-        width: 100%;
-    }
-    .info-panel {
-        flex-direction: column;
-        text-align: center;
-    }
-}
+.qa-arrow { margin-left: auto; color: var(--gray-300); font-size: 1.2rem; }
+.qa-card:hover .qa-arrow { color: var(--p-500); transform: translateX(3px); }
 </style>
-
-<!-- Hero Section -->
-<div class="welcome-hero">
-    <div class="welcome-text">
-        <h1 class="welcome-greeting"><?= $saludo ?>, <?= htmlspecialchars($primerNombre) ?>.</h1>
-        <p class="welcome-subtitle">Bienvenido al Sistema de Gestión Integral PROATAM. Selecciona un módulo para comenzar tu jornada.</p>
-    </div>
-    
-    <div class="welcome-clock">
-        <div class="clock-time" id="realTimeClock">00:00</div>
-        <div class="clock-date" id="realTimeDate">Cargando fecha...</div>
-    </div>
-</div>
-
-<!-- Accesos Rápidos -->
-<h2 class="section-title">
-    <span class="material-symbols-rounded" style="color: var(--p-500)">bolt</span>
-    Accesos Rápidos
-</h2>
-
-<div class="shortcuts-grid">
-    <?php if ($ver_dash): ?>
-    <a href="<?= BASE_URL ?>/dashboard.php" class="shortcut-card blue">
-        <div class="shortcut-icon"><span class="material-symbols-rounded">space_dashboard</span></div>
-        <div class="shortcut-info">
-            <h3>Panel de Control</h3>
-            <p>Visualiza el rendimiento y métricas principales de la empresa.</p>
-        </div>
-    </a>
-    <?php endif; ?>
-
-    <a href="<?= BASE_URL ?>/solicitud_soporte.php" class="shortcut-card purple">
-        <div class="shortcut-icon"><span class="material-symbols-rounded">support_agent</span></div>
-        <div class="shortcut-info">
-            <h3>Soporte TI</h3>
-            <p>¿Tienes problemas? Crea un ticket de mantenimiento o soporte.</p>
-        </div>
-    </a>
-
-    <?php if ($ver_activos): ?>
-    <a href="<?= BASE_URL ?>/activos/list_activos.php" class="shortcut-card green">
-        <div class="shortcut-icon"><span class="material-symbols-rounded">inventory_2</span></div>
-        <div class="shortcut-info">
-            <h3>Inventario</h3>
-            <p>Gestiona y revisa el estado de los activos físicos.</p>
-        </div>
-    </a>
-    <?php endif; ?>
-
-    <a href="<?= BASE_URL ?>/change_password.php" class="shortcut-card gold">
-        <div class="shortcut-icon"><span class="material-symbols-rounded">lock_reset</span></div>
-        <div class="shortcut-info">
-            <h3>Seguridad</h3>
-            <p>Actualiza tu contraseña corporativa regularmente.</p>
-        </div>
-    </a>
-</div>
-
-<!-- Panel de Información -->
-<div class="info-panel">
-    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="PROATAM">
-    <div class="info-text">
-        <h4>SGI PROATAM v1.2</h4>
-        <p>Sistema centralizado para la administración de activos, recursos humanos, control de proyectos y procuración. Si necesitas acceso a un módulo específico, contacta a tu administrador.</p>
-    </div>
-</div>
 
 <script>
 function updateClock() {
     const now = new Date();
-    
-    // Formato de hora (14:30)
-    document.getElementById('realTimeClock').textContent = now.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
-    
-    // Formato de fecha (Lunes, 5 de Mayo de 2026)
-    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('realTimeDate').textContent = now.toLocaleDateString('es-MX', opcionesFecha);
+    const options = { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit',
+        hour12: true 
+    };
+    const dateStr = now.toLocaleDateString('en-US', options).replace(',', '');
+    document.getElementById('realTimeDisplay').textContent = dateStr.toUpperCase();
+}
+
+async function fetchWeather() {
+    try {
+        const response = await fetch('https://wttr.in/Reynosa?format=j1');
+        const data = await response.json();
+        const current = data.current_condition[0];
+        
+        document.querySelector('.st-temp').textContent = current.temp_C + '°C';
+        
+        // Mapeo simple de descripción a iconos
+        const desc = current.weatherDesc[0].value.toLowerCase();
+        let icon = 'wb_sunny';
+        let descSp = 'Despejado';
+
+        if (desc.includes('cloud')) { icon = 'partly_cloudy_day'; descSp = 'Nublado'; }
+        if (desc.includes('rain')) { icon = 'rainy'; descSp = 'Lluvia'; }
+        if (desc.includes('clear')) { icon = 'wb_sunny'; descSp = 'Despejado'; }
+        if (desc.includes('overcast')) { icon = 'cloud'; descSp = 'Cubierto'; }
+        
+        document.querySelector('.status-icon').textContent = icon;
+        document.querySelector('.st-desc').textContent = descSp;
+    } catch (e) {
+        console.error("Error fetching weather", e);
+    }
 }
 
 setInterval(updateClock, 1000);
-updateClock(); // Iniciar inmediatamente
+updateClock();
+fetchWeather();
 </script>
 
 <?php

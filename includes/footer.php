@@ -29,32 +29,33 @@ require_once __DIR__ . '/../version.php';
 
   <!-- Layout Scripts -->
   <script>
+    const _tip = document.createElement('div');
+    _tip.id = 'sidebar-tooltip';
+    Object.assign(_tip.style, {
+      position: 'fixed', background: '#ffffff', color: '#1e293b',
+      fontSize: '0.78rem', fontWeight: '600', whiteSpace: 'nowrap',
+      padding: '5px 10px', borderRadius: '7px', pointerEvents: 'none',
+      opacity: '0', transition: 'opacity 0.15s ease',
+      zIndex: '99999', boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+      border: '1px solid #e2e8f0', fontFamily: 'inherit'
+    });
+    document.body.appendChild(_tip);
+
     function toggleSubmenu(e, menuId) {
       e.preventDefault();
-      const menuItem = document.getElementById(menuId);
-      const isExpanded = menuItem.classList.contains("expanded");
-
-      // Opcional: Cerrar otros submenús al abrir uno nuevo
-      // document.querySelectorAll(".has-submenu").forEach(item => item.classList.remove("expanded"));
-
-      if (!isExpanded) {
-        menuItem.classList.add("expanded");
-      } else {
-        menuItem.classList.remove("expanded");
-      }
+      document.getElementById(menuId).classList.toggle('expanded');
     }
 
     function toggleMobileSidebar() {
-      const sidebar = document.getElementById('appSidebar');
-      sidebar.classList.toggle('show');
+      document.getElementById('appSidebar').classList.toggle('show');
     }
 
     function toggleSidebar() {
       const sidebar = document.getElementById('appSidebar');
       sidebar.classList.toggle('collapsed');
+      initFlyouts();
     }
 
-    // Cerrar sidebar móvil al hacer clic fuera
     document.addEventListener('click', (e) => {
       const sidebar = document.getElementById('appSidebar');
       const toggleBtn = document.querySelector('.mobile-toggle');
@@ -64,6 +65,43 @@ require_once __DIR__ . '/../version.php';
         }
       }
     });
+
+    function initFlyouts() {
+      const sidebar = document.getElementById('appSidebar');
+
+      sidebar.querySelectorAll('.has-submenu').forEach(item => {
+        if (item._flyoutEnter) item.removeEventListener('mouseenter', item._flyoutEnter);
+        item._flyoutEnter = function() {
+          if (!sidebar.classList.contains('collapsed')) return;
+          const flyout = item.querySelector('.submenu-container');
+          if (!flyout) return;
+          const rect = item.querySelector('.menu-item').getBoundingClientRect();
+          flyout.style.left = (rect.right + 8) + 'px';
+          flyout.style.top = rect.top + 'px';
+        };
+        item.addEventListener('mouseenter', item._flyoutEnter);
+      });
+
+      sidebar.querySelectorAll('.menu-item[data-tooltip]').forEach(el => {
+        if (el._tipEnter) {
+          el.removeEventListener('mouseenter', el._tipEnter);
+          el.removeEventListener('mouseleave', el._tipLeave);
+        }
+        el._tipEnter = function() {
+          if (!sidebar.classList.contains('collapsed')) return;
+          const rect = el.getBoundingClientRect();
+          _tip.textContent = el.dataset.tooltip;
+          _tip.style.left = (rect.right + 10) + 'px';
+          _tip.style.top = (rect.top + rect.height / 2 - 12) + 'px';
+          _tip.style.opacity = '1';
+        };
+        el._tipLeave = function() { _tip.style.opacity = '0'; };
+        el.addEventListener('mouseenter', el._tipEnter);
+        el.addEventListener('mouseleave', el._tipLeave);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initFlyouts);
   </script>
 </body>
 </html>
