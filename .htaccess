@@ -1,3 +1,21 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Esto asegura que el Token llegue a PHP incluso si Apache intenta filtrarlo
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Encabezados CORS para permitir peticiones desde la App móvil
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Authorization"
+</IfModule>
+
+# htaccess que estaba antes en proatam_local desktop
+# Si la petición es de tipo OPTIONS (Preflight), responder 200 OK y salir
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
 DirectoryIndex login.php
 
 # Límites generales (soportar 600MB + 1GB)
