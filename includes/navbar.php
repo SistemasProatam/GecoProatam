@@ -22,6 +22,7 @@ $crear_orden = in_array($departamento_sesion, ['Director General', 'Subdirector 
 $ver_requisiciones = in_array($departamento_sesion, ['Director General', 'Subdirector General', 'Gerente de Operaciones', 'Supervisor de Proyecto', 'Tecnico de Sistemas', 'Coordinador de Control de Documentos y Facturación', 'Gerente de Seguridad Salud y Medio Ambiente', 'Procura', 'Supervisor del sistema de Administración', 'Supervisor de Calidad', 'Residente de Obra']);
 $ver_admin_usuarios = in_array($departamento_sesion, ['Director General', 'Subdirector General', 'Gerente de Recursos Humanos', 'Tecnico de Sistemas']);
 $ver_dash = in_array($departamento_sesion, ['Director General', 'Subdirector General', 'Gerente de Operaciones', 'Tecnico de Sistemas']);
+$ver_cotizaciones = ($_SESSION['departamento'] ?? '') === 'SUPER_ADMIN' || in_array($_SESSION['departamento_id'] ?? 0, [1, 2, 10, 16]);
 
 function is_active($path) {
     $current_file = basename($_SERVER['PHP_SELF']);
@@ -121,6 +122,21 @@ function is_active($path) {
                     <a href="<?= BASE_URL ?>/orders/new_requis.php" class="submenu-item <?= is_active('new_requis.php') ?>">Crear Requisición</a>
                     <?php endif; ?>
                     <a href="<?= BASE_URL ?>/orders/list_requis.php" class="submenu-item <?= is_active('list_requis.php') ?>">Ver Registros</a>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($ver_cotizaciones): ?>
+            <div class="has-submenu <?= is_active(['list_cotizaciones.php', 'cotizacion.php']) ? 'expanded' : '' ?>" id="menuCotizaciones" data-label="Cotizaciones">
+                <a href="#" class="menu-item <?= is_active(['list_cotizaciones.php', 'cotizacion.php']) ?>" onclick="toggleSubmenu(event, 'menuCotizaciones')">
+                    <span class="material-symbols-rounded">request_quote</span>
+                    <span class="menu-text">Cotizaciones</span>
+                    <span class="material-symbols-rounded chevron" style="margin-left:auto;font-size:1.1rem;">expand_more</span>
+                </a>
+                <div class="submenu-container">
+                    <span class="flyout-header">Cotizaciones</span>
+                    <a href="<?= BASE_URL ?>/cotizaciones/cotizacion.php" class="submenu-item <?= is_active('cotizacion.php') ?>">Crear Nueva</a>
+                    <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php" class="submenu-item <?= is_active('list_cotizaciones.php') ?>">Ver Registros</a>
                 </div>
             </div>
             <?php endif; ?>
@@ -240,6 +256,10 @@ function is_active($path) {
                 // Requisiciones
                 { name: 'Crear Requisición', parent: 'Requisiciones', url: '<?= BASE_URL ?>/orders/new_requis.php', icon: 'assignment', visible: <?= ($ver_requisiciones && $crear_orden) ? 'true' : 'false' ?> },
                 { name: 'Ver Registros Requisiciones', parent: 'Requisiciones', url: '<?= BASE_URL ?>/orders/list_requis.php', icon: 'assignment', visible: <?= $ver_requisiciones ? 'true' : 'false' ?> },
+                
+                // Cotizaciones
+                { name: 'Crear Nueva Cotización', parent: 'Cotizaciones', url: '<?= BASE_URL ?>/cotizaciones/cotizacion.php', icon: 'request_quote', visible: <?= $ver_cotizaciones ? 'true' : 'false' ?> },
+                { name: 'Ver Registros Cotizaciones', parent: 'Cotizaciones', url: '<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php', icon: 'request_quote', visible: <?= $ver_cotizaciones ? 'true' : 'false' ?> },
                 
                 // Recursos
                 { name: 'Catálogo', parent: '', url: '<?= BASE_URL ?>/catalog/list_catalog.php', icon: 'grid_view', visible: <?= $ver_catalogo ? 'true' : 'false' ?> },
