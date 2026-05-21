@@ -43,7 +43,7 @@ function is_active($path) {
   
   <!-- Estilos SaaS -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/tokens.css?v=1.2" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/layout.css?v=1.2" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/layout.css?v=1.3" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.2" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css?v=1.2" />
   
@@ -190,7 +190,7 @@ function is_active($path) {
                 
                 <div class="header-search">
                     <span class="material-symbols-rounded">search</span>
-                    <input type="text" id="globalSearchInput" placeholder="Buscar módulos o registros..." autocomplete="off">
+                    <input type="text" id="globalSearchInput" placeholder="Buscar módulos..." autocomplete="off">
                     
                     <!-- Dropdown de resultados -->
                     <div id="search-results-dropdown" class="search-dropdown"></div>
@@ -215,9 +215,7 @@ function is_active($path) {
                     <div class="avatar"><?= $inicial ?></div>
                 </div>
 
-                <button class="btn-icon btn-logout" onclick="UI.logout()" title="Cerrar Sesión">
-                    <span class="material-symbols-rounded">logout</span>
-                </button>
+
             </div>
         </header>
 

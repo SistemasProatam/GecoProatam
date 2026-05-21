@@ -47,7 +47,7 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
                         <li class="breadcrumb-item active" style="color: rgba(255,255,255,0.6);">Inicio</li>
                     </ol>
                 </nav>
-                <h1 class="page-title" style="color: #ffffff; font-size: 1.2rem;">Bienvenido</h1>
+                <h1 class="page-title" style="color: #ffffff; font-size: 1.6rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -0.025em;">Bienvenido</h1>
             </div>
 
             <div class="hero-top-info">
@@ -177,7 +177,7 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
     position: relative;
     z-index: 2;
     height: 100%;
-    padding: 3rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -235,7 +235,7 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 }
 
 .quote-card {
-    right: 3rem;
+    right: 1.5rem;
     bottom: 12rem;
     width: 280px;
 }
@@ -256,8 +256,8 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 }
 
 .status-card {
-    right: 3rem;
-    bottom: 3rem;
+    right: 1.5rem;
+    bottom: 1.5rem;
     min-width: 240px;
     display: flex;
     justify-content: space-between;

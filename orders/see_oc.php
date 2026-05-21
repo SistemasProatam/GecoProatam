@@ -783,260 +783,300 @@ $puede_subir_comprobante = ($departamento === 'Gerente de Recursos Humanos');   
 $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');         // Comprobante Subido -> Pagado
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Ver Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
-  <style>
-    .estado-badge {
-      font-size: 1rem;
-      padding: 8px 16px;
-    }
+<div class="orders-page-container">
 
-    .btn-estado {
-      margin: 5px;
-    }
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.1">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
 
-    .comentario-rechazo {
-      background-color: #f8f9fa;
-      border-left: 4px solid #dc3545;
-      padding: 15px;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
+<style>
+/* ─── SEE OC — Layout ────────────────────────────────────────── */
+.oc-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.25rem;
+  align-items: start;
+}
+.oc-card {
+  background: #fff;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.oc-card:last-child { margin-bottom: 0; }
+.oc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--gray-100, #f3f4f6);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--s-700, #113557);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.oc-card-body { padding: 1.25rem; }
+/* Fields grid */
+.oc-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem 1.5rem;
+}
+.oc-field label {
+  display: block;
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--gray-400, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.2rem;
+}
+.oc-field .val {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--s-800, #0f172a);
+}
+/* Finance sidebar */
+.oc-finance {
+  background: var(--s-700, #113557);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  color: #fff;
+  margin-bottom: 1.25rem;
+}
+.oc-finance-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.65);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.oc-finance-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.75);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.oc-finance-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+.oc-finance-total .lbl { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.9); text-transform: uppercase; }
+.oc-finance-total .amt { font-size: 1.35rem; font-weight: 800; color: #fff; }
+/* Sidebar small card */
+.oc-side-card {
+  background: #fff;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.oc-side-card:last-child { margin-bottom: 0; }
+.oc-side-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-100, #f3f4f6);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--s-700, #113557);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.oc-side-body { padding: 0.9rem 1rem; }
+.oc-side-field { margin-bottom: 0.75rem; }
+.oc-side-field:last-child { margin-bottom: 0; }
+.oc-side-field label {
+  display: block;
+  font-size: 0.63rem;
+  font-weight: 700;
+  color: var(--gray-400, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.15rem;
+}
+.oc-side-field .val { font-size: 0.82rem; font-weight: 600; color: var(--s-800, #0f172a); line-height: 1.3; }
+/* Type badge in items table */
+.type-badge {
+  display: inline-flex;
+  padding: 0.18rem 0.55rem;
+  border-radius: 20px;
+  font-size: 0.67rem;
+  font-weight: 700;
+}
+.type-badge.producto { background: rgba(59,130,246,.1); color: #1d4ed8; border: 1px solid rgba(59,130,246,.25); }
+.type-badge.servicio { background: rgba(139,92,246,.1); color: #6d28d9; border: 1px solid rgba(139,92,246,.25); }
+/* Empty state */
+.oc-empty { text-align:center; padding:1.5rem; color:var(--gray-400,#9ca3af); }
+.oc-empty i { font-size:1.8rem; display:block; margin-bottom:.4rem; opacity:.45; }
+.oc-empty p { font-size:.78rem; margin:0; }
+/* Comment box */
+.oc-comment {
+  background: var(--gray-50, #f9fafb);
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-left: 3px solid var(--s-700, #113557);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: .82rem;
+  color: var(--gray-700, #374151);
+}
+.oc-comment.danger { border-left-color: #e8445a; background: rgba(232,68,90,.04); }
+/* Loading overlay */
+#loadingOverlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  display:none; justify-content:center; align-items:center; z-index:9999;
+}
+.loading-box {
+  background:#fff; padding:25px 40px; border-radius:12px;
+  box-shadow:0 0 15px rgba(0,0,0,.3); text-align:center; font-size:17px; font-weight:bold;
+}
+.spinner-border { width:3rem; height:3rem; }
+@media(max-width:960px){ .oc-detail-grid { grid-template-columns:1fr; } .oc-fields { grid-template-columns:1fr 1fr; } }
+@media(max-width:576px){ .oc-fields { grid-template-columns:1fr; } }
+</style>
 
-    .comentario-header {
-      font-weight: bold;
-      color: #dc3545;
-      margin-bottom: 8px;
-    }
+    <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
 
-    .totales-box {
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-
-    .total-final {
-      background-color: #e7f3ff;
-      border: 2px solid #0d6efd;
-      font-weight: bold;
-    }
-
-    .comprobante-box {
-      background-color: #d1ecf1;
-      border: 1px solid #bee5eb;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 15px;
-    }
-
-    .ubicacion-box {
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 15px;
-    }
-
-    /* Overlay de carga pantalla completa */
-    #loadingOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    /* Contenedor del spinner */
-    .loading-box {
-      background: #ffffff;
-      padding: 25px 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      font-size: 17px;
-      font-weight: bold;
-    }
-
-    .spinner-border {
-      width: 3rem;
-      height: 3rem;
-    }
-  </style>
-</head>
-
-<body>
-
-  <?php
-  include __DIR__ . "/../includes/navbar.php"; ?>
-
-  <!-- HERO SECTION -->
-  <div class="hero-section">
-    <div class="container hero-content">
-      <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-        <span>/</span>
-        <span>Ver Orden de Compra</span>
-      </div>
-
-      <div class="row align-items-end">
-        <div class="col-lg-8">
-          <h1 class="hero-title">Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></h1>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="content-wrapper">
-
-    <div class="form-container">
-
-      <div class="form-body">
-        <!-- Mostrar mensajes -->
-        <?php
-        if (isset($_GET['success'])): ?>
-          <?php
-          $email_status = $_GET['email'] ?? '';
-          $comprobante_status = $_GET['comprobante'] ?? '';
-          $transferidos = $_GET['transferidos'] ?? 0;
-          $mensaje_clase = 'success';
-          $icono = 'check-circle';
-          $mensaje = 'Estado actualizado correctamente';
-
-          if ($comprobante_status === 'subido') {
-            $mensaje = 'Comprobante de pago subido exitosamente';
-          } else {
-            switch ($email_status) {
-              case 'enviado':
-                $count = $_GET['count'] ?? 0;
-                $mensaje .= " y se enviaron {$count} notificaciones por correo.";
-                if ($transferidos > 0) {
-                  $mensaje .= " Se transfirieron {$transferidos} items al catálogo.";
-                }
-                break;
-              case 'error':
-                $mensaje_clase = 'warning';
-                $icono = 'exclamation-triangle';
-                $mensaje .= ', pero hubo un problema al enviar las notificaciones por correo.';
-                if ($transferidos > 0) {
-                  $mensaje .= " Se transfirieron {$transferidos} items al catálogo.";
-                }
-                break;
-              case 'excepcion':
-                $mensaje_clase = 'warning';
-                $icono = 'exclamation-triangle';
-                $mensaje .= ', pero ocurrió un error al intentar enviar los correos.';
-                break;
-              default:
-                if ($transferidos > 0) {
-                  $mensaje .= " Se transfirieron {$transferidos} items al catálogo.";
-                }
-            }
-          }
-          ?>
-          <div class="alert alert-<?= $mensaje_clase ?> alert-dismissible fade show" role="alert">
-            <i class="bi bi-<?= $icono ?>"></i> <?= $mensaje ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        <?php
-        endif; ?>
-
-        <?php
-        if (isset($mensaje_error)): ?>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        <?php
-        endif; ?>
-
-        <!-- Información General -->
-        <div class="section-title">
-          <i class="bi bi-info-circle"></i>
-          Información General
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Folio OC</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['folio']) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Fecha de Solicitud</label>
-            <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($orden_compra['fecha_solicitud'])) ?>" readonly>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Entidad</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['entidad']) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Solicitante</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['nombres'] . ' ' . $orden_compra['apellidos']) ?>" readonly>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Categoría</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['categoria']) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Proveedor</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['proveedor']) ?>" readonly>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Requisición Relacionada</label>
-            <input type="text" class="form-control" value="<?= $orden_compra['folio_requisicion'] ? htmlspecialchars($orden_compra['folio_requisicion']) : 'N/A' ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Estado Actual</label>
-            <div class="mt-1">
-              <?php
-              switch ($orden_compra['estado']) {
-                case 'pendiente':
-                  echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-clock"></i> Pendiente</span>';
-                  break;
-                case 'revisado':
-                  echo '<span class="badge bg-light text-dark estado-badge"><i class="bi bi-check2-circle"></i> revisado</span>';
-                  break;
-                case 'aprobado':
-                  echo '<span class="badge bg-success estado-badge"><i class="bi bi-check-circle"></i> Aprobado</span>';
-                  break;
-                case 'rechazado':
-                  echo '<span class="badge bg-danger estado-badge"><i class="bi bi-x-circle"></i> Rechazado</span>';
-                  break;
-                case 'comprobante_subido':
-                  echo '<span class="badge bg-info estado-badge"><i class="bi bi-file-earmark-check"></i> Comprobante Subido</span>';
-                  break;
-                case 'devuelto':
-                  echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-arrow-counterclockwise"></i> Devuelto para Editar</span>';
-                  break;
-                case 'pagado':
-                  echo '<span class="badge bg-primary estado-badge"><i class="bi bi-currency-dollar"></i> Pagado y Completado</span>';
-                  break;
-              }
-              ?>
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <a href="<?= BASE_URL ?>/orders/list_oc.php">Órdenes de Compra</a>
+                <span class="separator">›</span>
+                <span>Detalles</span>
+            </nav>
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                <h1 class="orders-page-title">OC <?= htmlspecialchars($orden_compra['folio']) ?></h1>
+                <?php
+                $badge_map = [
+                    'pendiente'  => ['status-badge--pendiente', 'bi-clock',                   'Pendiente'],
+                    'revisado'   => ['status-badge--revisado',  'bi-check2-circle',            'Revisado'],
+                    'aprobado'   => ['status-badge--aprobado',  'bi-check-circle',             'Aprobado'],
+                    'rechazado'  => ['status-badge--rechazado', 'bi-x-circle',                'Rechazado'],
+                    'pagado'     => ['status-badge--pagado',    'bi-currency-dollar',          'Pagado'],
+                    'devuelto'   => ['status-badge--devuelto',  'bi-arrow-counterclockwise',  'Devuelto'],
+                    'comprobante_subido' => ['status-badge--revisado','bi-file-earmark-check','Comprobante Subido'],
+                ];
+                $b = $badge_map[$orden_compra['estado']] ?? ['status-badge--revisado','bi-circle', ucfirst($orden_compra['estado'])];
+                echo '<span class="status-badge ' . $b[0] . '"><i class="bi ' . $b[1] . '"></i> ' . $b[2] . '</span>';
+                ?>
             </div>
-          </div>
         </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start;">
+            <?php if (($orden_compra['estado'] == 'devuelto' && $_SESSION['user_id'] == $orden_compra['solicitante_id']) || (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas')): ?>
+                <a href="edit_oc.php?id=<?= $orden_compra['id'] ?>" class="btn-geco-secondary">
+                    <i class="bi bi-pencil"></i> Editar Orden
+                </a>
+            <?php endif; ?>
+            <?php if (in_array($orden_compra['estado'], ['devuelto', 'pagado'])): ?>
+                <a href="<?= BASE_URL ?>/orders/download_pdf_oc.php?id=<?= $orden_compra['id'] ?>" class="btn-geco-secondary" style="background:#fff;color:var(--s-700,#113557);border:1.5px solid var(--gray-200,#e5e7eb);" target="_blank">
+                    <i class="bi bi-download"></i> PDF
+                </a>
+            <?php endif; ?>
+            <a href="list_oc.php" class="btn-geco-secondary" style="background:#fff;color:var(--s-700,#113557);border:1.5px solid var(--gray-200,#e5e7eb);">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- ─── ALERTS ────────────────────────────────────────────────── -->
+    <?php if (isset($_GET['success'])): ?>
+        <?php
+        $email_status      = $_GET['email'] ?? '';
+        $comprobante_status = $_GET['comprobante'] ?? '';
+        $transferidos      = $_GET['transferidos'] ?? 0;
+        $msg_class = 'orders-alert--success';
+        $msg_icon  = 'bi-check-circle-fill';
+        $msg_text  = 'Estado actualizado correctamente';
+        if ($comprobante_status === 'subido') {
+            $msg_text = 'Comprobante de pago subido exitosamente';
+        } elseif ($email_status === 'enviado') {
+            $count = $_GET['count'] ?? 0;
+            $msg_text .= " y se enviaron {$count} notificaciones por correo.";
+        } elseif ($email_status === 'error') {
+            $msg_class = 'orders-alert--warning';
+            $msg_icon  = 'bi-exclamation-triangle-fill';
+            $msg_text .= ', pero hubo un problema al enviar las notificaciones.';
+        }
+        ?>
+        <div class="orders-alert <?= $msg_class ?> alert-dismissible fade show" role="alert">
+            <i class="bi <?= $msg_icon ?>"></i>
+            <span><?= $msg_text ?></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($mensaje_error)): ?>
+        <div class="orders-alert" style="background:rgba(232,68,90,.06);border-color:rgba(232,68,90,.3);color:#b91c1c;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span><?= $mensaje_error ?></span>
+        </div>
+    <?php endif; ?>
+
+    <!-- ─── 2-COLUMN DETAIL GRID ──────────────────────────────────── -->
+    <div class="oc-detail-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+
+            <!-- ─── INFORMACIÓN GENERAL ───────────────────────────────── -->
+            <div class="oc-card">
+                <div class="oc-card-header">
+                    <i class="bi bi-info-circle"></i> Información General
+                </div>
+                <div class="oc-card-body">
+                    <div class="oc-fields">
+                        <div class="oc-field">
+                            <label>Folio OC</label>
+                            <div class="val"><?= htmlspecialchars($orden_compra['folio']) ?></div>
+                        </div>
+                        <div class="oc-field">
+                            <label>Fecha de Solicitud</label>
+                            <div class="val"><?= date('d/m/Y H:i', strtotime($orden_compra['fecha_solicitud'])) ?></div>
+                        </div>
+                        <div class="oc-field">
+                            <label>Solicitante</label>
+                            <div class="val"><?= htmlspecialchars($orden_compra['nombres'] . ' ' . $orden_compra['apellidos']) ?></div>
+                        </div>
+                        <div class="oc-field">
+                            <label>Entidad</label>
+                            <div class="val"><?= htmlspecialchars($orden_compra['entidad']) ?></div>
+                        </div>
+                        <div class="oc-field">
+                            <label>Categoría</label>
+                            <div class="val"><?= htmlspecialchars($orden_compra['categoria']) ?></div>
+                        </div>
+                        <div class="oc-field">
+                            <label>Proveedor</label>
+                            <div class="val"><?= htmlspecialchars($orden_compra['proveedor']) ?></div>
+                        </div>
+                        <div class="oc-field">
+                            <label>Requisición Relacionada</label>
+                            <div class="val"><?= $orden_compra['folio_requisicion'] ? htmlspecialchars($orden_compra['folio_requisicion']) : 'N/A' ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
 
         <?php
         // Obtener comentario del revisor (Gerente de Operaciones) o aprobador (Subdirector General)
@@ -1060,545 +1100,331 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
         }
         ?>
 
-        <?php
-        if (!empty($comentario_decision)): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-chat-dots"></i>
-            Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
-          </div>
-          <div class="comentario" style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px;">
-            <div class="comentario-header-decision" style="font-weight: bold; margin-bottom: 8px;">
-              <i class="bi bi-info-circle"></i>
-              <?= $accion_decision === 'Revisó orden de compra' ? 'Gerente de Operaciones:' : 'Subdirector General:' ?>
-            </div>
-            <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_decision)) ?></p>
-          </div>
-        <?php
-        endif; ?>
 
-        <!-- Mostrar comentario de rechazo si está rechazada -->
-        <?php
-        if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-chat-dots"></i>
-            Motivo del Rechazo
-          </div>
-          <div class="comentario-rechazo">
-            <div class="comentario-header">
-              <i class="bi bi-info-circle"></i> Comentario del Subdirector General:
-            </div>
-            <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
-          </div>
-        <?php
-        endif; ?>
-
-        <!-- Ubicación del Presupuesto -->
-        <div class="section-title mt-4">
-          <i class="bi bi-diagram-3"></i>
-          Ubicación del Presupuesto
-        </div>
-
-        <div class="ubicacion-box">
-          <div class="row">
-            <?php
-            if ($orden_compra['nombre_proyecto']): ?>
-              <div class="col-md-6 mb-3">
-                <label class="form-label"><strong>Proyecto</strong></label>
-                <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_proyecto']) ?></div>
-              </div>
-            <?php
-            endif; ?>
-
-            <?php
-            if ($orden_compra['nombre_obra']): ?>
-              <div class="col-md-6 mb-3">
-                <label class="form-label"><strong>Obra</strong></label>
-                <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_obra']) ?></div>
-              </div>
-            <?php
-            endif; ?>
-
-            <?php
-            if ($orden_compra['nombre_catalogo']): ?>
-              <div class="col-md-6 mb-3">
-                <label class="form-label"><strong>Catálogo</strong></label>
-                <div class="form-control-plaintext"><?= htmlspecialchars($orden_compra['nombre_catalogo']) ?></div>
-              </div>
-            <?php
-            endif; ?>
-
-            <?php
-            if ($orden_compra['subcontrato_id']): ?>
-              <div class="col-md-6 mb-3">
-                <label class="form-label"><strong>Subcontrato</strong></label>
-                <div class="form-control-plaintext">
-                  <?= htmlspecialchars($orden_compra['subcontrato_proveedor_nombre'] ?? 'Subcontrato #' . $orden_compra['subcontrato_id']) ?>
+            <?php if (!empty($comentario_decision)): ?>
+            <div class="oc-card" style="border-left: 3px solid var(--s-700, #113557);">
+                <div class="oc-card-header"><i class="bi bi-chat-dots"></i>
+                    Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
                 </div>
-              </div>
-            <?php
-            endif; ?>
-
-            <?php
-            if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
-              <div class="col-md-6 mb-3">
-                <label class="form-label"><strong>Concepto</strong></label>
-                <div class="form-control-plaintext">
-                  <?php
-                  if ($orden_compra['codigo_concepto'] && $orden_compra['nombre_concepto']) {
-                    echo htmlspecialchars($orden_compra['codigo_concepto'] . ' - ' . $orden_compra['nombre_concepto']);
-                  } elseif ($orden_compra['codigo_concepto']) {
-                    echo htmlspecialchars($orden_compra['codigo_concepto']);
-                  } elseif ($orden_compra['nombre_concepto']) {
-                    echo htmlspecialchars($orden_compra['nombre_concepto']);
-                  } else {
-                    echo 'N/A';
-                  }
-                  ?>
+                <div class="oc-card-body">
+                    <p style="font-size:.82rem;color:var(--gray-600,#4b5563);margin:0;font-style:italic;">
+                        "<?= nl2br(htmlspecialchars($comentario_decision)) ?>"
+                    </p>
+                    <small style="font-size:.7rem;color:var(--gray-400,#9ca3af);margin-top:.4rem;display:block;">
+                        — <?= $accion_decision === 'Revisó orden de compra' ? 'Gerente de Operaciones' : 'Subdirector General' ?>
+                    </small>
                 </div>
-              </div>
-            <?php
-            endif; ?>
-          </div>
-        </div>
-
-        <!-- Items de la Orden de Compra -->
-        <div class="section-title mt-4">
-          <i class="bi bi-list-ul"></i> Items de la Orden de Compra
-        </div>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Tipo</th>
-              <th>Producto/Servicio</th>
-              <th>Cantidad</th>
-              <th>Unidad</th>
-              <th>Precio Unitario</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php
-            $i = 1;
-            $total_general = 0;
-            while ($item = $items->fetch_assoc()):
-              $subtotal = $item['cantidad'] * $item['precio_unitario'];
-              $total_general += $subtotal;
-            ?>
-              <tr>
-                <td><?= $i++ ?></td>
-                <td>
-                  <span class="badge bg-<?= $item['tipo'] === 'producto' ? 'primary' : 'info' ?>">
-                    <?= ucfirst(htmlspecialchars($item['tipo'] ?? 'producto')) ?>
-                  </span>
-                </td>
-                <td>
-                  <?= !empty($item['producto']) ? htmlspecialchars($item['producto']) : htmlspecialchars($item['descripcion']) ?>
-                </td>
-                <td><?= htmlspecialchars($item['cantidad']) ?></td>
-                <td><?= htmlspecialchars($item['unidad'] ?? 'PZA') ?></td>
-                <td>$<?= number_format($item['precio_unitario'], 2) ?></td>
-                <td>$<?= number_format($subtotal, 2) ?></td>
-              </tr>
-            <?php
-            endwhile; ?>
-          </tbody>
-        </table>
-
-        <!-- Totales -->
-        <div class="row justify-content-end">
-          <div class="col-md-6">
-            <div class="totales-box">
-              <div class="row mb-2">
-                <div class="col-6"><strong>Subtotal:</strong></div>
-                <div class="col-6 text-end">$<?= number_format($orden_compra['subtotal'] ?: $total_general, 2) ?></div>
-              </div>
-              <div class="row mb-2">
-                <div class="col-6"><strong>IVA <?php
-                                                if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
-                                                  $porcentaje_iva = ($orden_compra['iva'] / $orden_compra['subtotal']) * 100;
-                                                  if ($porcentaje_iva >= 15) {
-                                                    echo '(16%):';
-                                                  } elseif ($porcentaje_iva >= 7) {
-                                                    echo '(8%):';
-                                                  } else {
-                                                    echo '(0%):';
-                                                  }
-                                                } else {
-                                                  echo '(0%):';
-                                                }
-                                                ?></strong></div>
-                <div class="col-6 text-end">$<?= number_format($orden_compra['iva'], 2) ?></div>
-              </div>
-              <div class="row mb-2 total-final">
-                <div class="col-6"><strong>TOTAL:</strong></div>
-                <div class="col-6 text-end">$<?= number_format($orden_compra['total'], 2) ?></div>
-              </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Descripción -->
-        <?php
-        if (!empty($orden_compra['descripcion'])): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-file-text"></i>
-            Descripción
-          </div>
-          <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($orden_compra['descripcion']) ?></textarea>
-        <?php
-        endif; ?>
-
-        <!-- Observaciones -->
-        <?php
-        if (!empty($orden_compra['observaciones'])): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-chat-text"></i>
-            Observaciones
-          </div>
-          <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($orden_compra['observaciones']) ?></textarea>
-        <?php
-        endif; ?>
-
-        <!-- Archivos Adjuntos -->
-        <div class="section-title mt-4">
-          <i class="bi bi-paperclip"></i>
-          Archivos Adjuntos
-        </div>
-
-        <?php
-        if ($archivos->num_rows > 0): ?>
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th style="width: 5%">#</th>
-                  <th style="width: 45%">Nombre del Archivo</th>
-                  <th style="width: 15%">Tamaño</th>
-                  <th style="width: 15%">Tipo</th>
-                  <th style="width: 20%">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                $i = 1;
-                while ($archivo = $archivos->fetch_assoc()):
-                  $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
-                  $icono = 'file-earmark';
-                  $color = 'secondary';
-
-                  if (in_array($extension, ['pdf'])) {
-                    $icono = 'file-earmark-pdf';
-                    $color = 'danger';
-                  } elseif (in_array($extension, ['doc', 'docx'])) {
-                    $icono = 'file-earmark-word';
-                    $color = 'primary';
-                  } elseif (in_array($extension, ['xls', 'xlsx'])) {
-                    $icono = 'file-earmark-excel';
-                    $color = 'success';
-                  } elseif (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                    $icono = 'file-earmark-image';
-                    $color = 'warning';
-                  } elseif (in_array($extension, ['zip', 'rar'])) {
-                    $icono = 'file-earmark-zip';
-                    $color = 'dark';
-                  }
-                ?>
-                  <tr class="archivo-item">
-                    <td><?= $i++ ?></td>
-                    <td>
-                      <i class="bi bi-<?= $icono ?> text-<?= $color ?> me-2"></i>
-                      <strong><?= htmlspecialchars($archivo['nombre_archivo']) ?></strong>
-                    </td>
-                    <td>
-                      <span class="badge bg-light text-dark">
-                        <?= formatBytes($archivo['tamaño_archivo']) ?>
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge bg-<?= $color ?>">
-                        <?= strtoupper($extension) ?>
-                      </span>
-                    </td>
-                    <td>
-                      <button type="button"
-                        class="btn btn-sm btn-outline-info"
-                        onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')"
-                        title="Ver archivo">
-                        <i class="bi bi-eye"></i> Ver
-                      </button>
-                      <a href="<?= BASE_URL ?>/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>"
-                        class="btn btn-sm btn-outline-success"
-                        title="Descargar archivo">
-                        <i class="bi bi-download"></i> Descargar
-                      </a>
-                    </td>
-                  </tr>
-                <?php
-                endwhile; ?>
-              </tbody>
-            </table>
-          </div>
-        <?php
-        else: ?>
-          <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta orden de compra.
-          </div>
-        <?php
-        endif; ?>
-
-        <!-- Comprobante de Pago -->
-        <?php
-        if (!empty($orden_compra['comprobante_pago'])): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-receipt"></i>
-            Comprobante de Pago
-          </div>
-          <div class="comprobante-box">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <i class="bi bi-file-earmark-check-fill text-info fs-3 me-2"></i>
-                <strong>Comprobante adjunto</strong>
-              </div>
-              <div>
-                <button type="button"
-                  class="btn btn-sm btn-info"
-                  onclick="verComprobante(<?= $id ?>)"
-                  title="Ver comprobante de pago">
-                  <i class="bi bi-eye"></i> Ver Comprobante
-                </button>
-                <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1"
-                  class="btn btn-sm btn-outline-success"
-                  title="Descargar comprobante">
-                  <i class="bi bi-download"></i> Descargar
-                </a>
-              </div>
-            </div>
-          </div>
-        <?php
-        endif; ?>
-
-        <!-- SECCION DE ACCIONES PARA Gerente de Operaciones (ESTADO PENDIENTE) -->
-        <?php
-        if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-gear"></i>
-            Acciones Disponibles - Gerente de Operaciones
-          </div>
-
-          <div class="alert alert-info mb-3">
-            <i class="bi bi-envelope"></i>
-            <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante
-            y al Subdirector General.
-          </div>
-
-          <form method="POST" class="mb-4">
-            <div class="row">
-              <div class="col-md-9">
-                <label class="form-label">Acción</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <button type="button" class="btn btn-info btn-estado" onclick="seleccionarEstado('revisado')">
-                    <i class="bi bi-check2-circle"></i> Marcar como Revisado
-                  </button>
-
-                  <button type="button" class="btn btn-warning btn-estado" onclick="seleccionarEstado('devuelto')">
-                    <i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar
-                  </button>
-                </div>
-
-                <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
-              </div>
-            </div>
-
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
-                <small class="text-muted">
-                  <i class="bi bi-info-circle"></i>
-                  Si devuelve la orden de compra, este comentario se incluirá en las notificaciones.
-                </small>
-              </div>
-            </div>
-
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <button type="submit" name="cambiar_estado" class="btn btn-primary" id="btnConfirmar" disabled>
-                  <i class="bi bi-check-lg"></i> Confirmar Decisión
-                </button>
-              </div>
-            </div>
-          </form>
-        <?php
-        endif; ?>
-
-        <!-- SECCION DE ACCIONES PARA SUBDIRECTOR GENERAL (ESTADO REVISADO) -->
-        <?php
-        if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-gear"></i>
-            Acciones Disponibles - Subdirector General
-          </div>
-
-          <div class="alert alert-info mb-3">
-            <i class="bi bi-envelope"></i>
-            <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante
-            y al Gerente de Recursos Humanos.
-          </div>
-
-          <form method="POST" class="mb-4">
-            <div class="row">
-              <div class="col-md-9">
-                <label class="form-label">Acción</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <button type="button" class="btn btn-success btn-estado" onclick="seleccionarEstado('aprobado')">
-                    <i class="bi bi-check-circle"></i> Aprobar
-                  </button>
-
-                  <button type="button" class="btn btn-danger btn-estado" onclick="seleccionarEstado('rechazado')">
-                    <i class="bi bi-x-circle"></i> Rechazar
-                  </button>
-
-                  <button type="button" class="btn btn-warning btn-estado" onclick="seleccionarEstado('devuelto')">
-                    <i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar
-                  </button>
-                </div>
-
-                <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
-              </div>
-            </div>
-
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
-                <small class="text-muted">
-                  <i class="bi bi-info-circle"></i>
-                  Si rechaza o devuelve la orden de compra, este comentario se incluirá en las notificaciones.
-                </small>
-              </div>
-            </div>
-
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <button type="submit" name="cambiar_estado" class="btn btn-primary" id="btnConfirmar" disabled>
-                  <i class="bi bi-check-lg"></i> Confirmar Decisión
-                </button>
-              </div>
-            </div>
-          </form>
-        <?php
-        endif; ?>
-
-        <!-- SECCIÓN DE COMPROBANTE - Solo Gerente de RRHH cuando está aprobado -->
-        <?php if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-receipt"></i>
-            Subir Comprobante de Pago
-          </div>
-
-          <div class="alert alert-warning mb-3">
-            <i class="bi bi-info-circle"></i>
-            <strong>Instrucciones:</strong> Adjunte el comprobante de pago en formato PDF, JPG o PNG (máximo 10MB).
-            Al subir el comprobante, la orden quedará automáticamente marcada como <strong>pagada y completada</strong>.
-          </div>
-
-          <!-- FORMULARIO UNIFICADO: sube comprobante + marca como pagado en un solo paso -->
-          <form method="POST" enctype="multipart/form-data" class="mb-4">
-            <input type="hidden" name="nuevo_estado" value="pagado">
-
-            <div class="row">
-              <div class="col-md-8">
-                <label class="form-label">Archivo del Comprobante <span class="text-danger">*</span></label>
-                <input type="file"
-                  name="comprobante"
-                  class="form-control"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  required>
-                <small class="text-muted">Formatos permitidos: PDF, JPG, PNG | Tamaño máximo: 10MB</small>
-              </div>
-            </div>
-
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3"
-                  placeholder="Agregue observaciones sobre el pago realizado..."></textarea>
-              </div>
-            </div>
-
-            <div class="alert alert-info mt-3 mb-2">
-              <i class="bi bi-envelope"></i>
-              <strong>Notificación automática:</strong> Al confirmar, se notificará al solicitante y subdirector.
-              <?php if (!empty($orden_compra['nombre_catalogo'])): ?>
-                <br><i class="bi bi-diagram-3"></i>
-                <strong>Transferencia automática:</strong> Los items se transferirán al catálogo "<?= htmlspecialchars($orden_compra['nombre_catalogo']) ?>".
-              <?php endif; ?>
-            </div>
-
-            <div class="row mt-2">
-              <div class="col-md-6">
-                <button type="submit" name="subir_comprobante_y_pagar" class="btn btn-success btn-lg w-100">
-                  <i class="bi bi-check-circle-fill"></i> Subir Comprobante y Confirmar Pago
-                </button>
-              </div>
-            </div>
-          </form>
-        <?php endif; ?>
-
-        <!-- Botones de acción -->
-        <div class="form-actions mt-4 d-flex flex-wrap gap-2">
-
-          <?php
-          // Puede devolver: Gerente RRHH ($puede_subir_comprobante) o Sistemas
-          $es_sistemas     = (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas');
-          $puede_devolver  = $puede_subir_comprobante || $es_sistemas;
-          // Aplica en TODOS los estados excepto 'devuelto' y 'pendiente' (no tendría sentido)
-          $estados_devolver = ['aprobado', 'comprobante_subido', 'pagado'];
-          $estado_permite_devolver = in_array($orden_compra['estado'], $estados_devolver);
-          ?>
-
-          <?php if ($estado_permite_devolver && $puede_devolver): ?>
-            <form method="POST" class="d-inline" onsubmit="handleDevolver(event)">
-              <input type="hidden" name="nuevo_estado" value="devuelto">
-              <textarea name="comentario" class="d-none" id="comentario_devolver"></textarea>
-              <button type="submit" name="cambiar_estado" class="btn btn-warning">
-                <i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar
-              </button>
-            </form>
-          <?php endif; ?>
-
-          <!-- Editar: cuando está devuelta y el usuario es el solicitante, o es Sistemas -->
-          <?php if (($orden_compra['estado'] == 'devuelto' && $_SESSION['user_id'] == $orden_compra['solicitante_id']) || $es_sistemas): ?>
-            <a href="edit_oc.php?id=<?= $orden_compra['id'] ?>" class="btn btn-warning">
-              <i class="bi bi-pencil"></i> Editar Orden de Compra
-            </a>
-            <?php if ($orden_compra['subcontrato_id']): ?>
-              <small class="text-muted ms-2">
-                <i class="bi bi-info-circle"></i> Esta orden está asociada a un subcontrato
-              </small>
             <?php endif; ?>
-          <?php endif; ?>
 
-        </div>
+            <?php if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
+            <div class="oc-card" style="border-left: 3px solid #e8445a;">
+                <div class="oc-card-header" style="color:#b91c1c;"><i class="bi bi-x-circle"></i> Motivo del Rechazo</div>
+                <div class="oc-card-body">
+                    <p style="font-size:.82rem;color:#7f1d1d;margin:0;font-style:italic;">
+                        "<?= nl2br(htmlspecialchars($comentario_rechazo)) ?>"
+                    </p>
+                    <small style="font-size:.7rem;color:var(--gray-400,#9ca3af);margin-top:.4rem;display:block;">— Subdirector General</small>
+                </div>
+            </div>
+            <?php endif; ?>
 
-        <!-- Boton de regreso -->
-        <div class="fab-container-backbtn">
-          <a onclick="history.back()" class="fab-button-backbtn gray">
-            <i class="bi bi-arrow-left"></i>
-            <span class="fab-tooltip-backbtn">Volver</span>
-          </a>
-        </div>
+            <!-- ─── ITEMS DE LA ORDEN ───────────────────────────────── -->
+            <div class="oc-card">
+                <div class="oc-card-header"><i class="bi bi-list-ul"></i> Items de la Orden</div>
+                <div class="orders-table-wrap">
 
-        <div id="loadingOverlay">
-          <div class="loading-box">
-            <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-3">Procesando por favor espere</div>
-          </div>
+
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tipo</th>
+                            <th>Producto / Servicio</th>
+                            <th>Cant.</th>
+                            <th>Unidad</th>
+                            <th>P. Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $i = 1;
+                        $total_general = 0;
+                        while ($item = $items->fetch_assoc()):
+                            $subtotal = $item['cantidad'] * $item['precio_unitario'];
+                            $total_general += $subtotal;
+                        ?>
+                        <tr>
+                            <td class="cell-muted"><?= $i++ ?></td>
+                            <td>
+                                <span class="type-badge <?= ($item['tipo'] === 'producto') ? 'producto' : 'servicio' ?>">
+                                    <?= ucfirst(htmlspecialchars($item['tipo'] ?? 'producto')) ?>
+                                </span>
+                            </td>
+                            <td><?= !empty($item['producto']) ? htmlspecialchars($item['producto']) : htmlspecialchars($item['descripcion']) ?></td>
+                            <td><?= htmlspecialchars($item['cantidad']) ?></td>
+                            <td class="cell-muted"><?= htmlspecialchars($item['unidad'] ?? 'PZA') ?></td>
+                            <td>$<?= number_format($item['precio_unitario'], 2) ?></td>
+                            <td class="cell-folio">$<?= number_format($subtotal, 2) ?></td>
+                        </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+                </div><!-- /.orders-table-wrap -->
+            </div><!-- /.oc-card items -->
+
+            <?php if (!empty($orden_compra['descripcion'])): ?>
+            <div class="oc-card">
+                <div class="oc-card-header"><i class="bi bi-file-text"></i> Descripción</div>
+                <div class="oc-card-body">
+                    <p style="font-size:.85rem;color:var(--gray-700,#374151);margin:0;white-space:pre-wrap;"><?= htmlspecialchars($orden_compra['descripcion']) ?></p>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($orden_compra['observaciones'])): ?>
+            <div class="oc-card">
+                <div class="oc-card-header"><i class="bi bi-chat-text"></i> Observaciones</div>
+                <div class="oc-card-body">
+                    <p style="font-size:.85rem;color:var(--gray-700,#374151);margin:0;white-space:pre-wrap;"><?= htmlspecialchars($orden_compra['observaciones']) ?></p>
+                </div>
+            </div>
+            <?php endif; ?>
+
+        </div><!-- END LEFT COLUMN -->
+
+        <!-- ─── RIGHT COLUMN ──────────────────────────────────────── -->
+        <div>
+
+            <!-- Finance summary -->
+            <div class="oc-finance">
+                <div class="oc-finance-title"><i class="bi bi-calculator"></i> Resumen Financiero</div>
+                <div class="oc-finance-row">
+                    <span>Subtotal</span>
+                    <span>$<?= number_format($orden_compra['subtotal'] ?: $total_general, 2) ?></span>
+                </div>
+                <div class="oc-finance-row">
+                    <span>IVA <?php
+                        if ($orden_compra['subtotal'] > 0 && $orden_compra['iva'] > 0) {
+                            $pct = ($orden_compra['iva'] / $orden_compra['subtotal']) * 100;
+                            echo $pct >= 15 ? '(16%)' : ($pct >= 7 ? '(8%)' : '(0%)');
+                        } else { echo '(0%)'; }
+                    ?></span>
+                    <span>$<?= number_format($orden_compra['iva'], 2) ?></span>
+                </div>
+                <div class="oc-finance-total">
+                    <span class="lbl">Total</span>
+                    <span class="amt">$<?= number_format($orden_compra['total'], 2) ?></span>
+                </div>
+            </div>
+
+            <!-- Ubicación Presupuesto -->
+            <div class="oc-side-card">
+                <div class="oc-side-header"><i class="bi bi-diagram-3"></i> Ubicación Presupuesto</div>
+                <div class="oc-side-body">
+                    <?php if ($orden_compra['nombre_proyecto']): ?>
+                    <div class="oc-side-field">
+                        <label>Proyecto</label>
+                        <div class="val"><?= htmlspecialchars($orden_compra['nombre_proyecto']) ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($orden_compra['nombre_obra']): ?>
+                    <div class="oc-side-field">
+                        <label>Obra</label>
+                        <div class="val"><?= htmlspecialchars($orden_compra['nombre_obra']) ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($orden_compra['nombre_catalogo']): ?>
+                    <div class="oc-side-field">
+                        <label>Catálogo</label>
+                        <div class="val"><?= htmlspecialchars($orden_compra['nombre_catalogo']) ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($orden_compra['subcontrato_id']): ?>
+                    <div class="oc-side-field">
+                        <label>Subcontrato Asociado</label>
+                        <div class="val"><?= htmlspecialchars($orden_compra['subcontrato_proveedor_nombre'] ?? 'Subcontrato #' . $orden_compra['subcontrato_id']) ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($orden_compra['codigo_concepto'] || $orden_compra['nombre_concepto']): ?>
+                    <div class="oc-side-field">
+                        <label>Concepto</label>
+                        <div class="val"><?php
+                            if ($orden_compra['codigo_concepto'] && $orden_compra['nombre_concepto'])
+                                echo htmlspecialchars($orden_compra['codigo_concepto'] . ' - ' . $orden_compra['nombre_concepto']);
+                            elseif ($orden_compra['codigo_concepto'])
+                                echo htmlspecialchars($orden_compra['codigo_concepto']);
+                            elseif ($orden_compra['nombre_concepto'])
+                                echo htmlspecialchars($orden_compra['nombre_concepto']);
+                            else echo 'N/A';
+                        ?></div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Archivos Adjuntos sidebar card -->
+            <div class="oc-side-card">
+                <div class="oc-side-header"><i class="bi bi-paperclip"></i> Archivos Adjuntos</div>
+                <div class="oc-side-body" style="padding:0;">
+                <?php if ($archivos->num_rows > 0): ?>
+                    <?php while ($archivo = $archivos->fetch_assoc()):
+                        $ext = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
+                        $ficon = match(true) {
+                            in_array($ext,['pdf'])           => 'bi-file-earmark-pdf',
+                            in_array($ext,['doc','docx'])    => 'bi-file-earmark-word',
+                            in_array($ext,['xls','xlsx'])    => 'bi-file-earmark-excel',
+                            in_array($ext,['jpg','jpeg','png','gif']) => 'bi-file-earmark-image',
+                            in_array($ext,['zip','rar'])     => 'bi-file-earmark-zip',
+                            default                          => 'bi-file-earmark'
+                        };
+                    ?>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem;border-bottom:1px solid var(--gray-100,#f3f4f6);">
+                        <div style="display:flex;align-items:center;gap:.5rem;min-width:0;">
+                            <i class="bi <?= $ficon ?>" style="font-size:1rem;color:var(--gray-500,#6b7280);flex-shrink:0;"></i>
+                            <span style="font-size:.75rem;font-weight:600;color:var(--s-800,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
+                        </div>
+                        <div style="display:flex;gap:.35rem;flex-shrink:0;">
+                            <button type="button" class="btn-action" onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')" title="Ver">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <a href="<?= BASE_URL ?>/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>" class="btn-action" title="Descargar">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="oc-empty" style="padding:1.5rem;">
+                        <i class="bi bi-inbox"></i>
+                        <p>No hay archivos adjuntos</p>
+                    </div>
+                <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Comprobante de Pago -->
+            <?php if (!empty($orden_compra['comprobante_pago'])): ?>
+            <div class="oc-side-card" style="border-left:3px solid #6d28d9;">
+                <div class="oc-side-header" style="color:#6d28d9;"><i class="bi bi-receipt"></i> Comprobante de Pago</div>
+                <div class="oc-side-body">
+                    <div style="display:flex;gap:.5rem;">
+                        <button type="button" class="btn-geco-primary" style="font-size:.78rem;padding:.4rem .8rem;" onclick="verComprobante(<?= $id ?>)">
+                            <i class="bi bi-eye"></i> Ver
+                        </button>
+                        <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1" class="btn-geco-secondary" style="font-size:.78rem;padding:.4rem .8rem;">
+                            <i class="bi bi-download"></i> Descargar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+
+        </div><!-- END RIGHT COLUMN -->
+    </div><!-- END .oc-detail-grid -->
+
+
+
+
+    <!-- ─── SECCIÓN ACCIONES FLUJO DE ESTADO ─────────────────────────── -->
+
+
+
+
+    <!-- ─── ACCIONES: Gerente de Operaciones (Pendiente) ─────────── -->
+    <?php if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
+    <div class="oc-card" style="border-left:3px solid #3b82f6;">
+        <div class="oc-card-header" style="color:#1d4ed8;"><i class="bi bi-gear"></i> Acciones — Gerente de Operaciones</div>
+        <div class="oc-card-body">
+            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="bi bi-envelope"></i> <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante y al Subdirector General.</p>
+            <form method="POST">
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+                    <button type="button" class="btn-geco-primary" onclick="seleccionarEstado('revisado')" style="background:#1d4ed8;"><i class="bi bi-check2-circle"></i> Marcar como Revisado</button>
+                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('devuelto')"><i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar</button>
+                </div>
+                <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
+                <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;">Comentario (Opcional)</label>
+                <textarea class="form-control mt-1 mb-2" name="comentario" rows="2" placeholder="Comentario sobre la decisión..."></textarea>
+                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled><i class="bi bi-check-lg"></i> Confirmar Decisión</button>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
+    <?php endif; ?>
+
+    <!-- ─── ACCIONES: Subdirector General (Revisado) ──────────────── -->
+    <?php if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
+    <div class="oc-card" style="border-left:3px solid #407656;">
+        <div class="oc-card-header" style="color:#407656;"><i class="bi bi-gear"></i> Acciones — Subdirector General</div>
+        <div class="oc-card-body">
+            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="bi bi-envelope"></i> <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante y al Gerente de Recursos Humanos.</p>
+            <form method="POST">
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+                    <button type="button" class="btn-geco-primary" onclick="seleccionarEstado('aprobado')"><i class="bi bi-check-circle"></i> Aprobar</button>
+                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('rechazado')" style="background:#e8445a;color:#fff;border-color:transparent;"><i class="bi bi-x-circle"></i> Rechazar</button>
+                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('devuelto')"><i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar</button>
+                </div>
+                <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
+                <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;">Comentario (Opcional)</label>
+                <textarea class="form-control mt-1 mb-2" name="comentario" rows="2" placeholder="Comentario sobre la decisión..."></textarea>
+                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled><i class="bi bi-check-lg"></i> Confirmar Decisión</button>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- ─── COMPROBANTE: Gerente RRHH (Aprobado) ─────────────────── -->
+    <?php if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
+    <div class="oc-card" style="border-left:3px solid #6d28d9;">
+        <div class="oc-card-header" style="color:#6d28d9;"><i class="bi bi-receipt"></i> Subir Comprobante de Pago</div>
+        <div class="oc-card-body">
+            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="bi bi-info-circle"></i> Adjunte el comprobante (PDF, JPG, PNG — máx. 10MB). Al subir, la orden quedará marcada como <strong>Pagada</strong>.</p>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="nuevo_estado" value="pagado">
+                <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;">Archivo del Comprobante <span style="color:#e8445a;">*</span></label>
+                <input type="file" name="comprobante" class="form-control mt-1 mb-1" accept=".pdf,.jpg,.jpeg,.png" required>
+                <small class="text-muted">PDF, JPG, PNG | Máx. 10MB</small>
+                <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:1rem;">Comentario (Opcional)</label>
+                <textarea class="form-control mt-1 mb-2" name="comentario" rows="2" placeholder="Observaciones sobre el pago..."></textarea>
+                <button type="submit" name="subir_comprobante_y_pagar" class="btn-geco-primary"><i class="bi bi-check-circle-fill"></i> Subir Comprobante y Confirmar Pago</button>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- ─── DEVOLVER (RRHH/Sistemas en estados posteriores) ───────── -->
+    <?php
+    $es_sistemas = (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas');
+    $puede_devolver = $puede_subir_comprobante || $es_sistemas;
+    $estados_devolver = ['aprobado', 'comprobante_subido', 'pagado'];
+    $estado_permite_devolver = in_array($orden_compra['estado'], $estados_devolver);
+    if ($estado_permite_devolver && $puede_devolver): ?>
+    <div class="oc-card"">
+        <div class="oc-card-header" style="color:#92400e;"><i class="bi bi-arrow-counterclockwise"></i> Devolver Orden</div>
+        <div class="oc-card-body">
+            <form method="POST" class="d-inline" onsubmit="handleDevolver(event)">
+                <input type="hidden" name="nuevo_estado" value="devuelto">
+                <textarea name="comentario" class="d-none" id="comentario_devolver"></textarea>
+                <button type="submit" name="cambiar_estado" class="btn-geco-secondary"><i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar</button>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Loading overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-box">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-3">Procesando, por favor espere...</div>
+        </div>
+    </div>
+
+
+
+
+
+
+
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
@@ -1672,9 +1498,8 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
     });
   </script>
 
-  <?php
-  include __DIR__ . "/../includes/footer.php"; ?>
 
-</body>
+  </div>
 
-</html>
+  <?php include __DIR__ . "/../includes/footer.php"; ?>
+

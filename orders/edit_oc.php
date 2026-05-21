@@ -316,200 +316,41 @@ while ($archivo = $archivos->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.4">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
 
-    <style>
-        .form-body {
-            padding-top: 0;
-        }
 
-        .archivo-item {
-            transition: all .3s;
-        }
-
-        .archivo-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .archivo-item.marcado-eliminar {
-            opacity: .45;
-            text-decoration: line-through;
-            background-color: #fff5f5;
-        }
-
-        .file-size {
-            font-size: .85em;
-            color: #6c757d;
-        }
-
-        .progress-bar {
-            background-color: #113456;
-        }
-
-        /* ── Tabla de items ── */
-        #itemsTable thead th {
-            background-color: #113456;
-            color: #fff;
-            font-size: .85rem;
-            white-space: nowrap;
-        }
-
-        #itemsTable tbody tr:hover {
-            background-color: #f0f4f8;
-        }
-
-        #itemsTable .form-control,
-        #itemsTable .form-select {
-            font-size: .85rem;
-        }
-
-        .item-subtotal {
-            background-color: #f8f9fa !important;
-            font-weight: 600;
-            color: #113456;
-        }
-
-        /* ── Totales ── */
-        .totales-box {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: .5rem;
-            padding: 1.25rem;
-        }
-
-        .totales-box #display-total {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #113456;
-        }
-
-        /* ── Botón agregar item ── */
-        .btn-add-item {
-            background-color: #198754;
-            border-color: #198754;
-        }
-
-        .btn-add-item:hover {
-            background-color: #157347;
-        }
-
-        /* ── Animación nueva fila ── */
-        @keyframes rowFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-6px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .item-row-new {
-            animation: rowFadeIn .25s ease forwards;
-        }
-
-        /* ── Modal Catálogo ── */
-        #modalCatalogo .modal-header {
-            background-color: #113456;
-            color: #fff;
-        }
-
-        #modalCatalogo .modal-header .btn-close {
-            filter: invert(1);
-        }
-
-        #modalCatalogo .modal-body {
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-
-        .catalogo-card {
-            border: 1px solid #dee2e6;
-            border-radius: .5rem;
-            padding: .75rem 1rem;
-            cursor: pointer;
-            transition: all .2s;
-            background: #fff;
-            user-select: none;
-            pointer-events: auto;
-            /* garantizar que recibe eventos */
-        }
-
-        .catalogo-card:hover {
-            border-color: #113456;
-            background-color: #f0f4f8;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 10px rgba(17, 52, 86, .12);
-        }
-
-        .catalogo-card .badge-tipo {
-            font-size: .7rem;
-            padding: .25em .55em;
-        }
-
-        .catalogo-card .nombre-producto {
-            font-weight: 600;
-            color: #113456;
-        }
-
-        .catalogo-card .proveedor-producto {
-            font-size: .8rem;
-            color: #6c757d;
-        }
-
-        .catalogo-card .precio-producto {
-            font-weight: 700;
-            color: #198754;
-            font-size: .9rem;
-        }
-
-        #catalogoBuscador {
-            border-left: 3px solid #113456;
-        }
-
-        #catalogoBuscador:focus {
-            box-shadow: 0 0 0 .2rem rgba(17, 52, 86, .2);
-            border-color: #113456;
-        }
-
-        .filtros-tipo .btn-check:checked+.btn {
-            background-color: #113456;
-            color: #fff;
-            border-color: #113456;
-        }
-    </style>
-</head>
 
 <body>
     <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-    <!-- HERO SECTION -->
-    <div class="hero-section">
-        <div class="container hero-content">
-            <div class="breadcrumb-custom">
-                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-                <span>/</span>
-                <a href="<?= BASE_URL ?>/orders/list_oc.php">Registro de Órdenes de Compra</a>
-                <span>/</span>
-                <span>Editar Orden de Compra</span>
-            </div>
-            <div class="row align-items-end">
-                <div class="col-lg-8">
-                    <h1 class="hero-title">Editar Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></h1>
+    <div class="orders-page-container">
+
+        <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
+        <div class="orders-page-header mb-4">
+            <div class="orders-page-header-info">
+                <nav class="orders-breadcrumb">
+                    <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                    <span class="separator">›</span>
+                    <a href="<?= BASE_URL ?>/orders/list_oc.php">Órdenes de Compra</a>
+                    <span class="separator">›</span>
+                    <span>Editar Orden</span>
+                </nav>
+                <div style="display:flex; align-items:center;">
+                    <h1 class="orders-page-title">Editar Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></h1>
                 </div>
             </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start;">
+                <a href="see_oc.php?id=<?= $id ?>" class="btn-geco-secondary" style="background:#fff; color:var(--s-700,#113557); border:1.5px solid var(--gray-200,#e5e7eb);">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
         </div>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="content-wrapper">
-        <div class="form-container">
-            <div class="form-body">
+        <div class="orders-page-content">
 
                 <?php if (isset($mensaje_error)): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="orders-alert orders-alert--danger alert-dismissible fade show mb-4" role="alert">
                         <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -518,24 +359,26 @@ while ($archivo = $archivos->fetch_assoc()) {
                 <form method="POST" id="formEditarOC" enctype="multipart/form-data">
 
                     <!-- ── Información General ── -->
-                    <div class="section-title">
-                        <i class="bi bi-info-circle"></i> Información General
-                    </div>
+                    <div class="oc-card mb-4">
+                        <div class="oc-card-header">
+                            <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General</span>
+                        </div>
+                        <div class="oc-card-body">
 
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Folio OC <span class="text-muted">(No editable)</span></label>
+                            <label class="oc-form-label">Folio OC <span class="text-muted">(No editable)</span></label>
                             <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['folio']) ?>" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Fecha de Solicitud <span class="text-muted">(No editable)</span></label>
+                            <label class="oc-form-label">Fecha de Solicitud <span class="text-muted">(No editable)</span></label>
                             <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($orden_compra['fecha_solicitud'])) ?>" readonly>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Entidad <span class="text-danger">*</span></label>
+                            <label class="oc-form-label">Entidad <span class="text-danger">*</span></label>
                             <select class="form-select" name="entidad_id" required>
                                 <option value="">Seleccionar entidad</option>
                                 <?php while ($entidad = $entidades->fetch_assoc()): ?>
@@ -547,15 +390,15 @@ while ($archivo = $archivos->fetch_assoc()) {
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Solicitante <span class="text-muted">(No editable)</span></label>
+                            <label class="oc-form-label">Solicitante <span class="text-muted">(No editable)</span></label>
                             <input type="text" class="form-control"
                                 value="<?= htmlspecialchars($orden_compra['nombres'] . ' ' . $orden_compra['apellidos']) ?>" readonly>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                            <label class="oc-form-label">Categoría <span class="text-danger">*</span></label>
                             <select class="form-select" name="categoria_id" id="categoria_id" required>
                                 <option value="">Seleccionar categoría</option>
                                 <?php
@@ -571,7 +414,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Proveedor <span class="text-danger">*</span></label>
+                            <label class="oc-form-label">Proveedor <span class="text-danger">*</span></label>
                             <select class="form-select" name="proveedor_id" required>
                                 <option value="">Seleccionar proveedor</option>
                                 <?php while ($proveedor = $proveedores->fetch_assoc()): ?>
@@ -584,9 +427,9 @@ while ($archivo = $archivos->fetch_assoc()) {
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Proyecto</label>
+                            <label class="oc-form-label">Proyecto</label>
                             <select class="form-select" name="proyecto_id" id="proyecto_id">
                                 <option value="">Sin proyecto</option>
                                 <?php while ($proyecto = $proyectos->fetch_assoc()): ?>
@@ -598,7 +441,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Obra</label>
+                            <label class="oc-form-label">Obra</label>
                             <select class="form-select" name="obra_id" id="obra_id">
                                 <option value="">Sin obra</option>
                                 <?php while ($obra = $obras->fetch_assoc()): ?>
@@ -613,7 +456,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
+                        <label class="oc-form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
                         <select class="form-select" name="subcontrato_id" id="subcontrato_id_edit" <?= !$subcontrato_id ? 'disabled' : '' ?>>
                             <option value="">-- Seleccionar subcontrato --</option>
                             <?php if ($subcontrato_id): ?>
@@ -621,25 +464,28 @@ while ($archivo = $archivos->fetch_assoc()) {
                             <?php endif; ?>
                         </select>
                     </div>
-
-                    <!-- ── Items ── -->
-                    <div class="section-title">
-                        <i class="bi bi-list-ul"></i> Items de la Orden de Compra
+                        </div>
                     </div>
 
-                    <div class="items-table">
-                        <table class="table table-bordered align-middle" id="itemsTable">
+                    <!-- ── Items ── -->
+                    <div class="oc-card mb-4">
+                        <div class="oc-card-header">
+                            <span class="oc-card-header__title"><i class="bi bi-list-ul"></i> Items de la Orden de Compra</span>
+                        </div>
+                        <div class="oc-card-body oc-card-body--items">
+
+                    <div class="orders-table-wrap orders-table-wrap--items mt-2">
+                        <table class="orders-table orders-table--items" id="itemsTable">
                             <thead>
                                 <tr>
-                                    <th style="width:30%">Descripción</th>
-                                    <th style="width:10%">Cantidad</th>
-                                    <th style="width:12%">Unidad</th>
-                                    <th style="width:15%">Concepto</th>
-                                    <th style="width:14%">Precio Unit.</th>
-                                    <th style="width:14%">Subtotal</th>
-                                    <th style="width: 5%" class="text-center">
-                                        <i class="bi bi-trash" title="Eliminar"></i>
-                                    </th>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 30%">Descripción</th>
+                                    <th style="width: 10%">Cantidad</th>
+                                    <th style="width: 12%">Unidad</th>
+                                    <th style="width: 15%">Concepto</th>
+                                    <th style="width: 14%">Precio Unit.</th>
+                                    <th style="width: 15%">Subtotal</th>
+                                    <th style="width: 10%" class="text-center">Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="itemsTableBody">
@@ -649,6 +495,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                                 while ($item = $items->fetch_assoc()):
                                 ?>
                                     <tr class="item-row" data-index="<?= $item_index ?>">
+                                        <td><?= $item_index + 1 ?></td>
                                         <td>
                                             <input type="hidden"
                                                 name="items[<?= $item_index ?>][producto_id]"
@@ -718,9 +565,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                                                 readonly>
                                         </td>
                                         <td class="text-center">
-                                            <button type="button"
-                                                class="btn btn-sm btn-danger btn-remove-item"
-                                                title="Eliminar fila">
+                                            <button type="button" class="btn-action btn-action--delete remove-item-btn btn-remove-item" title="Eliminar ítem">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
@@ -735,168 +580,147 @@ while ($archivo = $archivos->fetch_assoc()) {
 
                     <div class="row mt-3 mb-4">
                         <div class="col-md-12 d-flex gap-2 flex-wrap">
-                            <button type="button" class="btn btn-success btn-add-item" id="btnAgregarItem">
+                            <button type="button" class="btn-geco-primary btn-add-item" id="btnAgregarItem">
                                 <i class="bi bi-plus-circle"></i> Agregar Item Vacío
                             </button>
-                            <button type="button" class="btn btn-primary" id="btnCatalogo">
+                            <button type="button" class="btn-geco-secondary" id="btnCatalogo">
                                 <i class="bi bi-grid-3x3-gap"></i> Agregar desde Catálogo
                             </button>
                         </div>
                     </div>
+                        </div>
+                    </div>
 
-                    <!-- ── Totales ── -->
-                    <div class="row justify-content-end mt-2 mb-4">
-                        <div class="col-md-5">
-                            <div class="totales-box">
-                                <div class="row mb-2 align-items-center">
-                                    <div class="col-6"><strong>Subtotal:</strong></div>
-                                    <div class="col-6 text-end" id="display-subtotal">
-                                        $<?= number_format($orden_compra['subtotal'], 2) ?>
+
+
+
+
+                    <div class="oc-form-layout">
+                        <div class="oc-form-layout-main">
+                            <!-- ── Descripción y Observaciones ── -->
+                            <div class="oc-card mb-4">
+                                <div class="oc-card-header">
+                                    <span class="oc-card-header__title"><i class="bi bi-file-text"></i> Descripción y Observaciones</span>
+                                </div>
+                                <div class="oc-card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label class="oc-form-label">Descripción</label>
+                                            <textarea class="form-control" name="descripcion" rows="4" placeholder="Descripción general de la orden de compra..."><?= htmlspecialchars($orden_compra['descripcion'] ?? '') ?></textarea>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="oc-form-label">Observaciones</label>
+                                            <textarea class="form-control" name="observaciones" rows="4" placeholder="Observaciones adicionales..."><?= htmlspecialchars($orden_compra['observaciones'] ?? '') ?></textarea>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row mb-2 align-items-center">
-                                    <div class="col-6 d-flex align-items-center gap-2 flex-wrap">
-                                        <strong>IVA:</strong>
-                                        <select class="form-select form-select-sm w-auto"
+                            </div>
+                        </div>
+
+                        <div class="oc-form-layout-side">
+                            <!-- ── Archivos Adjuntos ── -->
+                            <div class="oc-card mb-4">
+                                <div class="oc-card-header">
+                                    <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Archivos Adjuntos</span>
+                                </div>
+                                <div class="oc-card-body">
+                                    <div class="orders-alert orders-alert--info mb-3">
+                                        <i class="bi bi-info-circle"></i>
+                                        <span>Puede gestionar los archivos existentes o subir nuevos documentos (Máx. 10MB).</span>
+                                    </div>
+
+                                    <h6 class="oc-form-label mb-2"><i class="bi bi-files"></i> Archivos Actuales</h6>
+                                    <div class="list-group list-group-flush mb-4" id="lista-archivos" style="border: 1px solid var(--gray-100,#e5e7eb); border-radius: 10px; overflow: hidden;">
+                                        <?php if (count($archivos_array) > 0): ?>
+                                            <?php foreach ($archivos_array as $archivo): ?>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center archivo-item p-2" data-id="<?= $archivo['id'] ?>">
+                                                    <div class="text-truncate me-2" style="font-size: 0.85rem;">
+                                                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                                        <span title="<?= htmlspecialchars($archivo['nombre_archivo']) ?>"><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
+                                                    </div>
+                                                    <div class="d-flex gap-1">
+                                                        <a href="<?= BASE_URL ?>/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc" class="btn btn-sm btn-outline-info p-1" style="line-height:1" target="_blank" title="Descargar">
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+                                                        <button type="button" class="btn-action btn-action--delete btn-eliminar-archivo p-1" style="height:28px; width:28px; line-height:1" data-archivo-id="<?= $archivo['id'] ?>" title="Eliminar">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <div class="text-center text-muted p-4">
+                                                <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                                <span class="small">Sin archivos adjuntos</span>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <div class="oc-files-dropzone">
+                                        <h6 class="oc-files-dropzone__title"><i class="bi bi-cloud-arrow-up"></i> Subir Nuevos Documentos</h6>
+                                        <div class="oc-files-input-group mb-2">
+                                            <input type="file" class="form-control form-control-sm" id="nuevosArchivos" name="nuevos_archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+                                        </div>
+                                        <div class="oc-form-hint" style="font-size: 11px;">
+                                            <i class="bi bi-info-circle"></i> PDF, Excel, Word o Imagen (Máx. 10MB c/u).
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3" id="preview-nuevos-archivos" style="display:none;">
+                                        <h6 class="oc-form-label small">Por subir:</h6>
+                                        <div class="list-group list-group-flush" id="lista-nuevos-archivos"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="oc-finance">
+                                <div class="oc-finance-title"><i class="bi bi-calculator"></i> Resumen Financiero</div>
+                                <div class="oc-finance-row">
+                                    <span>Subtotal:</span>
+                                    <span id="display-subtotal">$<?= number_format($orden_compra['subtotal'], 3) ?></span>
+                                </div>
+                                <div class="oc-finance-row">
+                                    <span class="d-flex align-items-center gap-2">
+                                        IVA:
+                                        <select class="form-select form-select-sm oc-finance-iva-select"
                                             name="iva_porcentaje"
                                             id="iva_porcentaje">
                                             <option value="0" <?= $iva_porcentaje == 0  ? 'selected' : '' ?>>0 %</option>
                                             <option value="8" <?= $iva_porcentaje == 8  ? 'selected' : '' ?>>8 %</option>
                                             <option value="16" <?= $iva_porcentaje == 16 ? 'selected' : '' ?>>16 %</option>
                                         </select>
-                                    </div>
-                                    <div class="col-6 text-end" id="display-iva">
-                                        $<?= number_format($orden_compra['iva'], 2) ?>
-                                    </div>
+                                    </span>
+                                    <span id="display-iva">$<?= number_format($orden_compra['iva'], 3) ?></span>
                                 </div>
-                                <hr class="my-2">
-                                <div class="row align-items-center">
-                                    <div class="col-6"><strong>TOTAL:</strong></div>
-                                    <div class="col-6 text-end" id="display-total">
-                                        $<?= number_format($orden_compra['total'], 2) ?>
-                                    </div>
+                                <div class="oc-finance-total">
+                                    <span class="lbl">TOTAL:</span>
+                                    <span class="amt" id="display-total">$<?= number_format($orden_compra['total'], 2) ?></span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- ── Archivos Adjuntos ── -->
-                    <div class="section-title">
-                        <i class="bi bi-paperclip"></i> Archivos Adjuntos
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="alert alert-info py-2">
+                            <p class="oc-form-submit-note">
                                 <i class="bi bi-info-circle"></i>
-                                Puede eliminar archivos existentes o agregar nuevos archivos.
+                                Al guardar, esta orden será enviada nuevamente para su revisión.
+                            </p>
+
+                            <div class="oc-form-submit-actions">
+                                <button type="button" id="btnGuardar" class="btn-geco-primary">
+                                    <i class="bi bi-check-circle"></i> Guardar y Reenviar
+                                </button>
                             </div>
 
-                            <!-- Archivos actuales -->
-                            <h6 class="mt-3">Archivos actuales:</h6>
-                            <div class="list-group" id="lista-archivos">
-                                <?php if (count($archivos_array) > 0): ?>
-                                    <?php foreach ($archivos_array as $archivo): ?>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center archivo-item"
-                                            data-id="<?= $archivo['id'] ?>">
-                                            <div>
-                                                <i class="bi bi-file-earmark-text me-2"></i>
-                                                <span><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
-                                                <small class="file-size ms-2">
-                                                    (<?= number_format($archivo['tamaño_archivo'] / 1024, 2) ?> KB)
-                                                </small>
-                                            </div>
-                                            <div class="d-flex gap-2">
-                                                <a href="<?= BASE_URL ?>/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc"
-                                                    class="btn btn-sm btn-primary" target="_blank">
-                                                    <i class="bi bi-download"></i> Descargar
-                                                </a>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-danger btn-eliminar-archivo"
-                                                    data-archivo-id="<?= $archivo['id'] ?>">
-                                                    <i class="bi bi-trash"></i> Eliminar
-                                                </button>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="text-center text-muted p-3">
-                                        <i class="bi bi-inbox display-4"></i>
-                                        <p class="mt-2">No hay archivos adjuntos</p>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
-                            <!-- Nuevos archivos -->
-                            <div class="mt-4">
-                                <h6>Agregar nuevos archivos:</h6>
-                                <div class="input-group">
-                                    <input type="file"
-                                        class="form-control"
-                                        id="nuevosArchivos"
-                                        name="nuevos_archivos[]"
-                                        multiple
-                                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        onclick="document.getElementById('nuevosArchivos').value=''; ocultarPreview();">
-                                        <i class="bi bi-x-circle"></i> Limpiar
-                                    </button>
-                                </div>
-                                <small class="text-muted">
-                                    Formatos permitidos: PDF, Word, Excel, imágenes. Máximo 5 archivos, 10 MB cada uno.
-                                </small>
-                            </div>
-
-                            <!-- Vista previa nuevos archivos -->
-                            <div class="mt-3" id="preview-nuevos-archivos" style="display:none;">
-                                <h6>Nuevos archivos a subir:</h6>
-                                <div class="list-group" id="lista-nuevos-archivos"></div>
-                            </div>
-                        </div>
-                    </div>
+                        </div> <!-- /side -->
+                    </div> <!-- /oc-form-layout -->
 
                     <!-- Campo oculto archivos eliminados -->
                     <input type="hidden" name="archivos_eliminados" id="archivos_eliminados" value="[]">
 
-                    <!-- ── Descripción y Observaciones ── -->
-                    <div class="section-title">
-                        <i class="bi bi-file-text"></i> Descripción y Observaciones
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="form-label">Descripción</label>
-                            <textarea class="form-control" name="descripcion" rows="3"
-                                placeholder="Descripción general de la orden de compra..."><?= htmlspecialchars($orden_compra['descripcion'] ?? '') ?></textarea>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="form-label">Observaciones</label>
-                            <textarea class="form-control" name="observaciones" rows="3"
-                                placeholder="Observaciones adicionales..."><?= htmlspecialchars($orden_compra['observaciones'] ?? '') ?></textarea>
-                        </div>
-                    </div>
-
-                    <!-- campo oculto para que PHP detecte el POST -->
-                    <input type="hidden" name="actualizar_oc" id="input_actualizar_oc" value="">
-
-                    <!-- ── Botones ── -->
-                    <div class="form-actions mt-4">
-                        <button type="button" id="btnGuardar" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> Guardar Cambios y Reenviar
-                        </button>
-                        <a href="see_oc.php?id=<?= $id ?>" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Cancelar
-                        </a>
-                    </div>
 
                 </form>
 
-            </div><!-- /form-body -->
-        </div><!-- /form-container -->
-    </div><!-- /content-wrapper -->
+    </div><!-- /orders-page-content -->
+</div><!-- /orders-page-container -->
 
     <!-- ══════════════════════════════════════════════════════════
      MODAL CATÁLOGO — fuera de todo contenedor para evitar
@@ -995,6 +819,7 @@ while ($archivo = $archivos->fetch_assoc()) {
 
             return `
     <tr class="item-row item-row-new" data-index="${index}">
+        <td>${index + 1}</td>
         <td>
             <input type="hidden" name="items[${index}][producto_id]" value="${productoId}">
             <input type="hidden" name="items[${index}][tipo]"        value="${tipo}">
@@ -1038,9 +863,7 @@ while ($archivo = $archivos->fetch_assoc()) {
                    readonly>
         </td>
         <td class="text-center">
-            <button type="button"
-                    class="btn btn-sm btn-danger btn-remove-item"
-                    title="Eliminar fila">
+            <button type="button" class="btn-action btn-action--delete remove-item-btn btn-remove-item" title="Eliminar ítem">
                 <i class="bi bi-trash"></i>
             </button>
         </td>
@@ -1245,6 +1068,7 @@ while ($archivo = $archivos->fetch_assoc()) {
         function recalcularIndices() {
             document.querySelectorAll('#itemsTableBody .item-row').forEach((row, idx) => {
                 row.dataset.index = idx;
+                row.cells[0].textContent = idx + 1; // Actualizar número de fila
                 row.querySelectorAll('[name]').forEach(el => {
                     el.name = el.name.replace(/items\[\d+\]/, `items[${idx}]`);
                 });
@@ -1266,10 +1090,10 @@ while ($archivo = $archivos->fetch_assoc()) {
             function updateSubtotal() {
                 const cant = parseFloat(cantidadEl.value) || 0;
                 const precio = parseFloat(precioEl.value) || 0;
-                const sub = Math.round(cant * precio * 100) / 100;
+                const sub = Math.round(cant * precio * 1000) / 1000;
                 subtotalEl.value = '$' + sub.toLocaleString('es-MX', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    minimumFractionDigits: 3,
+                    maximumFractionDigits: 3
                 });
                 calculateTotals();
             }
@@ -1289,19 +1113,23 @@ while ($archivo = $archivos->fetch_assoc()) {
                 subtotal += cant * precio;
             });
 
-            subtotal = Math.round(subtotal * 100) / 100;
+            subtotal = Math.round(subtotal * 1000) / 1000;
 
             const ivaPct = parseFloat(document.getElementById('iva_porcentaje').value) || 0;
-            const iva = Math.round(subtotal * (ivaPct / 100) * 100) / 100;
+            const iva = Math.round(subtotal * (ivaPct / 100) * 1000) / 1000;
             const total = Math.round((subtotal + iva) * 100) / 100;
 
-            const fmt = n => '$' + n.toLocaleString('es-MX', {
+            const fmt3 = n => '$' + n.toLocaleString('es-MX', {
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3
+            });
+            const fmt2 = n => '$' + n.toLocaleString('es-MX', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-            document.getElementById('display-subtotal').textContent = fmt(subtotal);
-            document.getElementById('display-iva').textContent = fmt(iva);
-            document.getElementById('display-total').textContent = fmt(total);
+            document.getElementById('display-subtotal').textContent = fmt3(subtotal);
+            document.getElementById('display-iva').textContent = fmt3(iva);
+            document.getElementById('display-total').textContent = fmt2(total);
         }
 
         document.getElementById('iva_porcentaje').addEventListener('change', calculateTotals);

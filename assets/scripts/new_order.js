@@ -1126,7 +1126,7 @@ function buscarProductos(input) {
     autocompleteList.innerHTML = resultados.map(producto => 
       `<div class="autocomplete-item" onclick="seleccionarProductoEnLista(${producto.id}, '${producto.nombre.replace(/'/g, "\\'")}', this)">
         <strong>${producto.nombre}</strong><br>
-        <small class="text-muted">${producto.descripcion || 'Sin descripción'} - ${producto.tipo}</small>
+        <small class="text-muted">${(producto.descripcion || 'Sin descripción').substring(0, 100)} - ${producto.tipo}</small>
       </div>`
     ).join('');
   }
@@ -1247,8 +1247,8 @@ function addItem(itemData = null) {
   newRow.innerHTML = `
     <td>${rowCount}</td>
     <td>
-      <div class="producto-autocomplete">
-        <input type="text" class="form-control descripcion" name="descripcion[]" placeholder="Descripción" 
+      <div class="producto-autocomplete w-100">
+        <input type="text" class="form-control descripcion w-100" name="descripcion[]" placeholder="Descripción" 
                oninput="buscarProductos(this)" required>
         <div class="autocomplete-list" id="autocomplete-${rowCount}"></div>
       </div>
@@ -1271,9 +1271,11 @@ function addItem(itemData = null) {
     <td>
       <input type="number"  name="precio_unitario[]" class="form-control precio" min="0.001" value="1.000" step="0.001" onchange="calcularSubtotal(this)" required>
     </td>
-    <td class="subtotal">$0.00</td>
     <td>
-      <button type="button" class="btn btn-sm btn-danger remove-item-btn" onclick="removeItem(this)">
+      <input type="text" class="form-control subtotal" value="$0.000" readonly>
+    </td>
+    <td class="cell-actions">
+      <button type="button" class="btn-action btn-action--delete remove-item-btn" onclick="removeItem(this)" title="Eliminar ítem">
         <i class="bi bi-trash"></i>
       </button>
     </td>
@@ -1449,7 +1451,12 @@ function calcularSubtotal(input) {
   const subtotal = cantidad * precio;
   
   // Actualizar el subtotal en la tabla
-  row.querySelector('.subtotal').textContent = '$' + subtotal.toLocaleString('es-MX', {minimumFractionDigits: 2});
+  const subtotalEl = row.querySelector('.subtotal');
+  if (subtotalEl.tagName === 'INPUT') {
+    subtotalEl.value = '$' + subtotal.toLocaleString('es-MX', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+  } else {
+    subtotalEl.textContent = '$' + subtotal.toLocaleString('es-MX', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+  }
   
   // Recalcular todos los totales
   calcularTotales();
@@ -1459,8 +1466,9 @@ function calcularTotales() {
   let subtotalGeneral = 0;
   
   document.querySelectorAll('.subtotal').forEach(cell => {
-    // Limpiar el texto del subtotal - remover $ y cualquier otro caracter no numérico excepto punto decimal
-    const valorTexto = cell.textContent.replace(/[^\d.]/g, '');
+    // Limpiar el texto del subtotal - funciona tanto para input (value) como para td (textContent)
+    const val = cell.tagName === 'INPUT' ? cell.value : cell.textContent;
+    const valorTexto = val.replace(/[^\d.]/g, '');
     const valor = parseFloat(valorTexto) || 0;
     subtotalGeneral += valor;
   });

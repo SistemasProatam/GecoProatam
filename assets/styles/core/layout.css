@@ -356,6 +356,16 @@ body, html {
     gap: 12px;
     white-space: nowrap;
     overflow: hidden; /* Evitar que el contenido se salga */
+    flex-shrink: 0; /* Never compress menu items */
+    min-height: 42px; /* Maintain consistent height */
+}
+
+.has-submenu {
+    flex-shrink: 0; /* Never compress submenu parents */
+}
+
+.submenu-container {
+    flex-shrink: 0; /* Never compress submenu containers */
 }
 
 .menu-text {
