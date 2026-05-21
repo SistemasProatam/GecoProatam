@@ -58,185 +58,330 @@ $entidadColores = [
   'DAVID GOMEZ' => '#fbae17',
 ];
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Cotizaciones - Historial</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
-  <style>
-    .cot-card { transition: all 0.2s ease; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .cot-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-color: #113456; }
-    .badge-entidad { padding: 4px 10px; border-radius: 6px; color: white; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-  </style>
-</head>
-<body>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<style>
+  .badge-entidad {
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+  }
+</style>
+
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span><span>Cotizaciones</span>
-    </div>
-    <h1 class="hero-title">Historial de Cotizaciones</h1>
-  </div>
-</div>
+<div class="orders-page-container">
 
-<div class="content-wrapper">
-  <div class="container">
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-      <div class="card-body p-4">
-        <div class="row mb-4 align-items-center">
-          <div class="col-md-6">
-            <form id="search-form" class="d-flex gap-2">
-              <input class="form-control" type="search" name="q" placeholder="Buscar cotización..." value="<?= htmlspecialchars($busqueda) ?>">
-              <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-          </div>
-          <div class="col-md-6 text-end mt-3 mt-md-0">
-            <span class="badge bg-light text-dark border me-2 py-2 px-3 rounded-pill"><?= $totalRegistros ?> cotizaciones</span>
-            <button class="btn btn-success" onclick="location.href='cotizacion.php'"><i class="bi bi-plus-circle me-1"></i> Nueva Cotización</button>
-          </div>
+    <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <span>Cotizaciones</span>
+            </nav>
+            <h1 class="orders-page-title">Historial de Cotizaciones</h1>
         </div>
+        <a href="cotizacion.php" class="btn-geco-primary">
+            <i class="bi bi-plus-lg"></i> Nueva Cotización
+        </a>
+    </div>
 
-        <div id="table-container-wrapper">
-          <?php if ($result && $result->num_rows > 0): ?>
-            <div class="list-group list-group-flush border-top pt-3">
-              <?php while ($row = $result->fetch_assoc()): 
-                $id = $row['id']; $folio = $row['folio']; $ent = strtoupper($row['entidad'] ?? 'PROATAM');
-                $entColor = $entidadColores[$ent] ?? '#1a3a5c';
-              ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center py-3 cot-card bg-white" id="item-<?= $id ?>">
-                  <div class="d-flex align-items-center gap-3">
-                    <div class="badge-entidad" style="background: <?= $entColor ?>;"><?= htmlspecialchars($ent) ?></div>
-                    <div>
-                      <h6 class="mb-0 fw-bold"><?= htmlspecialchars($row['atencion']) ?></h6>
-                      <div class="text-muted small">
-                        <span class="me-2"><i class="bi bi-building me-1"></i><?= htmlspecialchars($row['compania'] ?: 'Sin empresa') ?></span>
-                        <span class="me-2"><i class="bi bi-hash me-1"></i><?= htmlspecialchars($folio) ?></span>
-                        <span><i class="bi bi-calendar3 me-1"></i><?= date('d/m/Y', strtotime($row['fecha_emision'])) ?></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-center gap-4">
-                    <div class="text-end">
-                      <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Total</div>
-                      <div class="fw-bold text-primary fs-5">$<?= number_format($row['total'], 2) ?> <small class="text-muted" style="font-size: 0.6rem;"><?= $row['moneda'] ?></small></div>
-                    </div>
-                    <div class="btn-group gap-1">
-                      <a href="descargar_cotizacion.php?id=<?= $id ?>" class="btn btn-sm btn-outline-danger" title="PDF"><i class="bi bi-file-earmark-pdf"></i></a>
-                      <button class="btn btn-sm btn-outline-info" onclick="verCotizacion(<?= $id ?>, '<?= $folio ?>')" title="Ver"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-outline-primary" onclick="editarCotizacion(<?= $id ?>)" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                      <button class="btn btn-sm btn-outline-danger" onclick="eliminarCotizacion(<?= $id ?>, '<?= $folio ?>')" title="Eliminar"><i class="bi bi-trash3"></i></button>
-                    </div>
-                  </div>
+    <!-- ─── FILTERS + SEARCH ─────────────────────────────────────── -->
+    <div class="orders-card mb-4">
+        <form id="search-form" method="GET">
+            <div class="orders-filter-bar">
+                <!-- Left side: Total counter -->
+                <div class="orders-filter-tabs">
+                    <span class="orders-pagination-info" style="font-weight: 500; font-size: 0.9rem; color: var(--text-secondary);">
+                        Total: <strong><?= $totalRegistros ?></strong> cotizaciones
+                    </span>
                 </div>
-              <?php endwhile; ?>
+
+                <!-- Right: Search Input -->
+                <div class="orders-filter-search" style="margin-left: auto;">
+                    <div class="search-input-wrap">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="q" id="visibleSearchInput"
+                               placeholder="Buscar folio, atención, compañía..."
+                               value="<?= htmlspecialchars($busqueda) ?>">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ─── TABLE ────────────────────────────────────────────────── -->
+    <div class="orders-card orders-ajax-fade" id="table-container-wrapper">
+        <div class="orders-table-wrap">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Entidad</th>
+                        <th>Folio</th>
+                        <th>Atención a</th>
+                        <th>Compañía</th>
+                        <th>Fecha Emisión</th>
+                        <th>Total</th>
+                        <th style="width: 130px; text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($result && $result->num_rows > 0): ?>
+                        <?php while ($row = $result->fetch_assoc()): 
+                            $id = $row['id']; 
+                            $folio = $row['folio']; 
+                            $ent = strtoupper($row['entidad'] ?? 'PROATAM');
+                            $entColor = $entidadColores[$ent] ?? '#1a3a5c';
+                        ?>
+                            <tr id="item-<?= $id ?>">
+                                <td>
+                                    <span class="badge-entidad" style="background: <?= $entColor ?>;">
+                                        <?= htmlspecialchars($ent) ?>
+                                    </span>
+                                </td>
+                                <td class="cell-folio"><?= htmlspecialchars($folio) ?></td>
+                                <td><strong><?= htmlspecialchars($row['atencion']) ?></strong></td>
+                                <td><?= htmlspecialchars($row['compania'] ?: 'Sin empresa') ?></td>
+                                <td class="cell-date"><?= date('d/m/Y', strtotime($row['fecha_emision'])) ?></td>
+                                <td>
+                                    <span class="fw-bold" style="color: var(--s-700);">
+                                        $<?= number_format($row['total'], 2) ?>
+                                    </span>
+                                    <small class="text-muted" style="font-size: 0.75rem;"><?= $row['moneda'] ?></small>
+                                </td>
+                                <td>
+                                    <div class="actions-group" style="justify-content: center;">
+                                        <a href="descargar_cotizacion.php?id=<?= $id ?>" 
+                                           class="btn-action btn-action--download" 
+                                           title="Descargar PDF">
+                                            <i class="bi bi-file-earmark-pdf"></i>
+                                        </a>
+                                        <button class="btn-action btn-action--view" 
+                                                onclick="verCotizacion(<?= $id ?>, '<?= $folio ?>')" 
+                                                title="Ver Vista Previa">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn-action btn-action--edit" 
+                                                onclick="editarCotizacion(<?= $id ?>)" 
+                                                title="Editar Cotización">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn-action btn-action--delete" 
+                                                onclick="eliminarCotizacion(<?= $id ?>, '<?= $folio ?>')" 
+                                                title="Eliminar Cotización">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7">
+                                <div class="orders-empty-state">
+                                    <i class="bi bi-inbox" style="font-size: 2.5rem; color: var(--gray-400);"></i>
+                                    <p>No se encontraron cotizaciones registradas</p>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="orders-pagination-bar">
+            <!-- Left Info -->
+            <div class="orders-pagination-left">
+                <span class="orders-pagination-info">
+                    <?php
+                    $inicio_registro = $totalRegistros > 0 ? $offset + 1 : 0;
+                    $fin_registro = min($offset + $porPagina, $totalRegistros);
+                    ?>
+                    Mostrando <strong><?= $inicio_registro ?>-<?= $fin_registro ?></strong> de <strong><?= $totalRegistros ?></strong> resultados
+                </span>
             </div>
 
-            <?php if ($totalPags > 1): ?>
-              <nav class="mt-4"><ul class="pagination justify-content-center">
-                <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>"><a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina - 1 ?>">&laquo;</a></li>
-                <?php foreach (range(max(1, $pagina - 2), min($totalPags, $pagina + 2)) as $i): ?>
-                  <li class="page-item <?= $i == $pagina ? 'active' : '' ?>"><a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>"><?= $i ?></a></li>
-                <?php endforeach; ?>
-                <li class="page-item <?= $pagina >= $totalPags ? 'disabled' : '' ?>"><a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $pagina + 1 ?>">&raquo;</a></li>
-              </ul></nav>
-            <?php endif; ?>
-          <?php else: ?>
-            <div class="text-center py-5 text-muted"><i class="bi bi-file-earmark-x display-1 d-block mb-3"></i>No se encontraron cotizaciones.</div>
-          <?php endif; ?>
+            <!-- Center Nav and Right Controls -->
+            <div class="orders-pagination-controls">
+                <?php if ($totalPags > 1): ?>
+                    <nav class="orders-pagination-nav" aria-label="Paginación">
+                        <!-- Ir al primero -->
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&page=1"
+                           aria-label="Primera página">
+                           &laquo;
+                        </a>
+
+                        <!-- Anterior -->
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&page=<?= max(1, $pagina - 1) ?>"
+                           aria-label="Página anterior">
+                           &lsaquo;
+                        </a>
+
+                        <!-- Números de página -->
+                        <?php 
+                        $rango_inicio = max(1, $pagina - 2);
+                        $rango_fin = min($totalPags, $pagina + 2);
+                        for ($i = $rango_inicio; $i <= $rango_fin; $i++): 
+                        ?>
+                            <a class="page-btn page-link <?= $i == $pagina ? 'active' : '' ?>"
+                               href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>">
+                                <?= $i ?>
+                            </a>
+                        <?php endfor; ?>
+
+                        <!-- Siguiente -->
+                        <a class="page-btn page-link <?= $pagina >= $totalPags ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&page=<?= min($totalPags, $pagina + 1) ?>"
+                           aria-label="Página siguiente">
+                           &rsaquo;
+                        </a>
+
+                        <!-- Ir al último -->
+                        <a class="page-btn page-link <?= $pagina >= $totalPags ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&page=<?= $totalPags ?>"
+                           aria-label="Última página">
+                           &raquo;
+                        </a>
+                    </nav>
+
+                    <!-- Divider -->
+                    <div class="orders-pagination-divider"></div>
+
+                    <!-- Go to page -->
+                    <div class="orders-pagination-goto">
+                        <span>Ir a</span>
+                        <input type="number" 
+                               class="goto-page-input" 
+                               min="1" 
+                               max="<?= $totalPags ?>" 
+                               value="<?= $pagina ?>"
+                               aria-label="Ir a la página">
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+
+    <!-- ─── SCRIPTS ──────────────────────────────────────────────── -->
+    <script>
+      function verCotizacion(id, folio) {
+        UI.modal({
+          title: `<i class="bi bi-file-earmark-pdf me-2"></i> ${folio}`,
+          size: "xl",
+          html: `<iframe src="descargar_cotizacion.php?id=${id}&inline=1" style="width:100%;height:75vh;border:none;background:#fff;"></iframe>`,
+          footer: `<a href="descargar_cotizacion.php?id=${id}" class="btn btn-success"><i class="bi bi-download me-1"></i> Descargar</a>`
+        });
+      }
+
+      function editarCotizacion(id) {
+        UI.loading("Cargando datos...");
+        fetch('get_cotizacion.php?id=' + id).then(r => r.json()).then(d => {
+          UI.loading.hide();
+          if (!d.success) { UI.toast.error(d.message); return; }
+          const c = d.cotizacion;
+          UI.modal({
+            title: "Editar Cotización - " + c.folio,
+            size: "lg",
+            html: `
+              <form id="formEditCot">
+                <input type="hidden" name="id" value="${c.id}">
+                <div class="row g-3">
+                  <div class="col-md-6"><label class="form-label">Atención a</label><input type="text" name="atencion" class="form-control" value="${c.atencion || ''}" required></div>
+                  <div class="col-md-6"><label class="form-label">Compañía</label><input type="text" name="compania" class="form-control" value="${c.compania || ''}"></div>
+                  <div class="col-md-4"><label class="form-label">Moneda</label><select name="moneda" class="form-select"><option value="MXN" ${c.moneda==='MXN'?'selected':''}>MXN</option><option value="USD" ${c.moneda==='USD'?'selected':''}>USD</option></select></div>
+                  <div class="col-md-4"><label class="form-label">Fecha</label><input type="date" name="fecha_emision" class="form-control" value="${c.fecha_emision || ''}"></div>
+                  <div class="col-md-4"><label class="form-label">Vigencia</label><input type="text" name="vigencia" class="form-control" value="${c.vigencia || ''}"></div>
+                  <div class="col-12"><label class="form-label">Notas</label><textarea name="notas" class="form-control" rows="3">${c.notas || ''}</textarea></div>
+                </div>
+                <div class="text-end mt-4"><button type="button" class="btn btn-secondary me-2" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Cambios</button></div>
+              </form>`
+          });
+          document.getElementById('formEditCot').addEventListener('submit', function(e) {
+            e.preventDefault();
+            UI.loading("Guardando...");
+            fetch('update_cotizacion.php', { method: 'POST', body: new FormData(this) }).then(r => r.json()).then(resp => {
+              UI.loading.hide();
+              if (resp.status === 'success') { UI.modal.close(); UI.toast.success("Actualizado"); updateList(window.location.href); }
+              else UI.toast.error(resp.message);
+            });
+          });
+        });
+      }
+
+      function eliminarCotizacion(id, folio) {
+        UI.confirm({ title: "¿Eliminar permanentemente?", message: `La cotización <b>${folio}</b> será eliminada.`, danger: true }).then(conf => {
+          if (!conf) return;
+          UI.loading("Eliminando...");
+          fetch('delete_cotizacion.php?id=' + id).then(r => r.json()).then(data => {
+            UI.loading.hide();
+            if (data.status === 'success') { UI.toast.success("Eliminada"); updateList(window.location.href); }
+            else UI.toast.error(data.message);
+          });
+        });
+      }
+
+      function updateList(url, pushState = true) {
+        const container = document.getElementById('table-container-wrapper');
+        UI.loading("Actualizando...");
+        fetch(url).then(r => r.text()).then(html => {
+            UI.loading.hide();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            container.innerHTML = doc.getElementById('table-container-wrapper').innerHTML;
+            if (pushState) window.history.pushState({}, '', url);
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('search-form');
+
+        if (searchForm) {
+          searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const url = new URL(window.location);
+            url.searchParams.set('q', this.q.value);
+            url.searchParams.delete('page');
+            updateList(url.toString());
+          });
+        }
+
+        document.addEventListener('keydown', function(e) {
+          if (e.target.classList.contains('goto-page-input') && e.key === 'Enter') {
+            e.preventDefault();
+            handleGoToPage(e.target);
+          }
+        });
+
+        function handleGoToPage(input) {
+          var page = parseInt(input.value);
+          var maxPage = parseInt(input.getAttribute('max'));
+          if (isNaN(page) || page < 1) {
+            page = 1;
+          } else if (page > maxPage) {
+            page = maxPage;
+          }
+
+          var url = new URL(window.location);
+          const qInput = document.querySelector('#search-form input[name="q"]');
+          url.searchParams.set('q', qInput ? qInput.value : "");
+          url.searchParams.set('page', page);
+          updateList(url.toString());
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+
+      document.addEventListener('click', e => {
+        const link = e.target.closest('.page-link');
+        if (link) { e.preventDefault(); updateList(link.href); window.scrollTo({top:0, behavior:'smooth'}); }
+      });
+    </script>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  function verCotizacion(id, folio) {
-    UI.modal({
-      title: `<i class="bi bi-file-earmark-pdf me-2"></i> ${folio}`,
-      size: "xl",
-      html: `<iframe src="descargar_cotizacion.php?id=${id}&inline=1" style="width:100%;height:75vh;border:none;background:#fff;"></iframe>`,
-      footer: `<a href="descargar_cotizacion.php?id=${id}" class="btn btn-success"><i class="bi bi-download me-1"></i> Descargar</a>`
-    });
-  }
-
-  function editarCotizacion(id) {
-    UI.loading("Cargando datos...");
-    fetch('get_cotizacion.php?id=' + id).then(r => r.json()).then(d => {
-      UI.loading.hide();
-      if (!d.success) { UI.toast.error(d.message); return; }
-      const c = d.cotizacion;
-      UI.modal({
-        title: "Editar Cotización - " + c.folio,
-        size: "lg",
-        html: `
-          <form id="formEditCot">
-            <input type="hidden" name="id" value="${c.id}">
-            <div class="row g-3">
-              <div class="col-md-6"><label class="form-label">Atención a</label><input type="text" name="atencion" class="form-control" value="${c.atencion || ''}" required></div>
-              <div class="col-md-6"><label class="form-label">Compañía</label><input type="text" name="compania" class="form-control" value="${c.compania || ''}"></div>
-              <div class="col-md-4"><label class="form-label">Moneda</label><select name="moneda" class="form-select"><option value="MXN" ${c.moneda==='MXN'?'selected':''}>MXN</option><option value="USD" ${c.moneda==='USD'?'selected':''}>USD</option></select></div>
-              <div class="col-md-4"><label class="form-label">Fecha</label><input type="date" name="fecha_emision" class="form-control" value="${c.fecha_emision || ''}"></div>
-              <div class="col-md-4"><label class="form-label">Vigencia</label><input type="text" name="vigencia" class="form-control" value="${c.vigencia || ''}"></div>
-              <div class="col-12"><label class="form-label">Notas</label><textarea name="notas" class="form-control" rows="3">${c.notas || ''}</textarea></div>
-            </div>
-            <div class="text-end mt-4"><button type="button" class="btn btn-secondary me-2" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Cambios</button></div>
-          </form>`
-      });
-      document.getElementById('formEditCot').addEventListener('submit', function(e) {
-        e.preventDefault();
-        UI.loading("Guardando...");
-        fetch('update_cotizacion.php', { method: 'POST', body: new FormData(this) }).then(r => r.json()).then(resp => {
-          UI.loading.hide();
-          if (resp.status === 'success') { UI.modal.close(); UI.toast.success("Actualizado"); updateList(window.location.href); }
-          else UI.toast.error(resp.message);
-        });
-      });
-    });
-  }
-
-  function eliminarCotizacion(id, folio) {
-    UI.confirm({ title: "¿Eliminar permanentemente?", message: `La cotización <b>${folio}</b> será eliminada.`, danger: true }).then(conf => {
-      if (!conf) return;
-      UI.loading("Eliminando...");
-      fetch('delete_cotizacion.php?id=' + id).then(r => r.json()).then(data => {
-        UI.loading.hide();
-        if (data.status === 'success') { UI.toast.success("Eliminada"); updateList(window.location.href); }
-        else UI.toast.error(data.message);
-      });
-    });
-  }
-
-  function updateList(url, pushState = true) {
-    const container = document.getElementById('table-container-wrapper');
-    UI.loading("Actualizando...");
-    fetch(url).then(r => r.text()).then(html => {
-        UI.loading.hide();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        container.innerHTML = doc.getElementById('table-container-wrapper').innerHTML;
-        if (pushState) window.history.pushState({}, '', url);
-    });
-  }
-
-  document.getElementById('search-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const url = new URL(window.location);
-    url.searchParams.set('q', this.q.value);
-    url.searchParams.delete('page');
-    updateList(url.toString());
-  });
-
-  document.addEventListener('click', e => {
-    const link = e.target.closest('.page-link');
-    if (link) { e.preventDefault(); updateList(link.href); window.scrollTo({top:0, behavior:'smooth'}); }
-  });
-</script>
-</body>
-</html>
+<?php include __DIR__ . "/../includes/footer.php"; ?>
