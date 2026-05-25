@@ -24,1368 +24,1220 @@ $result_departamentos = $result;
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
-  <style>
-    .section-detalle {
-      display: none;
-      animation: fadeIn .3s ease;
-    }
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
 
-    .section-detalle.visible {
-      display: block;
-    }
+<style>
+  /* GECO design improvements for Form sections and dynamic sections */
+  .section-title {
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--s-700, #113557) !important;
+    border-bottom: 2px solid var(--p-500, #407656) !important;
+    padding-bottom: 0.35rem !important;
+    margin-top: 2rem !important;
+    margin-bottom: 1.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+  .section-title i {
+    font-size: 1.1rem !important;
+    color: var(--p-500, #407656) !important;
+  }
+  
+  .section-detalle {
+    display: none;
+    animation: fadeIn .3s ease;
+  }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
+  .section-detalle.visible {
+    display: block;
+  }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .codigo-preview {
-      background: #f0f4f8;
-      border: 1px dashed #adb5bd;
-      border-radius: 6px;
-      padding: 8px 14px;
-      font-family: monospace;
-      font-size: 1rem;
-      color: #495057;
-      letter-spacing: 1px;
-    }
-
-    /* ══════════════════════════════════════════
-         SISTEMA DE ARCHIVOS CON ESTADO VISUAL
-      ══════════════════════════════════════════ */
-    .file-drop-zone {
-      border: 2px dashed #cbd5e1;
-      border-radius: 10px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: all .2s;
-      background: #f8fafc;
-      position: relative;
-    }
-
-    .file-drop-zone:hover {
-      border-color: #113456;
-      background: #eef3f8;
-    }
-
-    .file-drop-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
+  @keyframes fadeIn {
+    from {
       opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
+      transform: translateY(-8px);
     }
-
-    .file-drop-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      pointer-events: none;
-      font-size: .85rem;
-      color: #64748b;
-    }
-
-    .file-drop-label i {
-      font-size: 1.1rem;
-    }
-
-    /* Chips de archivos */
-    .file-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    .file-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px 4px 8px;
-      border-radius: 20px;
-      font-size: .78rem;
-      font-weight: 500;
-      max-width: 240px;
-      overflow: hidden;
-      animation: chipIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
-    }
-
-    @keyframes chipIn {
-      from {
-        opacity: 0;
-        transform: scale(.8);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .file-chip.ok {
-      background: #d1fae5;
-      color: #065f46;
-      border: 1px solid #6ee7b7;
-    }
-
-    .file-chip.error {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-    }
-
-    .file-chip .chip-name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 150px;
-    }
-
-    .file-chip .chip-size {
-      opacity: .75;
-      white-space: nowrap;
-    }
-
-    .file-chip .chip-remove {
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      color: inherit;
-      opacity: .7;
-      font-size: .85rem;
-      line-height: 1;
-      transition: opacity .15s;
-    }
-
-    .file-chip .chip-remove:hover {
+    to {
       opacity: 1;
+      transform: translateY(0);
     }
+  }
 
-    /* Adjuntos dinámicos (fiscal/extra) */
-    .adj-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      margin-bottom: 6px;
-      animation: chipIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
+  .codigo-preview {
+    background: var(--gray-50, #f9fafb);
+    border: 1px dashed var(--gray-300, #d1d5db);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+    font-size: 0.9rem;
+    color: var(--gray-600, #4b5563);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 38px;
+  }
+
+  /* File Drop Zone with GECO style */
+  .file-drop-zone {
+    border: 2px dashed var(--gray-200, #e5e7eb);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--gray-50, #f9fafb);
+    position: relative;
+  }
+
+  .file-drop-zone:hover {
+    border-color: var(--p-500, #407656);
+    background: rgba(64, 118, 86, 0.04);
+  }
+
+  .file-drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .file-drop-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    font-size: .82rem;
+    color: var(--gray-500, #6b7280);
+  }
+
+  .file-drop-label i {
+    font-size: 1.1rem;
+    color: var(--p-500, #407656);
+  }
+
+  /* Chips de archivos */
+  .file-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 20px;
+    font-size: .78rem;
+    font-weight: 500;
+    max-width: 240px;
+    overflow: hidden;
+    animation: chipIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
+  }
+
+  @keyframes chipIn {
+    from {
+      opacity: 0;
+      transform: scale(.8);
     }
-
-    .adj-item.ok {
-      border-color: #6ee7b7;
-      background: #f0fdf4;
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
+  }
 
-    .adj-item.error {
-      border-color: #fca5a5;
-      background: #fff5f5;
+  .file-chip.ok {
+    background: rgba(34, 197, 94, 0.08);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+  }
+
+  .file-chip.error {
+    background: rgba(239, 68, 68, 0.08);
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+
+  .file-chip .chip-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+
+  .file-chip .chip-size {
+    opacity: .75;
+    white-space: nowrap;
+  }
+
+  .file-chip .chip-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+    opacity: .7;
+    font-size: .85rem;
+    line-height: 1;
+    transition: opacity .15s;
+  }
+
+  .file-chip .chip-remove:hover {
+    opacity: 1;
+  }
+
+  /* Adjuntos dinámicos */
+  .adj-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200, #e5e7eb);
+    background: var(--gray-50, #f9fafb);
+    margin-bottom: 6px;
+    animation: chipIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
+  }
+
+  .adj-item.ok {
+    border-color: rgba(34, 197, 94, 0.25);
+    background: rgba(34, 197, 94, 0.03);
+  }
+
+  .adj-item.error {
+    border-color: rgba(239, 68, 68, 0.25);
+    background: rgba(239, 68, 68, 0.03);
+  }
+
+  .adj-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .adj-item.ok .adj-icon {
+    color: #15803d;
+  }
+
+  .adj-item.error .adj-icon {
+    color: #b91c1c;
+  }
+
+  .adj-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .adj-name {
+    font-size: .82rem;
+    font-weight: 500;
+    color: var(--s-900, #0f172a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .adj-meta {
+    font-size: .75rem;
+    color: var(--gray-500, #6b7280);
+  }
+
+  .adj-item.error .adj-meta {
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  /* Toast Notification */
+  #toastContainer {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    pointer-events: none;
+  }
+
+  .toast-notif {
+    pointer-events: all;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--p-500, #407656);
+    position: relative;
+    overflow: hidden;
+    animation: tIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
+  }
+
+  .toast-notif.t-danger {
+    border-left-color: #dc2626;
+  }
+  .toast-notif.t-danger .t-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+  }
+
+  .toast-notif.t-success {
+    border-left-color: #16a34a;
+  }
+  .toast-notif.t-success .t-icon {
+    color: #16a34a;
+    background: rgba(22, 163, 74, 0.08);
+  }
+
+  .toast-notif.t-warning {
+    border-left-color: #d97706;
+  }
+  .toast-notif.t-warning .t-icon {
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.08);
+  }
+
+  .toast-notif.t-info {
+    border-left-color: #2563eb;
+  }
+  .toast-notif.t-info .t-icon {
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.08);
+  }
+
+  .t-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .t-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .t-title {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-400, #9ca3af);
+    margin-bottom: 2px;
+  }
+
+  .t-msg {
+    font-size: .82rem;
+    color: var(--gray-700, #374151);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .t-close {
+    background: none;
+    border: none;
+    color: var(--gray-400, #9ca3af);
+    cursor: pointer;
+    padding: 0;
+    font-size: .9rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: color .15s;
+  }
+
+  .t-close:hover {
+    color: var(--gray-700, #374151);
+  }
+
+  .t-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    animation: tProgress 5s linear forwards;
+  }
+
+  .t-danger .t-progress { background: #dc2626; }
+  .t-success .t-progress { background: #16a34a; }
+  .t-warning .t-progress { background: #d97706; }
+  .t-info .t-progress { background: #2563eb; }
+
+  @keyframes tIn {
+    from {
+      opacity: 0;
+      transform: translateX(36px) scale(.95);
     }
-
-    .adj-icon {
-      font-size: 1.2rem;
-      flex-shrink: 0;
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
     }
+  }
 
-    .adj-item.ok .adj-icon {
-      color: #059669;
+  @keyframes tOut {
+    from {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      max-height: 120px;
     }
-
-    .adj-item.error .adj-icon {
-      color: #dc2626;
+    to {
+      opacity: 0;
+      transform: translateX(36px) scale(.95);
+      max-height: 0;
     }
+  }
 
-    .adj-info {
-      flex: 1;
-      min-width: 0;
+  @keyframes tProgress {
+    from { width: 100%; }
+    to { width: 0; }
+  }
+
+  /* Confirm Modal GECO style */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: ovIn .2s ease both;
+  }
+
+  @keyframes ovIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .confirm-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 26px 22px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: mIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
+  }
+
+  @keyframes mIn {
+    from {
+      opacity: 0;
+      transform: scale(.9) translateY(10px);
     }
-
-    .adj-name {
-      font-size: .85rem;
-      font-weight: 500;
-      color: #1e293b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
     }
+  }
 
-    .adj-meta {
-      font-size: .75rem;
-      color: #64748b;
-    }
+  .m-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    background: rgba(64, 118, 86, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--p-500, #407656);
+    margin: 0 auto 16px;
+  }
 
-    .adj-item.error .adj-meta {
-      color: #dc2626;
-      font-weight: 600;
-    }
+  .confirm-modal h5 {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--s-800, #0f172a);
+    margin-bottom: 6px;
+  }
 
-    /* ══════════════════════════════════════════
-         TOASTS
-      ══════════════════════════════════════════ */
-    #toastContainer {
-      position: fixed;
-      top: 76px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      pointer-events: none;
-    }
+  .confirm-modal p {
+    text-align: center;
+    font-size: .84rem;
+    color: var(--gray-500, #6b7280);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
 
-    .toast-notif {
-      pointer-events: all;
-      display: flex;
-      align-items: flex-start;
-      gap: 11px;
-      min-width: 300px;
-      max-width: 400px;
-      padding: 13px 14px;
-      border-radius: 12px;
-      background: #ffffff;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .12), 0 2px 6px rgba(0, 0, 0, .06);
-      border-left: 4px solid #113456;
-      position: relative;
-      overflow: hidden;
-      animation: tIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
-    }
+  .m-stats {
+    background: var(--gray-50, #f9fafb);
+    border: 1px solid var(--gray-100, #f3f4f6);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+  }
 
-    .toast-notif.t-danger {
-      border-color: #dc2626;
-    }
+  .m-stat {
+    text-align: center;
+  }
 
-    .toast-notif.t-danger .t-icon {
-      color: #dc2626;
-      background: #fee2e2;
-    }
+  .m-stat .val {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--s-800, #0f172a);
+    line-height: 1;
+  }
 
-    .toast-notif.t-success {
-      border-color: #16a34a;
-    }
+  .m-stat .lbl {
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-400, #9ca3af);
+    margin-top: 2px;
+    font-weight: 600;
+  }
 
-    .toast-notif.t-success .t-icon {
-      color: #16a34a;
-      background: #dcfce7;
-    }
+  .m-sep {
+    border-left: 1px solid var(--gray-200, #e5e7eb);
+    padding-left: 14px;
+  }
 
-    .toast-notif.t-warning {
-      border-color: #d97706;
-    }
+  .m-actions {
+    display: flex;
+    gap: 9px;
+  }
 
-    .toast-notif.t-warning .t-icon {
-      color: #d97706;
-      background: #fef3c7;
-    }
+  .m-actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .82rem;
+    border: none;
+    cursor: pointer;
+    transition: all .15s;
+  }
 
-    .toast-notif.t-info {
-      border-color: #2563eb;
-    }
+  .btn-cancel {
+    background: var(--gray-100, #f3f4f6);
+    color: var(--gray-700, #374151);
+  }
 
-    .toast-notif.t-info .t-icon {
-      color: #2563eb;
-      background: #dbeafe;
-    }
+  .btn-cancel:hover {
+    background: var(--gray-200, #e5e7eb);
+  }
 
-    .t-icon {
-      flex-shrink: 0;
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-    }
+  .btn-ok {
+    background: var(--p-500, #407656);
+    color: #fff;
+  }
 
-    .t-body {
-      flex: 1;
-      min-width: 0;
-    }
+  .btn-ok:hover {
+    background: var(--p-600, #2f573f);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(64, 118, 86, .2);
+  }
+</style>
 
-    .t-title {
-      font-size: .72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #6b7280;
-      margin-bottom: 2px;
-    }
+<div class="orders-page-container">
 
-    .t-msg {
-      font-size: .85rem;
-      color: #1f2937;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    .t-close {
-      background: none;
-      border: none;
-      color: #9ca3af;
-      cursor: pointer;
-      padding: 0;
-      font-size: .9rem;
-      line-height: 1;
-      flex-shrink: 0;
-      transition: color .15s;
-    }
-
-    .t-close:hover {
-      color: #374151;
-    }
-
-    .t-progress {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 3px;
-      animation: tProgress 5s linear forwards;
-    }
-
-    .t-danger .t-progress {
-      background: #dc2626;
-    }
-
-    .t-success .t-progress {
-      background: #16a34a;
-    }
-
-    .t-warning .t-progress {
-      background: #d97706;
-    }
-
-    .t-info .t-progress {
-      background: #2563eb;
-    }
-
-    @keyframes tIn {
-      from {
-        opacity: 0;
-        transform: translateX(36px) scale(.95);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-      }
-    }
-
-    @keyframes tOut {
-      from {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-        max-height: 120px;
-      }
-
-      to {
-        opacity: 0;
-        transform: translateX(36px) scale(.95);
-        max-height: 0;
-      }
-    }
-
-    @keyframes tProgress {
-      from {
-        width: 100%;
-      }
-
-      to {
-        width: 0;
-      }
-    }
-
-    /* ══════════════════════════════════════════
-         MODAL DE CONFIRMACIÓN
-      ══════════════════════════════════════════ */
-    .confirm-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(8, 12, 24, .5);
-      backdrop-filter: blur(4px);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: ovIn .2s ease both;
-    }
-
-    @keyframes ovIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    .confirm-modal {
-      background: #fff;
-      border-radius: 16px;
-      padding: 30px 26px 22px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, .2);
-      animation: mIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
-    }
-
-    @keyframes mIn {
-      from {
-        opacity: 0;
-        transform: scale(.85) translateY(18px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    .m-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 13px;
-      background: #dbeafe;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: #1d4ed8;
-      margin: 0 auto 16px;
-    }
-
-    .confirm-modal h5 {
-      text-align: center;
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: #111827;
-      margin-bottom: 6px;
-    }
-
-    .confirm-modal p {
-      text-align: center;
-      font-size: .86rem;
-      color: #6b7280;
-      margin-bottom: 18px;
-    }
-
-    .m-stats {
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-    }
-
-    .m-stat {
-      text-align: center;
-    }
-
-    .m-stat .val {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #113456;
-      line-height: 1;
-    }
-
-    .m-stat .lbl {
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #9ca3af;
-      margin-top: 2px;
-    }
-
-    .m-sep {
-      border-left: 1px solid #e5e7eb;
-      padding-left: 14px;
-    }
-
-    .m-actions {
-      display: flex;
-      gap: 9px;
-    }
-
-    .m-actions button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: .88rem;
-      border: none;
-      cursor: pointer;
-      transition: all .15s;
-    }
-
-    .btn-cancel {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .btn-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-ok {
-      background: #113456;
-      color: #fff;
-    }
-
-    .btn-ok:hover {
-      background: #0d2740;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(17, 52, 86, .3);
-    }
-  </style>
-
-
-
-  <!-- Toast container global -->
-  <div id="toastContainer"></div>
-
-  <!-- HERO SECTION -->
-  <div class="hero-section">
-    <div class="container hero-content">
-      <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-        <span>/</span>
+  <!-- Page Header -->
+  <div class="orders-page-header mb-4">
+    <div class="orders-page-header-info">
+      <nav class="orders-breadcrumb">
+        <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+        <span class="separator">›</span>
         <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
-        <span>/</span>
+        <span class="separator">›</span>
         <span>Nuevo Activo</span>
-      </div>
-      <div class="row align-items-end">
-        <div class="col-lg-8">
-          <h1 class="hero-title">Registro de Nuevo Activo</h1>
-        </div>
-      </div>
+      </nav>
+      <h1 class="orders-page-title">Registro de Nuevo Activo</h1>
     </div>
+    <a href="list_activos.php" class="btn-geco-outline">
+      ← Volver al Listado
+    </a>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content-wrapper">
-    <div class="form-container">
-      <div class="form-body">
+  <form id="activoForm" method="POST" action="save_activo.php" enctype="multipart/form-data">
 
-        <form id="activoForm" method="POST" action="save_activo.php" enctype="multipart/form-data">
+    <!-- ===== CARD 1: INFORMACIÓN GENERAL ===== -->
+    <div class="oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General del Activo</span>
+      </div>
+      <div class="oc-card-body">
+        <p class="oc-card-intro">Complete los datos básicos del activo físico. El código de identificación se generará automáticamente al guardar.</p>
 
-          <div>
-            <p>
-              Complete este formulario para registrar un nuevo activo en el sistema.
-              Seleccione primero el Tipo de Activo para que aparezcan los campos
-              específicos correspondientes.<br />
-              <b>Importante:</b> El código de identificación se generará automáticamente al guardar el registro.
-            </p>
+        <div class="orders-alert orders-alert--info mb-4">
+          <i class="bi bi-info-circle"></i>
+          <div class="orders-alert__body">
+            <p>Seleccione primero el <strong>Tipo de Activo</strong> para desplegar la sección de detalles técnicos específicos correspondientes.</p>
           </div>
+        </div>
 
-          <!-- ===== INFORMACIÓN GENERAL ===== -->
-          <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Tipo de Activo <span class="required">*</span></label>
-                <select class="form-select" id="tipo_id" name="tipo_id" required onchange="mostrarSeccionDetalle()">
-                  <option value="">Seleccionar Tipo</option>
-                  <?php
-                  if ($result_tipos && $result_tipos->num_rows > 0) {
-                    while ($row = $result_tipos->fetch_assoc()) {
-                      echo '<option value="' . htmlspecialchars($row['id']) . '" '
-                        . 'data-prefijo="' . htmlspecialchars($row['prefijo']) . '">'
-                        . htmlspecialchars($row['nombre']) . '</option>';
-                    }
-                  }
-                  ?>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Código de Activo</label>
-                <div class="codigo-preview" id="codigoPreview">
-                  <i class="bi bi-upc-scan"></i> Se asignará al guardar
-                </div>
-              </div>
+        <div class="row g-3">
+          <div class="col-md-6 col-lg-3">
+            <label class="oc-form-label">Tipo de Activo <span class="required">*</span></label>
+            <select class="form-select" id="tipo_id" name="tipo_id" required onchange="mostrarSeccionDetalle()">
+              <option value="">Seleccionar Tipo</option>
+              <?php
+              if ($result_tipos && $result_tipos->num_rows > 0) {
+                while ($row = $result_tipos->fetch_assoc()) {
+                  echo '<option value="' . htmlspecialchars($row['id']) . '" '
+                    . 'data-prefijo="' . htmlspecialchars($row['prefijo']) . '">'
+                    . htmlspecialchars($row['nombre']) . '</option>';
+                }
+              }
+              ?>
+            </select>
+          </div>
+          
+          <div class="col-md-6 col-lg-3">
+            <label class="oc-form-label">Código de Activo</label>
+            <div class="codigo-preview" id="codigoPreview">
+              <i class="bi bi-upc-scan"></i> Se asignará al guardar
             </div>
           </div>
 
-          <!-- Foto Principal -->
-          <div class="col-md-8 doc-item mb-3">
-            <label class="form-label">Foto Principal</label>
-            <div class="file-drop-zone" id="zone_img_foto_principal">
-              <input type="file" id="input_img_foto_principal"
-                accept=".jpg,.jpeg,.png,.gif,.webp"
-                onchange="handleFile(this,'img_foto_principal','imagen',false)" />
-              <div class="file-drop-label">
-                <i class="bi bi-cloud-arrow-up"></i>
-                <span>Haz clic para seleccionar — JPG, PNG, GIF o WebP (máx. 10 MB)</span>
-              </div>
-            </div>
-            <div class="file-chips" id="chips_img_foto_principal"></div>
+          <div class="col-md-6 col-lg-3">
+            <label class="oc-form-label">Nombre del Activo <span class="required">*</span></label>
+            <input type="text" class="form-control" name="nombre"
+              placeholder="Ej. Camioneta Ford F-150, Laptop Dell Inspiron..." required />
           </div>
 
-          <div class="row">
-            <div class="col-md-8">
-              <div class="form-group">
-                <label class="form-label">Nombre del Activo <span class="required">*</span></label>
-                <input type="text" class="form-control" name="nombre"
-                  placeholder="Ej. Camioneta Ford F-150, Laptop Dell Inspiron..." required />
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label">Condición <span class="required">*</span></label>
-                <select class="form-select" name="condicion" required>
-                  <option value="">Seleccionar</option>
-                  <option value="bueno">Bueno</option>
-                  <option value="regular">Regular</option>
-                  <option value="malo">Malo</option>
-                </select>
-              </div>
-            </div>
+          <div class="col-md-6 col-lg-3">
+            <label class="oc-form-label">Condición <span class="required">*</span></label>
+            <select class="form-select" name="condicion" required>
+              <option value="">Seleccionar</option>
+              <option value="bueno">Bueno</option>
+              <option value="regular">Regular</option>
+              <option value="malo">Malo</option>
+            </select>
           </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Responsable</label>
-                <select class="form-select" name="responsable_id" id="responsable">
-                  <option value="">Sin responsable asignado</option>
-                  <?php
-                  if ($result_usuarios && $result_usuarios->num_rows > 0) {
-                    while ($row = $result_usuarios->fetch_assoc()) {
-                      echo '<option value="' . htmlspecialchars($row['id']) . '"'
-                        . ' data-departamento="' . htmlspecialchars($row['departamento_id']) . '">'
-                        . htmlspecialchars($row['nombres'] . ' ' . $row['apellidos']) . '</option>';
-                    }
-                  }
-                  ?>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Departamento</label>
-                <select class="form-select" name="departamento_id" id="departamento">
-                  <option value="">Sin departamento asignado</option>
-                  <?php
-                  if ($result_departamentos && $result_departamentos->num_rows > 0) {
-                    while ($row = $result_departamentos->fetch_assoc()) {
-                      echo '<option value="' . htmlspecialchars($row['id']) . '">'
-                        . htmlspecialchars($row['nombre']) . '</option>';
-                    }
-                  }
-                  ?>
-                </select>
-              </div>
-            </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="oc-form-label">Responsable</label>
+            <select class="form-select" name="responsable_id" id="responsable">
+              <option value="">Sin responsable asignado</option>
+              <?php
+              if ($result_usuarios && $result_usuarios->num_rows > 0) {
+                while ($row = $result_usuarios->fetch_assoc()) {
+                  echo '<option value="' . htmlspecialchars($row['id']) . '"'
+                    . ' data-departamento="' . htmlspecialchars($row['departamento_id']) . '">'
+                    . htmlspecialchars($row['nombres'] . ' ' . $row['apellidos']) . '</option>';
+                }
+              }
+              ?>
+            </select>
           </div>
 
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label">Fecha de Adquisición</label>
-                <input type="date" class="form-control" name="fecha_adquisicion" />
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label">Valor Factura <span class="comentario">(MXN)</span></label>
-                <input type="number" class="form-control" name="valor_factura" placeholder="0.00" step="0.01" min="0" />
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group">
-                <label class="form-label">Vida Útil <span class="comentario">(años)</span></label>
-                <input type="number" class="form-control" name="vida_util" placeholder="0" min="0" />
-              </div>
-            </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="oc-form-label">Departamento</label>
+            <select class="form-select" name="departamento_id" id="departamento">
+              <option value="">Sin departamento asignado</option>
+              <?php
+              if ($result_departamentos && $result_departamentos->num_rows > 0) {
+                while ($row = $result_departamentos->fetch_assoc()) {
+                  echo '<option value="' . htmlspecialchars($row['id']) . '">'
+                    . htmlspecialchars($row['nombre']) . '</option>';
+                }
+              }
+              ?>
+            </select>
           </div>
 
-          <div class="row">
-            <div class="col-md-8">
-              <div class="form-group">
-                <label class="form-label">Ubicación</label>
-                <input type="text" class="form-control" name="ubicacion"
-                  placeholder="Ej. Oficina Ribereña, Almaguer, Obra..." />
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label">Estatus <span class="required">*</span></label>
-                <select class="form-select" name="estatus" required>
-                  <option value="activo">Activo</option>
-                  <option value="inactivo">Inactivo</option>
-                </select>
-              </div>
-            </div>
+          <div class="col-md-12 col-lg-4">
+            <label class="oc-form-label">Estatus <span class="required">*</span></label>
+            <select class="form-select" name="estatus" required>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Notas Generales</label>
+          <div class="col-md-12">
+            <label class="oc-form-label">Notas Generales</label>
             <textarea class="form-control" name="notas" rows="2"
               placeholder="Observaciones, historial de mantenimiento, características adicionales..."></textarea>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- ============================================================ -->
-          <!-- VEHÍCULOS                                                     -->
-          <!-- ============================================================ -->
-          <div id="seccion-vehiculos" class="section-detalle">
-            <div class="section-title"><i class="bi bi-truck"></i> Detalles del Vehículo</div>
-            <small class="text-muted d-block mb-3">
-              <i class="bi bi-info-circle"></i>
-              Tipo de Gravamen: -Libre: Propiedad plena. -Limitado: Propiedad compartida o en proceso de pago. -Con gravamen: Restricción legal o judicial activa.
-            </small>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Marca</label>
-                  <input type="text" class="form-control" name="v_marca" placeholder="Ford, Toyota, Nissan..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Modelo</label>
-                  <input type="text" class="form-control" name="v_modelo" placeholder="F-150, Hilux..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Año</label>
-                  <input type="number" class="form-control" name="v_anio" placeholder="2024" min="1900" max="2099" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label class="form-label">Color</label>
-                  <input type="text" class="form-control" name="v_color" placeholder="Blanco, Rojo..." />
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label class="form-label">Placa</label>
-                  <input type="text" class="form-control" name="v_placa" placeholder="ABC-123-D" />
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label class="form-label">VIN / Número de Serie</label>
-                  <input type="text" class="form-control" name="v_vin" placeholder="17 caracteres..." />
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label class="form-label">Número de Motor</label>
-                  <input type="text" class="form-control" name="v_numero_motor" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Entidad Federativa</label>
-                  <input type="text" class="form-control" name="v_entidad_federativa" placeholder="Tamaulipas, Nuevo León..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Número de Pedimento</label>
-                  <input type="text" class="form-control" name="v_numero_pedimento" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Origen</label>
-                  <select class="form-select" name="v_origen">
-                    <option value="">Seleccionar</option>
-                    <option value="nacional">Nacional</option>
-                    <option value="importado">Importado</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Gravamen</label>
-                  <select class="form-select" name="v_gravamen">
-                    <option value="">Seleccionar</option>
-                    <option value="libre">Libre</option>
-                    <option value="limitado">Limitado</option>
-                    <option value="gravado">Con gravamen</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-8">
-                <div class="form-group">
-                  <label class="form-label">Nombre del Propietario</label>
-                  <input type="text" class="form-control" name="v_nombre_propietario" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Aseguradora <span class="comentario">(México)</span></label>
-                  <input type="text" class="form-control" name="v_nombre_aseguradora_mx" placeholder="Qualitas, Inbursa..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Teléfono Aseguradora <span class="comentario">(México)</span></label>
-                  <input type="text" class="form-control" name="v_telefono_aseguradora_mx" placeholder="800-XXX-XXXX" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Vto. Seguro <span class="comentario">(México)</span></label>
-                  <input type="date" class="form-control" name="v_fecha_vencimiento_seguro_mx" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Aseguradora <span class="comentario">(USA)</span></label>
-                  <input type="text" class="form-control" name="v_nombre_aseguradora_usa" placeholder="GEICO, State Farm..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Teléfono Aseguradora <span class="comentario">(USA)</span></label>
-                  <input type="text" class="form-control" name="v_telefono_aseguradora_usa" placeholder="800-XXX-XXXX" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Vto. Seguro <span class="comentario">(USA)</span></label>
-                  <input type="date" class="form-control" name="v_fecha_vencimiento_seguro_usa" />
-                </div>
-              </div>
-            </div>
+    <!-- ============================================================ -->
+    <!-- VEHÍCULOS                                                     -->
+    <!-- ============================================================ -->
+    <div id="seccion-vehiculos" class="section-detalle oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-truck"></i> Detalles del Vehículo</span>
+      </div>
+      <div class="oc-card-body">
+        <div class="orders-alert orders-alert--info mb-4">
+          <i class="bi bi-info-circle"></i>
+          <span><strong>Gravamen:</strong> -Libre: Propiedad plena. -Limitado: Propiedad compartida/proceso de pago. -Con gravamen: Restricción legal activa.</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="oc-form-label">Marca</label>
+            <input type="text" class="form-control" name="v_marca" placeholder="Ford, Toyota, Nissan..." />
           </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Modelo</label>
+            <input type="text" class="form-control" name="v_modelo" placeholder="F-150, Hilux..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Año</label>
+            <input type="number" class="form-control" name="v_anio" placeholder="2024" min="1900" max="2099" />
+          </div>
+          <div class="col-md-3">
+            <label class="oc-form-label">Color</label>
+            <input type="text" class="form-control" name="v_color" placeholder="Blanco, Rojo..." />
+          </div>
+          <div class="col-md-3">
+            <label class="oc-form-label">Placa</label>
+            <input type="text" class="form-control" name="v_placa" placeholder="ABC-123-D" />
+          </div>
+          <div class="col-md-3">
+            <label class="oc-form-label">VIN / Número de Serie</label>
+            <input type="text" class="form-control" name="v_vin" placeholder="17 caracteres..." />
+          </div>
+          <div class="col-md-3">
+            <label class="oc-form-label">Número de Motor</label>
+            <input type="text" class="form-control" name="v_numero_motor" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Entidad Federativa</label>
+            <input type="text" class="form-control" name="v_entidad_federativa" placeholder="Tamaulipas, Nuevo León..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Número de Pedimento</label>
+            <input type="text" class="form-control" name="v_numero_pedimento" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Origen</label>
+            <select class="form-select" name="v_origen">
+              <option value="">Seleccionar</option>
+              <option value="nacional">Nacional</option>
+              <option value="importado">Importado</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Gravamen</label>
+            <select class="form-select" name="v_gravamen">
+              <option value="">Seleccionar</option>
+              <option value="libre">Libre</option>
+              <option value="limitado">Limitado</option>
+              <option value="gravado">Con gravamen</option>
+            </select>
+          </div>
+          <div class="col-md-8">
+            <label class="oc-form-label">Nombre del Propietario</label>
+            <input type="text" class="form-control" name="v_nombre_propietario" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Aseguradora <span class="comentario">(México)</span></label>
+            <input type="text" class="form-control" name="v_nombre_aseguradora_mx" placeholder="Qualitas, Inbursa..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Teléfono Aseguradora <span class="comentario">(México)</span></label>
+            <input type="text" class="form-control" name="v_telefono_aseguradora_mx" placeholder="800-XXX-XXXX" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Vto. Seguro <span class="comentario">(México)</span></label>
+            <input type="date" class="form-control" name="v_fecha_vencimiento_seguro_mx" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Aseguradora <span class="comentario">(USA)</span></label>
+            <input type="text" class="form-control" name="v_nombre_aseguradora_usa" placeholder="GEICO, State Farm..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Teléfono Aseguradora <span class="comentario">(USA)</span></label>
+            <input type="text" class="form-control" name="v_telefono_aseguradora_usa" placeholder="800-XXX-XXXX" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Vto. Seguro <span class="comentario">(USA)</span></label>
+            <input type="date" class="form-control" name="v_fecha_vencimiento_seguro_usa" />
+          </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- ============================================================ -->
-          <!-- MAQUINARIA                                                    -->
-          <!-- ============================================================ -->
-          <div id="seccion-maquinaria" class="section-detalle">
-            <div class="section-title"><i class="bi bi-gear-wide-connected"></i> Detalles de Maquinaria</div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Marca</label>
-                  <input type="text" class="form-control" name="m_marca" placeholder="Caterpillar, Komatsu..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Modelo</label>
-                  <input type="text" class="form-control" name="m_modelo" placeholder="D6T, PC200..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Número de Serie</label>
-                  <input type="text" class="form-control" name="m_numero_serie" />
-                </div>
+    <!-- ============================================================ -->
+    <!-- MAQUINARIA                                                    -->
+    <!-- ============================================================ -->
+    <div id="seccion-maquinaria" class="section-detalle oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-gear-wide-connected"></i> Detalles de Maquinaria</span>
+      </div>
+      <div class="oc-card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="oc-form-label">Marca</label>
+            <input type="text" class="form-control" name="m_marca" placeholder="Caterpillar, Komatsu..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Modelo</label>
+            <input type="text" class="form-control" name="m_modelo" placeholder="D6T, PC200..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Número de Serie</label>
+            <input type="text" class="form-control" name="m_numero_serie" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Kilometraje / Horómetro</label>
+            <input type="number" class="form-control" name="m_kilometraje" placeholder="0" min="0" />
+          </div>
+          <div class="col-md-8">
+            <label class="oc-form-label">Foto Motor</label>
+            <div class="file-drop-zone" id="zone_m_foto_motor">
+              <input type="file" id="input_m_foto_motor"
+                accept="image/*"
+                onchange="handleFile(this,'m_foto_motor','imagen',false)" />
+              <div class="file-drop-label">
+                <i class="bi bi-camera"></i>
+                <span>Seleccionar imagen del motor (máx. 10 MB)</span>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Kilometraje / Horómetro</label>
-                  <input type="number" class="form-control" name="m_kilometraje" placeholder="0" min="0" />
-                </div>
-              </div>
-              <div class="col-md-8">
-                <div class="form-group">
-                  <label class="form-label">Foto Motor</label>
-                  <div class="file-drop-zone" id="zone_m_foto_motor">
-                    <input type="file" id="input_m_foto_motor"
-                      accept="image/*"
-                      onchange="handleFile(this,'m_foto_motor','imagen',false)" />
-                    <div class="file-drop-label">
-                      <i class="bi bi-camera"></i>
-                      <span>Seleccionar imagen del motor (máx. 10 MB)</span>
-                    </div>
+            <div class="file-chips" id="chips_m_foto_motor"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MOBILIARIO                                                    -->
+    <!-- ============================================================ -->
+    <div id="seccion-mobiliario" class="section-detalle oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-archive"></i> Detalles de Mobiliario</span>
+      </div>
+      <div class="oc-card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="oc-form-label">Marca</label>
+            <input type="text" class="form-control" name="mob_marca" placeholder="Ikea, Steelcase..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Modelo</label>
+            <input type="text" class="form-control" name="mob_modelo" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Número de Items</label>
+            <input type="number" class="form-control" name="mob_numero_items" placeholder="1" min="1" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Medida Aproximada</label>
+            <input type="text" class="form-control" name="mob_medida_aprox" placeholder="1.80 x 0.80 m" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Edificio</label>
+            <input type="text" class="form-control" name="mob_edificio" placeholder="Edificio A, Torre Norte..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Área / Departamento</label>
+            <input type="text" class="form-control" name="mob_area_departamento" placeholder="Recursos Humanos, Gerencia..." />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Dirección</label>
+            <input type="text" class="form-control" name="mob_direccion" placeholder="Calle, número, colonia..." />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Descripción</label>
+            <textarea class="form-control" name="mob_descripcion" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- INMUEBLES                                                     -->
+    <!-- ============================================================ -->
+    <div id="seccion-inmuebles" class="section-detalle oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-building"></i> Detalles del Inmueble</span>
+      </div>
+      <div class="oc-card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="oc-form-label">Tipo de Inmueble</label>
+            <input type="text" class="form-control" name="inm_tipo" placeholder="Oficina, Bodega, Terreno..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Tipo de Posesión</label>
+            <input type="text" class="form-control" name="inm_tipo_posesion" placeholder="Propio, Arrendado, Comodato..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Uso</label>
+            <input type="text" class="form-control" name="inm_uso" placeholder="Habitacional, Comercial, Industrial..." />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Dirección</label>
+            <input type="text" class="form-control" name="inm_direccion" />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Coordenadas GPS</label>
+            <input type="text" class="form-control" name="inm_coordenadas" placeholder="29.0729° N, 110.9559° W" />
+          </div>
+          <div class="col-md-3">
+            <label class="oc-form-label">Superficie Terreno (m²)</label>
+            <input type="number" class="form-control" name="inm_superficie_terreno" placeholder="0.00" step="0.01" min="0" />
+          </div>
+          <div class="col-md-3">
+            <label class="oc-form-label">Superficie Construida (m²)</label>
+            <input type="number" class="form-control" name="inm_superficie_construida" placeholder="0.00" step="0.01" min="0" />
+          </div>
+          <div class="col-md-2">
+            <label class="oc-form-label">Niveles</label>
+            <input type="number" class="form-control" name="inm_niveles" placeholder="1" min="0" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Valor Terreno</label>
+            <input type="number" class="form-control" name="inm_valor_terreno" placeholder="0.00" step="0.01" min="0" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Folio RPP</label>
+            <input type="text" class="form-control" name="inm_folio_rpp" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Predial</label>
+            <input type="text" class="form-control" name="inm_predial" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Estatus Legal</label>
+            <input type="text" class="form-control" name="inm_estatus_legal" />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Responsable Administrativo</label>
+            <input type="text" class="form-control" name="inm_responsable_administrativo" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- HERRAMIENTAS                                                  -->
+    <!-- ============================================================ -->
+    <div id="seccion-herramientas" class="section-detalle oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-tools"></i> Detalles de Herramienta</span>
+      </div>
+      <div class="oc-card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="oc-form-label">Marca</label>
+            <input type="text" class="form-control" name="h_marca" placeholder="Dewalt, Bosch, Stanley..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Modelo</label>
+            <input type="text" class="form-control" name="h_modelo" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Número de Serie</label>
+            <input type="text" class="form-control" name="h_numero_serie" />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Asignación</label>
+            <input type="text" class="form-control" name="h_asignacion" />
+          </div>
+          <div class="col-md-6">
+            <label class="oc-form-label">Ubicación</label>
+            <input type="text" class="form-control" name="h_ubicacion_fisica" />
+          </div>
+          <div class="col-12 mt-3">
+            <label class="oc-form-label">Descripción</label>
+            <textarea class="form-control" name="h_descripcion" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TICs                                                          -->
+    <!-- ============================================================ -->
+    <div id="seccion-tics" class="section-detalle oc-card">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="bi bi-laptop"></i> Detalles de TICs</span>
+      </div>
+      <div class="oc-card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="oc-form-label">Marca</label>
+            <input type="text" class="form-control" name="t_marca" placeholder="Dell, HP, Apple..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Modelo</label>
+            <input type="text" class="form-control" name="t_modelo" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Número de Serie</label>
+            <input type="text" class="form-control" name="t_numero_serie" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Sistema Operativo</label>
+            <input type="text" class="form-control" name="t_sistema_operativo" placeholder="Windows 11, macOS 14..." />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Procesador</label>
+            <input type="text" class="form-control" name="t_procesador" />
+          </div>
+          <div class="col-md-2">
+            <label class="oc-form-label">RAM</label>
+            <input type="text" class="form-control" name="t_ram" placeholder="16 GB" />
+          </div>
+          <div class="col-md-2">
+            <label class="oc-form-label">Almacenamiento</label>
+            <input type="text" class="form-control" name="t_almacenamiento" placeholder="512 GB SSD" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Office / Suite</label>
+            <input type="text" class="form-control" name="t_office" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Correo Asignado</label>
+            <input type="email" class="form-control" name="t_correo" />
+          </div>
+          <div class="col-md-4">
+            <label class="oc-form-label">Ubicación Física</label>
+            <input type="text" class="form-control" name="t_ubicacion_fisica" />
+          </div>
+          <div class="col-md-6 mt-3">
+            <label class="oc-form-label">Programas Instalados</label>
+            <textarea class="form-control" name="t_programas_instalados" rows="2"></textarea>
+          </div>
+          <div class="col-md-6 mt-3">
+            <label class="oc-form-label">Complementos / Accesorios</label>
+            <textarea class="form-control" name="t_complementos" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOUBLE COLUMN FORM LAYOUT -->
+    <div class="oc-form-layout">
+      <div class="oc-form-layout-main">
+
+        <!-- CARD: IMÁGENES -->
+        <div class="oc-card">
+          <div class="oc-card-header">
+            <span class="oc-card-header__title"><i class="bi bi-card-image"></i> Imágenes del Activo</span>
+          </div>
+          <div class="oc-card-body">
+            <div class="row g-3">
+              <div class="col-12 mb-3">
+                <label class="oc-form-label">Foto Principal</label>
+                <div class="file-drop-zone" id="zone_img_foto_principal">
+                  <input type="file" id="input_img_foto_principal"
+                    accept=".jpg,.jpeg,.png,.gif,.webp"
+                    onchange="handleFile(this,'img_foto_principal','imagen',false)" />
+                  <div class="file-drop-label">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <span>Haz clic para seleccionar o arrastra la foto principal (máx. 10 MB)</span>
                   </div>
-                  <div class="file-chips" id="chips_m_foto_motor"></div>
                 </div>
+                <div class="file-chips" id="chips_img_foto_principal"></div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="oc-form-label">Fotos Generales</label>
+                <div class="file-drop-zone">
+                  <input type="file" id="input_img_foto_general" accept=".jpg,.jpeg,.png,.gif,.webp" multiple onchange="handleFile(this,'img_foto_general','imagen',true)" />
+                  <div class="file-drop-label"><i class="bi bi-images"></i><span>Fotos generales</span></div>
+                </div>
+                <div class="file-chips" id="chips_img_foto_general"></div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="oc-form-label">Foto de Placa</label>
+                <div class="file-drop-zone">
+                  <input type="file" id="input_img_foto_placa" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_placa','imagen',false)" />
+                  <div class="file-drop-label"><i class="bi bi-camera"></i><span>Foto placa</span></div>
+                </div>
+                <div class="file-chips" id="chips_img_foto_placa"></div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="oc-form-label">Foto de Número de Serie</label>
+                <div class="file-drop-zone">
+                  <input type="file" id="input_img_foto_numero_serie" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_numero_serie','imagen',false)" />
+                  <div class="file-drop-label"><i class="bi bi-camera"></i><span>Foto serie</span></div>
+                </div>
+                <div class="file-chips" id="chips_img_foto_numero_serie"></div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- ============================================================ -->
-          <!-- MOBILIARIO                                                    -->
-          <!-- ============================================================ -->
-          <div id="seccion-mobiliario" class="section-detalle">
-            <div class="section-title"><i class="bi bi-archive"></i> Detalles de Mobiliario</div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Marca</label>
-                  <input type="text" class="form-control" name="mob_marca" placeholder="Ikea, Steelcase..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Modelo</label>
-                  <input type="text" class="form-control" name="mob_modelo" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Número de Items</label>
-                  <input type="number" class="form-control" name="mob_numero_items" placeholder="1" min="1" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Medida Aproximada</label>
-                  <input type="text" class="form-control" name="mob_medida_aprox" placeholder="1.80 x 0.80 m" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Edificio</label>
-                  <input type="text" class="form-control" name="mob_edificio" placeholder="Edificio A, Torre Norte..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Área / Departamento</label>
-                  <input type="text" class="form-control" name="mob_area_departamento" placeholder="Recursos Humanos, Gerencia..." />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Dirección</label>
-                  <input type="text" class="form-control" name="mob_direccion" placeholder="Calle, número, colonia..." />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Descripción</label>
-                  <textarea class="form-control" name="mob_descripcion" rows="2"></textarea>
-                </div>
-              </div>
-            </div>
+        <!-- CARD: EXPEDIENTE DIGITAL -->
+        <div class="oc-card">
+          <div class="oc-card-header">
+            <span class="oc-card-header__title"><i class="bi bi-file-earmark-pdf"></i> Expediente Digital (Documentos)</span>
           </div>
+          <div class="oc-card-body">
+            <div class="orders-alert orders-alert--info mb-3">
+              <i class="bi bi-info-circle"></i>
+              <span>Cargue documentos PDF, Word o imagen. Máx. 10 MB por archivo (Catálogo hasta 1 GB).</span>
+            </div>
 
-          <!-- ============================================================ -->
-          <!-- INMUEBLES                                                     -->
-          <!-- ============================================================ -->
-          <div id="seccion-inmuebles" class="section-detalle">
-            <div class="section-title"><i class="bi bi-building"></i> Detalles del Inmueble</div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Tipo de Inmueble</label>
-                  <input type="text" class="form-control" name="inm_tipo" placeholder="Oficina, Bodega, Terreno..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Tipo de Posesión</label>
-                  <input type="text" class="form-control" name="inm_tipo_posesion" placeholder="Propio, Arrendado, Comodato..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Uso</label>
-                  <input type="text" class="form-control" name="inm_uso" placeholder="Habitacional, Comercial, Industrial..." />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Dirección</label>
-                  <input type="text" class="form-control" name="inm_direccion" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Coordenadas GPS</label>
-                  <input type="text" class="form-control" name="inm_coordenadas" placeholder="29.0729° N, 110.9559° W" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label class="form-label">Superficie Terreno (mÂ²)</label>
-                  <input type="number" class="form-control" name="inm_superficie_terreno" placeholder="0.00" step="0.01" min="0" />
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label class="form-label">Superficie Construida (mÂ²)</label>
-                  <input type="number" class="form-control" name="inm_superficie_construida" placeholder="0.00" step="0.01" min="0" />
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label class="form-label">Niveles</label>
-                  <input type="number" class="form-control" name="inm_niveles" placeholder="1" min="0" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Valor Terreno</label>
-                  <input type="number" class="form-control" name="inm_valor_terreno" placeholder="0.00" step="0.01" min="0" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Folio RPP</label>
-                  <input type="text" class="form-control" name="inm_folio_rpp" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Predial</label>
-                  <input type="text" class="form-control" name="inm_predial" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Estatus Legal</label>
-                  <input type="text" class="form-control" name="inm_estatus_legal" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Responsable Administrativo</label>
-                  <input type="text" class="form-control" name="inm_responsable_administrativo" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ============================================================ -->
-          <!-- HERRAMIENTAS                                                  -->
-          <!-- ============================================================ -->
-          <div id="seccion-herramientas" class="section-detalle">
-            <div class="section-title"><i class="bi bi-tools"></i> Detalles de Herramienta</div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Marca</label>
-                  <input type="text" class="form-control" name="h_marca" placeholder="Dewalt, Bosch, Stanley..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Modelo</label>
-                  <input type="text" class="form-control" name="h_modelo" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Número de Serie</label>
-                  <input type="text" class="form-control" name="h_numero_serie" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Asignación</label>
-                  <input type="text" class="form-control" name="h_asignacion" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Ubicación</label>
-                  <input type="text" class="form-control" name="h_ubicacion_fisica" />
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Descripción</label>
-              <textarea class="form-control" name="h_descripcion" rows="2"></textarea>
-            </div>
-          </div>
-
-          <!-- ============================================================ -->
-          <!-- TICs                                                          -->
-          <!-- ============================================================ -->
-          <div id="seccion-tics" class="section-detalle">
-            <div class="section-title"><i class="bi bi-laptop"></i> Detalles de TICs</div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Marca</label>
-                  <input type="text" class="form-control" name="t_marca" placeholder="Dell, HP, Apple..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Modelo</label>
-                  <input type="text" class="form-control" name="t_modelo" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Número de Serie</label>
-                  <input type="text" class="form-control" name="t_numero_serie" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Sistema Operativo</label>
-                  <input type="text" class="form-control" name="t_sistema_operativo" placeholder="Windows 11, macOS 14..." />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Procesador</label>
-                  <input type="text" class="form-control" name="t_procesador" />
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label class="form-label">RAM</label>
-                  <input type="text" class="form-control" name="t_ram" placeholder="16 GB" />
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label class="form-label">Almacenamiento</label>
-                  <input type="text" class="form-control" name="t_almacenamiento" placeholder="512 GB SSD" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Office / Suite</label>
-                  <input type="text" class="form-control" name="t_office" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Correo Asignado</label>
-                  <input type="email" class="form-control" name="t_correo" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-label">Ubicación Física</label>
-                  <input type="text" class="form-control" name="t_ubicacion_fisica" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Programas Instalados</label>
-                  <textarea class="form-control" name="t_programas_instalados" rows="2"></textarea>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label">Complementos / Accesorios</label>
-                  <textarea class="form-control" name="t_complementos" rows="2"></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ============================================================ -->
-          <!-- DOCUMENTOS                                                    -->
-          <!-- ============================================================ -->
-          <div class="section-title"><i class="bi bi-paperclip"></i> Documentos</div>
-          <small class="text-muted d-block mb-4">
-            <i class="bi bi-info-circle"></i>
-            Todos los campos son opcionales. Máximo 10 MB por archivo (catálogo de refacciones hasta 1 GB).
-          </small>
-
-          <div class="row">
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Factura / Comprobante de Compra</label>
+            <div class="mb-3">
+              <label class="oc-form-label">Factura / Comprobante de Compra</label>
               <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen</span></div>
               </div>
               <div class="file-chips" id="chips_doc_factura"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Pedimento</label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Pedimento de Importación</label>
               <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word</span></div>
               </div>
               <div class="file-chips" id="chips_doc_pedimento"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Póliza de Seguro <span class="comentario">(México)</span></label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Póliza de Seguro <span class="comentario">(México)</span></label>
               <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen</span></div>
               </div>
               <div class="file-chips" id="chips_doc_poliza_seguro"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
               <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF, Word o imagen</span></div>
               </div>
               <div class="file-chips" id="chips_doc_poliza_seguro_usa"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Manual de Usuario / Operación</label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Manual de Usuario / Operación</label>
               <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word</span></div>
               </div>
               <div class="file-chips" id="chips_doc_manual"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Manual de Mantenimiento</label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Manual de Mantenimiento</label>
               <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word</span></div>
               </div>
               <div class="file-chips" id="chips_doc_manual_mantenimiento"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
               <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 1 GB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word</span></div>
               </div>
               <div class="file-chips" id="chips_doc_catalogo_refacciones"></div>
             </div>
-            <div class="col-md-6 doc-item mb-3">
-              <label class="form-label">Contrato / Escritura</label>
+
+            <div class="mb-3">
+              <label class="oc-form-label">Contrato / Escritura</label>
               <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word (máx. 10 MB)</span></div>
+                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>PDF o Word</span></div>
               </div>
               <div class="file-chips" id="chips_doc_contrato"></div>
             </div>
           </div>
+        </div>
 
-          <!-- ============================================================ -->
-          <!-- IMÁGENES                                                      -->
-          <!-- ============================================================ -->
-          <div class="section-title"><i class="bi bi-card-image"></i> Imágenes</div>
-          <div class="row">
-            <div class="col-md-4 doc-item mb-3">
-              <label class="form-label">Fotos Generales</label>
-              <div class="file-drop-zone"><input type="file" id="input_img_foto_general" accept=".jpg,.jpeg,.png,.gif,.webp" multiple onchange="handleFile(this,'img_foto_general','imagen',true)" />
-                <div class="file-drop-label"><i class="bi bi-images"></i><span>Varias imágenes (máx. 10 MB c/u)</span></div>
+        <!-- CARD: EXPEDIENTE FISCAL Y EXTRA -->
+        <div class="oc-card">
+          <div class="oc-card-header">
+            <span class="oc-card-header__title"><i class="bi bi-folder-plus"></i> Carpetas de Control Dinámico</span>
+          </div>
+          <div class="oc-card-body">
+            <div class="mb-4">
+              <label class="oc-form-label"><i class="bi bi-hash"></i> Control Fiscal / Tenencias / Predial</label>
+              <small class="text-muted d-block mb-2">Máx. 10 archivos, 10 MB c/u.</small>
+              <div class="input-group">
+                <input type="file" class="form-control" id="singleFileInputFiscal" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+                <button class="btn-geco-secondary" type="button" onclick="agregarAdjunto('fiscal')">
+                  <i class="bi bi-plus-circle"></i> Agregar
+                </button>
               </div>
-              <div class="file-chips" id="chips_img_foto_general"></div>
-            </div>
-            <div class="col-md-4 doc-item mb-3">
-              <label class="form-label">Foto de Placa</label>
-              <div class="file-drop-zone"><input type="file" id="input_img_foto_placa" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_placa','imagen',false)" />
-                <div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (máx. 10 MB)</span></div>
+              <div id="adjuntosContainerFiscal" class="mt-2">
+                <h6 class="mb-2">Archivos agregados: <span id="contadorFiscal" class="badge bg-secondary">0</span></h6>
+                <div id="adjuntosListFiscal">
+                  <p class="text-muted text-center small mb-0"><i class="bi bi-inbox"></i> No hay archivos</p>
+                </div>
               </div>
-              <div class="file-chips" id="chips_img_foto_placa"></div>
             </div>
-            <div class="col-md-4 doc-item mb-3">
-              <label class="form-label">Foto de Número de Serie</label>
-              <div class="file-drop-zone"><input type="file" id="input_img_foto_numero_serie" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="handleFile(this,'img_foto_numero_serie','imagen',false)" />
-                <div class="file-drop-label"><i class="bi bi-camera"></i><span>JPG, PNG o WebP (máx. 10 MB)</span></div>
+
+            <div>
+              <label class="oc-form-label"><i class="bi bi-plus-square"></i> Documentación Extra / Adicional</label>
+              <small class="text-muted d-block mb-2">Máx. 10 archivos, 10 MB c/u.</small>
+              <div class="input-group">
+                <input type="file" class="form-control" id="singleFileInputExtra" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+                <button class="btn-geco-secondary" type="button" onclick="agregarAdjunto('extra')">
+                  <i class="bi bi-plus-circle"></i> Agregar
+                </button>
               </div>
-              <div class="file-chips" id="chips_img_foto_numero_serie"></div>
-            </div>
-          </div>
-
-          <!-- ============================================================ -->
-          <!-- EXPEDIENTE FISCAL                                             -->
-          <!-- ============================================================ -->
-          <div class="section-title"><i class="bi bi-paperclip"></i> Expediente de Control Fiscal y Tenencia / Predial</div>
-          <div class="form-group">
-            <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> Máx. 10 archivos, 10 MB c/u.</small>
-            <div class="input-group">
-              <input type="file" class="form-control" id="singleFileInputFiscal"
-                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
-              <button class="btn btn-primary" type="button" onclick="agregarAdjunto('fiscal')"
-                style="background:#113456; transform:none;">
-                <i class="bi bi-plus-circle"></i> Agregar
-              </button>
-            </div>
-          </div>
-          <div id="adjuntosContainerFiscal" class="mt-2 mb-3">
-            <h6 class="mb-2">Archivos: <span id="contadorFiscal">0</span></h6>
-            <div id="adjuntosListFiscal">
-              <p class="text-muted text-center small"><i class="bi bi-inbox"></i> No hay archivos</p>
-            </div>
-          </div>
-
-          <!-- ============================================================ -->
-          <!-- DOCUMENTACIÓN EXTRA                                           -->
-          <!-- ============================================================ -->
-          <div class="section-title"><i class="bi bi-paperclip"></i> Documentación Extra</div>
-          <div class="form-group">
-            <small class="text-muted d-block mb-3"><i class="bi bi-info-circle"></i> Máx. 10 archivos, 10 MB c/u.</small>
-            <div class="input-group">
-              <input type="file" class="form-control" id="singleFileInputExtra"
-                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
-              <button class="btn btn-primary" type="button" onclick="agregarAdjunto('extra')"
-                style="background:#113456; transform:none;">
-                <i class="bi bi-plus-circle"></i> Agregar
-              </button>
-            </div>
-          </div>
-          <div id="adjuntosContainerExtra" class="mt-2 mb-3">
-            <h6 class="mb-2">Archivos: <span id="contadorExtra">0</span></h6>
-            <div id="adjuntosListExtra">
-              <p class="text-muted text-center small"><i class="bi bi-inbox"></i> No hay archivos</p>
-            </div>
-          </div>
-
-          <!-- ===== GUARDAR ===== -->
-          <div class="form-actions mt-3">
-            <div class="send-otxt">Verifique que toda la información sea correcta antes de guardar el registro.</div>
-            <div class="container overflow-hidden text-center">
-              <div class="row gx-5">
-                <div class="col">
-                  <div class="p-3">
-                    <button type="submit" class="button-57" id="btnGuardar">
-                      <i class="bi bi-floppy"></i> Guardar Activo
-                    </button>
-                  </div>
+              <div id="adjuntosContainerExtra" class="mt-2">
+                <h6 class="mb-2">Archivos agregados: <span id="contadorExtra" class="badge bg-secondary">0</span></h6>
+                <div id="adjuntosListExtra">
+                  <p class="text-muted text-center small mb-0"><i class="bi bi-inbox"></i> No hay archivos</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-        </form>
+      </div>
+
+      <div class="oc-form-layout-side">
+
+        <!-- CARD: INVERSIÓN Y FECHAS -->
+        <div class="oc-card">
+          <div class="oc-card-header">
+            <span class="oc-card-header__title"><i class="bi bi-wallet2"></i> Inversión y Ubicación</span>
+          </div>
+          <div class="oc-card-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="oc-form-label">Fecha de Adquisición</label>
+                <input type="date" class="form-control" name="fecha_adquisicion" />
+              </div>
+              <div class="col-12">
+                <label class="oc-form-label">Valor Factura <span class="comentario">(MXN)</span></label>
+                <input type="number" class="form-control" name="valor_factura" placeholder="0.00" step="0.01" min="0" />
+              </div>
+              <div class="col-12">
+                <label class="oc-form-label">Vida Útil <span class="comentario">(años)</span></label>
+                <input type="number" class="form-control" name="vida_util" placeholder="0" min="0" />
+              </div>
+              <div class="col-12">
+                <label class="oc-form-label">Ubicación Física</label>
+                <input type="text" class="form-control" name="ubicacion" placeholder="Ej. Oficina Ribereña, Almaguer, Obra..." />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCIONES DE ENVÍO -->
+        <div class="oc-card">
+          <div class="oc-card-body">
+            <p class="oc-form-submit-note mb-3"><i class="bi bi-info-circle"></i> Esta ficha será almacenada en la base de datos de activos de GECO.</p>
+            <div class="oc-form-submit-actions">
+              <button type="submit" class="btn-geco-primary w-100" id="btnGuardar">
+                <i class="bi bi-floppy"></i> Guardar Activo
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>
 
-  <div class="fab-container-backbtn">
-    <a onclick="history.back()" class="fab-button-backbtn gray">
-      <i class="bi bi-arrow-left"></i>
-      <span class="fab-tooltip-backbtn">Volver</span>
-    </a>
-  </div>
+  </form>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"

@@ -20,12 +20,16 @@ $r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra");
 $oc_total = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra WHERE estado = 'pendiente'");
 $oc_pendientes = $r->fetch_assoc()['total'];
+$r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra WHERE estado = 'revisado'");
+$oc_revisadas = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra WHERE estado = 'aprobado'");
 $oc_aprobadas = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra WHERE estado = 'rechazado'");
 $oc_rechazadas = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra WHERE estado = 'pagado'");
 $oc_pagadas = $r->fetch_assoc()['total'];
+$r = $conn->query("SELECT COUNT(*) AS total FROM ordenes_compra WHERE estado = 'devuelto'");
+$oc_devueltas = $r->fetch_assoc()['total'];
 $r = $conn->query("SELECT COALESCE(SUM(total),0) AS monto FROM ordenes_compra WHERE estado NOT IN ('rechazado')");
 $oc_monto = $r->fetch_assoc()['monto'];
 
@@ -130,150 +134,161 @@ function pct($part, $total)
 }
 
 $tipo_colores = [
-    ['#00c9a7', '#00a383'],
-    ['#4db8ff', '#2096e0'],
-    ['#f4b942', '#d49520'],
-    ['#a78bfa', '#7c5fe0'],
-    ['#e8445a', '#c02040'],
-    ['#fb923c', '#d46010'],
+    ['#16a34a', '#15803d'], // GECO Green
+    ['#2563eb', '#1d4ed8'], // GECO Blue
+    ['#d97706', '#b45309'], // GECO Gold
+    ['#7c3aed', '#6d28d9'], // GECO Purple
+    ['#e11d48', '#be123c'], // GECO Rose
+    ['#ea580c', '#c2410c'], // GECO Orange
 ];
 ?>
-<!DOCTYPE html>
-<html lang="es">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/dashboard.css">
-</head>
+<?php include __DIR__ . "/includes/navbar.php"; ?>
 
-<body>
+<div class="orders-page-container">
 
-    <?php
-
-    include __DIR__ . "/includes/navbar.php"; ?>
-
-    <div class="hero-section">
-        <div class="container hero-content">
-            <div class="breadcrumb-custom">
-                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-                <span>/</span>
+    <!-- Page Header -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
                 <span>Panel de Control</span>
-            </div>
-            <div class="row align-items-end">
-                <div class="col-lg-8">
-                    <h1 class="hero-title">Panel de Control</h1>
-                </div>
-            </div>
+            </nav>
+            <h1 class="orders-page-title">Panel de Control</h1>
         </div>
     </div>
 
-    <div class="content-wrapper">
-        <div class="form-container">
 
             <!-- KPIs PRINCIPALES -->
-            <div class="section-label">Resumen general</div>
-            <div class="grid-stats mb-section">
-                <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
-                    <div class="kpi-card c-green fade-up delay-1">
-                        <i class="bi bi-folder2-open kpi-icon"></i>
-                        <div class="kpi-label">Proyectos</div>
-                        <div class="kpi-value"><?= $proyectos_vigentes ?></div>
-                        <div class="kpi-sub">
-                            <?= $proyectos_total ?> totales &nbsp;·&nbsp;
-                            <span><?= $proyectos_terminados ?> terminados</span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="<?= BASE_URL ?>/projects/list_obras.php" class="kpi-card-link">
-                    <div class="kpi-card c-gold fade-up delay-2">
-                        <i class="bi bi-building kpi-icon"></i>
-                        <div class="kpi-label">Obras Registradas</div>
-                        <div class="kpi-value"><?= $obras_total ?></div>
-                        <div class="kpi-sub">Frentes de trabajo activos</div>
-                    </div>
-                </a>
-
-                <a href="<?= BASE_URL ?>/orders/list_oc.php" class="kpi-card-link">
-                    <div class="kpi-card c-sky fade-up delay-3">
-                        <i class="bi bi-cart3 kpi-icon"></i>
-                        <div class="kpi-label">Órdenes de Compra</div>
-                        <div class="kpi-value"><?= $oc_total ?></div>
-                        <div class="kpi-sub">Monto: <?= fmt($oc_monto) ?></div>
-                    </div>
-                </a>
-
-                <a href="<?= BASE_URL ?>/orders/list_requis.php" class="kpi-card-link">
-                    <div class="kpi-card c-purple fade-up delay-4">
-                        <i class="bi bi-clipboard-check kpi-icon"></i>
-                        <div class="kpi-label">Requisiciones</div>
-                        <div class="kpi-value"><?= $req_total ?></div>
-                        <div class="kpi-sub"><?= $req_pendientes ?> pendientes de revisión</div>
-                    </div>
-                </a>
-
-                <div class="kpi-card c-rose fade-up delay-1">
-                    <i class="bi bi-person-badge kpi-icon"></i>
-                    <div class="kpi-label">Subcontratos</div>
-                    <div class="kpi-value"><?= $subcontratos_total ?></div>
-                    <div class="kpi-sub">Contratos externos vigentes</div>
+            <div class="oc-card mb-section fade-up delay-1">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-grid-fill"></i> Resumen general</span>
                 </div>
+                <div class="oc-card-body" style="padding: 24px;">
+                    <div class="grid-stats">
+                        <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
+                            <div class="kpi-card c-green">
+                                <i class="bi bi-folder2-open kpi-icon"></i>
+                                <div class="kpi-label">Proyectos</div>
+                                <div class="kpi-value"><?= $proyectos_vigentes ?></div>
+                                <div class="kpi-sub">
+                                    <?= $proyectos_total ?> totales &nbsp;·&nbsp;
+                                    <span><?= $proyectos_terminados ?> terminados</span>
+                                </div>
+                            </div>
+                        </a>
 
-                <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
-                    <div class="kpi-card c-gold fade-up delay-2">
-                        <i class="bi bi-boxes kpi-icon"></i>
-                        <div class="kpi-label">Activos</div>
-                        <div class="kpi-value"><?= $activos_activos ?></div>
-                        <div class="kpi-sub">Valor: <?= fmt($activos_valor_total) ?></div>
-                    </div>
-                </a>
+                        <a href="<?= BASE_URL ?>/projects/list_obras.php" class="kpi-card-link">
+                            <div class="kpi-card c-gold">
+                                <i class="bi bi-building kpi-icon"></i>
+                                <div class="kpi-label">Obras Registradas</div>
+                                <div class="kpi-value"><?= $obras_total ?></div>
+                                <div class="kpi-sub">Frentes de trabajo activos</div>
+                            </div>
+                        </a>
 
-                <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
-                    <div class="kpi-card c-purple fade-up delay-3">
-                        <i class="bi bi-people kpi-icon"></i>
-                        <div class="kpi-label">Usuarios</div>
-                        <div class="kpi-value"><?= $usuarios_activos ?></div>
-                        <div class="kpi-sub">Personal en el sistema</div>
+                        <a href="<?= BASE_URL ?>/orders/list_oc.php" class="kpi-card-link">
+                            <div class="kpi-card c-sky">
+                                <i class="bi bi-cart3 kpi-icon"></i>
+                                <div class="kpi-label">Órdenes de Compra</div>
+                                <div class="kpi-value"><?= $oc_total ?></div>
+                                <div class="kpi-sub">Monto: <?= fmt($oc_monto) ?></div>
+                            </div>
+                        </a>
+
+                        <a href="<?= BASE_URL ?>/orders/list_requis.php" class="kpi-card-link">
+                            <div class="kpi-card c-purple">
+                                <i class="bi bi-clipboard-check kpi-icon"></i>
+                                <div class="kpi-label">Requisiciones</div>
+                                <div class="kpi-value"><?= $req_total ?></div>
+                                <div class="kpi-sub"><?= $req_pendientes ?> pendientes de revisión</div>
+                            </div>
+                        </a>
+
+                        <div class="kpi-card c-rose">
+                            <i class="bi bi-person-badge kpi-icon"></i>
+                            <div class="kpi-label">Subcontratos</div>
+                            <div class="kpi-value"><?= $subcontratos_total ?></div>
+                            <div class="kpi-sub">Contratos externos vigentes</div>
+                        </div>
+
+                        <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
+                            <div class="kpi-card c-gold">
+                                <i class="bi bi-boxes kpi-icon"></i>
+                                <div class="kpi-label">Activos</div>
+                                <div class="kpi-value"><?= $activos_activos ?></div>
+                                <div class="kpi-sub">Valor: <?= fmt($activos_valor_total) ?></div>
+                            </div>
+                        </a>
+
+                        <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
+                            <div class="kpi-card c-purple">
+                                <i class="bi bi-people kpi-icon"></i>
+                                <div class="kpi-label">Usuarios</div>
+                                <div class="kpi-value"><?= $usuarios_activos ?></div>
+                                <div class="kpi-sub">Personal en el sistema</div>
+                            </div>
+                        </a>
                     </div>
-                </a>
+                </div>
             </div>
 
             <!-- OC ESTADOS -->
-            <div class="section-label">Órdenes de compra · estado actual</div>
-            <div class="grid-4 mb-section">
-
-                <div class="oc-stat fade-up delay-1">
-                    <div class="oc-stat-dot" style="background:var(--gold)"></div>
-                    <div class="oc-stat-val"><?= $oc_pendientes ?></div>
-                    <div class="oc-stat-lbl">Pendientes</div>
+            <div class="oc-card mb-section fade-up delay-2">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-cart-check"></i> Órdenes de compra · estado actual</span>
                 </div>
+                <div class="oc-card-body" style="padding: 24px;">
+                    <div class="status-metric-group">
+                        
+                        <div class="status-metric-item">
+                            <span class="status-badge status-badge--pendiente">
+                                <i class="bi bi-clock"></i> Pendientes
+                            </span>
+                            <span class="status-metric-count"><?= $oc_pendientes ?></span>
+                        </div>
 
-                <div class="oc-stat fade-up delay-2">
-                    <div class="oc-stat-dot" style="background:var(--accent)"></div>
-                    <div class="oc-stat-val"><?= $oc_aprobadas ?></div>
-                    <div class="oc-stat-lbl">Aprobadas</div>
+                        <div class="status-metric-item">
+                            <span class="status-badge status-badge--revisado">
+                                <i class="bi bi-check2-circle"></i> Revisadas
+                            </span>
+                            <span class="status-metric-count"><?= $oc_revisadas ?></span>
+                        </div>
+
+                        <div class="status-metric-item">
+                            <span class="status-badge status-badge--aprobado">
+                                <i class="bi bi-check-circle"></i> Aprobadas
+                            </span>
+                            <span class="status-metric-count"><?= $oc_aprobadas ?></span>
+                        </div>
+
+                        <div class="status-metric-item">
+                            <span class="status-badge status-badge--rechazado">
+                                <i class="bi bi-x-circle"></i> Rechazadas
+                            </span>
+                            <span class="status-metric-count"><?= $oc_rechazadas ?></span>
+                        </div>
+
+                        <div class="status-metric-item">
+                            <span class="status-badge status-badge--pagado">
+                                <i class="bi bi-currency-dollar"></i> Pagadas
+                            </span>
+                            <span class="status-metric-count"><?= $oc_pagadas ?></span>
+                        </div>
+
+                        <div class="status-metric-item">
+                            <span class="status-badge status-badge--devuelto">
+                                <i class="bi bi-arrow-counterclockwise"></i> Devueltas
+                            </span>
+                            <span class="status-metric-count"><?= $oc_devueltas ?></span>
+                        </div>
+
+                    </div>
                 </div>
-
-                <div class="oc-stat fade-up delay-3">
-                    <div class="oc-stat-dot" style="background:var(--rose)"></div>
-                    <div class="oc-stat-val"><?= $oc_rechazadas ?></div>
-                    <div class="oc-stat-lbl">Rechazadas</div>
-                </div>
-
-                <div class="oc-stat fade-up delay-4">
-                    <div class="oc-stat-dot" style="background:var(--sky)"></div>
-                    <div class="oc-stat-val"><?= $oc_pagadas ?></div>
-                    <div class="oc-stat-lbl">Pagadas</div>
-                </div>
-
             </div>
 
             <!-- GRÁFICO OC ANCHO COMPLETO -->
@@ -500,13 +515,9 @@ $tipo_colores = [
                         </table>
                     </div>
                 </div>
+</div> <!-- /grid-triple -->
+</div> <!-- /orders-page-container -->
 
-            </div>
-
-        </div><!-- /form-container -->
-    </div><!-- /content-wrapper -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         (function tick() {
             const el = document.getElementById('reloj');
@@ -519,30 +530,30 @@ $tipo_colores = [
         })();
 
         const C = {
-            accent: '#00c9a7',
-            gold: '#f4b942',
-            rose: '#e8445a',
-            sky: '#4db8ff',
-            purple: '#a78bfa',
-            ink2: '#8fa3b8',
-            grid: 'rgba(0,0,0,.05)',
-            navy: '#1a2e45'
+            accent: '#407656', // GECO Green
+            gold: '#d97706',   // Amber-600
+            rose: '#e11d48',   // Rose-600
+            sky: '#2563eb',    // Blue-600
+            purple: '#7c3aed', // Purple-600
+            ink2: '#6b7280',   // Gray-500
+            grid: 'rgba(0,0,0,.04)',
+            navy: '#374151'    // Gray-700
         };
 
         Chart.defaults.color = C.navy;
-        Chart.defaults.font.family = "'DM Sans', sans-serif";
+        Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
         // 1. OC por mes
         const ocData = <?= json_encode($oc_por_mes) ?>;
         const ctxOC = document.getElementById('chartOC').getContext('2d');
 
         const gradientBar = ctxOC.createLinearGradient(0, 0, 0, 400);
-        gradientBar.addColorStop(0, 'rgba(77, 184, 255, 0.6)');
-        gradientBar.addColorStop(1, 'rgba(77, 184, 255, 0.1)');
+        gradientBar.addColorStop(0, 'rgba(37, 99, 235, 0.4)');
+        gradientBar.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
 
         const gradientLine = ctxOC.createLinearGradient(0, 0, 0, 400);
-        gradientLine.addColorStop(0, 'rgba(0, 201, 167, 0.3)');
-        gradientLine.addColorStop(1, 'rgba(0, 201, 167, 0)');
+        gradientLine.addColorStop(0, 'rgba(64, 118, 86, 0.2)');
+        gradientLine.addColorStop(1, 'rgba(64, 118, 86, 0)');
 
         new Chart(ctxOC, {
             type: 'bar',
@@ -694,11 +705,15 @@ $tipo_colores = [
                         <?= $condicion_activos['malo'] ?>
                     ],
                     backgroundColor: [
-                        'rgba(0,201,167,.8)',
-                        'rgba(244,185,66,.8)',
-                        'rgba(232,68,90,.8)',
+                        'rgba(22, 163, 74, 0.8)',
+                        'rgba(217, 119, 6, 0.8)',
+                        'rgba(225, 29, 72, 0.8)'
                     ],
-                    borderColor: [C.accent, C.gold, C.rose],
+                    borderColor: [
+                        '#16a34a',
+                        '#d97706',
+                        '#e11d48'
+                    ],
                     borderWidth: 2,
                     borderRadius: 10,
                     barThickness: 25
@@ -744,9 +759,4 @@ $tipo_colores = [
         });
     </script>
 
-    <?php
-
-    include __DIR__ . "/includes/footer.php"; ?>
-</body>
-
-</html>
+    <?php include __DIR__ . "/includes/footer.php"; ?>

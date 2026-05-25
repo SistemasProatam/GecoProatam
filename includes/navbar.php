@@ -8,8 +8,9 @@ preventCaching();
 
 $departamento_sesion = $_SESSION['departamento'] ?? 'Sin departamento';
 $nombre_usuario = $_SESSION['nombres'] ?? 'Usuario';
+$apellidos_usuario = $_SESSION['apellidos'] ?? '';
 $primerNombre = explode(' ', trim($nombre_usuario))[0] ?? 'U';
-$inicial = strtoupper(substr($primerNombre, 0, 1));
+$inicial = getInitials($nombre_usuario, $apellidos_usuario);
 $rol_usuario = $_SESSION['departamento'] ?? 'General';
 
 // --- PERMISOS ---
@@ -44,11 +45,12 @@ function is_active($path) {
   
   <!-- Estilos SaaS -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/tokens.css?v=1.2" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/layout.css?v=1.3" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/layout.css?v=1.4" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.2" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css?v=1.2" />
   
   <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
+  <script src="<?= BASE_URL ?>/assets/scripts/ui.js?v=1.5"></script>
 </head>
 
 <body>

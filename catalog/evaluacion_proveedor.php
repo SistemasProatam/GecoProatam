@@ -106,163 +106,175 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación de Proveedores - PROATAM</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/evaluacion.css" />
-    <style>
-        .rating-options > div {
-            padding: 10px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            margin: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .rating-options > div:hover {
-            background-color: #f8f9fa;
-        }
-        .rating-options > div.selected {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        .excellent { background-color: #d4edda; color: #155724; }
-        .good { background-color: #d1ecf1; color: #0c5460; }
-        .conditional { background-color: #fff3cd; color: #856404; }
-        .not-approved { background-color: #f8d7da; color: #721c24; }
-    </style>
-</head>
-<body>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<style>
+  .oc-section-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--gray-100, #f3f4f6);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--gray-500, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .oc-section-header i {
+    font-size: 1rem;
+    color: var(--p-500, #407656);
+  }
+  .oc-section-body {
+    padding: 1.25rem 1.5rem;
+  }
+  .result-card {
+    background: var(--gray-50, #f9fafb);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .rating-options {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+  .rating-options > div {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    border: 1.5px solid var(--gray-200, #e5e7eb);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .rating-options > div.selected {
+    border-color: var(--p-500, #407656);
+    background: rgba(64, 118, 86, 0.06);
+  }
+  .excellent { background-color: #d4edda; color: #155724; }
+  .good      { background-color: #d1ecf1; color: #0c5460; }
+  .conditional { background-color: #fff3cd; color: #856404; }
+  .not-approved { background-color: #f8d7da; color: #721c24; }
+</style>
 
-<!-- HERO SECTION -->
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span>
-      <a href="<?= BASE_URL ?>/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
-      <span>/</span>
-      <span>Evaluación de Proveedor</span>
+<?php include __DIR__ . '/../includes/navbar.php'; ?>
+
+<div class="orders-page-container">
+
+  <!-- Page Header -->
+  <div class="orders-page-header">
+    <div class="orders-page-header-info">
+      <nav class="orders-breadcrumb">
+        <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+        <span>›</span>
+        <a href="<?= BASE_URL ?>/catalog/list_catalog.php?entidad=proveedores">Proveedores</a>
+        <span>›</span>
+        <span>Evaluación de Proveedor</span>
+      </nav>
+      <h1 class="orders-page-title">Evaluación de Proveedor</h1>
     </div>
-    
-    <div class="row align-items-end">
-      <div class="col-lg-8">
-        <h1 class="hero-title">Evaluación de Proveedor</h1>
-      </div>
-      <div class="col-lg-4 text-end">
-        <div class="btn-group">
-          <button class="btn-inf" onclick="verHistorial()"  
-            data-bs-toggle="tooltip" data-bs-placement="top" title="Historial de evaluaciones">
-            <i class="bi bi-clock-history"></i>
-          </button>
-        </div>
-      </div>
+    <div class="ms-auto">
+      <button class="btn-geco-secondary" onclick="verHistorial()" title="Historial de evaluaciones">
+        <i class="bi bi-clock-history"></i> Historial
+      </button>
     </div>
   </div>
-</div>
 
-<!-- MAIN CONTENT -->
-<div class="content-wrapper">
-  <div class="form-container">
-    <div class="form-body">
-      
-      <?php
-if (isset($mensaje_exito)): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <?= $mensaje_exito ?>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <?php
-endif; ?>
-      
-      <?php
-if (isset($mensaje_error)): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <?= $mensaje_error ?>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <?php
-endif; ?>
-      
-      <form method="POST" id="evaluationForm">
-        <div class="section-title">
-          <i class="bi bi-info-circle"></i>
-          Información General
-        </div>
-        
-        <!-- Nombre o razón social del proveedor -->
+  <!-- Alerts -->
+  <?php if (isset($mensaje_exito)): ?>
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+      <?= $mensaje_exito ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <?php endif; ?>
+
+  <?php if (isset($mensaje_error)): ?>
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+      <?= $mensaje_error ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <?php endif; ?>
+
+  <!-- Main Form Card -->
+  <div class="orders-card mt-4">
+    <form method="POST" id="evaluationForm">
+
+      <!-- Section 1: Información General -->
+      <div class="oc-section-header">
+        <i class="bi bi-info-circle"></i>
+        Información General
+      </div>
+      <div class="oc-section-body">
         <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">Nombre o Razón Social del Proveedor:</label>
-                    <input type="text" class="form-control" 
-                     value="<?= htmlspecialchars($proveedor['razon_social']) ?>" 
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Nombre o Razón Social del Proveedor:</label>
+              <input type="text" class="form-control"
+                     value="<?= htmlspecialchars($proveedor['razon_social']) ?>"
                      readonly />
-                </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">CIF. o R.F.C.:</label>
-                    <input type="text" class="form-control" name="supplierRFC" 
-                           value="<?= htmlspecialchars($proveedor['rfc'] ?? '') ?>" required>
-                </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">CIF. o R.F.C.:</label>
+              <input type="text" class="form-control" name="supplierRFC"
+                     value="<?= htmlspecialchars($proveedor['rfc'] ?? '') ?>" required>
             </div>
+          </div>
         </div>
-
         <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">Lugar y Fecha de Elaboración:</label>
-                    <input type="text" class="form-control" name="evaluationDate" 
-                           value="PROATAM S.A. DE C.V. - <?= date('d/m/Y') ?>" required>
-                </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Lugar y Fecha de Elaboración:</label>
+              <input type="text" class="form-control" name="evaluationDate"
+                     value="PROATAM S.A. DE C.V. - <?= date('d/m/Y') ?>" required>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">Contrato No.:</label>
-                    <input type="text" class="form-control" name="contractNumber" required>
-                </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Contrato No.:</label>
+              <input type="text" class="form-control" name="contractNumber" required>
             </div>
+          </div>
         </div>
+      </div>
 
-        <div class="section-title">
-          <i class="bi bi-speedometer2"></i>
-          Escala de Calificación:
+      <!-- Section 2: Escala de Calificación -->
+      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
+        <i class="bi bi-speedometer2"></i>
+        Escala de Calificación
+      </div>
+      <div class="oc-section-body">
+        <div class="rating-options">
+          <div data-value="1">
+            <strong>1</strong><br>Muy Deficiente
+          </div>
+          <div data-value="2">
+            <strong>2</strong><br>Deficiente
+          </div>
+          <div data-value="3">
+            <strong>3</strong><br>Regular
+          </div>
+          <div data-value="4">
+            <strong>4</strong><br>Bueno
+          </div>
+          <div data-value="5">
+            <strong>5</strong><br>Excelente
+          </div>
         </div>
-        <div class="row text-center rating-options">
-            <div class="col" data-value="1">
-                <strong>1</strong><br>Muy Deficiente
-            </div>
-            <div class="col" data-value="2">
-                <strong>2</strong><br>Deficiente
-            </div>
-            <div class="col" data-value="3">
-                <strong>3</strong><br>Regular
-            </div>
-            <div class="col" data-value="4">
-                <strong>4</strong><br>Bueno
-            </div>
-            <div class="col" data-value="5">
-                <strong>5</strong><br>Excelente
-            </div>
-        </div>
+      </div>
 
-        <div class="section-title">
-          <i class="bi bi-star"></i>
-          Evaluación del Proveedor
-        </div>
-        <div class="table-container">
-          <table class="table table-bordered">
+      <!-- Section 3: Evaluación del Proveedor -->
+      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
+        <i class="bi bi-star"></i>
+        Evaluación del Proveedor
+      </div>
+      <div class="oc-section-body p-0">
+        <div class="orders-table-wrap">
+          <table class="orders-table">
             <thead>
               <tr>
                 <th>Criterio</th>
@@ -361,82 +373,85 @@ endif; ?>
             </tbody>
           </table>
         </div>
+      </div>
 
-        <div class="section-title">
-          <i class="bi bi-speedometer2"></i>
-          Resultado Final:
-        </div>
-        <div class="result-section">
-          <div class="row">
-            <div class="col-md-6">
-              <table class="table table-bordered">
-                <thead class="table-light">
-                  <tr>
-                    <th>PUNTAJE</th>
-                    <th>RESULTADO</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="excellent">
-                    <td>450 – 500</td>
-                    <td>Excelente</td>
-                  </tr>
-                  <tr class="good">
-                    <td>400 – 449</td>
-                    <td>Bueno</td>
-                  </tr>
-                  <tr class="conditional">
-                    <td>350 – 399</td>
-                    <td>Regular (Requiere seguimiento)</td>
-                  </tr>
-                  <tr class="not-approved">
-                    <td>&lt; 350</td>
-                    <td>No Aprobado</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="col-md-6">
-              <div class="text-center p-4">
-                <h4 id="finalScore">Puntuación: 0</h4>
-                <div id="finalResult" class="mt-3 p-3 rounded">
-                  <h5 id="resultText">-</h5>
-                </div>
+      <!-- Section 4: Resultado Final -->
+      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
+        <i class="bi bi-speedometer2"></i>
+        Resultado Final
+      </div>
+      <div class="oc-section-body">
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>PUNTAJE</th>
+                  <th>RESULTADO</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="excellent">
+                  <td>450 – 500</td>
+                  <td>Excelente</td>
+                </tr>
+                <tr class="good">
+                  <td>400 – 449</td>
+                  <td>Bueno</td>
+                </tr>
+                <tr class="conditional">
+                  <td>350 – 399</td>
+                  <td>Regular (Requiere seguimiento)</td>
+                </tr>
+                <tr class="not-approved">
+                  <td>&lt; 350</td>
+                  <td>No Aprobado</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <div class="result-card">
+              <h4 id="finalScore">Puntuación: 0</h4>
+              <div id="finalResult" class="mt-3 p-3 rounded">
+                <h5 id="resultText">-</h5>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="section-title">
-          <i class="bi bi-chat-text"></i>
-          Observaciones:
+      <!-- Section 5: Observaciones y Responsable -->
+      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
+        <i class="bi bi-chat-text"></i>
+        Observaciones
+      </div>
+      <div class="oc-section-body">
+        <div class="mb-3">
+          <textarea class="form-control" name="observations" rows="3"></textarea>
         </div>
-        <textarea class="form-control" name="observations" rows="3"></textarea>
-
-        <div class="section-title">
-          <i class="bi bi-person-check"></i>
-          Responsable:
+        <div class="mb-3">
+          <label class="form-label"><i class="bi bi-person-check"></i> Responsable:</label>
+          <input type="text" class="form-control" name="responsibles"
+                 value="<?php echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+                 readonly />
         </div>
-        <input type="text" class="form-control" name="responsibles" 
-               value="<?php
-echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
-                readonly />
+      </div>
 
-        <!-- Guardar -->
-        <div class="form-actions mt-3">
-          <div class="send-otxt">
-            Esta evaluación se guardará automáticamente en el registro de evaluaciones de este proveedor.
-          </div>
-          <button type="submit" class="button-56">
+      <!-- Submit -->
+      <div class="oc-section-body" style="border-top:1px solid var(--gray-100,#f3f4f6);">
+        <div style="max-width:300px; margin:auto; text-align:center;">
+          <button type="submit" class="btn-geco-primary w-100">
             <i class="bi bi-floppy"></i> Guardar Evaluación
           </button>
         </div>
-      </form>
-    </div>
-  </div>
-</div>
+      </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </form>
+  </div><!-- /.orders-card -->
+
+</div><!-- /.orders-page-container -->
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Manejar selección de calificaciones
@@ -496,11 +511,4 @@ echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
   }
 </script>
 
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
-
-</body>
-</html>
-
-
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>

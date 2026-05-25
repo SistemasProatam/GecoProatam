@@ -125,12 +125,12 @@ unset($nodo);
 
 function nivelEstilo(int $nivel): array {
     $paleta = [
-        1 => ['bg' => '#1a3a5c', 'color' => '#ffffff', 'border' => '#1a3a5c', 'icon' => 'bi-folder-fill',      'fw' => 700, 'fs' => '1rem'],
-        2 => ['bg' => '#e8f4fd', 'color' => '#155f7a', 'border' => '#17a2b8', 'icon' => 'bi-folder2-open',     'fw' => 600, 'fs' => '0.9rem'],
-        3 => ['bg' => '#f0f9f0', 'color' => '#3d6b35', 'border' => '#5a9e50', 'icon' => 'bi-chevron-right',    'fw' => 600, 'fs' => '0.85rem'],
-        4 => ['bg' => '#fff8e8', 'color' => '#7a5a00', 'border' => '#ffc107', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.82rem'],
-        5 => ['bg' => '#fdf0f8', 'color' => '#7a1a5c', 'border' => '#e91e8c', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.80rem'],
-        6 => ['bg' => '#f5f0ff', 'color' => '#4a1a7a', 'border' => '#9c27b0', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.78rem'],
+        1 => ['bg' => 'var(--s-700, #113557)', 'color' => '#ffffff', 'border' => 'var(--s-900, #020617)', 'icon' => 'bi-folder-fill',      'fw' => 700, 'fs' => '1rem'],
+        2 => ['bg' => 'var(--s-50, #f1f5f9)', 'color' => 'var(--s-800, #0f172a)', 'border' => 'var(--s-300, #94a3b8)', 'icon' => 'bi-folder2-open',     'fw' => 600, 'fs' => '0.9rem'],
+        3 => ['bg' => 'var(--p-50, #f0f7f2)', 'color' => 'var(--p-800, #233e30)', 'border' => 'var(--p-300, #8ecc9f)', 'icon' => 'bi-chevron-right',    'fw' => 600, 'fs' => '0.85rem'],
+        4 => ['bg' => '#fffbeb', 'color' => '#78350f', 'border' => '#fde68a', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.82rem'],
+        5 => ['bg' => '#fdf2f8', 'color' => '#701a75', 'border' => '#fbcfe8', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.80rem'],
+        6 => ['bg' => '#faf5ff', 'color' => '#4a044e', 'border' => '#e9d5ff', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.78rem'],
     ];
     $idx = (($nivel - 1) % count($paleta)) + 1;
     return $paleta[$idx];
@@ -157,8 +157,8 @@ function renderNodo(array &$nodo): void {
     $t_monto = totalMontoNodo($nodo);
     ?>
     <div class="nodo-bloque" style="margin-left:<?= $indent ?>px;">
-        <div class="nodo-header d-flex align-items-center justify-content-between px-3 py-2 mb-1"
-            style="background:<?= $est['bg'] ?>; border-left:4px solid <?= $est['border'] ?>; border-radius:0 6px 6px 0; color:<?= $est['color'] ?>;">
+        <div class="nodo-header d-flex align-items-center justify-content-between px-3 py-2 mb-2"
+            style="background:<?= $est['bg'] ?>; border-left:4px solid <?= $est['border'] ?>; color:<?= $est['color'] ?>;">
             <div class="d-flex align-items-center gap-2">
                 <i class="bi <?= $est['icon'] ?>"></i>
                 <span style="font-size:<?= $est['fs'] ?>;font-weight:<?= $est['fw'] ?>;">
@@ -171,9 +171,9 @@ function renderNodo(array &$nodo): void {
             <?php if ($t_items > 0 || $t_monto > 0): ?>
                 <div class="d-flex gap-2">
                     <?php if ($t_items > 0): ?>
-                        <span class="badge bg-info" style="font-size:.7rem;"><?= $t_items ?> items</span>
+                        <span class="status-badge" style="color: var(--s-600); background: rgba(23, 162, 184, 0.08); border-color: rgba(23, 162, 184, 0.2); font-size:.7rem;"><?= $t_items ?> items</span>
                     <?php endif; ?>
-                    <span class="badge bg-success" style="font-size:.7rem;">$<?= number_format($t_monto, 2) ?></span>
+                    <span class="status-badge" style="color: var(--p-700); background: rgba(64, 118, 86, 0.08); border-color: rgba(64, 118, 86, 0.2); font-size:.7rem;">$<?= number_format($t_monto, 2) ?></span>
                 </div>
             <?php endif; ?>
         </div>
@@ -191,7 +191,7 @@ function renderConcepto(array $c, int $indent_px): void {
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                        <span class="badge bg-primary" style="font-size:.75rem;min-width:70px;text-align:center;"><?= htmlspecialchars($c['codigo_concepto']) ?></span>
+                        <span class="status-badge" style="color: var(--p-700); background: rgba(64,118,86,0.06); border: 1px solid rgba(64,118,86,0.15); font-size:.75rem; font-weight:600;"><?= htmlspecialchars($c['codigo_concepto']) ?></span>
                         <?php if ($c['numero_original']): ?>
                             <small class="text-muted">#<?= htmlspecialchars($c['numero_original']) ?></small>
                         <?php endif; ?>
@@ -208,17 +208,17 @@ function renderConcepto(array $c, int $indent_px): void {
                     <div class="d-flex justify-content-end align-items-center gap-3">
                         <div class="text-end">
                             <?php if ($c['total_items'] > 0): ?>
-                                <span class="badge bg-info mb-1"><?= $c['total_items'] ?> items</span><br>
+                                <span class="status-badge status-badge--aprobado mb-1" style="font-size:0.7rem;"><?= $c['total_items'] ?> items</span><br>
                                 <span class="fw-bold text-success" style="font-size:.9rem;">$<?= number_format($c['monto_total'], 2) ?></span>
                             <?php else: ?>
-                                <span class="badge bg-secondary mb-1">Sin items</span><br>
+                                <span class="status-badge status-badge--pendiente mb-1" style="font-size:0.7rem;">Sin items</span><br>
                                 <span class="text-muted" style="font-size:.85rem;">$0.00</span>
                             <?php endif; ?>
                         </div>
-                        <div class="btn-group">
-                            <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEditar(<?= $c['id'] ?>)" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-sm btn-outline-info" onclick="verDetalleConceptoView(<?= $c['id'] ?>, '<?= htmlspecialchars(addslashes($c['codigo_concepto'])) ?>')" title="Detalle"><i class="bi bi-info-circle"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarConceptoView(<?= $c['id'] ?>)" title="Eliminar"><i class="bi bi-trash3"></i></button>
+                        <div class="actions-group">
+                            <button class="btn-action btn-action--edit" onclick="abrirModalEditar(<?= $c['id'] ?>)" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn-action btn-action--view" onclick="verDetalleConceptoView(<?= $c['id'] ?>, '<?= htmlspecialchars(addslashes($c['codigo_concepto'])) ?>')" title="Detalle"><i class="bi bi-info-circle"></i></button>
+                            <button class="btn-action btn-action--delete" onclick="eliminarConceptoView(<?= $c['id'] ?>)" title="Eliminar"><i class="bi bi-trash3"></i></button>
                         </div>
                     </div>
                 </div>
@@ -228,155 +228,376 @@ function renderConcepto(array $c, int $indent_px): void {
     <?php
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conceptos - <?= htmlspecialchars($catalogo['nombre_catalogo']) ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/chinior.ico" type="image/x-icon">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
-    <style>
-        .item-orden-pagada { border-left: 4px solid #28a745; background: rgba(40,167,69,.05); }
-        .sec-label { font-size:.73rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#6c757d; border-bottom:1px solid #dee2e6; padding-bottom:3px; margin:16px 0 10px; }
-    </style>
-</head>
-<body>
-    <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-    <div class="hero-section">
-        <div class="container hero-content">
-            <div class="breadcrumb-custom">
-                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a> <span>/</span>
-                <a href="list_project.php">Registro de Obras</a> <span>/</span>
-                <?php if ($obra_info): ?><a href="details_obra.php?id=<?= $obra_id ?>"><?= htmlspecialchars($obra_info['nombre_obra']) ?></a> <span>/</span><?php endif; ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+
+<style>
+    .item-orden-pagada {
+        border-left: 4px solid var(--p-500, #407656) !important;
+        background: rgba(64, 118, 86, 0.02) !important;
+    }
+    
+    .concepto-item {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1.5px solid var(--gray-100, #f3f4f6) !important;
+        border-radius: var(--radius-md, 10px);
+        background: #fff;
+    }
+    .concepto-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.05)) !important;
+        border-color: var(--p-200, #bce1c7) !important;
+    }
+    
+    .nodo-header {
+        border-radius: var(--radius-md, 10px) !important;
+        box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.02));
+        font-family: var(--font-heading, 'Outfit', sans-serif);
+        transition: all 0.2s ease;
+    }
+    .nodo-header:hover {
+        opacity: 0.95;
+    }
+    
+    /* KPI Stats Grid */
+    .budget-kpi-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+    .kpi-card {
+        background: #fff;
+        border-radius: var(--radius-lg, 16px);
+        padding: 1.5rem;
+        border: 1.5px solid var(--gray-100, #f3f4f6);
+        box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.03));
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .kpi-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md, 0 8px 20px -3px rgba(0,0,0,0.06));
+        border-color: var(--card-hover-border) !important;
+    }
+    
+    .kpi-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--gray-500, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--s-800, #0f172a);
+        font-family: var(--font-heading, 'Outfit', sans-serif);
+        line-height: 1.2;
+    }
+    .kpi-subtitle {
+        font-size: 0.75rem;
+        color: var(--gray-500, #6b7280);
+    }
+    
+    .kpi-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-md, 10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        transition: all 0.2s ease;
+    }
+
+    /* Soft Pastel theme variations (no left borders, full color cards) */
+    .kpi-card--conceptos {
+        background: rgba(64, 118, 86, 0.04);
+        border-color: rgba(64, 118, 86, 0.12);
+        --card-hover-border: rgba(64, 118, 86, 0.3);
+    }
+    .kpi-card--conceptos .kpi-value, .kpi-card--conceptos .kpi-icon { color: var(--p-500, #407656) !important; }
+    .kpi-card--conceptos .kpi-icon { background: rgba(64, 118, 86, 0.08); }
+
+    .kpi-card--nodos {
+        background: rgba(17, 53, 87, 0.04);
+        border-color: rgba(17, 53, 87, 0.12);
+        --card-hover-border: rgba(17, 53, 87, 0.3);
+    }
+    .kpi-card--nodos .kpi-value, .kpi-card--nodos .kpi-icon { color: var(--s-700, #113557) !important; }
+    .kpi-card--nodos .kpi-icon { background: rgba(17, 53, 87, 0.08); }
+
+    .kpi-card--niveles {
+        background: rgba(245, 158, 11, 0.04);
+        border-color: rgba(245, 158, 11, 0.12);
+        --card-hover-border: rgba(245, 158, 11, 0.3);
+    }
+    .kpi-card--niveles .kpi-value, .kpi-card--niveles .kpi-icon { color: #d97706 !important; }
+    .kpi-card--niveles .kpi-icon { background: rgba(245, 158, 11, 0.08); }
+
+    .kpi-card--monto {
+        background: rgba(34, 197, 94, 0.04);
+        border-color: rgba(34, 197, 94, 0.12);
+        --card-hover-border: rgba(34, 197, 94, 0.3);
+    }
+    .kpi-card--monto .kpi-value, .kpi-card--monto .kpi-icon { color: #16a34a !important; }
+    .kpi-card--monto .kpi-icon { background: rgba(34, 197, 94, 0.08); }
+
+    /* Custom Action Delete */
+    .btn-action--delete:hover {
+        border-color: rgba(239, 68, 68, 0.3) !important;
+        color: #ef4444 !important;
+        background: rgba(239, 68, 68, 0.04) !important;
+    }
+</style>
+
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
+
+<div class="orders-page-container">
+
+    <!-- Page Header -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <a href="list_project.php">Proyectos</a>
+                <span class="separator">›</span>
+                <a href="list_obras.php">Obras</a>
+                <?php if ($obra_info): ?>
+                    <span class="separator">›</span>
+                    <a href="details_obra.php?id=<?= $obra_id ?>"><?= htmlspecialchars($obra_info['nombre_obra']) ?></a>
+                <?php endif; ?>
+                <span class="separator">›</span>
                 <span><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></span>
-            </div>
-            <h1 class="hero-title"><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></h1>
-            <div class="mt-3">
-                <button class="btn btn-sm btn-outline-light" onclick="editarCatalogoView()"><i class="bi bi-pencil-square me-1"></i> Editar Catálogo</button>
-            </div>
+            </nav>
+            <h1 class="orders-page-title"><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="details_obra.php?id=<?= $obra_id ?>" class="btn-geco-outline">
+                <i class="bi bi-arrow-left"></i> Volver a la Obra
+            </a>
+            <button class="btn-geco-outline" onclick="editarCatalogoView()">
+                <i class="bi bi-pencil-square"></i> Editar Catálogo
+            </button>
         </div>
     </div>
 
-    <div class="content-wrapper">
-        <div class="budget-dashboard mb-4">
-            <div class="budget-stats">
-                <div class="budget-stat"><div class="budget-stat-label">Total Conceptos</div><div class="budget-stat-value"><?= $stats['total_conceptos'] ?></div></div>
-                <div class="budget-stat"><div class="budget-stat-label">Nodos</div><div class="budget-stat-value"><?= $stats['total_nodos'] ?></div></div>
-                <div class="budget-stat"><div class="budget-stat-label">Niveles</div><div class="budget-stat-value"><?= $stats['niveles_usados'] ?></div></div>
-                <div class="budget-stat"><div class="budget-stat-label">Monto Total</div><div class="budget-stat-value text-success">$<?= number_format($stats['monto_total_general'], 2) ?></div></div>
+    <!-- KPI Dashboard -->
+    <div class="budget-kpi-container">
+        <div class="kpi-card kpi-card--conceptos">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="kpi-label">Conceptos</span>
+                <div class="kpi-icon kpi-icon--conceptos"><i class="bi bi-tag-fill"></i></div>
+            </div>
+            <span class="kpi-value"><?= $stats['total_conceptos'] ?></span>
+            <span class="kpi-subtitle">Partidas registradas</span>
+        </div>
+        <div class="kpi-card kpi-card--nodos">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="kpi-label">Nodos / Capas</span>
+                <div class="kpi-icon kpi-icon--nodos"><i class="bi bi-diagram-3-fill"></i></div>
+            </div>
+            <span class="kpi-value"><?= $stats['total_nodos'] ?></span>
+            <span class="kpi-subtitle">Niveles en la estructura</span>
+        </div>
+        <div class="kpi-card kpi-card--niveles">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="kpi-label">Profundidad</span>
+                <div class="kpi-icon kpi-icon--niveles"><i class="bi bi-layers-fill"></i></div>
+            </div>
+            <span class="kpi-value"><?= $stats['niveles_usados'] ?></span>
+            <span class="kpi-subtitle">Nivel máximo alcanzado</span>
+        </div>
+        <div class="kpi-card kpi-card--monto">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="kpi-label">Monto Contratado</span>
+                <div class="kpi-icon kpi-icon--monto"><i class="bi bi-cash-stack"></i></div>
+            </div>
+            <span class="kpi-value text-success">$<?= number_format($stats['monto_total_general'], 2) ?></span>
+            <span class="kpi-subtitle">Acumulado en conceptos</span>
+        </div>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="orders-card">
+        <!-- Filter Bar -->
+        <div class="orders-filter-bar border-bottom d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-list-ul me-2 text-primary"></i>Conceptos</h5>
+                <select id="filtroItems" class="form-select form-select-sm" style="width:auto;" onchange="toggleFilter(this.value)">
+                    <option value="todos">Todos los conceptos</option>
+                    <option value="conItems">Con órdenes de compra</option>
+                    <option value="sinItems">Sin órdenes de compra</option>
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn-geco-primary btn-sm" onclick="mostrarFormConcepto()"><i class="bi bi-plus-circle me-1"></i>Nuevo Concepto</button>
+                <button class="btn-geco-secondary btn-sm" onclick="importarExcelConceptos()"><i class="bi bi-upload me-1"></i>Importar Excel</button>
             </div>
         </div>
 
-        <div class="budget-dashboard">
-            <div class="dashboard-header d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-3">
-                    <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Conceptos</h5>
-                    <select id="filtroItems" class="form-select form-select-sm" style="width:auto;" onchange="toggleFilter(this.value)">
-                        <option value="todos">Todos</option>
-                        <option value="conItems">Con items</option>
-                        <option value="sinItems">Sin items</option>
-                    </select>
+        <!-- Tree Area -->
+        <div class="p-4">
+            <?php foreach ($raices as &$raiz): renderNodo($raiz); endforeach; ?>
+            <?php if (!empty($conceptos_sin_nodo)): ?>
+                <div class="mt-4">
+                    <div class="nodo-header px-3 py-2 bg-light mb-2 rounded border-start border-4 border-secondary" style="border-radius: 8px !important;">
+                        <strong class="text-secondary">Sin Categoría / Nodo Suelto</strong>
+                    </div>
+                    <?php foreach ($conceptos_sin_nodo as $c): renderConcepto($c, 18); endforeach; ?>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-success btn-sm" onclick="mostrarFormConcepto()"><i class="bi bi-plus-circle me-1"></i>Nuevo</button>
-                    <button class="btn btn-info btn-sm text-white" onclick="importarExcelConceptos()"><i class="bi bi-upload me-1"></i>Importar</button>
+            <?php endif; ?>
+            <?php if (empty($raices) && empty($conceptos_sin_nodo)): ?>
+                <div class="orders-empty-state">
+                    <i class="bi bi-folder2-open" style="font-size: 3rem;"></i>
+                    <p class="mt-2">No hay conceptos registrados en este catálogo.</p>
                 </div>
-            </div>
-
-            <div class="mt-4">
-                <?php foreach ($raices as &$raiz): renderNodo($raiz); endforeach; ?>
-                <?php if (!empty($conceptos_sin_nodo)): ?>
-                    <div class="mt-4"><div class="nodo-header px-3 py-2 bg-light mb-2"><strong>Sin Categoría</strong></div><?php foreach ($conceptos_sin_nodo as $c): renderConcepto($c, 18); endforeach; ?></div>
-                <?php endif; ?>
-                <?php if (empty($raices) && empty($conceptos_sin_nodo)): ?>
-                    <div class="text-center py-5 text-muted"><i class="bi bi-inbox display-4 d-block mb-3"></i>No hay conceptos registrados.</div>
-                <?php endif; ?>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 
-    <div class="fab-container-backbtn">
-        <a onclick="history.back()" class="fab-button-backbtn"><i class="bi bi-arrow-left"></i><span class="fab-tooltip-backbtn">Volver</span></a>
-    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
-    <script>
-    const catalogoId = <?= $catalogo_id ?>;
-    const catalogoNombre = '<?= addslashes($catalogo['nombre_catalogo']) ?>';
-    const obraId = <?= $obra_id ?: 'null' ?>;
-    const obraNombre = '<?= $obra_info ? addslashes($obra_info['nombre_obra']) : '' ?>';
-    const API = 'catalogos_manager.php';
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
+<script>
+const catalogoId = <?= $catalogo_id ?>;
+const catalogoNombre = '<?= addslashes($catalogo['nombre_catalogo']) ?>';
+const obraId = <?= $obra_id ?: 'null' ?>;
+const obraNombre = '<?= $obra_info ? addslashes($obra_info['nombre_obra']) : '' ?>';
+const API = 'catalogos_manager.php';
 
-    function toggleFilter(tipo) {
-        document.querySelectorAll('.concepto-item').forEach(el => {
-            const ti = el.dataset.tieneItems === 'si';
-            el.style.display = (tipo === 'conItems' && !ti) || (tipo === 'sinItems' && ti) ? 'none' : '';
-        });
-    }
+function toggleFilter(tipo) {
+    document.querySelectorAll('.concepto-item').forEach(el => {
+        const ti = el.dataset.tieneItems === 'si';
+        el.style.display = (tipo === 'conItems' && !ti) || (tipo === 'sinItems' && ti) ? 'none' : '';
+    });
+}
 
-    function mostrarFormConcepto() { mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId, obraNombre); }
-    function importarExcelConceptos() { mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId, obraNombre); }
-    function eliminarConceptoView(cid) { eliminarConcepto(cid); }
-    function editarCatalogoView() { editarCatalogo(catalogoId, catalogoNombre, '<?= addslashes($catalogo['descripcion']) ?>'); }
-    function verDetalleConceptoView(cid, codigo) { verDetalleConcepto(cid, codigo, catalogoId, catalogoNombre); }
+function mostrarFormConcepto() { mostrarFormularioConcepto(catalogoId, catalogoNombre, obraId, obraNombre); }
+function importarExcelConceptos() { mostrarImportarExcelConceptos(catalogoId, catalogoNombre, obraId, obraNombre); }
+function eliminarConceptoView(cid) { eliminarConcepto(cid); }
+function editarCatalogoView() { editarCatalogo(catalogoId, catalogoNombre, '<?= addslashes($catalogo['descripcion']) ?>'); }
+function verDetalleConceptoView(cid, codigo) { verDetalleConcepto(cid, codigo, catalogoId, catalogoNombre); }
 
-    function abrirModalEditar(id) {
-        UI.loading("Cargando...");
-        const fd = new FormData(); fd.append('action', 'obtener_detalle_concepto'); fd.append('concepto_id', id);
-        fetch(API, { method: 'POST', body: fd }).then(r => r.json()).then(data => {
-            UI.loading.hide();
-            if (!data.success) { UI.toast.error(data.error); return; }
-            const c = data.concepto;
-            UI.modal({
-                title: "Editar Concepto - " + c.codigo_concepto,
-                size: "lg",
-                html: `
-                    <form id="formEditConc">
+function abrirModalEditar(id) {
+    UI.loading("Cargando...");
+    const fd = new FormData(); fd.append('action', 'obtener_detalle_concepto'); fd.append('concepto_id', id);
+    fetch(API, { method: 'POST', body: fd }).then(r => r.json()).then(data => {
+        UI.loading.hide();
+        if (!data.success) { UI.toast.error(data.error); return; }
+        const c = data.concepto;
+        UI.modal({
+            title: "Editar Concepto — " + c.codigo_concepto,
+            size: "lg",
+            html: `
+                <div class="orders-page-container p-1">
+                    <form id="formEditConc" class="m-0">
                         <input type="hidden" name="concepto_id" value="${c.id}">
-                        <div class="sec-label">Identificación</div>
-                        <div class="row g-2">
-                            <div class="col-4"><label class="form-label small">Código</label><input type="text" name="codigo_concepto" class="form-control" value="${c.codigo_concepto}" required></div>
-                            <div class="col-2"><label class="form-label small">Núm.</label><input type="text" name="numero_original" class="form-control" value="${c.numero_original || ''}"></div>
-                            <div class="col-6"><label class="form-label small">Nombre</label><input type="text" name="nombre_concepto" class="form-control" value="${c.nombre_concepto}" required></div>
+                        
+                        <div class="oc-form-subsection mt-0 pt-0 border-0">
+                            <div class="oc-form-subsection__title">
+                                <i class="bi bi-info-circle"></i> Identificación
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Código *</label>
+                                    <input type="text" name="codigo_concepto" class="form-control" value="${c.codigo_concepto}" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Núm.</label>
+                                    <input type="text" name="numero_original" class="form-control" value="${c.numero_original || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Nombre *</label>
+                                    <input type="text" name="nombre_concepto" class="form-control" value="${c.nombre_concepto}" required>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label small fw-bold">Descripción</label>
+                                <textarea name="descripcion" class="form-control" rows="3" placeholder="Descripción detallada del concepto...">${c.descripcion || ''}</textarea>
+                            </div>
                         </div>
-                        <div class="mt-2"><label class="form-label small">Descripción</label><textarea name="descripcion" class="form-control" rows="2">${c.descripcion || ''}</textarea></div>
-                        <div class="sec-label">Jerarquía</div>
-                        <div class="row g-2"><div class="col-12"><label class="form-label small">Clave del nodo</label><input type="text" name="nodo_clave" class="form-control font-monospace" value="${c.nodo_clave || ''}" placeholder="Ej: I.1.1"></div></div>
-                        <div class="sec-label">Costos</div>
-                        <div class="row g-2">
-                            <div class="col-3"><label class="form-label small">Unidad</label><input type="text" name="unidad_medida" class="form-control" value="${c.unidad_medida || ''}"></div>
-                            <div class="col-3"><label class="form-label small">Cantidad</label><input type="number" step="0.001" name="cantidad" class="form-control" value="${c.cantidad || ''}"></div>
-                            <div class="col-3"><label class="form-label small">P. Unitario</label><input type="number" step="0.01" name="precio_unitario" class="form-control" value="${c.precio_unitario || ''}"></div>
-                            <div class="col-3"><label class="form-label small">Importe</label><input type="number" step="0.01" name="importe" class="form-control" value="${c.importe || ''}"></div>
-                        </div>
-                        <div class="sec-label">Periodo</div>
-                        <div class="row g-2">
-                            <div class="col-6"><label class="form-label small">Inicio</label><input type="date" name="fecha_inicio" class="form-control" value="${c.fecha_inicio || ''}"></div>
-                            <div class="col-6"><label class="form-label small">Fin</label><input type="date" name="fecha_fin" class="form-control" value="${c.fecha_fin || ''}"></div>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4"><button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Cambios</button></div>
-                    </form>`
-            });
-            document.getElementById('formEditConc').addEventListener('submit', function(e) {
-                e.preventDefault();
-                UI.loading("Guardando...");
-                const fd2 = new FormData(this); fd2.append('action', 'actualizar_concepto');
-                fetch(API, { method: 'POST', body: fd2 }).then(r => r.json()).then(res => {
-                    UI.loading.hide();
-                    if (res.success) { UI.modal.close(); UI.toast.success("Actualizado"); setTimeout(() => location.reload(), 1500); }
-                    else UI.toast.error(res.error);
-                }).catch(() => { UI.loading.hide(); UI.toast.error("Error de red"); });
-            });
-        });
-    }
-    </script>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
-</body>
-</html>
+                        <div class="oc-form-subsection">
+                            <div class="oc-form-subsection__title">
+                                <i class="bi bi-diagram-3"></i> Jerarquía
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Clave del nodo</label>
+                                    <input type="text" name="nodo_clave" class="form-control font-monospace" value="${c.nodo_clave || ''}" placeholder="Ej: I.1.1">
+                                    <small class="text-muted d-block mt-1" style="font-size: 11px;">Define la ubicación del concepto en el árbol de categorías.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oc-form-subsection">
+                            <div class="oc-form-subsection__title">
+                                <i class="bi bi-cash-coin"></i> Costos
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Unidad</label>
+                                    <input type="text" name="unidad_medida" class="form-control" value="${c.unidad_medida || ''}" placeholder="Ej: m, pza">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Cantidad</label>
+                                    <input type="number" step="0.001" name="cantidad" class="form-control" value="${c.cantidad || ''}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Precio Unitario</label>
+                                    <input type="number" step="0.01" name="precio_unitario" class="form-control" value="${c.precio_unitario || ''}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Importe</label>
+                                    <input type="number" step="0.01" name="importe" class="form-control" value="${c.importe || ''}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oc-form-subsection">
+                            <div class="oc-form-subsection__title">
+                                <i class="bi bi-calendar-event"></i> Periodo
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Inicio</label>
+                                    <input type="date" name="fecha_inicio" class="form-control" value="${c.fecha_inicio || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Fin</label>
+                                    <input type="date" name="fecha_fin" class="form-control" value="${c.fecha_fin || ''}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-secondary px-3" onclick="UI.modal.close()">Cancelar</button>
+                            <button type="submit" class="btn-geco-primary"><i class="bi bi-floppy me-1"></i>Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>`
+        });
+        document.getElementById('formEditConc').addEventListener('submit', function(e) {
+            e.preventDefault();
+            UI.loading("Guardando...");
+            const fd2 = new FormData(this); fd2.append('action', 'actualizar_concepto');
+            fetch(API, { method: 'POST', body: fd2 }).then(r => r.json()).then(res => {
+                UI.loading.hide();
+                if (res.success) { UI.modal.close(); UI.toast.success("Concepto actualizado correctamente"); setTimeout(() => location.reload(), 1500); }
+                else UI.toast.error(res.error);
+            }).catch(() => { UI.loading.hide(); UI.toast.error("Error de conexión"); });
+        });
+    });
+}
+</script>
+
+<?php include __DIR__ . "/../includes/footer.php"; ?>

@@ -244,7 +244,7 @@
   align-items: center;
 }
 
-.orders-filter-search .search-input-wrap {
+.search-input-wrap {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -256,19 +256,19 @@
   transition: all 0.2s;
 }
 
-.orders-filter-search .search-input-wrap:focus-within {
+.search-input-wrap:focus-within {
   border-color: var(--p-400, #5db076);
   background: #fff;
   box-shadow: 0 0 0 3px rgba(64, 118, 86, 0.08);
 }
 
-.orders-filter-search .search-input-wrap i {
+.search-input-wrap i {
   color: var(--gray-400, #9ca3af);
   font-size: 0.9rem;
   flex-shrink: 0;
 }
 
-.orders-filter-search .search-input-wrap input {
+.search-input-wrap input {
   border: none;
   background: transparent;
   outline: none;
@@ -278,7 +278,7 @@
   font-family: inherit;
 }
 
-.orders-filter-search .search-input-wrap input::placeholder {
+.search-input-wrap input::placeholder {
   color: var(--gray-400, #9ca3af);
 }
 
@@ -731,7 +731,7 @@
     width: 100%;
   }
 
-  .orders-filter-search .search-input-wrap {
+  .search-input-wrap {
     max-width: 100%;
     width: 100%;
   }

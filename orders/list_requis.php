@@ -134,373 +134,388 @@ while ($ent = $entidadesRes->fetch_assoc()) {
     $entidadesOptions .= "<option value='{$ent['id']}' $selected>" . htmlspecialchars($ent['nombre']) . "</option>";
 }
 ?>
-
-<style>
-    /* CONTENEDOR CON SCROLL HORIZONTAL */
-    .table-container {
-        width: 100%;
-        overflow-x: auto;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        background: white;
-        margin-bottom: 1rem;
-    }
-
-    /* Asegurar que la tabla tenga un ancho mínimo */
-    .table {
-        min-width: 700px;
-        margin: 0;
-        white-space: nowrap;
-    }
-
-    /* Estilos para la tabla dentro del contenedor scrollable */
-    .table-container .table thead {
-        background: var(--light-bg);
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-
-    .table-container .table th {
-        border: none;
-        padding: 1rem;
-        font-weight: 600;
-        color: var(--primary-color);
-        background: var(--light-bg);
-    }
-
-    .table-container .table td {
-        border: none;
-        padding: 1rem;
-        vertical-align: middle;
-        white-space: nowrap;
-    }
-
-    .table-container .table tbody tr {
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .table-container .table tbody tr:hover {
-        background-color: #f8f9fa;
-    }
-
-    /* Estilos personalizados para la scrollbar */
-    .table-container::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .table-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    .table-container::-webkit-scrollbar-thumb {
-        background: var(--secondary-color);
-        border-radius: 4px;
-    }
-
-    .table-container::-webkit-scrollbar-thumb:hover {
-        background: var(--primary-color);
-    }
-
-    /* Para Firefox */
-    .table-container {
-        scrollbar-width: thin;
-        scrollbar-color: var(--secondary-color) #f1f1f1;
-    }
-
-    @media (max-width: 768px) {
-        .table-container {
-            font-size: 0.9rem;
-        }
-
-        .table-container .table th,
-        .table-container .table td {
-            padding: 0.75rem 0.5rem;
-        }
-
-        .btn-group button {
-            padding: 0.4rem;
-            font-size: 0.8rem;
-        }
-
-        .btn-group i {
-            font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .table {
-            min-width: 600px;
-        }
-    }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-    <!-- HERO SECTION -->
-    <div class="hero-section">
-        <div class="container hero-content">
-            <div class="breadcrumb-custom">
-                <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-                <span>/</span>
+<div class="orders-page-container">
+
+    <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
                 <span>Registro de Requisiciones</span>
-            </div>
-
-            <div class="row align-items-end">
-                <div class="col-lg-8">
-                    <h1 class="hero-title">Registro de Requisiciones</h1>
-                </div>
-            </div>
-
+            </nav>
+            <h1 class="orders-page-title">Registro de Requisiciones</h1>
         </div>
+        <button class="btn-geco-primary" type="button" onclick="window.location.href='new_requis.php'">
+            <i class="bi bi-plus-lg"></i> Agregar Requisición
+        </button>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="content-wrapper">
+    <!-- ─── FILTERS + SEARCH ─────────────────────────────────────── -->
+    <div class="orders-card mb-4">
 
-        <div class="form-container">
-            <div class="form-body">
-                <!-- Buscador -->
-                <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-5" method="GET">
-                    <input type="hidden" name="estado" value="<?= htmlspecialchars($estado_filtro) ?>">
-                    <input type="hidden" name="entidad" value="<?= htmlspecialchars($entidad_filtro) ?>">
-                    <input class="form-control w-100" type="search" name="q"
-                        placeholder="Buscar por folio o entidad..."
-                        value="<?= htmlspecialchars($busqueda) ?>" />
-                    <button class="btn btn-outline-success" type="submit">
+        <!-- Hidden search form (preserves AJAX sync) -->
+        <form id="search-form" method="GET" style="display:none;">
+            <input type="hidden" name="estado" id="hiddenEstadoInput" value="<?= htmlspecialchars($estado_filtro) ?>">
+            <input type="hidden" name="entidad" value="<?= htmlspecialchars($entidad_filtro) ?>">
+            <input type="search" name="q" value="<?= htmlspecialchars($busqueda) ?>">
+        </form>
+
+        <!-- Filter form (Single Row) -->
+        <form id="filter-form" method="GET">
+            <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
+            
+            <?php
+            $tab_labels = [
+                ''          => 'Todas',
+                'pendiente' => 'Pendientes',
+                'aprobado'  => 'Aprobadas',
+                'rechazado' => 'Rechazadas'
+            ];
+            ?>
+            <!-- Hidden state select synchronized with tabs -->
+            <select name="estado" id="estadoSelect" style="display:none;">
+                <?php foreach ($tab_labels as $val => $label): ?>
+                    <option value="<?= htmlspecialchars($val) ?>" <?= $estado_filtro === $val ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                <?php endforeach; ?>
+            </select>
+
+            <div class="orders-filter-bar">
+                <!-- Left: Tabs -->
+                <div class="orders-filter-tabs" id="estadoTabs">
+                    <?php foreach ($tab_labels as $val => $label): ?>
+                        <button type="button"
+                                class="tab-btn <?= $estado_filtro === $val ? 'active' : '' ?>"
+                                data-estado="<?= $val ?>"><?= $label ?></button>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Middle: Dropdown selectors -->
+                <div class="orders-filter-selects">
+                    <select name="entidad" class="form-select">
+                        <option value="">Todas las entidades</option>
+                        <?= $entidadesOptions ?>
+                    </select>
+                </div>
+
+                <!-- Right: Search Input -->
+                <div class="orders-filter-search">
+                    <div class="search-input-wrap">
                         <i class="bi bi-search"></i>
-                    </button>
-                </form>
-
-                <div class="mb-2">
-                    <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
-                        <i class="bi bi-funnel"></i> Filtros
-                    </h5>
+                        <input type="text" id="visibleSearchInput"
+                               placeholder="Buscar por folio o entidad..."
+                               value="<?= htmlspecialchars($busqueda) ?>">
+                    </div>
                 </div>
-                <!-- Filtros -->
-                <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
-                    <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
-
-                    <div style="flex: 0 0 auto; min-width: 150px;">
-                        <select name="estado" class="form-select" style="max-width:250px;">
-                            <option value="">-- Todos los estados --</option>
-                            <option value="pendiente" <?= $estado_filtro == 'pendiente' ? 'selected' : '' ?>>Pendiente</option>
-                            <option value="aprobado" <?= $estado_filtro == 'aprobado' ? 'selected' : '' ?>>Aprobado</option>
-                            <option value="rechazado" <?= $estado_filtro == 'rechazado' ? 'selected' : '' ?>>Rechazado</option>
-                        </select>
-                    </div>
-
-                    <div style="flex: 0 0 auto; min-width: 150px;">
-                        <select name="entidad" class="form-select" style="max-width:250px;">
-                            <option value="">-- Todas las entidades --</option>
-                            <?= $entidadesOptions ?>
-                        </select>
-                    </div>
-                </form>
-
-                <div id="table-container-wrapper">
-
-                    <!-- Botón de agregar requisicion -->
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="badge-num"><?= $totalRegistros ?> requisiciones</span>
-                        <button class="button-56" type="button" onclick="window.location.href='new_requis.php'">
-                            <i class="bi bi-plus-circle"></i> Agregar
-                        </button>
-                    </div>
-
-                    <!-- Lista de requisiciones con scroll horizontal -->
-                    <div class="table-container">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Folio</th>
-                                    <th>Entidad</th>
-                                    <th>Estado</th>
-                                    <th>Fecha de Solicitud</th>
-                                    <th>Descripción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                if ($result && $result->num_rows > 0): ?>
-                                    <?php
-                                    while ($row = $result->fetch_assoc()): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($row['folio']) ?></td>
-                                            <td><?= htmlspecialchars($row['entidad']) ?></td>
-                                            <td>
-                                                <?php
-                                                switch ($row['estado']) {
-                                                    case 'pendiente':
-                                                        echo '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente</span>';
-                                                        break;
-                                                    case 'aprobado':
-                                                        echo '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Aprobado</span>';
-                                                        break;
-                                                    case 'rechazado':
-                                                        echo '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Rechazado</span>';
-                                                        break;
-                                                    default:
-                                                        echo '<span class="badge bg-secondary">' . htmlspecialchars($row['estado']) . '</span>';
-                                                }
-                                                ?>
-                                            </td>
-                                            <td><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
-                                            <td class="descripcion" title="<?= htmlspecialchars($row['descripcion']) ?>">
-                                                <?= htmlspecialchars($row['descripcion']) ?>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group" style="gap:5px;">
-                                                    <button class="btn-inf" onclick="window.location.href='see_requis.php?id=<?= $row['id'] ?>'" title="Ver detalles"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top">
-                                                        <i class="bi bi-info-circle"></i>
-                                                    </button>
-
-                                                    <!-- SOLO mostrar boton de orden de compra si está APROBADO y el departamento tiene permiso -->
-                                                    <?php
-                                                    if ($row['estado'] === 'aprobado' && $puede_crear_oc): ?>
-                                                        <button class="btn-add-oc" onclick="window.location.href='new_order.php?requisicion_id=<?= $row['id'] ?>'" title="Crear orden de compra"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top">
-                                                            <i class="bi bi-file-earmark-plus"></i>
-                                                        </button>
-                                                    <?php
-                                                    endif; ?>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php
-                                    endwhile; ?>
-                                <?php
-                                else: ?>
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
-                                            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                                            <p class="mt-2">No hay requisiciones registradas</p>
-                                        </td>
-                                    </tr>
-                                <?php
-                                endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Paginación estilo catálogo -->
-                    <?php
-                    if ($totalPaginas > 1): ?>
-                        <nav aria-label="Paginación">
-                            <ul class="pagination justify-content-center mt-3">
-                                <?php
-                                for ($i = 1; $i <= $totalPaginas; $i++): ?>
-                                    <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
-                                        <a class="page-link"
-                                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
-                                            <?= $i ?>
-                                        </a>
-                                    </li>
-                                <?php
-                                endfor; ?>
-                            </ul>
-                        </nav>
-                    <?php
-                    endif; ?>
-                </div> <!-- /table-container-wrapper -->
             </div>
-        </div>
+        </form>
     </div>
 
-    <script>
-        // Inicializar tooltips de Bootstrap
-        document.addEventListener('DOMContentLoaded', function() {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
+    <!-- ─── TABLE ────────────────────────────────────────────────── -->
+    <div class="orders-card orders-ajax-fade" id="table-container-wrapper">
+        <div class="orders-table-wrap">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Folio</th>
+                        <th>Entidad</th>
+                        <th>Estado</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Descripción</th>
+                        <th style="width: 120px; text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($result && $result->num_rows > 0): ?>
+                        <?php while ($row = $result->fetch_assoc()): ?>
+                            <tr>
+                                <td class="cell-folio"><?= htmlspecialchars($row['folio']) ?></td>
+                                <td><strong><?= htmlspecialchars($row['entidad']) ?></strong></td>
+                                <td>
+                                    <?php
+                                    $badge_map = [
+                                        'pendiente' => ['status-badge--pendiente', 'bi-clock', 'Pendiente'],
+                                        'espera'    => ['status-badge--pendiente', 'bi-clock', 'En Espera'],
+                                        'aprobado'  => ['status-badge--aprobado', 'bi-check-circle', 'Aprobado'],
+                                        'aprobada'  => ['status-badge--aprobado', 'bi-check-circle', 'Aprobada'],
+                                        'rechazado' => ['status-badge--rechazado', 'bi-x-circle', 'Rechazado'],
+                                        'rechazada' => ['status-badge--rechazado', 'bi-x-circle', 'Rechazada']
+                                    ];
+                                    $b = $badge_map[$row['estado']] ?? ['status-badge--pendiente', 'bi-circle', ucfirst($row['estado'])];
+                                    echo '<span class="status-badge ' . $b[0] . '"><i class="bi ' . $b[1] . '"></i> ' . $b[2] . '</span>';
+                                    ?>
+                                </td>
+                                <td class="cell-date"><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
+                                <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?= htmlspecialchars($row['descripcion']) ?>">
+                                    <?= htmlspecialchars($row['descripcion']) ?>
+                                </td>
+                                <td>
+                                    <div class="actions-group">
+                                        <!-- SOLO mostrar boton de orden de compra si está APROBADO/APROBADA y el departamento tiene permiso -->
+                                        <?php if (($row['estado'] === 'aprobado' || $row['estado'] === 'aprobada') && $puede_crear_oc): ?>
+                                            <a href="new_order.php?requisicion_id=<?= $row['id'] ?>" class="btn-action btn-action--edit" style="background-color: #e8f5e9; color: #2e7d32; border-color: #c8e6c9;">
+                                                <i class="bi bi-file-earmark-plus"></i>
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <a href="see_requis.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6">
+                                <div class="orders-empty-state">
+                                    <i class="bi bi-inbox" style="font-size: 2.5rem; color: var(--gray-400);"></i>
+                                    <p>No hay requisiciones registradas</p>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="orders-pagination-bar mt-3">
+            <!-- Left Info -->
+            <div class="orders-pagination-left">
+                <span class="orders-pagination-info">
+                    <?php
+                    $inicio_registro = $totalRegistros > 0 ? $offset + 1 : 0;
+                    $fin_registro = min($offset + $por_pagina, $totalRegistros);
+                    ?>
+                    Mostrando <strong><?= $inicio_registro ?>-<?= $fin_registro ?></strong> de <strong><?= $totalRegistros ?></strong> resultados
+                </span>
+            </div>
+
+            <!-- Controls -->
+            <div class="orders-pagination-controls">
+                <?php if ($totalPaginas > 1): ?>
+                    <nav class="orders-pagination-nav" aria-label="Paginación">
+                        <!-- Ir al primero -->
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=1"
+                           aria-label="Primera página">
+                           &laquo;
+                         </a>
+
+                        <!-- Anterior -->
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= max(1, $pagina - 1) ?>"
+                           aria-label="Página anterior">
+                           &lsaquo;
+                        </a>
+
+                        <!-- Números de página -->
+                        <?php 
+                        $rango_inicio = max(1, $pagina - 2);
+                        $rango_fin = min($totalPaginas, $pagina + 2);
+                        for ($i = $rango_inicio; $i <= $rango_fin; $i++): 
+                        ?>
+                            <a class="page-btn page-link <?= $i == $pagina ? 'active' : '' ?>"
+                               href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
+                                 <?= $i ?>
+                            </a>
+                        <?php endfor; ?>
+
+                        <!-- Siguiente -->
+                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= min($totalPaginas, $pagina + 1) ?>"
+                           aria-label="Página siguiente">
+                           &rsaquo;
+                        </a>
+
+                        <!-- Ir al último -->
+                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" 
+                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $totalPaginas ?>"
+                           aria-label="Última página">
+                           &raquo;
+                        </a>
+                    </nav>
+
+                    <!-- Divider -->
+                    <div class="orders-pagination-divider"></div>
+
+                    <!-- Go to page -->
+                    <div class="orders-pagination-goto">
+                        <span>Ir a</span>
+                        <input type="number" 
+                               class="goto-page-input" 
+                               min="1" 
+                               max="<?= $totalPaginas ?>" 
+                               value="<?= $pagina ?>"
+                               aria-label="Ir a la página">
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div> <!-- /table-container-wrapper -->
+</div>
+
+<script>
+    // Función para actualizar la lista vía AJAX
+    function initAJAX() {
+        const searchForm = document.getElementById('search-form');
+        const filterForm = document.getElementById('filter-form');
+        const container = document.getElementById('table-container-wrapper');
+        const visibleSearch = document.getElementById('visibleSearchInput');
+        const hiddenSearchInput = searchForm ? searchForm.querySelector('input[name="q"]') : null;
+
+        if (!searchForm || !filterForm || !container) return;
+
+        // Sync visible search → hidden form
+        if (visibleSearch && hiddenSearchInput) {
+            visibleSearch.addEventListener('input', function() {
+                hiddenSearchInput.value = this.value;
+                const filterQ = filterForm.querySelector('input[name="q"]');
+                if (filterQ) filterQ.value = this.value;
             });
-        });
-    </script>
-    <script>
-        // Función para actualizar la lista vía AJAX
-        function initAJAX() {
-            const searchForm = document.getElementById('search-form');
-            const filterForm = document.getElementById('filter-form');
-            const container = document.getElementById('table-container-wrapper');
 
-            if (!searchForm || !filterForm || !container) return;
-
-            function updateList(url, pushState = true) {
-                container.style.opacity = '0.5';
-                container.style.pointerEvents = 'none';
-
-                fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        const newContent = doc.getElementById('table-container-wrapper');
-
-                        if (newContent) {
-                            container.innerHTML = newContent.innerHTML;
-                        }
-
-                        const newSearch = doc.getElementById('search-form');
-                        const newFilter = doc.getElementById('filter-form');
-                        if (newSearch) syncForm(searchForm, newSearch);
-                        if (newFilter) syncForm(filterForm, newFilter);
-
-                        container.style.opacity = '1';
-                        container.style.pointerEvents = 'auto';
-
-                        if (pushState) window.history.pushState({}, '', url);
-
-                        // Reinicializar tooltips
-                        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                        tooltipTriggerList.map(function(tooltipTriggerEl) {
-                            return new bootstrap.Tooltip(tooltipTriggerEl);
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        container.style.opacity = '1';
-                        container.style.pointerEvents = 'auto';
-                    });
-            }
-
-            function syncForm(current, source) {
-                source.querySelectorAll('input, select').forEach(input => {
-                    const target = current.querySelector(`[name="${input.name}"]`);
-                    if (target) target.value = input.value;
-                });
-            }
-
-            document.addEventListener('click', function(e) {
-                const pageLink = e.target.closest('.page-link');
-                if (pageLink) {
+            visibleSearch.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
                     e.preventDefault();
-                    updateList(pageLink.href);
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
+                    filterForm.requestSubmit();
                 }
-            });
-
-            [searchForm, filterForm].forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const params = new URLSearchParams(new FormData(filterForm));
-                    const searchData = new FormData(searchForm);
-                    params.set('q', searchData.get('q') || "");
-
-                    params.set('page', '1');
-                    updateList('?' + params.toString());
-                });
-            });
-
-            filterForm.querySelectorAll('select').forEach(select => {
-                select.addEventListener('change', () => filterForm.requestSubmit());
             });
         }
 
-        document.addEventListener('DOMContentLoaded', initAJAX);
-    </script>
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+        // Tab click → update hidden select and submit
+        document.querySelectorAll('#estadoTabs .tab-btn').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                const estadoSelect = document.getElementById('estadoSelect');
+                if (estadoSelect) {
+                    estadoSelect.value = this.dataset.estado;
+                }
+                const hiddenEstadoInput = document.getElementById('hiddenEstadoInput');
+                if (hiddenEstadoInput) {
+                    hiddenEstadoInput.value = this.dataset.estado;
+                }
+                document.querySelectorAll('#estadoTabs .tab-btn').forEach(function(t) {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+                filterForm.requestSubmit();
+            });
+        });
+
+        // Sync tab active state after AJAX
+        function syncTabState() {
+            const estadoSelect = document.getElementById('estadoSelect');
+            if (estadoSelect) {
+                var val = estadoSelect.value;
+                document.querySelectorAll('#estadoTabs .tab-btn').forEach(function(t) {
+                    t.classList.toggle('active', t.dataset.estado === val);
+                });
+            }
+        }
+
+        function updateList(url, pushState = true) {
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.getElementById('table-container-wrapper');
+
+                    if (newContent) {
+                        container.innerHTML = newContent.innerHTML;
+                    }
+
+                    const newSearch = doc.getElementById('search-form');
+                    const newFilter = doc.getElementById('filter-form');
+                    if (newSearch) syncForm(searchForm, newSearch);
+                    if (newFilter) {
+                        syncForm(filterForm, newFilter);
+                        syncTabState();
+                    }
+
+                    // Sync visible search input
+                    if (visibleSearch && hiddenSearchInput) {
+                        visibleSearch.value = hiddenSearchInput.value;
+                    }
+
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+
+                    if (pushState) window.history.pushState({}, '', url);
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+                });
+        }
+
+        function syncForm(current, source) {
+            source.querySelectorAll('input, select').forEach(input => {
+                const target = current.querySelector(`[name="${input.name}"]`);
+                if (target) target.value = input.value;
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const pageLink = e.target.closest('.page-link');
+            if (pageLink) {
+                e.preventDefault();
+                updateList(pageLink.href);
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.target.classList.contains('goto-page-input') && e.key === 'Enter') {
+                e.preventDefault();
+                let page = parseInt(e.target.value);
+                let maxPage = parseInt(e.target.getAttribute('max'));
+                if (isNaN(page) || page < 1) {
+                    page = 1;
+                } else if (page > maxPage) {
+                    page = maxPage;
+                }
+
+                const params = new URLSearchParams(new FormData(filterForm));
+                const searchData = new FormData(searchForm);
+                params.set('q', searchData.get('q') || "");
+                params.set('page', page);
+                updateList('?' + params.toString());
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        [searchForm, filterForm].forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const params = new URLSearchParams(new FormData(filterForm));
+                const searchData = new FormData(searchForm);
+                params.set('q', searchData.get('q') || "");
+
+                params.set('page', '1');
+                updateList('?' + params.toString());
+            });
+        });
+
+        filterForm.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', () => filterForm.requestSubmit());
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initAJAX);
+</script>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

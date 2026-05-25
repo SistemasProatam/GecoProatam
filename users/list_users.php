@@ -49,7 +49,7 @@ $stmtTotal->execute();
 $totalRegistros = $stmtTotal->get_result()->fetch_assoc()['total'] ?? 0;
 
 // ====== Datos paginados ======
-$stmt = $conn->prepare("SELECT u.id, u.nombres, u.apellidos, u.correo_corporativo, d.nombre AS departamento
+$stmt = $conn->prepare("SELECT u.id, u.nombres, u.apellidos, u.correo_corporativo, u.foto_jpg, d.nombre AS departamento
                         $sqlBase
                         ORDER BY u.nombres ASC
                         LIMIT ? OFFSET ?");
@@ -73,129 +73,143 @@ while($dep = $departamentos->fetch_assoc()){
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<!-- HERO SECTION -->
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span>
-      <span>Registro de Usuarios</span>
-    </div>
-    
-    <div class="row align-items-end">
-      <div class="col-lg-8">
-        <h1 class="hero-title">Registro de Usuarios</h1>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="orders-page-container">
 
-<!-- MAIN CONTENT -->
-<div class="content-wrapper">
-  
-<div class="form-container">
-
-    <div class="form-body">
-  <!-- Buscador -->
-  <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
-        <input type="hidden" name="departamento" value="<?= htmlspecialchars($departamento_id) ?>">
-        <input class="form-control w-100" type="search" name="q" placeholder="Buscar usuario..." value="<?= htmlspecialchars($busqueda) ?>">
-        <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
-      </form>
-
-      <div class="mb-2">
-        <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
-          <i class="bi bi-funnel"></i> Filtros
-        </h5>
-      </div>
-      <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
-    <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
-    <!-- Filtro por departamento -->
-  <div style="flex: 0 0 auto; min-width: 150px;">
-    <select name="departamento" class="form-select">
-      <option value="">-- Todos los departamentos --</option>
-      <?= $departamentosOptions ?>
-    </select>
-  </div>
-</form>
-
-<div id="table-container-wrapper">
-
-  <!-- Botón de agregar usuario -->
-  <div class="d-flex justify-content-between mb-3">
-        <span class="badge-num"><?= $totalRegistros ?> usuarios</span>
-        <a href="add_user.php" class="button-56" style="text-decoration: none;">
-          <i class="bi bi-plus-circle"></i> Agregar
-        </a>
-      </div>
-
-      <!-- Lista -->
-      <?php
-if($result && $result->num_rows>0): ?>
-      <ul class="list-group">
-        <?php
-while($row = $result->fetch_assoc()): ?>
-        <li class="list-group-item d-flex justify-content-between align-items-center text-nowrap">
-          <div>
-            <strong><?= htmlspecialchars($row['nombres'].' '.$row['apellidos']) ?></strong>
-            <br>
-            <small class="text-muted">
-              <?= $row['departamento'] ?? "Sin departamento" ?>
-            </small>
-          </div>
-          <div class="btn-group">
-            <a href="details_user.php?id=<?= $row['id'] ?>" class="btn-inf" 
-              data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles del Usuario">
-              <i class="bi bi-info-circle"></i>
-            </a>
-            <a href="edit_user.php?id=<?= $row['id'] ?>" class="btn-ed"
-              data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Usuario">
-              <i class="bi bi-pencil"></i>
-              </a>
-            <button class="btn-del" onclick="eliminarUsuario(<?= $row['id'] ?>)">
-              <i class="bi bi-trash3"></i>
-            </button>
-          </div>
-
-        </li>
-        <?php
-endwhile; ?>
-      </ul>
-
-      <!-- Paginación -->
-      <?php
-if($totalPaginas>1): ?>
-      <nav aria-label="Paginación">
-        <ul class="pagination justify-content-center mt-3">
-          <?php
-for($i=1;$i<=$totalPaginas;$i++): ?>
-          <li class="page-item <?= $i==$pagina?'active':'' ?>">
-            <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&departamento=<?= urlencode($departamento_id) ?>&page=<?= $i ?>">
-              <?= $i ?>
-            </a>
-          </li>
-          <?php
-endfor; ?>
-        </ul>
+  <!-- Page Header -->
+  <div class="orders-page-header mb-4">
+    <div class="orders-page-header-info">
+      <nav class="orders-breadcrumb">
+        <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+        <span class="separator">›</span>
+        <span>Registro de Usuarios</span>
       </nav>
-      <?php
-endif; ?>
-      <?php
-else: ?>
-       <tr>
-          <td colspan="9" class="text-center text-muted py-4">
-            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-            <p class="mt-2">No hay usuarios registrados</p>
-          </td>
-        </tr>
-      <?php
-endif; ?>
-      </div> <!-- /table-container-wrapper -->
+      <h1 class="orders-page-title">Registro de Usuarios</h1>
     </div>
+    <a href="add_user.php" class="btn-geco-primary">
+      <i class="bi bi-plus-circle"></i> Agregar Usuario
+    </a>
   </div>
-</div>
+
+  <!-- Main Card -->
+  <div class="orders-card">
+    
+    <!-- Filter Bar -->
+    <form id="filter-search-form" method="GET">
+      <div class="orders-filter-bar mb-3">
+        
+        <!-- Left: Filters (Selects) -->
+        <div class="orders-filter-selects">
+          <select name="departamento" class="form-select" style="min-width: 250px;">
+            <option value="">-- Todos los departamentos --</option>
+            <?= $departamentosOptions ?>
+          </select>
+        </div>
+
+        <!-- Right: Search -->
+        <div class="orders-filter-search">
+          <div class="search-input-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" placeholder="Buscar usuario..." value="<?= htmlspecialchars($busqueda) ?>">
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- Table Wrapper -->
+    <div id="table-container-wrapper">
+
+      <?php if($result && $result->num_rows>0): ?>
+        <div class="orders-table-wrap">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Correo Corporativo</th>
+                <th>Departamento</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php while($row = $result->fetch_assoc()): ?>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <?php if(!empty($row['foto_jpg'])): ?>
+                        <img src="../uploads/usuarios/<?= htmlspecialchars($row['foto_jpg']) ?>" alt="Foto" class="rounded-circle" style="width: 38px; height: 38px; object-fit: cover; border: 1px solid var(--gray-200,#e5e7eb);">
+                      <?php else: ?>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 38px; height: 38px; background: var(--gray-600, #4b5563); font-size: 0.82rem; letter-spacing: 0.5px;">
+                          <?= getInitials($row['nombres'], $row['apellidos']) ?>
+                        </div>
+                      <?php endif; ?>
+                      <div>
+                        <span class="fw-bold text-dark d-block"><?= htmlspecialchars($row['nombres'] . ' ' . $row['apellidos']) ?></span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span style="font-size: 0.82rem; font-family: inherit; color: var(--gray-500,#6b7280);"><?= htmlspecialchars($row['correo_corporativo']) ?></span>
+                  </td>
+                  <td>
+                    <span class="fw-semibold text-secondary" style="font-size: 0.85rem;"><?= htmlspecialchars($row['departamento'] ?? "Sin departamento") ?></span>
+                  </td>
+                  <td>
+                    <div class="actions-group justify-content-end">
+                      <a href="details_user.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view">
+                        <i class="bi bi-info-circle"></i>
+                      </a>
+                      <a href="edit_user.php?id=<?= $row['id'] ?>" class="btn-action btn-action--edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <button class="btn-action btn-action--delete" onclick="eliminarUsuario(<?= $row['id'] ?>)">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <?php endwhile; ?>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="orders-pagination-bar mt-3">
+          <div class="orders-pagination-left">
+            <span class="orders-pagination-info">
+              <?php
+              $inicio_registro = $totalRegistros > 0 ? $offset + 1 : 0;
+              $fin_registro = min($offset + $por_pagina, $totalRegistros);
+              ?>
+              Mostrando <strong><?= $inicio_registro ?>-<?= $fin_registro ?></strong> de <strong><?= $totalRegistros ?></strong> usuarios registrados
+            </span>
+          </div>
+          <div class="orders-pagination-controls">
+            <?php if($totalPaginas > 1): ?>
+              <nav class="orders-pagination-nav" aria-label="Paginación">
+                <?php for($i=1;$i<=$totalPaginas;$i++): ?>
+                  <a href="?q=<?= urlencode($busqueda) ?>&departamento=<?= urlencode($departamento_id) ?>&page=<?= $i ?>" 
+                     class="page-btn <?= $i==$pagina?'active':'' ?>">
+                    <?= $i ?>
+                  </a>
+                <?php endfor; ?>
+              </nav>
+            <?php endif; ?>
+          </div>
+        </div>
+
+      <?php else: ?>
+        <div class="orders-empty-state">
+          <i class="bi bi-people" style="font-size: 3rem;"></i>
+          <h6>No se encontraron usuarios</h6>
+          <p>Prueba ajustando los filtros o criterios de búsqueda.</p>
+        </div>
+      <?php endif; ?>
+    </div> <!-- /table-container-wrapper -->
+  </div> <!-- /orders-card -->
+</div> <!-- /orders-page-container -->
 
 
 <script>
@@ -238,11 +252,10 @@ function eliminarUsuario(id) {
 
 // Función para actualizar la lista vía AJAX
 function initAJAX() {
-    const searchForm = document.getElementById('search-form');
-    const filterForm = document.getElementById('filter-form');
+    const form = document.getElementById('filter-search-form');
     const container = document.getElementById('table-container-wrapper');
 
-    if (!searchForm || !filterForm || !container) return;
+    if (!form || !container) return;
 
     window.updateList = function(url, pushState = true) {
         container.style.opacity = '0.5';
@@ -259,10 +272,8 @@ function initAJAX() {
                     container.innerHTML = newContent.innerHTML;
                 }
 
-                const newSearch = doc.getElementById('search-form');
-                const newFilter = doc.getElementById('filter-form');
-                if (newSearch) syncForm(searchForm, newSearch);
-                if (newFilter) syncForm(filterForm, newFilter);
+                const newForm = doc.getElementById('filter-search-form');
+                if (newForm) syncForm(form, newForm);
 
                 container.style.opacity = '1';
                 container.style.pointerEvents = 'auto';
@@ -290,7 +301,7 @@ function initAJAX() {
     }
 
     document.addEventListener('click', function(e) {
-        const pageLink = e.target.closest('.page-link');
+        const pageLink = e.target.closest('.page-btn');
         if (pageLink) {
             e.preventDefault();
             updateList(pageLink.href);
@@ -298,21 +309,28 @@ function initAJAX() {
         }
     });
 
-    [searchForm, filterForm].forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const params = new URLSearchParams(new FormData(filterForm));
-            const searchData = new FormData(searchForm);
-            params.set('q', searchData.get('q') || "");
-            
-            params.set('page', '1');
-            updateList('?' + params.toString());
-        });
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const params = new URLSearchParams(new FormData(form));
+        params.set('page', '1');
+        updateList('?' + params.toString());
     });
 
-    filterForm.querySelectorAll('select').forEach(select => {
-        select.addEventListener('change', () => filterForm.requestSubmit());
+    form.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', () => form.requestSubmit());
     });
+
+    // Búsqueda en tiempo real con debounce
+    let timeout = null;
+    const searchInput = form.querySelector('input[name="q"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                form.requestSubmit();
+            }, 400);
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initAJAX);

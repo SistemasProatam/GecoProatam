@@ -100,23 +100,6 @@ $stmt_imgs->execute();
 $imagenes = $stmt_imgs->get_result()->fetch_all(MYSQLI_ASSOC);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-function campo($label, $valor, $cols = 4) {
-    $v = $valor ?? '—';
-    echo '<div class="col-md-' . $cols . ' detail-field">'
-       . '<span class="detail-label">' . htmlspecialchars($label) . '</span>'
-       . '<span class="detail-value">' . htmlspecialchars($v) . '</span>'
-       . '</div>';
-}
-
-function iconoDoc($nombre) {
-    $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
-    $map = ['pdf'=>'bi-file-pdf','doc'=>'bi-file-word','docx'=>'bi-file-word',
-            'xls'=>'bi-file-excel','xlsx'=>'bi-file-excel','txt'=>'bi-file-text',
-            'jpg'=>'bi-file-image','jpeg'=>'bi-file-image','png'=>'bi-file-image',
-            'gif'=>'bi-file-image','webp'=>'bi-file-image'];
-    return $map[$ext] ?? 'bi-file-earmark';
-}
-
 function labelTipoDoc($tipo) {
     $map = [
         'factura'             => 'Factura / Comprobante',
@@ -133,681 +116,632 @@ function labelTipoDoc($tipo) {
     return $map[$tipo] ?? ucfirst($tipo);
 }
 
-$condicion_badges = [
-    'bueno'   => 'success',
-    'regular' => 'warning',
-    'malo'    => 'danger',
-];
-$estatus_badges = [
-    'activo'  => 'success',
-    'inactivo'=> 'secondary',
-];
+function iconoDoc($nombre) {
+    $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
+    $map = ['pdf'=>'bi-file-pdf','doc'=>'bi-file-word','docx'=>'bi-file-word',
+            'xls'=>'bi-file-excel','xlsx'=>'bi-file-excel','txt'=>'bi-file-text',
+            'jpg'=>'bi-file-image','jpeg'=>'bi-file-image','png'=>'bi-file-image',
+            'gif'=>'bi-file-image','webp'=>'bi-file-image'];
+    return $map[$ext] ?? 'bi-file-earmark';
+}
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Activo – <?= htmlspecialchars($activo['codigo']) ?></title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-    crossorigin="anonymous" />
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css" />
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_mobile.css" />
-  <style>
-    /* ── Hero image ── */
+
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+
+<style>
+    /* Custom status badges for condition */
+    .status-badge--bueno {
+        color: #15803d;
+        background: rgba(34, 197, 94, 0.06);
+        border-color: rgba(34, 197, 94, 0.25);
+    }
+    .status-badge--regular {
+        color: #b45309;
+        background: rgba(245, 158, 11, 0.06);
+        border-color: rgba(245, 158, 11, 0.25);
+    }
+    .status-badge--malo {
+        color: #be123c;
+        background: rgba(244, 63, 94, 0.06);
+        border-color: rgba(244, 63, 94, 0.25);
+    }
+
+    /* Custom premium card layouts for details */
     .hero-img-wrap {
-      width: 100%;
-      max-height: 380px;
-      overflow: hidden;
-      border-radius: 14px;
-      margin-bottom: 28px;
-      box-shadow: 0 6px 30px rgba(0,0,0,.18);
-      background: #e9ecef;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        width: 100%;
+        max-height: 380px;
+        overflow: hidden;
+        border-radius: 12px;
+        border: 1px solid var(--gray-200,#e5e7eb);
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
     }
     .hero-img-wrap img {
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      border-radius: 14px;
-      transition: transform .35s ease;
+        width: 100%;
+        height: 320px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform .25s ease;
     }
-    .hero-img-wrap img:hover { transform: scale(1.02); }
-    .hero-img-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 200px;
-      color: #adb5bd;
-    }
-    .hero-img-placeholder i { font-size: 4rem; }
-
-    /* ── Secciones ── */
-    .detail-section {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 22px 24px;
-      margin-bottom: 22px;
-    }
-    .detail-section .section-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #113456;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 10px;
-      margin-bottom: 16px;
-    }
-    .detail-field {
-      margin-bottom: 14px;
-    }
-    .detail-label {
-      display: block;
-      font-size: .72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      color: #6c757d;
-      margin-bottom: 2px;
-    }
-    .detail-value {
-      display: block;
-      font-size: .95rem;
-      color: #212529;
+    .hero-img-wrap img:hover {
+        transform: scale(1.02);
     }
 
-    /* ── Galería ── */
+    /* Documents & Gallery */
+    .documents-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
+    .document-card {
+        background: var(--gray-50,#f9fafb);
+        border: 1px solid var(--gray-200,#e5e7eb);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 145px;
+    }
+    .document-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border-color: var(--p-300,#86efac);
+        background: #fff;
+    }
+    .document-icon {
+        font-size: 1.8rem;
+        color: var(--p-500,#407656);
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+    .document-card h6 {
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: var(--s-800,#0f172a);
+    }
     .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
     }
-    .gallery-item img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #dee2e6;
-      cursor: pointer;
-      transition: transform .2s, box-shadow .2s;
+    .gallery-card {
+        background: #fff;
+        border: 1px solid var(--gray-200,#e5e7eb);
+        border-radius: 12px;
+        padding: 8px;
+        text-align: center;
+        transition: all 0.2s;
     }
-    .gallery-item img:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(0,0,0,.18); }
-    .gallery-item small { font-size: .72rem; color: #6c757d; display: block; text-align: center; margin-top: 4px; }
-
-    /* ── Docs ── */
-    .doc-item-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      background: #f8fafc;
+    .gallery-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-color: var(--p-300,#86efac);
     }
-    .doc-item-row i { font-size: 0.85rem; }
-    .doc-item-row .doc-info { flex: 1; }
-    .doc-item-row .doc-label { font-size: .75rem; color: #6c757d; }
-    .doc-item-row .doc-name  { font-size: .9rem;  color: #212529; font-weight: 500; }
-
-    /* ── Código badge ── */
-    .codigo-badge {
-      font-family: monospace;
-      font-size: 1.1rem;
-      background: #f0f4f8;
-      border: 1px dashed #adb5bd;
-      border-radius: 6px;
-      padding: 4px 12px;
-      color: #113456;
-      letter-spacing: 1px;
+    .gallery-card img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
     }
-
-    /* ── Acciones ── */
-    .action-bar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 22px;
+    .gallery-card small {
+        display: block;
+        margin-top: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--gray-400);
+        text-transform: uppercase;
     }
-  </style>
-</head>
-<body>
+</style>
 
 <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+include __DIR__ . "/../includes/navbar.php";
 
-<!-- HERO -->
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span>
-      <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
-      <span>/</span>
-      <span><?= htmlspecialchars($activo['codigo']) ?></span>
-    </div>
-    <div class="row align-items-end">
-      <div class="col-lg-8">
-        <h1 class="hero-title"><?= htmlspecialchars($activo['nombre']) ?></h1>
-        <div class="d-flex align-items-center gap-3 mt-2 flex-wrap">
-          <span class="codigo-badge"><i class="bi bi-upc-scan"></i> <?= htmlspecialchars($activo['codigo']) ?></span>
-          <span class="badge bg-<?= $estatus_badges[$activo['estatus']] ?? 'secondary' ?> fs-6">
-            <?= ucfirst(htmlspecialchars($activo['estatus'] ?? '')) ?>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+// Redefine visual-friendly field helper with GECO standards
+function renderGecoCampo($label, $valor, $cols = 4) {
+    $v = $valor ?? '—';
+    echo '<div class="col-md-' . $cols . ' mb-3">'
+       . '<span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400, #9ca3af); letter-spacing: 0.05em; margin-bottom: 4px;">' . htmlspecialchars($label) . '</span>'
+       . '<span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800, #0f172a);">' . htmlspecialchars($v) . '</span>'
+       . '</div>';
+}
 
-<!-- CONTENIDO -->
-<div class="content-wrapper">
-  <div class="form-container">
-    <div class="form-body">
+function renderCondicionBadge($condicion) {
+    $cond = strtolower($condicion ?? '');
+    if ($cond === 'bueno') {
+        return '<span class="status-badge status-badge--bueno">Bueno</span>';
+    } elseif ($cond === 'regular') {
+        return '<span class="status-badge status-badge--regular">Regular</span>';
+    } elseif ($cond === 'malo') {
+        return '<span class="status-badge status-badge--malo">Malo</span>';
+    }
+    return '<span class="status-badge">' . htmlspecialchars($condicion ?? '—') . '</span>';
+}
 
-      <?php
-if (isset($_GET['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <i class="bi bi-check-circle-fill"></i> Activo registrado exitosamente.
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <?php
-endif; ?>
+function renderEstatusBadge($estatus) {
+    $est = strtolower($estatus ?? '');
+    if ($est === 'activo') {
+        return '<span class="status-badge status-badge--aprobado">Activo</span>';
+    } elseif ($est === 'inactivo') {
+        return '<span class="status-badge status-badge--rechazado">Inactivo</span>';
+    }
+    return '<span class="status-badge">' . htmlspecialchars($estatus ?? '—') . '</span>';
+}
+?>
 
-      <?php
-if (!empty($activo['qr_token'])): ?>
-      <!-- ══ QR DEL ACTIVO ═════════════════════════════════════════════════ -->
-      <div class="detail-section">
-  <div class="row align-items-center g-4">
+<div class="orders-page-container">
 
-    <!-- QR -->
-    <div class="col-auto">
-      <?php
-$qrRutaActual = array_key_exists('qr_ruta_imagen', $activo)
-            ? $activo['qr_ruta_imagen']
-            : null;
-
-        if (!$qrRutaActual || !file_exists(__DIR__ . '/..' . $qrRutaActual)) {
-            $nuevaRuta = QRGenerator::generarYGuardar($activo['qr_token']);
-
-            if ($nuevaRuta) {
-                try {
-                    $stmt_qrupd = $conn->prepare("UPDATE activos SET qr_ruta_imagen=? WHERE id=?");
-                    $stmt_qrupd->bind_param("si", $nuevaRuta, $id);
-                    $stmt_qrupd->execute();
-                } catch (Throwable $e) {
-                    error_log("QR update skipped: " . $e->getMessage());
-                }
-
-                $qrRutaActual = $nuevaRuta;
-            }
-        }
-
-        $qrUrl = QRGenerator::getQRUrl($activo['qr_token'], $qrRutaActual, 200);
-      ?>
-
-      <img src="<?= htmlspecialchars($qrUrl) ?>"
-           alt="QR <?= htmlspecialchars($activo['codigo']) ?>"
-           class="qr-img">
-    </div>
-
-    <!-- TEXTO Y OPCIONES -->
-    <div class="col">
-
-      <div class="section-title mb-2" style="border:none;padding:0;">
-        <i class="bi bi-qr-code"></i> Código QR del Activo
-      </div>
-
-      <p class="text-muted mb-3" style="font-size:.88rem;">
-        Escanea este código para acceder rápidamente a la información del activo
-        desde cualquier dispositivo móvil.
-      </p>
-
-      <div class="d-flex flex-wrap gap-2">
-
-        <a href="print_qr.php?id=<?= $id ?>"
-           target="_blank"
-           class="btn btn-sm btn-outline-dark">
-          <i class="bi bi-download"></i> Descargar etiqueta
-        </a>
-
-      </div>
-    </div>
-  </div>
-</div>
-      <?php
-endif; ?>
-
-      <!-- ══ IMAGEN PRINCIPAL ══════════════════════════════════════════════ -->
-      <div class="hero-img-wrap">
-        <?php
-if (!empty($activo['img_foto_principal'])): ?>
-          <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
-               alt="Foto principal de <?= htmlspecialchars($activo['nombre']) ?>"
-               data-bs-toggle="modal" data-bs-target="#modalImgPrincipal"
-               title="Clic para ampliar" />
-        <?php
-else: ?>
-          <div class="hero-img-placeholder">
-            <i class="bi bi-image"></i>
-            <p class="mt-2 mb-0">Sin foto principal</p>
-          </div>
-        <?php
-endif; ?>
-      </div>
-
-      <!-- ══ INFORMACIÓN GENERAL ═══════════════════════════════════════════ -->
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
-        <div class="row">
-          <?php
-campo('Tipo de Activo',       $activo['tipo_nombre']);     ?>
-          <?php
-campo('Nombre',               $activo['nombre']);          ?>
-          <?php
-campo('Condición',            ucfirst($activo['condicion'] ?? ''));  ?>
-          <?php
-campo('Responsable',          trim(($activo['resp_nombres'] ?? '') . ' ' . ($activo['resp_apellidos'] ?? '')) ?: null); ?>
-          <?php
-campo('Departamento',         $activo['depto_nombre']);    ?>
-          <?php
-campo('Fecha de Adquisición', $activo['fecha_adquisicion'] ? date('d/m/Y', strtotime($activo['fecha_adquisicion'])) : null); ?>
-          <?php
-campo('Valor Factura (MXN)',  $activo['valor_factura'] ? '$' . number_format($activo['valor_factura'], 2) : null); ?>
-          <?php
-campo('Vida Útil',            $activo['vida_util'] ? $activo['vida_util'] . ' año(s)' : null); ?>
-          <?php
-campo('Ubicación',            $activo['ubicacion'],  4); ?>
-          <?php
-campo('Fecha de Registro',    $activo['fecha_creacion'] ? date('d/m/Y H:i', strtotime($activo['fecha_creacion'])) : null); ?>
-        </div>
-        <?php
-if (!empty($activo['notas'])): ?>
-          <div class="mt-2">
-            <span class="detail-label">Notas Generales</span>
-            <span class="detail-value"><?= nl2br(htmlspecialchars($activo['notas'])) ?></span>
-          </div>
-        <?php
-endif; ?>
-      </div>
-
-      <!-- ══ DETALLES VEHÍCULO ══════════════════════════════════════════════ -->
-      <?php
-if ($detalle_vehiculo): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-truck"></i> Detalles del Vehículo</div>
-        <div class="row">
-          <?php
-campo('Marca',             $detalle_vehiculo['marca']);           ?>
-          <?php
-campo('Modelo',            $detalle_vehiculo['modelo']);          ?>
-          <?php
-campo('Año',               $detalle_vehiculo['anio']);            ?>
-          <?php
-campo('Color',             $detalle_vehiculo['color']);           ?>
-          <?php
-campo('Placa',             $detalle_vehiculo['placa']);           ?>
-          <?php
-campo('VIN / N° Serie',    $detalle_vehiculo['vin']);             ?>
-          <?php
-campo('N° Motor',          $detalle_vehiculo['numero_motor']);    ?>
-          <?php
-campo('Entidad Federativa',$detalle_vehiculo['entidad_federativa']); ?>
-          <?php
-campo('N° Pedimento',      $detalle_vehiculo['numero_pedimento']); ?>
-          <?php
-campo('Origen',            ucfirst($detalle_vehiculo['origen'] ?? '')); ?>
-          <?php
-campo('Gravamen',          ucfirst($detalle_vehiculo['gravamen'] ?? '')); ?>
-          <?php
-campo('Propietario',       $detalle_vehiculo['nombre_propietario'], 8); ?>
-        </div>
-
-        <div class="row mt-3">
-          <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO MÉXICO</strong></div>
-          <?php
-campo('Aseguradora (MX)',   $detalle_vehiculo['nombre_aseguradora_mx']);    ?>
-          <?php
-campo('Teléfono (MX)',      $detalle_vehiculo['telefono_aseguradora_mx']);  ?>
-          <?php
-campo('Vto. Seguro (MX)',   $detalle_vehiculo['fecha_venc_seguro_mx'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_mx'])) : null); ?>
-        </div>
-        <div class="row mt-2">
-          <div class="col-12"><strong class="text-muted" style="font-size:.8rem;">SEGURO USA</strong></div>
-          <?php
-campo('Aseguradora (USA)',  $detalle_vehiculo['nombre_aseguradora_usa']);   ?>
-          <?php
-campo('Teléfono (USA)',     $detalle_vehiculo['telefono_aseguradora_usa']); ?>
-          <?php
-campo('Vto. Seguro (USA)',  $detalle_vehiculo['fecha_venc_seguro_usa'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_usa'])) : null); ?>
-        </div>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ DETALLES MAQUINARIA ════════════════════════════════════════════ -->
-      <?php
-if ($detalle_maquinaria): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-gear-wide-connected"></i> Detalles de Maquinaria</div>
-        <div class="row">
-          <?php
-campo('Marca',             $detalle_maquinaria['marca']);        ?>
-          <?php
-campo('Modelo',            $detalle_maquinaria['modelo']);       ?>
-          <?php
-campo('N° Serie',          $detalle_maquinaria['numero_serie']); ?>
-          <?php
-campo('Km / Horómetro',    $detalle_maquinaria['kilometraje'] ? number_format($detalle_maquinaria['kilometraje']) : null); ?>
-        </div>
-        <?php
-if (!empty($detalle_maquinaria['foto_motor'])): ?>
-          <div class="mt-3">
-            <span class="detail-label">Foto Motor</span>
-            <img src="<?= htmlspecialchars($detalle_maquinaria['foto_motor']) ?>"
-                 alt="Foto motor" class="img-thumbnail mt-1" style="max-height:200px;" />
-          </div>
-        <?php
-endif; ?>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ DETALLES MOBILIARIO ════════════════════════════════════════════ -->
-      <?php
-if ($detalle_mobiliario): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-archive"></i> Detalles de Mobiliario</div>
-        <div class="row">
-          <?php
-campo('Marca',            $detalle_mobiliario['marca']);             ?>
-          <?php
-campo('Modelo',           $detalle_mobiliario['modelo']);            ?>
-          <?php
-campo('N° de Items',      $detalle_mobiliario['numero_items']);      ?>
-          <?php
-campo('Medida Aprox.',    $detalle_mobiliario['medida_aprox']);      ?>
-          <?php
-campo('Edificio',         $detalle_mobiliario['edificio']);          ?>
-          <?php
-campo('Área / Depto.',    $detalle_mobiliario['area_departamento']); ?>
-          <?php
-campo('Dirección',        $detalle_mobiliario['direccion'], 8);      ?>
-        </div>
-        <?php
-if (!empty($detalle_mobiliario['descripcion'])): ?>
-          <div class="mt-2">
-            <span class="detail-label">Descripción</span>
-            <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_mobiliario['descripcion'])) ?></span>
-          </div>
-        <?php
-endif; ?>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ DETALLES INMUEBLE ══════════════════════════════════════════════ -->
-      <?php
-if ($detalle_inmueble): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-building"></i> Detalles del Inmueble</div>
-        <div class="row">
-          <?php
-campo('Tipo de Inmueble',         $detalle_inmueble['tipo_inmueble']);             ?>
-          <?php
-campo('Tipo de Posesión',         $detalle_inmueble['tipo_posesion']);             ?>
-          <?php
-campo('Uso',                      $detalle_inmueble['uso']);                       ?>
-          <?php
-campo('Dirección',                $detalle_inmueble['direccion'], 6);              ?>
-          <?php
-campo('Coordenadas GPS',          $detalle_inmueble['coordenadas'], 6);            ?>
-          <?php
-campo('Sup. Terreno (mÂ²)',        $detalle_inmueble['superficie_terreno'] ? number_format($detalle_inmueble['superficie_terreno'], 2) : null); ?>
-          <?php
-campo('Sup. Construida (mÂ²)',     $detalle_inmueble['superficie_construida'] ? number_format($detalle_inmueble['superficie_construida'], 2) : null); ?>
-          <?php
-campo('Niveles',                  $detalle_inmueble['niveles']);                   ?>
-          <?php
-campo('Valor Terreno',            $detalle_inmueble['valor_terreno'] ? '$' . number_format($detalle_inmueble['valor_terreno'], 2) : null); ?>
-          <?php
-campo('Folio RPP',                $detalle_inmueble['folio_rpp']);                 ?>
-          <?php
-campo('Predial',                  $detalle_inmueble['predial']);                   ?>
-          <?php
-campo('Estatus Legal',            $detalle_inmueble['estatus_legal']);             ?>
-          <?php
-campo('Resp. Administrativo',     $detalle_inmueble['responsable_administrativo'], 8); ?>
-        </div>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ DETALLES HERRAMIENTA ═══════════════════════════════════════════ -->
-      <?php
-if ($detalle_herramienta): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-tools"></i> Detalles de Herramienta</div>
-        <div class="row">
-          <?php
-campo('Marca',         $detalle_herramienta['marca']);            ?>
-          <?php
-campo('Modelo',        $detalle_herramienta['modelo']);           ?>
-          <?php
-campo('N° Serie',      $detalle_herramienta['numero_serie']);     ?>
-          <?php
-campo('Asignación',    $detalle_herramienta['asignacion']);       ?>
-          <?php
-campo('Ubicación',     $detalle_herramienta['ubicacion_fisica']); ?>
-        </div>
-        <?php
-if (!empty($detalle_herramienta['descripcion'])): ?>
-          <div class="mt-2">
-            <span class="detail-label">Descripción</span>
-            <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_herramienta['descripcion'])) ?></span>
-          </div>
-        <?php
-endif; ?>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ DETALLES TICs ══════════════════════════════════════════════════ -->
-      <?php
-if ($detalle_tic): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-laptop"></i> Detalles de TICs</div>
-        <div class="row">
-          <?php
-campo('Marca',            $detalle_tic['marca']);              ?>
-          <?php
-campo('Modelo',           $detalle_tic['modelo']);             ?>
-          <?php
-campo('N° Serie',         $detalle_tic['numero_serie']);       ?>
-          <?php
-campo('Sistema Operativo',$detalle_tic['sistema_operativo']);  ?>
-          <?php
-campo('Procesador',       $detalle_tic['procesador']);         ?>
-          <?php
-campo('RAM',              $detalle_tic['ram']);                ?>
-          <?php
-campo('Almacenamiento',   $detalle_tic['almacenamiento']);     ?>
-          <?php
-campo('Office / Suite',   $detalle_tic['office']);             ?>
-          <?php
-campo('Correo Asignado',  $detalle_tic['correo']);             ?>
-          <?php
-campo('Ubicación Física', $detalle_tic['ubicacion_fisica']);   ?>
-        </div>
-        <?php
-if (!empty($detalle_tic['programas_instalados'])): ?>
-          <div class="mt-2">
-            <span class="detail-label">Programas Instalados</span>
-            <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_tic['programas_instalados'])) ?></span>
-          </div>
-        <?php
-endif; ?>
-        <?php
-if (!empty($detalle_tic['complementos'])): ?>
-          <div class="mt-2">
-            <span class="detail-label">Complementos / Accesorios</span>
-            <span class="detail-value"><?= nl2br(htmlspecialchars($detalle_tic['complementos'])) ?></span>
-          </div>
-        <?php
-endif; ?>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ DOCUMENTOS ════════════════════════════════════════════════════ -->
-      <?php
-if (!empty($documentos)): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-paperclip"></i> Documentos</div>
-        <?php
-foreach ($documentos as $doc): ?>
-          <div class="doc-item-row">
-            <i class="bi <?= iconoDoc($doc['nombre_original'] ?? $doc['ruta_archivo']) ?>"></i>
-            <div class="doc-info">
-              <div class="doc-label"><?= htmlspecialchars(labelTipoDoc($doc['tipo_documento'])) ?></div>
-              <div class="doc-name"><?= htmlspecialchars($doc['nombre_original'] ?? basename($doc['ruta_archivo'])) ?></div>
+    <!-- ===== Cabecera de Página ===== -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <a href="list_activos.php">Registro de Activos</a>
+                <span class="separator">›</span>
+                <span>Detalles del Activo</span>
+            </nav>
+            <div class="d-flex align-items-center gap-3 flex-wrap mt-1">
+                <h1 class="orders-page-title m-0"><?= htmlspecialchars($activo['nombre']) ?></h1>
+                <span class="status-badge" style="font-family: monospace; font-size: 0.88rem; font-weight: 600; padding: 4px 10px; border-style: dashed;">
+                    <?= htmlspecialchars($activo['codigo']) ?>
+                </span>
+                <?= renderEstatusBadge($activo['estatus']) ?>
+                <?= renderCondicionBadge($activo['condicion']) ?>
             </div>
-            <a href="<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank"
-               class="btn btn-sm btn-outline-dark" title="Abrir documento">
-              <i class="bi bi-eye"></i>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="list_activos.php" class="btn-geco-outline">
+                <i class="bi bi-arrow-left"></i> Volver al Listado
             </a>
-          </div>
-        <?php
-endforeach; ?>
-      </div>
-      <?php
-endif; ?>
-
-      <!-- ══ GALERÍA DE IMÁGENES ════════════════════════════════════════════ -->
-      <?php
-$imgs_galeria = array_filter($imagenes, fn($im) => $im['tipo_imagen'] !== 'foto_principal');
-      $foto_placa   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_placa');
-      $foto_serie   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_numero_serie');
-      $fotos_gen    = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_general');
-      ?>
-      <?php
-if (!empty($imgs_galeria)): ?>
-      <div class="detail-section">
-        <div class="section-title"><i class="bi bi-card-image"></i> Imágenes</div>
-        <div class="gallery-grid">
-          <?php
-foreach ($fotos_gen as $img): ?>
-            <div class="gallery-item">
-              <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                   alt="Foto general"
-                   data-bs-toggle="modal" data-bs-target="#modalGaleria"
-                   data-src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                   onclick="abrirImagen(this)" />
-              <small>Foto general</small>
-            </div>
-          <?php
-endforeach; ?>
-          <?php
-foreach ($foto_placa as $img): ?>
-            <div class="gallery-item">
-              <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                   alt="Foto placa"
-                   data-bs-toggle="modal" data-bs-target="#modalGaleria"
-                   onclick="abrirImagen(this)" />
-              <small>Placa</small>
-            </div>
-          <?php
-endforeach; ?>
-          <?php
-foreach ($foto_serie as $img): ?>
-            <div class="gallery-item">
-              <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                   alt="N° Serie"
-                   data-bs-toggle="modal" data-bs-target="#modalGaleria"
-                   onclick="abrirImagen(this)" />
-              <small>N° Serie</small>
-            </div>
-          <?php
-endforeach; ?>
+            <a href="edit_activo.php?id=<?= $id ?>" class="btn-geco-primary">
+                <i class="bi bi-pencil"></i> Editar Activo
+            </a>
         </div>
-      </div>
-      <?php
-endif; ?>
+    </div>
 
-    </div><!-- /form-body -->
-  </div><!-- /form-container -->
-</div><!-- /content-wrapper -->
+    <!-- ===== Mensajes de registro ===== -->
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> Activo registrado exitosamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
-<!-- Modal imagen principal -->
-<?php
-if (!empty($activo['img_foto_principal'])): ?>
+    <div class="row">
+        <!-- ===== Columna Izquierda: Foto y QR (4 cols) ===== -->
+        <div class="col-lg-4">
+            
+            <!-- Foto Principal Card -->
+            <div class="oc-card mb-4">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-image"></i> Foto Principal</span>
+                </div>
+                <div class="oc-card-body">
+                    <div class="hero-img-wrap">
+                        <?php if (!empty($activo['img_foto_principal'])): ?>
+                            <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
+                                 alt="Foto principal"
+                                 data-bs-toggle="modal" data-bs-target="#modalImgPrincipal"
+                                 title="Clic para ampliar" />
+                        <?php else: ?>
+                            <div class="text-center py-5 text-muted" style="width: 100%;">
+                                <i class="bi bi-image" style="font-size: 3rem; opacity: 0.4; display: block; margin-bottom: 8px;"></i>
+                                <span style="font-size: 0.88rem;">Sin foto principal</span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Código QR Card -->
+            <?php if (!empty($activo['qr_token'])):
+                $qrRutaActual = array_key_exists('qr_ruta_imagen', $activo) ? $activo['qr_ruta_imagen'] : null;
+
+                if (!$qrRutaActual || !file_exists(__DIR__ . '/..' . $qrRutaActual)) {
+                    $nuevaRuta = QRGenerator::generarYGuardar($activo['qr_token']);
+
+                    if ($nuevaRuta) {
+                        try {
+                            $stmt_qrupd = $conn->prepare("UPDATE activos SET qr_ruta_imagen=? WHERE id=?");
+                            $stmt_qrupd->bind_param("si", $nuevaRuta, $id);
+                            $stmt_qrupd->execute();
+                        } catch (Throwable $e) {
+                            error_log("QR update skipped: " . $e->getMessage());
+                        }
+                        $qrRutaActual = $nuevaRuta;
+                    }
+                }
+                $qrUrl = QRGenerator::getQRUrl($activo['qr_token'], $qrRutaActual, 200);
+            ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="<?= htmlspecialchars($qrUrl) ?>"
+                                 alt="QR <?= htmlspecialchars($activo['codigo']) ?>"
+                                 style="width: 90px; height: 90px; border-radius: 8px; border: 1px solid var(--gray-200);"
+                                 title="Código QR del activo">
+                            <div>
+                                <div style="font-size: 0.88rem; font-weight: 700; color: var(--s-800); margin-bottom: 4px;">
+                                    <i class="bi bi-qr-code"></i> Código QR del Activo
+                                </div>
+                                <p style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 8px; line-height: 1.3;">
+                                    Escanea este código para acceder rápidamente a la información móvil del activo.
+                                </p>
+                                <a href="print_qr.php?id=<?= $id ?>" target="_blank" class="btn-geco-outline" style="font-size: 0.75rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
+                                    <i class="bi bi-printer"></i> Imprimir Etiqueta
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- ===== Columna Derecha: Información y Detalles (8 cols) ===== -->
+        <div class="col-lg-8">
+            
+            <!-- Información General Card -->
+            <div class="oc-card mb-4">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General</span>
+                </div>
+                <div class="oc-card-body">
+                    <div class="row g-3">
+                        <?php
+                        renderGecoCampo('Tipo de Activo',       $activo['tipo_nombre']);
+                        renderGecoCampo('Nombre',               $activo['nombre']);
+                        renderGecoCampo('Condición',            ucfirst($activo['condicion'] ?? ''));
+                        renderGecoCampo('Responsable',          trim(($activo['resp_nombres'] ?? '') . ' ' . ($activo['resp_apellidos'] ?? '')) ?: null);
+                        renderGecoCampo('Departamento',         $activo['depto_nombre']);
+                        renderGecoCampo('Fecha de Adquisición', $activo['fecha_adquisicion'] ? date('d/m/Y', strtotime($activo['fecha_adquisicion'])) : null);
+                        renderGecoCampo('Valor Factura (MXN)',  $activo['valor_factura'] ? '$' . number_format($activo['valor_factura'], 2) : null);
+                        renderGecoCampo('Vida Útil',            $activo['vida_util'] ? $activo['vida_util'] . ' año(s)' : null);
+                        renderGecoCampo('Ubicación',            $activo['ubicacion'], 4);
+                        renderGecoCampo('Fecha de Registro',    $activo['fecha_creacion'] ? date('d/m/Y H:i', strtotime($activo['fecha_creacion'])) : null);
+                        ?>
+                    </div>
+                    <?php if (!empty($activo['notas'])): ?>
+                        <div class="mt-4 pt-3 border-top">
+                            <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400, #9ca3af); letter-spacing: 0.05em; margin-bottom: 6px;">Notas Generales</span>
+                            <span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800, #0f172a); line-height: 1.5; background: var(--gray-50); padding: 12px; border-radius: 8px; border: 1px solid var(--gray-100);"><?= nl2br(htmlspecialchars($activo['notas'])) ?></span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Detalles Específicos por Tipo de Activo -->
+
+            <!-- Vehículo -->
+            <?php if ($detalle_vehiculo): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-truck"></i> Detalles del Vehículo</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="row g-3">
+                            <?php
+                            renderGecoCampo('Marca',             $detalle_vehiculo['marca']);
+                            renderGecoCampo('Modelo',            $detalle_vehiculo['modelo']);
+                            renderGecoCampo('Año',               $detalle_vehiculo['anio']);
+                            renderGecoCampo('Color',             $detalle_vehiculo['color']);
+                            renderGecoCampo('Placa',             $detalle_vehiculo['placa']);
+                            renderGecoCampo('VIN / N° Serie',    $detalle_vehiculo['vin']);
+                            renderGecoCampo('N° Motor',          $detalle_vehiculo['numero_motor']);
+                            renderGecoCampo('Entidad Federativa',$detalle_vehiculo['entidad_federativa']);
+                            renderGecoCampo('N° Pedimento',      $detalle_vehiculo['numero_pedimento']);
+                            renderGecoCampo('Origen',            ucfirst($detalle_vehiculo['origen'] ?? ''));
+                            renderGecoCampo('Gravamen',          ucfirst($detalle_vehiculo['gravamen'] ?? ''));
+                            renderGecoCampo('Propietario',       $detalle_vehiculo['nombre_propietario'], 8);
+                            ?>
+                            
+                            <!-- Subsección Seguro MX -->
+                            <div class="col-12 mt-4 mb-2">
+                                <div class="oc-form-subsection">
+                                    <div class="oc-form-subsection__title">
+                                        <i class="bi bi-shield-check"></i> Seguro México
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                            renderGecoCampo('Aseguradora (MX)',   $detalle_vehiculo['nombre_aseguradora_mx']);
+                            renderGecoCampo('Teléfono (MX)',      $detalle_vehiculo['telefono_aseguradora_mx']);
+                            renderGecoCampo('Vto. Seguro (MX)',   $detalle_vehiculo['fecha_venc_seguro_mx'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_mx'])) : null);
+                            ?>
+
+                            <!-- Subsección Seguro USA -->
+                            <div class="col-12 mt-4 mb-2">
+                                <div class="oc-form-subsection">
+                                    <div class="oc-form-subsection__title">
+                                        <i class="bi bi-shield-check"></i> Seguro USA
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                            renderGecoCampo('Aseguradora (USA)',  $detalle_vehiculo['nombre_aseguradora_usa']);
+                            renderGecoCampo('Teléfono (USA)',     $detalle_vehiculo['telefono_aseguradora_usa']);
+                            renderGecoCampo('Vto. Seguro (USA)',  $detalle_vehiculo['fecha_venc_seguro_usa'] ? date('d/m/Y', strtotime($detalle_vehiculo['fecha_venc_seguro_usa'])) : null);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Maquinaria -->
+            <?php if ($detalle_maquinaria): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-gear-wide-connected"></i> Detalles de Maquinaria</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="row g-3">
+                            <?php
+                            renderGecoCampo('Marca',             $detalle_maquinaria['marca']);
+                            renderGecoCampo('Modelo',            $detalle_maquinaria['modelo']);
+                            renderGecoCampo('N° Serie',          $detalle_maquinaria['numero_serie']);
+                            renderGecoCampo('Km / Horómetro',    $detalle_maquinaria['kilometraje'] ? number_format($detalle_maquinaria['kilometraje']) : null);
+                            ?>
+                        </div>
+                        <?php if (!empty($detalle_maquinaria['foto_motor'])): ?>
+                            <div class="mt-4 pt-3 border-top">
+                                <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: 8px;">Foto Motor</span>
+                                <img src="<?= htmlspecialchars($detalle_maquinaria['foto_motor']) ?>"
+                                     alt="Foto motor" class="img-thumbnail" style="max-height: 220px; border-radius: 8px; border: 1px solid var(--gray-200);" />
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Mobiliario -->
+            <?php if ($detalle_mobiliario): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-archive"></i> Detalles de Mobiliario</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="row g-3">
+                            <?php
+                            renderGecoCampo('Marca',            $detalle_mobiliario['marca']);
+                            renderGecoCampo('Modelo',           $detalle_mobiliario['modelo']);
+                            renderGecoCampo('N° de Items',      $detalle_mobiliario['numero_items']);
+                            renderGecoCampo('Medida Aprox.',    $detalle_mobiliario['medida_aprox']);
+                            renderGecoCampo('Edificio',         $detalle_mobiliario['edificio']);
+                            renderGecoCampo('Área / Depto.',    $detalle_mobiliario['area_departamento']);
+                            renderGecoCampo('Dirección',        $detalle_mobiliario['direccion'], 8);
+                            ?>
+                        </div>
+                        <?php if (!empty($detalle_mobiliario['descripcion'])): ?>
+                            <div class="mt-4 pt-3 border-top">
+                                <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: 6px;">Descripción</span>
+                                <span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800); line-height: 1.5; background: var(--gray-50); padding: 12px; border-radius: 8px; border: 1px solid var(--gray-100);"><?= nl2br(htmlspecialchars($detalle_mobiliario['descripcion'])) ?></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Inmueble -->
+            <?php if ($detalle_inmueble): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-building"></i> Detalles del Inmueble</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="row g-3">
+                            <?php
+                            renderGecoCampo('Tipo de Inmueble',         $detalle_inmueble['tipo_inmueble']);
+                            renderGecoCampo('Tipo de Posesión',         $detalle_inmueble['tipo_posesion']);
+                            renderGecoCampo('Uso',                      $detalle_inmueble['uso']);
+                            renderGecoCampo('Dirección',                $detalle_inmueble['direccion'], 6);
+                            renderGecoCampo('Coordenadas GPS',          $detalle_inmueble['coordenadas'], 6);
+                            renderGecoCampo('Sup. Terreno (m²)',        $detalle_inmueble['superficie_terreno'] ? number_format($detalle_inmueble['superficie_terreno'], 2) : null);
+                            renderGecoCampo('Sup. Construida (m²)',     $detalle_inmueble['superficie_construida'] ? number_format($detalle_inmueble['superficie_construida'], 2) : null);
+                            renderGecoCampo('Niveles',                  $detalle_inmueble['niveles']);
+                            renderGecoCampo('Valor Terreno',            $detalle_inmueble['valor_terreno'] ? '$' . number_format($detalle_inmueble['valor_terreno'], 2) : null);
+                            renderGecoCampo('Folio RPP',                $detalle_inmueble['folio_rpp']);
+                            renderGecoCampo('Predial',                  $detalle_inmueble['predial']);
+                            renderGecoCampo('Estatus Legal',            $detalle_inmueble['estatus_legal']);
+                            renderGecoCampo('Resp. Administrativo',     $detalle_inmueble['responsable_administrativo'], 8);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Herramienta -->
+            <?php if ($detalle_herramienta): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-tools"></i> Detalles de Herramienta</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="row g-3">
+                            <?php
+                            renderGecoCampo('Marca',         $detalle_herramienta['marca']);
+                            renderGecoCampo('Modelo',        $detalle_herramienta['modelo']);
+                            renderGecoCampo('N° Serie',      $detalle_herramienta['numero_serie']);
+                            renderGecoCampo('Asignación',    $detalle_herramienta['asignacion']);
+                            renderGecoCampo('Ubicación',     $detalle_herramienta['ubicacion_fisica']);
+                            ?>
+                        </div>
+                        <?php if (!empty($detalle_herramienta['descripcion'])): ?>
+                            <div class="mt-4 pt-3 border-top">
+                                <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: 6px;">Descripción</span>
+                                <span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800); line-height: 1.5; background: var(--gray-50); padding: 12px; border-radius: 8px; border: 1px solid var(--gray-100);"><?= nl2br(htmlspecialchars($detalle_herramienta['descripcion'])) ?></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- TICs -->
+            <?php if ($detalle_tic): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-laptop"></i> Detalles de TICs</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="row g-3">
+                            <?php
+                            renderGecoCampo('Marca',            $detalle_tic['marca']);
+                            renderGecoCampo('Modelo',           $detalle_tic['modelo']);
+                            renderGecoCampo('N° Serie',         $detalle_tic['numero_serie']);
+                            renderGecoCampo('Sistema Operativo',$detalle_tic['sistema_operativo']);
+                            renderGecoCampo('Procesador',       $detalle_tic['procesador']);
+                            renderGecoCampo('RAM',              $detalle_tic['ram']);
+                            renderGecoCampo('Almacenamiento',   $detalle_tic['almacenamiento']);
+                            renderGecoCampo('Office / Suite',   $detalle_tic['office']);
+                            renderGecoCampo('Correo Asignado',  $detalle_tic['correo']);
+                            renderGecoCampo('Ubicación Física', $detalle_tic['ubicacion_fisica']);
+                            ?>
+                        </div>
+                        <?php if (!empty($detalle_tic['programas_instalados'])): ?>
+                            <div class="mt-4 pt-3 border-top">
+                                <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: 6px;">Programas Instalados</span>
+                                <span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800); line-height: 1.5; background: var(--gray-50); padding: 12px; border-radius: 8px; border: 1px solid var(--gray-100);"><?= nl2br(htmlspecialchars($detalle_tic['programas_instalados'])) ?></span>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($detalle_tic['complementos'])): ?>
+                            <div class="mt-3 pt-3 border-top">
+                                <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: 6px;">Complementos / Accesorios</span>
+                                <span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800); line-height: 1.5; background: var(--gray-50); padding: 12px; border-radius: 8px; border: 1px solid var(--gray-100);"><?= nl2br(htmlspecialchars($detalle_tic['complementos'])) ?></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Documentos Adjuntos -->
+            <div class="oc-card mb-4">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Documentos Adjuntos</span>
+                </div>
+                <div class="oc-card-body">
+                    <?php if (!empty($documentos)): ?>
+                        <div class="documents-grid">
+                            <?php foreach ($documentos as $doc): 
+                                $ruta = htmlspecialchars($doc['ruta_archivo']);
+                                $nombre = htmlspecialchars($doc['nombre_original'] ?? basename($doc['ruta_archivo']));
+                                $tipoLabel = htmlspecialchars(labelTipoDoc($doc['tipo_documento']));
+                                $iconClass = iconoDoc($doc['nombre_original'] ?? $doc['ruta_archivo']);
+                            ?>
+                                <div class="document-card">
+                                    <div>
+                                        <i class="bi <?= $iconClass ?> document-icon"></i>
+                                        <h6><?= $tipoLabel ?></h6>
+                                        <span style="font-size: 0.72rem; color: var(--gray-400); word-break: break-all; display: block;"><?= $nombre ?></span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="<?= $ruta ?>" target="_blank" class="btn btn-sm w-100" style="background: rgba(64,118,86,0.06); color: var(--p-700,#2a523a); border: 1px solid rgba(64,118,86,0.15); font-size: 0.78rem; font-weight: 600;">
+                                            <i class="bi bi-eye me-1"></i> Ver / Descargar
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-4 text-muted" style="font-size: 0.88rem;">
+                            <i class="bi bi-info-circle me-1"></i> No hay documentos asociados a este activo.
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Galería de Imágenes -->
+            <?php
+            $imgs_galeria = array_filter($imagenes, fn($im) => $im['tipo_imagen'] !== 'foto_principal');
+            $foto_placa   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_placa');
+            $foto_serie   = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_numero_serie');
+            $fotos_gen    = array_filter($imagenes,  fn($im) => $im['tipo_imagen'] === 'foto_general');
+            ?>
+            <?php if (!empty($imgs_galeria)): ?>
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-card-image"></i> Galería de Imágenes</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="gallery-grid">
+                            <?php foreach ($fotos_gen as $img): ?>
+                                <div class="gallery-card">
+                                    <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
+                                         alt="Foto general"
+                                         data-bs-toggle="modal" data-bs-target="#modalGaleria"
+                                         onclick="abrirImagen(this)" />
+                                    <small>Foto General</small>
+                                </div>
+                            <?php endforeach; ?>
+                            
+                            <?php foreach ($foto_placa as $img): ?>
+                                <div class="gallery-card">
+                                    <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
+                                         alt="Foto placa"
+                                         data-bs-toggle="modal" data-bs-target="#modalGaleria"
+                                         onclick="abrirImagen(this)" />
+                                    <small>Placa</small>
+                                </div>
+                            <?php endforeach; ?>
+                            
+                            <?php foreach ($foto_serie as $img): ?>
+                                <div class="gallery-card">
+                                    <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
+                                         alt="N° Serie"
+                                         data-bs-toggle="modal" data-bs-target="#modalGaleria"
+                                         onclick="abrirImagen(this)" />
+                                    <small>N° Serie</small>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Imagen Principal -->
+<?php if (!empty($activo['img_foto_principal'])): ?>
 <div class="modal fade" id="modalImgPrincipal" tabindex="-1">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content bg-dark border-0">
-      <div class="modal-header border-0">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center p-0">
-        <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
-             alt="Foto principal" class="img-fluid" style="max-height:85vh;" />
-      </div>
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark border-0">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
+                     alt="Foto principal" class="img-fluid" style="max-height:85vh; border-radius: 8px;" />
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-<?php
-endif; ?>
+<?php endif; ?>
 
-<!-- Modal galería -->
+<!-- Modal Galería -->
 <div class="modal fade" id="modalGaleria" tabindex="-1">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content bg-dark border-0">
-      <div class="modal-header border-0">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center p-0">
-        <img id="modalGaleriaImg" src="" alt="Imagen" class="img-fluid" style="max-height:85vh;" />
-      </div>
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark border-0">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="modalGaleriaImg" src="" alt="Imagen" class="img-fluid" style="max-height:85vh; border-radius: 8px;" />
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-
-<!-- Botón volver -->
-<div class="fab-container-backbtn">
-  <a onclick="history.back()" class="fab-button-backbtn gray">
-    <i class="bi bi-arrow-left"></i>
-    <span class="fab-tooltip-backbtn">Volver</span>
-  </a>
 </div>
 
 <script>
-// Inicializar tooltips de Bootstrap
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-  crossorigin="anonymous"></script>
-<script>
-  function abrirImagen(el) {
+function abrirImagen(el) {
     document.getElementById('modalGaleriaImg').src = el.src;
-  }
+}
 </script>
 
-<?php
-include __DIR__ . "/../includes/footer.php"; ?>
-</body>
-</html>
-
-
-
+<?php include __DIR__ . "/../includes/footer.php"; ?>

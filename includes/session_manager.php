@@ -97,5 +97,34 @@ class SessionManager {
         $_SESSION = array();
     }
 }
+
+/**
+ * Obtiene las iniciales de 2 letras a partir de nombres y apellidos.
+ */
+function getInitials($nombres, $apellidos = '') {
+    $iniciales = '';
+    $nombres = trim($nombres ?? '');
+    $apellidos = trim($apellidos ?? '');
+    
+    if (!empty($nombres)) {
+        $iniciales .= strtoupper(substr($nombres, 0, 1));
+    }
+    if (!empty($apellidos)) {
+        $iniciales .= strtoupper(substr($apellidos, 0, 1));
+    } else if (strlen($nombres) > 1) {
+        $n_parts = explode(' ', $nombres);
+        if (count($n_parts) > 1) {
+            $iniciales .= strtoupper(substr($n_parts[1], 0, 1));
+        } else {
+            $iniciales .= strtoupper(substr($nombres, 1, 1));
+        }
+    }
+    
+    if (empty($iniciales)) {
+        $iniciales = 'US';
+    }
+    
+    return substr($iniciales, 0, 2);
+}
 ?>
 

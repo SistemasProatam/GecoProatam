@@ -11,7 +11,7 @@
  *   UI.loading.hide()
  *   UI.sessionWarning({ seconds, onExtend, onLogout })
  */
-const UI = (() => {
+var UI = (() => {
   /* ── ICONS MAP ─────────────────────────────────────────────────── */
   const ICONS = {
     success : 'bi-check-circle-fill',

@@ -95,248 +95,233 @@ function urlFiltros(array $extras = []): string {
 }
 ?>
 
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+
 <style>
-    /* Badge estatus */
-    .badge-activo   { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-    .badge-inactivo { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-    /* Badge condición */
-    .badge-bueno    { background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-    .badge-regular  { background:#fef9c3; color:#92400e; border-radius:20px; padding:3px 10px; font-size:.75rem; }
-    .badge-malo     { background:#fee2e2; color:#991b1b; border-radius:20px; padding:3px 10px; font-size:.75rem; }
+    /* Custom status badges for condition */
+    .status-badge--bueno {
+        color: #15803d;
+        background: rgba(34, 197, 94, 0.06);
+        border-color: rgba(34, 197, 94, 0.25);
+    }
+    .status-badge--regular {
+        color: #b45309;
+        background: rgba(245, 158, 11, 0.06);
+        border-color: rgba(245, 158, 11, 0.25);
+    }
+    .status-badge--malo {
+        color: #be123c;
+        background: rgba(244, 63, 94, 0.06);
+        border-color: rgba(244, 63, 94, 0.25);
+    }
 </style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<!-- HERO SECTION -->
-<div class="hero-section">
-    <div class="container hero-content">
-        <div class="breadcrumb-custom">
-            <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-            <span>/</span>
-            <span>Registro de Activos</span>
+<div class="orders-page-container">
+
+    <!-- ===== Cabecera de Página ===== -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <span>Registro de Activos</span>
+            </nav>
+            <h1 class="orders-page-title">Registro de Activos</h1>
         </div>
-        <div class="row align-items-end">
-            <div class="col-lg-8">
-                <h1 class="hero-title">Registro de Activos</h1>
-            </div>
-        </div>
+        <a href="new_activo.php" class="btn-geco-primary">
+            <i class="bi bi-plus-circle"></i> Agregar Activo
+        </a>
     </div>
-</div>
 
-<div class="content-wrapper">
-    <div class="form-container">
-        <div class="form-body">
+    <!-- ===== Alertas de sesión ===== -->
+    <?php if ($msg_success): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <?= $msg_success ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <?php if ($msg_error): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> <?= $msg_error ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
-            <!-- ===== Alertas de sesión ===== -->
-            <?php
-if ($msg_success): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle"></i> <?= $msg_success ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php
-endif; ?>
-            <?php
-if ($msg_error): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle"></i> <?= $msg_error ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php
-endif; ?>
-
-            <!-- ===== Buscador ===== -->
-            <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+    <!-- ===== Tarjeta Principal con Filtros y Tabla ===== -->
+    <div class="orders-card">
+        
+        <!-- ===== Filtros y Buscador Combinados ===== -->
+        <div class="orders-filter-bar">
+            <!-- Buscador (Izquierda) -->
+            <form id="search-form" method="GET" class="orders-filter-search" style="margin: 0; padding: 0;">
                 <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo_id) ?>">
                 <input type="hidden" name="estatus" value="<?= htmlspecialchars($estatus) ?>">
-                <input class="form-control w-100" type="search" name="q"
-                       placeholder="Buscar por código o nombre..."
-                       value="<?= htmlspecialchars($busqueda) ?>" />
-                <button class="btn btn-outline-success" type="submit">
+                <div class="search-input-wrap">
                     <i class="bi bi-search"></i>
-                </button>
+                    <input type="search" name="q" placeholder="Buscar por código o nombre..." value="<?= htmlspecialchars($busqueda) ?>">
+                </div>
             </form>
 
-            <div class="mb-2">
-                <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
-                    <i class="bi bi-funnel"></i> Filtros
-                </h5>
-            </div>
-            <!-- ===== Filtros ===== -->
-            <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+            <!-- Selectores y Filtros (Derecha) -->
+            <form id="filter-form" method="GET" class="orders-filter-selects" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 0.75rem;">
                 <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
 
-                <div style="flex:0 0 auto; min-width:160px;">
-                    <select name="tipo" class="form-select">
-                        <option value="">-- Tipo --</option>
-                        <?php
-                        while ($t = $tipos->fetch_assoc()): ?>
-                            <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($t['nombre']) ?>
-                            </option>
-                        <?php
-                        endwhile; ?>
-                    </select>
-                </div>
+                <select name="tipo" class="form-select" style="width: auto; min-width: 150px;">
+                    <option value="">-- Tipo --</option>
+                    <?php 
+                    $tipos->data_seek(0);
+                    while ($t = $tipos->fetch_assoc()): ?>
+                        <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($t['nombre']) ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
 
-                <div style="flex:0 0 auto; min-width:160px;">
-                    <select name="estatus" class="form-select">
-                        <option value="">-- Estatus --</option>
-                        <option value="activo"   <?= $estatus == 'activo'   ? 'selected' : '' ?>>Activo</option>
-                        <option value="inactivo" <?= $estatus == 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
-                    </select>
-                </div>
+                <select name="estatus" class="form-select" style="width: auto; min-width: 140px;">
+                    <option value="">-- Estatus --</option>
+                    <option value="activo"   <?= $estatus == 'activo'   ? 'selected' : '' ?>>Activo</option>
+                    <option value="inactivo" <?= $estatus == 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
+                </select>
 
-                <?php
-if ($busqueda || $tipo_id || $estatus): ?>
-                <a href="list_activos.php" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-circle"></i> Limpiar
-                </a>
-                <?php
-endif; ?>
+                <?php if ($busqueda || $tipo_id || $estatus): ?>
+                    <a href="list_activos.php" class="btn btn-outline-secondary btn-sm rounded-3 px-3 py-1.5" style="font-size:0.8rem; display: inline-flex; align-items: center; gap: 0.3rem;">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </a>
+                <?php endif; ?>
             </form>
+        </div>
 
-            <div id="table-container-wrapper">
+        <div id="table-container-wrapper">
+            <!-- ===== Lista / Tabla ===== -->
+            <?php if ($result && $result->num_rows > 0): ?>
+                <div class="orders-table-wrap">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre del Activo</th>
+                                <th>Tipo de Activo</th>
+                                <th>Ubicación</th>
+                                <th>Condición</th>
+                                <th>Estatus</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                                <tr>
+                                    <td><strong class="cell-folio"><?= htmlspecialchars($row['codigo']) ?></strong></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--s-800);"><?= htmlspecialchars($row['nombre']) ?></div>
+                                    </td>
+                                    <td><span class="cell-muted"><?= htmlspecialchars($row['tipo']) ?></span></td>
+                                    <td>
+                                        <span class="cell-muted">
+                                            <?php if ($row['ubicacion']): ?>
+                                                <i class="bi bi-geo-alt"></i> <?= htmlspecialchars($row['ubicacion']) ?>
+                                            <?php else: ?>
+                                                —
+                                            <?php endif; ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if ($row['condicion']): ?>
+                                            <span class="status-badge status-badge--<?= htmlspecialchars($row['condicion']) ?>">
+                                                <?= ucfirst($row['condicion']) ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="cell-muted">—</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-badge--<?= $row['estatus'] === 'activo' ? 'aprobado' : 'rechazado' ?>">
+                                            <?= ucfirst($row['estatus']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-flex gap-1 justify-content-end">
+                                            <a href="details_activo.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver detalle"
+                                               data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="bi bi-info-circle"></i>
+                                            </a>
+                                            <a href="edit_activo.php?id=<?= $row['id'] ?>" class="btn-action btn-action--edit" title="Editar activo"
+                                               data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- ===== Contador + Botón agregar ===== -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="badge-num"><?= $totalRegistros ?> activo<?= $totalRegistros != 1 ? 's' : '' ?></span>
-                <button class="button-56" type="button" onclick="window.location.href='new_activo.php'">
-                    <i class="bi bi-plus-circle"></i> Agregar
-                </button>
-            </div>
-
-            <!-- ===== Lista ===== -->
-            <?php
-if ($result && $result->num_rows > 0): ?>
-            <ul class="list-group">
-                <?php
-while ($row = $result->fetch_assoc()): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center gap-2 py-3">
-
-                    <div style="min-width:0; flex:1;">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <strong><?= htmlspecialchars($row['codigo']) ?></strong>
-                            <span class="badge-<?= $row['estatus'] ?>">
-                                <?= ucfirst($row['estatus']) ?>
-                            </span>
-                        </div>
-                        <div class="mt-1"><?= htmlspecialchars($row['nombre']) ?></div>
-                        <small class="text-muted">
-                            <i class="bi bi-tag"></i> <?= htmlspecialchars($row['tipo']) ?>
-                            <?php
-if ($row['ubicacion']): ?>
-                                &nbsp;|&nbsp;<i class="bi bi-geo-alt"></i> <?= htmlspecialchars($row['ubicacion']) ?>
-                            <?php
-endif; ?> |
-                            <span <?= $row['condicion'] ?>>
-                                <?= ucfirst($row['condicion']) ?>
-                            </span>
-                        </small>
-                    </div>  
-
-                    <!-- Botones de accion -->
-                    <div class="d-flex gap-1 flex-shrink-0">
-                        <button class="btn-inf" title="Ver detalle" style="color:#fff;"
-                                onclick="window.location.href='details_activo.php?id=<?= $row['id'] ?>'"
-                                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles">
-                            <i class="bi bi-info-circle"></i>
-                        </button>
-                        <button class="btn-ed" title="Editar" style="color:#fff;"
-                                onclick="window.location.href='edit_activo.php?id=<?= $row['id'] ?>'"
-                                data-bs-toggle="tooltip" data-bs-placement="top" title="Editar activo">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                <!-- ===== Barra de Paginación y Conteo ===== -->
+                <div class="orders-pagination-bar">
+                    <div class="orders-pagination-left">
+                        <span class="orders-pagination-info">
+                            Mostrando <strong><?= $totalRegistros ?></strong> activo<?= $totalRegistros != 1 ? 's' : '' ?> registrado<?= $totalRegistros != 1 ? 's' : '' ?>
+                        </span>
                     </div>
 
-                </li>
-                <?php
-endwhile; ?>
-            </ul>
+                    <?php if ($totalPaginas > 1): ?>
+                        <div class="orders-pagination-controls">
+                            <nav class="orders-pagination-nav">
+                                <!-- Anterior -->
+                                <a class="page-btn <?= $pagina <= 1 ? 'disabled' : '' ?>" href="<?= urlFiltros(['page' => $pagina - 1]) ?>">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
 
-            <!-- ===== Paginación ===== -->
-            <?php
-if ($totalPaginas > 1): ?>
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center flex-wrap">
+                                <?php
+                                $inicio = max(1, $pagina - 2);
+                                $fin    = min($totalPaginas, $pagina + 2);
 
-                    <!-- Anterior -->
-                    <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= urlFiltros(['page' => $pagina - 1]) ?>">
-                            <i class="bi bi-chevron-left"></i>
+                                if ($inicio > 1): ?>
+                                    <a class="page-btn" href="<?= urlFiltros(['page' => 1]) ?>">1</a>
+                                    <?php if ($inicio > 2): ?>
+                                        <span class="page-btn disabled">…</span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                <?php for ($p = $inicio; $p <= $fin; $p++): ?>
+                                    <a class="page-btn <?= $p === $pagina ? 'active' : '' ?>" href="<?= urlFiltros(['page' => $p]) ?>"><?= $p ?></a>
+                                <?php endfor; ?>
+
+                                <?php if ($fin < $totalPaginas): ?>
+                                    <?php if ($fin < $totalPaginas - 1): ?>
+                                        <span class="page-btn disabled">…</span>
+                                    <?php endif; ?>
+                                    <a class="page-btn" href="<?= urlFiltros(['page' => $totalPaginas]) ?>"><?= $totalPaginas ?></a>
+                                <?php endif; ?>
+
+                                <!-- Siguiente -->
+                                <a class="page-btn <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" href="<?= urlFiltros(['page' => $pagina + 1]) ?>">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </nav>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+            <?php else: ?>
+                <!-- ===== Estado Vacío ===== -->
+                <div class="text-center text-muted py-5" style="background: var(--gray-50, #f9fafb);">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: var(--gray-300);"></i>
+                    <p class="mt-3 mb-2" style="font-size: 0.95rem; font-weight: 500;">No se encontraron activos registrados</p>
+                    <?php if ($busqueda || $tipo_id || $estatus): ?>
+                        <a href="list_activos.php" class="btn btn-outline-secondary btn-sm rounded-pill px-4 mt-2" style="font-size: 0.8rem;">
+                            <i class="bi bi-x-circle"></i> Limpiar filtros
                         </a>
-                    </li>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </div> <!-- /table-container-wrapper -->
 
-                    <?php
-// Mostrar máximo 5 páginas alrededor de la actual
-                    $inicio = max(1, $pagina - 2);
-                    $fin    = min($totalPaginas, $pagina + 2);
+    </div> <!-- /orders-card -->
 
-                    if ($inicio > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="<?= urlFiltros(['page' => 1]) ?>">1</a>
-                        </li>
-                        <?php
-if ($inicio > 2): ?>
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        <?php
-endif; ?>
-                    <?php
-endif; ?>
-
-                    <?php
-for ($p = $inicio; $p <= $fin; $p++): ?>
-                        <li class="page-item <?= $p === $pagina ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= urlFiltros(['page' => $p]) ?>"><?= $p ?></a>
-                        </li>
-                    <?php
-endfor; ?>
-
-                    <?php
-if ($fin < $totalPaginas): ?>
-                        <?php
-if ($fin < $totalPaginas - 1): ?>
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        <?php
-endif; ?>
-                        <li class="page-item">
-                            <a class="page-link" href="<?= urlFiltros(['page' => $totalPaginas]) ?>"><?= $totalPaginas ?></a>
-                        </li>
-                    <?php
-endif; ?>
-
-                    <!-- Siguiente -->
-                    <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= urlFiltros(['page' => $pagina + 1]) ?>">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-
-                </ul>
-            </nav>
-            <?php
-endif; ?>
-
-            <?php
-else: ?>
-            <div class="text-center text-muted py-5">
-                <i class="bi bi-inbox" style="font-size:3rem;"></i>
-                <p class="mt-2">No hay activos registrados<?= ($busqueda || $tipo_id || $estatus) ? ' con esos filtros' : '' ?></p>
-                <?php
-if ($busqueda || $tipo_id || $estatus): ?>
-                    <a href="list_activos.php" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-x-circle"></i> Limpiar filtros
-                    </a>
-                <?php
-endif; ?>
-            </div>
-            <?php
-endif; ?>
-            </div> <!-- /table-container-wrapper -->
-
-        </div><!-- /form-body -->
-    </div><!-- /form-container -->
-</div><!-- /content-wrapper -->
+</div> <!-- /orders-page-container -->
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 

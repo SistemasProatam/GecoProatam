@@ -260,59 +260,37 @@ function generarTextoUbicacion($requisicion_data)
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-  <meta charset="UTF-8">
-  <title>Detalles Requisición <?= htmlspecialchars($requisicion['folio']) ?></title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
-  <style>
-    .estado-badge {
-      font-size: 1rem;
-      padding: 8px 16px;
-    }
-
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<style>
     .btn-estado {
-      margin: 5px;
+      margin: 5px 5px 5px 0;
     }
-
     .comentario-rechazo {
-      background-color: #f8f9fa;
-      border-left: 4px solid #dc3545;
+      background-color: #fff5f5;
+      border-left: 4px solid var(--danger-color, #dc3545);
       padding: 15px;
       border-radius: 4px;
       margin-top: 10px;
     }
-
     .comentario-header {
       font-weight: bold;
-      color: #dc3545;
+      color: var(--danger-color, #dc3545);
       margin-bottom: 8px;
     }
-
     .concepto-info {
       font-size: 0.85rem;
       color: #6c757d;
       margin-top: 4px;
     }
-
     .concepto-badge {
       background-color: #e9ecef;
       color: #495057;
       font-size: 0.75rem;
       padding: 2px 6px;
       border-radius: 3px;
+      display: inline-block;
+      margin-right: 4px;
     }
-
-    .form-body {
-      padding-top: 0;
-    }
-
-    /* Overlay de carga pantalla completa */
     #loadingOverlay {
       position: fixed;
       inset: 0;
@@ -322,8 +300,6 @@ function generarTextoUbicacion($requisicion_data)
       align-items: center;
       z-index: 9999;
     }
-
-    /* Contenedor del spinner */
     .loading-box {
       background: #ffffff;
       padding: 25px 40px;
@@ -333,49 +309,34 @@ function generarTextoUbicacion($requisicion_data)
       font-size: 17px;
       font-weight: bold;
     }
+</style>
 
-    .spinner-border {
-      width: 3rem;
-      height: 3rem;
-    }
-  </style>
-</head>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<body>
+<div class="orders-page-container">
 
-  <?php
-  include __DIR__ . "/../includes/navbar.php"; ?>
-
-  <!-- HERO SECTION -->
-  <div class="hero-section">
-    <div class="container hero-content">
-      <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-        <span>/</span>
-        <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
-        <span>/</span>
-        <span>Detalles de Requisición</span>
-      </div>
-
-      <div class="row align-items-end">
-        <div class="col-lg-8">
-          <h1 class="hero-title">Requisición - <?= htmlspecialchars($requisicion['folio']) ?></h1>
+    <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
+                <span class="separator">›</span>
+                <span>Detalles de Requisición</span>
+            </nav>
+            <h1 class="orders-page-title">Requisición - <?= htmlspecialchars($requisicion['folio']) ?></h1>
         </div>
-      </div>
-
+        <a href="list_requis.php" class="btn-geco-outline">
+            <i class="bi bi-arrow-left"></i> Volver al Listado
+        </a>
     </div>
-  </div>
-  </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content-wrapper">
+    <!-- MAIN CONTENT -->
+    <div class="orders-ajax-fade">
 
-    <div class="form-container">
-
-      <div class="form-body">
         <!-- Mostrar mensajes -->
-        <?php
-        if (isset($_GET['success'])): ?>
+        <?php if (isset($_GET['success'])): ?>
           <?php
           $email_status = $_GET['email'] ?? '';
           $mensaje_clase = 'success';
@@ -409,449 +370,412 @@ function generarTextoUbicacion($requisicion_data)
             <i class="bi bi-<?= $icono ?>"></i> <?= $mensaje ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php
-        endif; ?>
+        <?php endif; ?>
 
-        <?php
-        if (isset($mensaje_error)): ?>
+        <?php if (isset($mensaje_error)): ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle"></i> <?= $mensaje_error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
-        <?php
-        endif; ?>
+        <?php endif; ?>
 
-        <!-- Información General -->
-        <div class="section-title">
-          <i class="bi bi-info-circle"></i>
-          Información General
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Folio</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['folio']) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Fecha de Solicitud</label>
-            <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($requisicion['fecha_solicitud'])) ?>" readonly>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Entidad</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['entidad']) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Solicitante</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?>" readonly>
-            <?php
-            if (!empty($requisicion['correo_corporativo'])): ?>
-              <small class="text-muted">
-                <i class="bi bi-envelope"></i> <?= htmlspecialchars($requisicion['correo_corporativo']) ?>
-              </small>
-            <?php
-            else: ?>
-              <small class="text-warning">
-                <i class="bi bi-exclamation-triangle"></i> Sin correo registrado
-              </small>
-            <?php
-            endif; ?>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Categoría</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['categoria']) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Estado Actual</label>
-            <div class="mt-1">
-              <?php
-              switch ($requisicion['estado']) {
-                case 'pendiente':
-                  echo '<span class="badge bg-warning text-dark estado-badge"><i class="bi bi-clock"></i> Pendiente</span>';
-                  break;
-                case 'aprobado':
-                  echo '<span class="badge bg-success estado-badge"><i class="bi bi-check-circle"></i> Aprobado</span>';
-                  break;
-                case 'rechazado':
-                  echo '<span class="badge bg-danger estado-badge"><i class="bi bi-x-circle"></i> Rechazado</span>';
-                  break;
-              }
-              ?>
+        <!-- Card 1: Información General -->
+        <div class="oc-card mb-4">
+            <div class="oc-card-header">
+                <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Ubicación del Presupuesto -->
-        <?php
-        if (
-          !empty($requisicion['nombre_proyecto']) || !empty($requisicion['nombre_obra']) ||
-          !empty($requisicion['nombre_catalogo'])
-        ): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-diagram-3"></i>
-            Ubicación del Presupuesto
-          </div>
-
-          <div class="row mb-3">
-            <?php
-            if (!empty($requisicion['nombre_proyecto'])): ?>
-              <div class="col-md-6">
-                <label class="form-label">Proyecto</label>
-                <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_proyecto']) ?>" readonly>
-              </div>
-            <?php
-            endif; ?>
-
-            <?php
-            if (!empty($requisicion['nombre_obra'])): ?>
-              <div class="col-md-6">
-                <label class="form-label">Obra</label>
-                <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_obra']) ?>" readonly>
-              </div>
-            <?php
-            endif; ?>
-          </div>
-
-          <div class="row mb-3">
-            <?php
-            if (!empty($requisicion['nombre_catalogo'])): ?>
-              <div class="col-md-6">
-                <label class="form-label">Catálogo</label>
-                <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_catalogo']) ?>" readonly>
-              </div>
-            <?php
-            endif; ?>
-          </div>
-        <?php
-        endif; ?>
-
-        <!-- Mostrar comentario de rechazo si está rechazada -->
-        <?php
-        if ($requisicion['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-chat-dots"></i>
-            Motivo del Rechazo
-          </div>
-          <div class="comentario-rechazo">
-            <div class="comentario-header">
-              <i class="bi bi-info-circle"></i> Comentario del supervisor:
-            </div>
-            <p class="mb-0"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
-          </div>
-        <?php
-        endif; ?>
-
-        <!-- Items -->
-        <div class="section-title mt-4">
-          <i class="bi bi-list-ul"></i>
-          Items Solicitados
-        </div>
-
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Tipo</th>
-              <th>Producto/Servicio</th>
-              <th>Cantidad</th>
-              <th>Unidad</th>
-              <th>Concepto</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php
-            $i = 1;
-            while ($item = $items->fetch_assoc()): ?>
-              <tr>
-                <td><?= $i++ ?></td>
-                <td><?= ucfirst(htmlspecialchars($item['tipo'])) ?></td>
-                <td><?= htmlspecialchars($item['producto']) ?></td>
-                <td><?= htmlspecialchars($item['cantidad']) ?></td>
-                <td><?= htmlspecialchars($item['unidad']) ?></td>
-                <td>
-                  <?php
-                  if (!empty($item['codigo_concepto'])): ?>
-                    <div class="concepto-info">
-                      <?php
-                      if (!empty($item['numero_original'])): ?>
-                        <span class="concepto-badge">
-                          <i class="bi bi-hash"></i> <?= htmlspecialchars($item['numero_original']) ?>
-                        </span>
-                      <?php
-                      endif; ?>
-                      <span class="concepto-badge">
-                        <i class="bi bi-tag"></i> <?= htmlspecialchars($item['codigo_concepto']) ?>
-                      </span>
-                      <?php
-                      if (!empty($item['nombre_concepto'])): ?>
-                        <br>
-                        <small><?= htmlspecialchars($item['nombre_concepto']) ?></small>
-                      <?php
-                      endif; ?>
+            <div class="oc-card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="oc-form-label">Folio</label>
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['folio']) ?>" readonly>
                     </div>
-                  <?php
-                  else: ?>
-                    <span class="text-muted">-</span>
-                  <?php
-                  endif; ?>
-                </td>
-              </tr>
-            <?php
-            endwhile; ?>
-          </tbody>
-        </table>
-
-        <!-- Extra -->
-        <?php
-        if (!empty($requisicion['extra'])): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-plus-circle"></i>
-            Producto/servicio no listado
-          </div>
-          <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['extra']) ?></textarea>
-        <?php
-        endif; ?>
-
-        <!-- Descripción -->
-        <div class="section-title mt-4">
-          <i class="bi bi-file-text"></i>
-          Descripción
+                    <div class="col-md-6">
+                        <label class="oc-form-label">Fecha de Solicitud</label>
+                        <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($requisicion['fecha_solicitud'])) ?>" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="oc-form-label">Entidad</label>
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['entidad']) ?>" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="oc-form-label">Solicitante</label>
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?>" readonly>
+                        <?php if (!empty($requisicion['correo_corporativo'])): ?>
+                            <div class="mt-1">
+                                <small class="text-muted"><i class="bi bi-envelope"></i> <?= htmlspecialchars($requisicion['correo_corporativo']) ?></small>
+                            </div>
+                        <?php else: ?>
+                            <div class="mt-1">
+                                <small class="text-warning"><i class="bi bi-exclamation-triangle"></i> Sin correo registrado</small>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="oc-form-label">Categoría</label>
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['categoria']) ?>" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="oc-form-label">Estado Actual</label>
+                        <div class="mt-1">
+                            <?php
+                            $badge_map = [
+                                'pendiente' => ['status-badge--pendiente', 'bi-clock', 'Pendiente'],
+                                'espera'    => ['status-badge--pendiente', 'bi-clock', 'En Espera'],
+                                'aprobado'  => ['status-badge--aprobado', 'bi-check-circle', 'Aprobado'],
+                                'aprobada'  => ['status-badge--aprobado', 'bi-check-circle', 'Aprobada'],
+                                'rechazado' => ['status-badge--rechazado', 'bi-x-circle', 'Rechazado'],
+                                'rechazada' => ['status-badge--rechazado', 'bi-x-circle', 'Rechazada']
+                            ];
+                            $b = $badge_map[$requisicion['estado']] ?? ['status-badge--pendiente', 'bi-circle', ucfirst($requisicion['estado'])];
+                            echo '<span class="status-badge ' . $b[0] . '"><i class="bi ' . $b[1] . '"></i> ' . $b[2] . '</span>';
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['descripcion']) ?></textarea>
 
-        <!-- Observaciones -->
-        <?php
-        if (!empty($requisicion['observaciones'])): ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-chat-text"></i>
-            Observaciones
-          </div>
-          <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($requisicion['observaciones']) ?></textarea>
-        <?php
-        endif; ?>
+        <!-- Card 2: Ubicación del Presupuesto (Conditional) -->
+        <?php if (!empty($requisicion['nombre_proyecto']) || !empty($requisicion['nombre_obra']) || !empty($requisicion['nombre_catalogo'])): ?>
+            <div class="oc-card mb-4">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</span>
+                </div>
+                <div class="oc-card-body">
+                    <div class="row g-3">
+                        <?php if (!empty($requisicion['nombre_proyecto'])): ?>
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Proyecto</label>
+                                <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_proyecto']) ?>" readonly>
+                            </div>
+                        <?php endif; ?>
 
-        <!-- Archivos Adjuntos -->
-        <div class="section-title mt-4">
-          <i class="bi bi-paperclip"></i>
-          Archivos Adjuntos
+                        <?php if (!empty($requisicion['nombre_obra'])): ?>
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Obra</label>
+                                <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_obra']) ?>" readonly>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($requisicion['nombre_catalogo'])): ?>
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Catálogo</label>
+                                <input type="text" class="form-control" value="<?= htmlspecialchars($requisicion['nombre_catalogo']) ?>" readonly>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Card 3: Motivo del Rechazo (Conditional) -->
+        <?php if ($requisicion['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
+            <div class="oc-card mb-4 border-danger">
+                <div class="oc-card-header bg-danger-subtle text-danger" style="border-bottom: 1px solid rgba(220,53,69,0.15);">
+                    <span class="oc-card-header__title text-danger"><i class="bi bi-chat-dots text-danger" style="color: #dc3545 !important;"></i> Motivo del Rechazo</span>
+                </div>
+                <div class="oc-card-body">
+                    <div class="comentario-rechazo">
+                        <div class="comentario-header">
+                            <i class="bi bi-info-circle"></i> Comentario del supervisor:
+                        </div>
+                        <p class="mb-0 text-dark"><?= nl2br(htmlspecialchars($comentario_rechazo)) ?></p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Card 4: Items Solicitados -->
+        <div class="oc-card mb-4">
+            <div class="oc-card-header">
+                <span class="oc-card-header__title"><i class="bi bi-list-ul"></i> Items Solicitados</span>
+            </div>
+            <div class="oc-card-body p-0">
+                <div class="orders-table-wrap">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th style="width: 120px;">Tipo</th>
+                                <th>Producto/Servicio</th>
+                                <th style="width: 100px;">Cantidad</th>
+                                <th style="width: 100px;">Unidad</th>
+                                <th>Concepto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 1;
+                            while ($item = $items->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= $i++ ?></td>
+                                    <td>
+                                        <span class="badge" style="background-color: <?= $item['tipo'] == 'producto' ? '#e3f2fd' : '#e8f5e9' ?>; color: <?= $item['tipo'] == 'producto' ? '#0d47a1' : '#1b5e20' ?>; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">
+                                            <?= ucfirst(htmlspecialchars($item['tipo'])) ?>
+                                        </span>
+                                    </td>
+                                    <td><strong><?= htmlspecialchars($item['producto']) ?></strong></td>
+                                    <td><?= htmlspecialchars($item['cantidad']) ?></td>
+                                    <td><?= htmlspecialchars($item['unidad']) ?></td>
+                                    <td>
+                                        <?php if (!empty($item['codigo_concepto'])): ?>
+                                            <div class="concepto-info">
+                                                <?php if (!empty($item['numero_original'])): ?>
+                                                    <span class="concepto-badge">
+                                                        <i class="bi bi-hash"></i> <?= htmlspecialchars($item['numero_original']) ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <span class="concepto-badge">
+                                                    <i class="bi bi-tag"></i> <?= htmlspecialchars($item['codigo_concepto']) ?>
+                                                </span>
+                                                <?php if (!empty($item['nombre_concepto'])): ?>
+                                                    <br>
+                                                    <small class="text-muted d-block mt-1"><?= htmlspecialchars($item['nombre_concepto']) ?></small>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="text-muted">-</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <?php
-        if ($archivos->num_rows > 0): ?>
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th style="width: 5%">#</th>
-                  <th style="width: 45%">Nombre del Archivo</th>
-                  <th style="width: 15%">Tamaño</th>
-                  <th style="width: 15%">Tipo</th>
-                  <th style="width: 20%">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                $i = 1;
-                while ($archivo = $archivos->fetch_assoc()):
-                  $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
-                  $icono = 'file-earmark';
-                  $color = 'secondary';
+        <!-- Card 5: Detalles Adicionales (Conditional) -->
+        <?php if (!empty($requisicion['extra']) || !empty($requisicion['descripcion']) || !empty($requisicion['observaciones'])): ?>
+            <div class="oc-card mb-4">
+                <div class="oc-card-header">
+                    <span class="oc-card-header__title"><i class="bi bi-file-text"></i> Detalles Adicionales</span>
+                </div>
+                <div class="oc-card-body">
+                    <div class="row g-3">
+                        <?php if (!empty($requisicion['extra'])): ?>
+                            <div class="col-md-12">
+                                <label class="oc-form-label"><i class="bi bi-plus-circle me-1 text-primary"></i> Producto/servicio no listado</label>
+                                <textarea class="form-control" rows="3" readonly style="background-color: #f8f9fa; border: 1px solid #dee2e6; color: #495057;"><?= htmlspecialchars($requisicion['extra']) ?></textarea>
+                            </div>
+                        <?php endif; ?>
 
-                  if (in_array($extension, ['pdf'])) {
-                    $icono = 'file-earmark-pdf';
-                    $color = 'danger';
-                  } elseif (in_array($extension, ['doc', 'docx'])) {
-                    $icono = 'file-earmark-word';
-                    $color = 'primary';
-                  } elseif (in_array($extension, ['xls', 'xlsx'])) {
-                    $icono = 'file-earmark-excel';
-                    $color = 'success';
-                  } elseif (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                    $icono = 'file-earmark-image';
-                    $color = 'warning';
-                  } elseif (in_array($extension, ['zip', 'rar'])) {
-                    $icono = 'file-earmark-zip';
-                    $color = 'dark';
-                  }
-                ?>
-                  <tr class="archivo-item">
-                    <td><?= $i++ ?></td>
-                    <td>
-                      <i class="bi bi-<?= $icono ?> text-<?= $color ?> me-2"></i>
-                      <strong><?= htmlspecialchars($archivo['nombre_archivo']) ?></strong>
-                    </td>
-                    <td>
-                      <span class="badge bg-light text-dark">
-                        <?= formatBytes($archivo['tamaño_archivo']) ?>
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge bg-<?= $color ?>">
-                        <?= strtoupper($extension) ?>
-                      </span>
-                    </td>
-                    <td>
-                      <button type="button"
-                        class="btn btn-sm btn-outline-info"
-                        onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')"
-                        title="Ver archivo">
-                        <i class="bi bi-eye"></i> Ver
-                      </button>
-                    </td>
-                  </tr>
-                <?php
-                endwhile; ?>
-              </tbody>
-            </table>
-          </div>
-        <?php
-        else: ?>
-          <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> No hay archivos adjuntos en esta requisición.
-          </div>
-        <?php
-        endif; ?>
+                        <?php if (!empty($requisicion['descripcion'])): ?>
+                            <div class="col-md-12">
+                                <label class="oc-form-label"><i class="bi bi-info-circle me-1 text-primary"></i> Descripción General</label>
+                                <textarea class="form-control" rows="3" readonly style="background-color: #f8f9fa; border: 1px solid #dee2e6; color: #495057;"><?= htmlspecialchars($requisicion['descripcion']) ?></textarea>
+                            </div>
+                        <?php endif; ?>
 
-        <!-- Cambiar Estado (solo para requisiciones pendientes y si es supervisor) -->
+                        <?php if (!empty($requisicion['observaciones'])): ?>
+                            <div class="col-md-12">
+                                <label class="oc-form-label"><i class="bi bi-chat-text me-1 text-primary"></i> Observaciones</label>
+                                <textarea class="form-control" rows="3" readonly style="background-color: #f8f9fa; border: 1px solid #dee2e6; color: #495057;"><?= htmlspecialchars($requisicion['observaciones']) ?></textarea>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Card 6: Archivos Adjuntos -->
+        <div class="oc-card mb-4">
+            <div class="oc-card-header">
+                <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Archivos Adjuntos</span>
+            </div>
+            <div class="oc-card-body p-0">
+                <?php if ($archivos->num_rows > 0): ?>
+                    <div class="orders-table-wrap">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">#</th>
+                                    <th>Nombre del Archivo</th>
+                                    <th style="width: 120px;">Tamaño</th>
+                                    <th style="width: 120px;">Tipo</th>
+                                    <th style="width: 120px; text-align: center;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $i = 1;
+                                while ($archivo = $archivos->fetch_assoc()):
+                                    $extension = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
+                                    $icono = 'file-earmark';
+                                    $color = 'secondary';
+
+                                    if (in_array($extension, ['pdf'])) {
+                                        $icono = 'file-earmark-pdf';
+                                        $color = 'danger';
+                                    } elseif (in_array($extension, ['doc', 'docx'])) {
+                                        $icono = 'file-earmark-word';
+                                        $color = 'primary';
+                                    } elseif (in_array($extension, ['xls', 'xlsx'])) {
+                                        $icono = 'file-earmark-excel';
+                                        $color = 'success';
+                                    } elseif (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                        $icono = 'file-earmark-image';
+                                        $color = 'warning';
+                                    } elseif (in_array($extension, ['zip', 'rar'])) {
+                                        $icono = 'file-earmark-zip';
+                                        $color = 'dark';
+                                    }
+                                ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td>
+                                            <i class="bi bi-<?= $icono ?> text-<?= $color ?> me-2 fs-5"></i>
+                                            <strong><?= htmlspecialchars($archivo['nombre_archivo']) ?></strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border">
+                                                <?= formatBytes($archivo['tamaño_archivo']) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-<?= $color === 'secondary' ? 'light text-dark' : $color ?> text-uppercase">
+                                                <?= htmlspecialchars($extension) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="actions-group" style="justify-content: center;">
+                                                <button type="button"
+                                                        class="btn-action btn-action--view"
+                                                        onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-info-circle me-1"></i> No hay archivos adjuntos en esta requisición.
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Card 7: Cambiar Estado (Supervisión) (Conditional) -->
         <?php
         $esEncargado = isset($_SESSION['departamento']) && in_array($_SESSION['departamento'], ['Gerente de Operaciones', 'Procura']);
         if ($requisicion['estado'] === 'pendiente' && $esEncargado):
         ?>
-          <div class="section-title mt-4">
-            <i class="bi bi-gear"></i>
-            Cambiar Estado
-          </div>
-
-          <?php
-          if (!empty($requisicion['correo_corporativo'])): ?>
-            <div class="alert alert-info mb-3">
-              <i class="bi bi-envelope"></i>
-              <strong>Notificación automática:</strong> Al cambiar el estado, se enviará un correo a
-              <strong><?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?></strong>
-              (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>)
-            </div>
-          <?php
-          else: ?>
-            <div class="alert alert-warning mb-3">
-              <i class="bi bi-exclamation-triangle"></i>
-              <strong>Advertencia:</strong> El solicitante no tiene correo registrado.
-              No se enviará notificación automática.
-            </div>
-          <?php
-          endif; ?>
-
-          <form method="POST" class="mb-4">
-            <div class="row">
-              <div class="col-md-6">
-                <label class="form-label">Nuevo Estado</label>
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-success btn-estado" onclick="seleccionarEstado('aprobado')">
-                    <i class="bi bi-check-circle"></i> Aprobar
-                  </button>
-                  <button type="button" class="btn btn-danger btn-estado" onclick="seleccionarEstado('rechazado')">
-                    <i class="bi bi-x-circle"></i> Rechazar
-                  </button>
+            <div class="oc-card mb-4 border-primary">
+                <div class="oc-card-header bg-primary-subtle text-primary" style="border-bottom: 1px solid rgba(13,110,253,0.15);">
+                    <span class="oc-card-header__title text-primary"><i class="bi bi-gear text-primary" style="color: #0d6efd !important;"></i> Cambiar Estado (Supervisión)</span>
                 </div>
-                <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
-              </div>
+                <div class="oc-card-body">
+                    <?php if (!empty($requisicion['correo_corporativo'])): ?>
+                        <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-envelope-fill text-info fs-5"></i>
+                            <div>
+                                <strong>Notificación automática:</strong> Al cambiar el estado, se enviará un correo a 
+                                <strong><?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?></strong> 
+                                (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>).
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-warning d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                            <div>
+                                <strong>Advertencia:</strong> El solicitante no tiene correo registrado. No se enviará notificación automática.
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST" class="mt-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Nuevo Estado <span class="required">*</span></label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-success" onclick="seleccionarEstado('aprobado')">
+                                        <i class="bi bi-check-circle"></i> Aprobar
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="seleccionarEstado('rechazado')">
+                                        <i class="bi bi-x-circle"></i> Rechazar
+                                    </button>
+                                </div>
+                                <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
+                            </div>
+
+                            <div class="col-md-12 mt-3">
+                                <label class="oc-form-label">Comentario (Opcional)</label>
+                                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
+                                <small class="text-muted d-block mt-1">
+                                    <i class="bi bi-info-circle"></i>
+                                    Si rechaza la requisición, este comentario se mostrará como motivo del rechazo
+                                    <?= !empty($requisicion['correo_corporativo']) ? ' y se incluirá en el correo de notificación' : '' ?>.
+                                </small>
+                            </div>
+
+                            <div class="col-md-12 mt-3">
+                                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled style="opacity:0.65;">
+                                    <i class="bi bi-check-lg"></i> Seleccione una acción arriba
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
+        <?php endif; ?>
 
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <label class="form-label">Comentario (Opcional)</label>
-                <textarea class="form-control" name="comentario" rows="3" placeholder="Agregue un comentario sobre la decisión..."></textarea>
-                <small class="text-muted">
-                  <i class="bi bi-info-circle"></i>
-                  Si rechaza la requisición, este comentario se mostrará como motivo del rechazo
-                  <?= !empty($requisicion['correo_corporativo']) ? 'y se incluirá en el correo de notificación' : '' ?>.
-                </small>
-              </div>
-            </div>
+    </div> <!-- /orders-ajax-fade -->
+</div> <!-- /orders-page-container -->
 
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <button type="submit" name="cambiar_estado" class="btn btn-primary" id="btnConfirmar" disabled>
-                  <i class="bi bi-check-lg"></i> Confirmar Cambio de Estado
-                </button>
-              </div>
-            </div>
-          </form>
-        <?php
-        endif; ?>
-      </div>
-    </div>
-  </div>
-
-  <!-- Boton de regreso -->
-  <div class="fab-container-backbtn">
-    <a onclick="history.back()" class="fab-button-backbtn gray">
-      <i class="bi bi-arrow-left"></i>
-      <span class="fab-tooltip-backbtn">Volver</span>
-    </a>
-  </div>
-
-  <div id="loadingOverlay">
+<div id="loadingOverlay">
     <div class="loading-box">
-      <div class="spinner-border text-primary" role="status"></div>
-      <div class="mt-3">Procesando… por favor espere</div>
+        <div class="spinner-border text-primary" role="status"></div>
+        <div class="mt-3">Procesando… por favor espere</div>
     </div>
-  </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
+<script>
     // Función para seleccionar estado
     function seleccionarEstado(estado) {
-      document.getElementById('nuevo_estado').value = estado;
-      document.getElementById('btnConfirmar').disabled = false;
+        document.getElementById('nuevo_estado').value = estado;
+        document.getElementById('btnConfirmar').disabled = false;
+        document.getElementById('btnConfirmar').style.opacity = '1';
 
-      const btnConfirmar = document.getElementById('btnConfirmar');
-      if (estado === 'aprobado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Aprobación';
-        btnConfirmar.className = 'btn btn-success';
-      } else {
-        btnConfirmar.innerHTML = '<i class="bi bi-x-lg"></i> Confirmar Rechazo';
-        btnConfirmar.className = 'btn btn-danger';
-      }
+        const btnConfirmar = document.getElementById('btnConfirmar');
+        if (estado === 'aprobado') {
+            btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Aprobación';
+            btnConfirmar.className = 'btn btn-success';
+        } else {
+            btnConfirmar.innerHTML = '<i class="bi bi-x-lg"></i> Confirmar Rechazo';
+            btnConfirmar.className = 'btn btn-danger';
+        }
     }
 
     // Función para ver archivo
     function verArchivo(archivoId, tipoMime) {
-      const tiposVisualizables = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+        const tiposVisualizables = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
-      if (tiposVisualizables.includes(tipoMime)) {
-        window.open('/orders/view_archivo.php?id=' + archivoId, '_blank');
-      } else {
-        UI.toast.info('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
-        window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
-      }
+        if (tiposVisualizables.includes(tipoMime)) {
+            window.open('/orders/view_archivo.php?id=' + archivoId, '_blank');
+        } else {
+            UI.toast.info('Este tipo de archivo no se puede visualizar en el navegador. Se descargará automáticamente.');
+            window.open('/orders/download_archivo.php?id=' + archivoId, '_blank');
+        }
     }
-  </script>
+</script>
 
-  <script>
-    document.querySelector("form").addEventListener("submit", function(e) {
+<script>
+    document.querySelector("form")?.addEventListener("submit", function(e) {
+        // Mostrar overlay
+        document.getElementById("loadingOverlay").style.display = "flex";
 
-      // Mostrar overlay
-      document.getElementById("loadingOverlay").style.display = "flex";
-
-      // Deshabilitar todos los botones del formulario
-      const buttons = this.querySelectorAll("btnConfirmar, input[type='submit']");
-      buttons.forEach(btn => btn.disabled = true);
-
+        // Deshabilitar todos los botones del formulario
+        const buttons = this.querySelectorAll("#btnConfirmar, input[type='submit']");
+        buttons.forEach(btn => btn.disabled = true);
     });
-  </script>
+</script>
 
-  <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-  <?php
-  include __DIR__ . "/../includes/footer.php"; ?>
-
-
-</body>
-
-</html>
+<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

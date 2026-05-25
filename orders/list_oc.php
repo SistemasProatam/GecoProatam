@@ -284,33 +284,25 @@ if ($obrasRes) {
                                     <div class="actions-group">
                                         <?php if ($oc['estado'] == 'devuelto'): ?>
                                             <button class="btn-action btn-action--download"
-                                                    onclick="descargarPDF(<?= $oc['id'] ?>)"
-                                                    title="Descargar PDF"
-                                                    >
+                                                    onclick="descargarPDF(<?= $oc['id'] ?>)">
                                                 <i class="bi bi-download"></i>
                                             </button>
                                         <?php endif; ?>
 
                                         <?php if ($oc['estado'] == 'pagado'): ?>
                                             <button class="btn-action btn-action--download"
-                                                    onclick="descargarPDF(<?= $oc['id'] ?>)"
-                                                    title="Descargar PDF"
-                                                    >
+                                                    onclick="descargarPDF(<?= $oc['id'] ?>)">
                                                 <i class="bi bi-download"></i>
                                             </button>
                                         <?php endif; ?>
 
                                         <button class="btn-action btn-action--edit"
-                                                onclick="window.location.href='edit_oc.php?id=<?= $oc['id'] ?>'"
-                                                title="Editar orden"
-                                                >
+                                                onclick="window.location.href='edit_oc.php?id=<?= $oc['id'] ?>'">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
                                         <button class="btn-action btn-action--view"
-                                                onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'"
-                                                title="Ver orden"
-                                                >
+                                                onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </div>

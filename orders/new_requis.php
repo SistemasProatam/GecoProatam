@@ -60,6 +60,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
 ?>
 
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
 <style>
    /* Overlay de carga pantalla completa */
 #loadingOverlay {
@@ -91,360 +92,330 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<!-- HERO SECTION -->
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span>
-      <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
-      <span>/</span>
-      <span>Nueva Requisición</span>
+<div class="orders-page-container">
+
+    <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
+    <div class="orders-page-header mb-4">
+        <div class="orders-page-header-info">
+            <nav class="orders-breadcrumb">
+                <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+                <span class="separator">›</span>
+                <a href="<?= BASE_URL ?>/orders/list_requis.php">Registro de Requisiciones</a>
+                <span class="separator">›</span>
+                <span>Nueva Requisición</span>
+            </nav>
+            <h1 class="orders-page-title">Nueva Requisición</h1>
+        </div>
+        <a href="list_requis.php" class="btn-geco-outline">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
     </div>
-    
-    <div class="row align-items-end">
-      <div class="col-lg-8">
-        <h1 class="hero-title">Nueva Requisición</h1>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- MAIN CONTENT -->
-<div class="content-wrapper">
+    <!-- Formulario principal -->
+    <form id="ordenCompraForm" method="POST" action="save_requis.php" enctype="multipart/form-data">
 
-  <div class="form-container">
+        <!-- ─── CARD: INFORMACIÓN GENERAL ───────────────────────────── -->
+        <div class="oc-card">
+            <div class="oc-card-header">
+                <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General de la Requisición</span>
+            </div>
+            <div class="oc-card-body">
+                <p class="oc-card-intro">Complete los datos generales de la requisición. Los campos marcados con <span class="required">*</span> son obligatorios.</p>
 
-    <div class="form-body">
-      <form id="ordenCompraForm" method="POST" action="save_requis.php" enctype="multipart/form-data">
+                <div class="orders-alert orders-alert--info mb-4">
+                    <i class="bi bi-info-circle"></i>
+                    <div class="orders-alert__body">
+                        <p class="m-0">Este formulario debe ser completado por el personal autorizado para solicitar la compra de bienes o servicios, o para requerir el pago de facturas y compromisos adquiridos por la organización.</p>
+                        <span class="mt-1 d-block"><strong>Importante:</strong> El envío de este formulario no garantiza la aprobación automática del pago o compra. Asegúrese de cumplir con los procedimientos y tiempos establecidos por la organización.</span>
+                    </div>
+                </div>
 
-        <!-- Información General -->
-        <div>
-          <p>
-            Este formulario debe ser completado por el personal autorizado
-            para solicitar la compra de bienes o servicios, o para requerir
-            el pago de facturas y compromisos adquiridos por la
-            organización. <br />
-            <b>Importante:</b> El envío de este formulario no garantiza la
-            aprobación automática del pago o compra. Asegúrese de cumplir
-            con los procedimientos y tiempos establecidos por la
-            organización. <br></p>
-           <p>Los campos marcados con <span class="required">*</span> son obligatorios.</p>
+                <div class="row g-3">
+                    <div class="col-md-6 col-lg-4">
+                        <label class="oc-form-label" for="Folio">Folio de Requisición</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="Folio"
+                          name="folio"
+                          placeholder="Identificador de requisiciones"
+                          required
+                          value="<?= htmlspecialchars($folio) ?>"
+                          readonly
+                        />
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <label class="oc-form-label" for="fecha_solicitud">Fecha de Solicitud</label>
+                        <input type="datetime-local" class="form-control" id="fecha_solicitud" name="fecha_solicitud" readonly>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <label class="oc-form-label" for="solicitante">Solicitante <span class="required">*</span></label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="solicitante"
+                          name="solicitante"
+                          placeholder="Nombre de quien realiza la requisición"
+                          required
+                          value="<?= htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+                          readonly
+                        />
+                        <input type="hidden" name="solicitante_id" value="<?= $_SESSION['user_id'] ?>">
+                    </div>
+
+                    <div class="col-md-6 col-lg-6">
+                        <label class="oc-form-label" for="entidad">Entidad <span class="required">*</span></label>
+                        <select class="form-select" id="entidad" name="entidad_id" required>
+                            <option value="">Seleccionar Entidad</option>
+                            <?php
+                            if ($result_entidades && $result_entidades->num_rows > 0) { 
+                                while ($row = $result_entidades->fetch_assoc()) {
+                                    echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['nombre']) . '</option>';
+                                }
+                            } ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-lg-6">
+                        <label class="oc-form-label" for="categoria">Categoría <span class="required">*</span></label>
+                        <select class="form-select" id="categoria" name="categoria_id" required>
+                            <option value="">Seleccionar Categoría</option>
+                            <?php
+                            if ($result_categorias && $result_categorias->num_rows > 0) {
+                                while ($row = $result_categorias->fetch_assoc()) {
+                                    echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['nombre']) . '</option>';
+                                }
+                            } ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="section-title"><i class="bi bi-info-circle"></i> Información General</div>
-
-        <!-- Folio de Requisición  y fecha-->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">Folio de Requisición</label>
-              <input
-                type="text"
-                class="form-control"
-                id="Folio"
-                name="folio"
-                placeholder="Identificador de requisiciones"
-                required
-                value="<?= htmlspecialchars($folio) ?>"
-                readonly
-              />
+        <!-- ─── CARD: UBICACIÓN DEL PRESUPUESTO ──────────────────────── -->
+        <div class="oc-card">
+            <div class="oc-card-header">
+                <span class="oc-card-header__title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</span>
             </div>
-          </div>
+            <div class="oc-card-body">
+                <p class="oc-card-intro">Especifique el proyecto, obra y catálogo correspondiente para la afectación presupuestal.</p>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="oc-form-label" for="proyecto">Proyecto <span class="required">*</span></label>
+                        <select class="form-select" id="proyecto" name="proyecto_id" required>
+                            <option value="">Seleccionar Proyecto</option>
+                            <?php
+                            if ($result_proyectos && $result_proyectos->num_rows > 0) { 
+                                while ($row = $result_proyectos->fetch_assoc()) {
+                                    echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['nombre_proyecto']) . ' - ' . htmlspecialchars($row['numero_contrato']) . '</option>';
+                                }
+                            } ?>
+                        </select>
+                    </div>
 
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">Fecha de Solicitud</label>
-              <input type="datetime-local" class="form-control" id="fecha_solicitud" name="fecha_solicitud" readonly>
+                    <div class="col-md-4">
+                        <label class="oc-form-label" for="obra">Obra <span class="required">*</span></label>
+                        <select class="form-select" id="obra" name="obra_id" disabled required>
+                            <option value="">Primero seleccione un proyecto</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="oc-form-label" for="catalogo">Catálogo <span class="required">*</span></label>
+                        <select class="form-select" id="catalogo" name="catalogo_id" disabled required>
+                            <option value="">Primero seleccione una obra</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
-        <!-- Entidad  y solicitante-->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">Entidad <span class="required">*</span></label>
-              <select class="form-select" id="entidad" name="entidad_id" required>
-                <option value="">Seleccionar Entidad</option>
-                <?php
-if($result_entidades && $result_entidades->num_rows>0){ 
-                  while($row=$result_entidades->fetch_assoc()){
-                    echo '<option value="'.htmlspecialchars($row['id']).'">'.htmlspecialchars($row['nombre']).'</option>';
-                  }
-                } ?>
-              </select>
+        <!-- ─── CARD: ITEMS DE LA REQUISICIÓN ────────────────────────── -->
+        <div class="oc-card">
+            <div class="oc-card-header">
+                <span class="oc-card-header__title"><i class="bi bi-list-ul"></i> Items de la Requisición</span>
+                <button type="button" class="btn-geco-outline btn-geco-outline--sm" onclick="mostrarCatalogoProductos()">
+                    <i class="bi bi-plus-circle"></i> Agregar Item
+                </button>
             </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">Solicitante <span class="required">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                id="solicitante"
-                name="solicitante"
-                placeholder="Nombre de quien realiza la orden de compra"
-                required
-                value="<?php
-echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
-                readonly
-                />
-                <input type="hidden" name="solicitante_id" value="<?= $_SESSION['user_id'] ?>">
+            <div class="oc-card-body oc-card-body--items">
+                <div class="orders-table-wrap orders-table-wrap--items">
+                    <table class="orders-table orders-table--items" id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 15%">Tipo <span class="required">*</span></th>
+                                <th style="width: 35%">Producto/Servicio <span class="required">*</span></th>
+                                <th style="width: 12%">Cantidad <span class="required">*</span></th>
+                                <th style="width: 15%">Unidad <span class="required">*</span></th>
+                                <th style="width: 13%">Concepto</th>
+                                <th style="width: 5%" class="text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se agregarán dinámicamente desde JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </div>
         </div>
 
-        <!-- Categoria-->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">Categoría <span class="required">*</span></label>
-              <select class="form-select" id="categoria" name="categoria_id" required>
-                <option value="">Seleccionar Categoría</option>
-                <?php
-if($result_categorias && $result_categorias->num_rows>0){
-                  while($row=$result_categorias->fetch_assoc()){
-                    echo '<option value="'.htmlspecialchars($row['id']).'">'.htmlspecialchars($row['nombre']).'</option>';
-                  }
-                } ?>
-              </select>
+        <!-- ─── SECCIÓN: DETALLES Y ADJUNTOS (DOS COLUMNAS) ────────── -->
+        <div class="oc-form-layout">
+            <div class="oc-form-layout-main">
+                <div class="oc-card">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-chat-text"></i> Detalle, Descripciones y Observaciones</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="mb-4">
+                            <label class="oc-form-label" for="extra">¿No encuentra un producto o servicio?</label>
+                            <p class="oc-form-hint--block">Proporcione: Nombre, tipo (producto/servicio) y detalles adicionales para que este pueda ser añadido a la lista.</p>
+                            <textarea
+                              class="form-control"
+                              id="extra"
+                              name="extra"
+                              rows="3"
+                              placeholder="Ingrese producto o servicio no listado..."
+                            ></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="oc-form-label" for="descripcion">Descripción General</label>
+                            <p class="oc-form-hint--block">Describa de forma general y clara el bien o servicio que se requiere, indicando su uso o finalidad y cantidad aproximada.</p>
+                            <textarea
+                              class="form-control"
+                              id="descripcion"
+                              name="descripcion"
+                              rows="3"
+                              placeholder="Ingrese una descripción general..."
+                            ></textarea>
+                        </div>
+
+                        <div>
+                            <label class="oc-form-label" for="observaciones">Observaciones Adicionales</label>
+                            <p class="oc-form-hint--block">Utilice este espacio para anotar detalles importantes: condiciones de entrega, contacto, especificaciones técnicas o cualquier observación relevante.</p>
+                            <textarea
+                              class="form-control"
+                              id="observaciones"
+                              name="observaciones"
+                              rows="3"
+                              placeholder="Ingrese observaciones o comentarios adicionales..."
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <div class="oc-form-layout-side">
+                <div class="oc-card">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Archivos Adjuntos</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="orders-alert orders-alert--info mb-3">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Cargue hasta 5 archivos de uno en uno. PDF, Word, Excel, imágenes. Máx. 10 MB por archivo.</span>
+                        </div>
+                        
+                        <div class="oc-files-input-group mb-3">
+                            <input 
+                              type="file" 
+                              class="form-control" 
+                              id="singleFileInput"
+                              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+                            <button class="btn-geco-secondary" type="button" onclick="agregarArchivo()">
+                              <i class="bi bi-upload"></i> Subir
+                            </button>
+                        </div>
+
+                        <!-- Lista de archivos acumulados -->
+                        <div id="archivosContainer" class="oc-files-dropzone">
+                            <h6 class="oc-files-dropzone__title">Archivos seleccionados: <span id="contadorArchivos" class="badge bg-secondary">0</span></h6>
+                            <ul id="fileList" class="list-group list-group-flush mt-2">
+                                <li class="list-group-item text-center text-muted" style="background:transparent;border:none;">
+                                    <i class="bi bi-inbox fs-4 d-block mb-1"></i> No hay archivos agregados
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ─── SUBMIT ACTIONS ──────────────────────────────────────── -->
+                <p class="oc-form-submit-note"><i class="bi bi-info-circle"></i> Esta requisición será evaluada por el Supervisor de Proyectos.</p>
+                <div class="oc-form-submit-actions" style="align-items: center;">
+                    <button type="submit" class="btn-geco-primary" id="btnEnviar" style="max-width: 320px; width: 100%;">
+                        <i class="bi bi-floppy"></i> Guardar Requisición
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Modal para catálogo de productos (Legacy/Soporte) -->
+    <div class="modal fade" id="modalCatalogo" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-        </div>
-
-        <!-- Proyecto, Obra, Catálogo -->
-        <div class="section-title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</div>
-
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label">Proyecto</label>
-              <select class="form-select" id="proyecto" name="proyecto_id" required>
-                <option value="">Seleccionar Proyecto</option>
-                <?php
-if($result_proyectos && $result_proyectos->num_rows>0){ 
-                  while($row=$result_proyectos->fetch_assoc()){
-                    echo '<option value="'.htmlspecialchars($row['id']).'">'.htmlspecialchars($row['nombre_proyecto']) . ' - ' . htmlspecialchars($row['numero_contrato']) . '</option>';
-                  }
-                } ?>
-              </select>
+          <div class="modal-body">
+            <div class="mb-3">
+              <input type="text" class="form-control" id="buscarCatalogo" placeholder="Buscar producto o servicio...">
             </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label">Obra</label>
-              <select class="form-select" id="obra" name="obra_id" disabled required>
-                <option value="">Primero seleccione un proyecto</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label">Catálogo</label>
-              <select class="form-select" id="catalogo" name="catalogo_id" disabled required>
-                <option value="">Primero seleccione una obra</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Items dinámicos -->
-        <div class="section-title"><i class="bi bi-list-ul"></i> Items de la Orden</div>
-
-        <div class="items-table">
-          <table class="table" id="itemsTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Tipo</th>
-                <th>Producto/Servicio</th>
-                <th>Cantidad</th>
-                <th>Unidad</th>
-                <th>Concepto</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-             <!-- Inicialmente vacío -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="text-end mt-3">
-              <button type="button" class="button-56" onclick="mostrarCatalogoProductos()">
-                <i class="bi bi-plus-circle"></i> Agregar Item
-              </button>
-            </div>
-
-        <!-- Extra, Descripción y Observaciones -->
-      <div class="section-title"><i class="bi bi-plus-circle"></i>Producto/servicio no listado</div>
-        <div class="form-group">
-              <label class="form-label"
-                ><b>¿No encuentra un producto o servicio?</b> <br>
-                  Proporcione: Nombre, tipo (producto/servicio) y detalles adicionales para que este pueda ser añadido a la lista.</label
-              >
-              <textarea
-                class="form-control"
-                id="extra"
-                name="extra"
-                rows="3"
-                placeholder="Ingrese producto o servicio no listado..."
-              ></textarea>
-            </div>
-
-        <div class="section-title"><i class="bi bi-file-text"></i> Descripción</div>
-        <div class="form-group">
-              <label class="form-label"
-                >Describa de forma general y clara el bien o servicio que se
-                requiere, indicando su uso o finalidad, la cantidad aproximada y
-                cualquier detalle relevante que facilite su identificación o
-                cotización.</label
-              >
-              <textarea
-                class="form-control"
-                id="descripcion"
-                name="descripcion"
-                rows="3"
-                placeholder="Ingrese una descripción adicional..."
-              ></textarea>
-            </div>
-
-        <div class="section-title"><i class="bi bi-chat-text"></i> Observaciones</div>
-        <div class="form-group">
-              <label class="form-label"
-                >Utilice este espacio para anotar detalles importantes, como
-                requisitos de empaque, condiciones de pago acordadas, contacto
-                para entrega o cualquier otra observación que deba tenerse en
-                cuenta para procesar esta orden.</label
-              >
-              <textarea
-                class="form-control"
-                id="observaciones"
-                name="observaciones"
-                rows="3"
-                placeholder="Ingrese observaciones o comentarios adicionales..."
-              ></textarea>
-            </div>
-
-        <!-- Archivos - Agregar de uno en uno -->
-<div class="section-title"><i class="bi bi-paperclip"></i> Adjuntar Archivos</div>
-
-<div class="form-group">
-  <small class="text-muted d-block mt-2 mb-4">
-    <i class="bi bi-info-circle"></i>
-    Cargue hasta 5 archivos seleccionándolos de uno en uno. 
-    Formatos permitidos: PDF, Word, Excel, imágenes. Tamaño máximo por archivo: 10 MB.  
-  </small>
-  
-  <!-- Input visible para seleccionar archivos de uno en uno -->
-  <div class="input-group">
-    <input 
-      type="file" 
-      class="form-control" 
-      id="singleFileInput"
-      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
-    <button class="btn btn-primary" type="button" onclick="agregarArchivo()" style="background: #113456; transform: none;">
-      <i class="bi bi-plus-circle"></i> Agregar
-    </button>
-  </div>
-  
-</div>
-
-<!-- Contenedor de alertas -->
-<div id="alertContainer" class="mt-2"></div>
-
-<!-- Lista de archivos acumulados -->
-<div id="archivosContainer" class="mt-3">
-  <h6 class="mb-2">Archivos seleccionados: <span id="contadorArchivos">0</span></h6>
-  <ul id="fileList" class="list-group"></ul>
-</div>
-
-        <!-- Guardar -->
-        <div class="form-actions mt-3">
-          <div class="send-otxt">Esta requisición será evaluada por el Supervisor de Proyectos.
-          </div>
-          <button type="submit" class="button-57"><i class="bi bi-floppy"></i> Guardar</button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Modal para catálogo de productos -->
-<div class="modal fade" id="modalCatalogo" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <input type="text" class="form-control" id="buscarCatalogo" placeholder="Buscar producto o servicio...">
-        </div>
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyCatalogo">
-              <?php
-if ($result_productos_servicios && $result_productos_servicios->num_rows > 0): ?>
-                <?php
-// Reset pointer para usar nuevamente
-                $result_productos_servicios->data_seek(0);
-                while ($producto = $result_productos_servicios->fetch_assoc()): ?>
+            <div class="orders-table-wrap">
+              <table class="orders-table">
+                <thead>
                   <tr>
-                    <td><?= htmlspecialchars($producto['nombre']) ?></td>
-                    <td>
-                      <span class="badge bg-<?= $producto['tipo'] == 'producto' ? 'primary' : 'success' ?>">
-                        <?= ucfirst($producto['tipo']) ?>
-                      </span>
-                    </td>
-                    <td>
-                      <button type="button" class="btn btn-sm btn-primary" 
-                               onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
-                        <i class="bi bi-plus"></i> Seleccionar
-                      </button>
-                    </td>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Acción</th>
                   </tr>
-                <?php
-endwhile; ?>
-              <?php
-else: ?>
-                <tr>
-                  <td colspan="3" class="text-center text-muted">
-                    No hay productos o servicios registrados
-                  </td>
-                </tr>
-              <?php
-endif; ?>
-            </tbody>
-          </table>
+                </thead>
+                <tbody id="tbodyCatalogo">
+                  <?php
+                  if ($result_productos_servicios && $result_productos_servicios->num_rows > 0): ?>
+                    <?php
+                    // Reset pointer para usar nuevamente
+                    $result_productos_servicios->data_seek(0);
+                    while ($producto = $result_productos_servicios->fetch_assoc()): ?>
+                      <tr>
+                        <td><?= htmlspecialchars($producto['nombre']) ?></td>
+                        <td>
+                          <span class="badge bg-<?= $producto['tipo'] == 'producto' ? 'primary' : 'success' ?>">
+                            <?= ucfirst($producto['tipo']) ?>
+                          </span>
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn-sm btn-primary" 
+                                   onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
+                            <i class="bi bi-plus"></i> Seleccionar
+                          </button>
+                        </td>
+                      </tr>
+                    <?php
+                    endwhile; ?>
+                  <?php
+                  else: ?>
+                    <tr>
+                      <td colspan="3" class="text-center text-muted">
+                        No hay productos o servicios registrados
+                      </td>
+                    </tr>
+                  <?php
+                  endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Boton de regreso -->
-<div class="fab-container-backbtn">  
-  <a onclick="history.back()" class="fab-button-backbtn gray">
-    <i class="bi bi-arrow-left"></i>
-    <span class="fab-tooltip-backbtn">Volver</span>
-  </a>
-</div>
+</div> <!-- Termina .orders-page-container -->
 
 <div id="loadingOverlay">
     <div class="loading-box">

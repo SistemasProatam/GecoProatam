@@ -12,6 +12,7 @@ require_once __DIR__ . "/../conexion.php";
 // ==== Filtros ====
 $busqueda = $_GET['q'] ?? '';
 $proyecto_id = $_GET['proyecto_id'] ?? '';
+$proyecto_id_js = !empty($proyecto_id) ? intval($proyecto_id) : 'null';
 $pagina = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $por_pagina = 10;
 $offset = ($pagina - 1) * $por_pagina;
@@ -82,255 +83,278 @@ while ($proyecto = $proyectosResult->fetch_assoc()) {
 // Total páginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<style>
+  .badge-presupuesto { font-size: 0.75em; padding: 0.25em 0.5em; }
+  .presupuesto-info  { font-size: 0.85em; line-height: 1.4; }
+  .progress          { height: 6px; margin-top: 5px; }
+  .progress-bar      { transition: width 0.3s ease; }
+</style>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Registro de Obras</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <style>
-    .badge-presupuesto {
-        font-size: 0.75em;
-        padding: 0.25em 0.5em;
-    }
-    .presupuesto-info {
-        font-size: 0.85em;
-        line-height: 1.4;
-    }
-    .text-warning {
-        color: #ffc107 !important;
-    }
-    .progress {
-        height: 6px;
-        margin-top: 5px;
-    }
-    .progress-bar {
-        transition: width 0.3s ease;
-    }
-    .filter-section {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-  </style>
-</head>
-<body>
-<?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+<?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<!-- HERO SECTION -->
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span>
-      <a href="list_project.php">Registro de Proyectos</a>
-      <span>/</span>
-      <span>Registro de Obras</span>
+<div class="orders-page-container">
+
+  <!-- Page Header -->
+  <div class="orders-page-header mb-4">
+    <div class="orders-page-header-info">
+      <nav class="orders-breadcrumb">
+        <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+        <span class="separator">›</span>
+        <a href="list_project.php">Proyectos</a>
+        <span class="separator">›</span>
+        <span>Obras</span>
+      </nav>
+      <h1 class="orders-page-title">
+        <?= !empty($proyecto_id) ? "Obras del Proyecto" : "Registro de Obras" ?>
+      </h1>
     </div>
-    
-    <div class="row align-items-end">
-      <div class="col-lg-8">
-        <h1 class="hero-title">Registro de Obras</h1>
-      </div>
+    <div class="d-flex gap-2">
+      <a href="list_project.php" class="btn-geco-outline">
+        <i class="bi bi-arrow-left"></i> Volver a Proyectos
+      </a>
+      <button class="btn-geco-primary" type="button" onclick="agregarObra(<?= $proyecto_id_js ?>)">
+        <i class="bi bi-plus-circle"></i> Nueva Obra
+      </button>
     </div>
   </div>
-</div>
 
-<!-- MAIN CONTENT -->
-<div class="content-wrapper">
-  <div class="form-container">
-    <div class="form-body">
-      
-        <!-- Buscador -->
-      <form id="search-form" class="form-search d-flex justify-content-center w-100 mb-4" method="GET">
+  <!-- Filters Card -->
+  <div class="orders-card mb-4">
+    <div class="p-3 d-flex flex-wrap gap-3 align-items-center">
+      <!-- Buscador (Ajax compatible) -->
+      <form id="search-form" class="orders-filter-bar d-flex gap-2 flex-grow-1" method="GET" style="margin-bottom: 0;">
         <input type="hidden" name="proyecto_id" value="<?= htmlspecialchars($proyecto_id) ?>">
-        <input class="form-control w-100" type="search" name="q" placeholder="Buscar obra..." value="<?= htmlspecialchars($busqueda) ?>">
-        <button class="btn btn-outline-success" type="submit"> <i class="bi bi-search"></i> </button>
+        <div class="search-input-wrap flex-grow-1">
+          <i class="bi bi-search search-icon"></i>
+          <input class="form-control" type="search" name="q" placeholder="Buscar obra..." value="<?= htmlspecialchars($busqueda) ?>">
+        </div>
+        <button class="btn-geco-primary" type="submit">Buscar</button>
       </form>
 
-      <div class="mb-2">
-        <h5 class="text-muted" style="font-size: 1rem; font-weight: 600;">
-          <i class="bi bi-funnel"></i> Filtros
-        </h5>
-      </div>
-      <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+      <!-- Selector de Filtros (Ajax compatible) -->
+      <form id="filter-form" method="GET" class="d-flex align-items-center" style="margin-bottom: 0; min-width: 280px;">
         <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
-        <div style="flex: 0 0 auto; min-width: 250px;">
+        <div class="w-100">
           <select name="proyecto_id" class="form-select">
             <option value="">-- Todos los proyectos --</option>
-            <?php
-foreach ($proyectos as $p): ?>
+            <?php foreach ($proyectos as $p): ?>
               <option value="<?= $p['id'] ?>" <?= $proyecto_id == $p['id'] ? 'selected' : '' ?>>
                 <?= htmlspecialchars($p['nombre_proyecto']) ?>
               </option>
-            <?php
-endforeach; ?>
+            <?php endforeach; ?>
           </select>
         </div>
       </form>
-
-      <div id="table-container-wrapper">
-
-      <!-- Botón de agregar obra -->
-      <div class="d-flex justify-content-between mb-3">
-        <span class="badge-num"><?= $totalRegistros ?> obras</span>
-        <button class="button-56" type="button" onclick="agregarObra(<?= $proyecto_id ?>)">
-          <i class="bi bi-plus-circle"></i> Nueva Obra
-        </button>
-      </div>
-
-      <!-- Lista de obras -->
-      <?php
-if($result && $result->num_rows > 0): ?>
-      <ul class="list-group">
-        <?php
-while($row = $result->fetch_assoc()): 
-          $costo_disponible = $row['costo_directo'] - $row['costo_directo_utilizado'];
-          $porcentaje_utilizado = $row['costo_directo'] > 0 ? ($row['costo_directo_utilizado'] / $row['costo_directo']) * 100 : 0;
-          $progress_class = $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
-        ?>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <strong><?= htmlspecialchars($row['nombre_obra']) ?></strong>
-                <div class="text-muted small">
-                  <div><strong>Número:</strong> <?= htmlspecialchars($row['numero_obra']) ?></div>
-                </div>
-                
-              </div>
-            </div>
-          </div>
-          <div class="btn-group" style="gap:5px;">
-            <a href="details_obra.php?id=<?= $row['id'] ?>" class="btn-inf" 
-                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalles de la Obra">
-                <i class="bi bi-info-circle"></i>
-            </a>
-            <button class="btn-del" onclick="eliminarObra(<?= $row['id'] ?>)">
-              <i class="bi bi-trash3"></i>
-            </button>
-          </div>
-        </li>
-        <?php
-endwhile; ?>
-      </ul>
-
-      <!-- Paginación -->
-      <?php
-if($totalPaginas > 1): ?>
-      <nav aria-label="Paginación">
-        <ul class="pagination justify-content-center mt-3">
-          <?php
-for($i = 1; $i <= $totalPaginas; $i++): ?>
-          <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
-            <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= $proyecto_id ?>&page=<?= $i ?>">
-              <?= $i ?>
-            </a>
-          </li>
-          <?php
-endfor; ?>
-        </ul>
-      </nav>
-      <?php
-endif; ?>
-      
-      <?php
-else: ?>
-      <div class="text-center text-muted py-4">
-        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-        <p class="mt-2">No hay obras registradas</p>
-        <button class="btn btn-primary mt-2" onclick="agregarObra(<?= $proyecto_id ?>)">
-            <i class="bi bi-plus-circle"></i> Crear primera obra
-          </button>
-      </div>
-      <?php
-endif; ?>
-      </div> <!-- /table-container-wrapper -->
     </div>
   </div>
+
+  <!-- Table Card -->
+  <div class="orders-card">
+    <div id="table-container-wrapper" class="p-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="fw-bold text-muted"><?= $totalRegistros ?> obras encontradas</span>
+      </div>
+
+      <?php if($result && $result->num_rows > 0): ?>
+      <div class="orders-table-wrap">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Obra</th>
+              <th>Proyecto</th>
+              <th>Periodo</th>
+              <th>Catálogos</th>
+              <th>Presupuesto CD</th>
+              <th style="width: 150px; text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php while($row = $result->fetch_assoc()):
+              $costo_directo = (float)$row['costo_directo'];
+              $costo_directo_utilizado = (float)$row['costo_directo_utilizado'];
+              $costo_disponible = $costo_directo - $costo_directo_utilizado;
+              $porcentaje_utilizado = $costo_directo > 0 ? ($costo_directo_utilizado / $costo_directo) * 100 : 0;
+              $progress_class = $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success');
+            ?>
+            <tr>
+              <td>
+                <div class="d-flex flex-column">
+                  <span class="fw-bold text-dark"><?= htmlspecialchars($row['nombre_obra']) ?></span>
+                  <span class="text-muted small">Número: <?= htmlspecialchars($row['numero_obra']) ?></span>
+                </div>
+              </td>
+              <td>
+                <span class="fw-semibold text-secondary"><?= htmlspecialchars($row['nombre_proyecto'] ?? 'Sin Proyecto') ?></span>
+              </td>
+              <td>
+                <span class="small text-muted">
+                  <?= date('d/m/Y', strtotime($row['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($row['fecha_fin'])) ?>
+                </span>
+              </td>
+              <td>
+                <?php if($row['total_catalogos'] > 0): ?>
+                <span class="status-badge" style="color:#407656; background:rgba(64,118,86,0.06); border-color:rgba(64,118,86,0.3);">
+                  <i class="bi bi-journal-text me-1"></i> <?= $row['total_catalogos'] ?> catálogo(s)
+                </span>
+                <?php else: ?>
+                <span class="status-badge" style="color:#64748b; background:rgba(148,163,184,0.08); border-color:rgba(148,163,184,0.3);">
+                  Sin catálogos
+                </span>
+                <?php endif; ?>
+              </td>
+              <td>
+                <div class="d-flex flex-column" style="min-width: 160px;">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span class="text-muted">CD: $<?= number_format($costo_directo, 2) ?></span>
+                    <span class="fw-semibold <?= $costo_disponible < 0 ? 'text-danger' : 'text-success' ?>">
+                      $<?= number_format($costo_disponible, 2) ?> disp.
+                    </span>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar <?= $progress_class ?>" role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="actions-group justify-content-end">
+                  <!-- Editar Obra -->
+                  <button class="btn-action" style="color: #d97706;" onclick="editarObra(<?= $row['id'] ?>)" title="Editar Obra">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <!-- Ver Detalles -->
+                  <a href="details_obra.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver Detalles de la Obra">
+                    <i class="bi bi-info-circle"></i>
+                  </a>
+                  <!-- Eliminar Obra -->
+                  <button class="btn-action" style="color: #ef4444;" onclick="eliminarObra(<?= $row['id'] ?>)" title="Eliminar Obra">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <?php endwhile; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <?php if($totalPaginas > 1): ?>
+      <div class="orders-pagination-bar mt-3 p-3 border-top d-flex justify-content-center">
+        <nav aria-label="Paginación">
+          <ul class="pagination mb-0">
+            <?php for($i=1; $i<=$totalPaginas; $i++): ?>
+            <li class="page-item <?= $i==$pagina?'active':'' ?>">
+              <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= $proyecto_id ?>&page=<?= $i ?>"><?= $i ?></a>
+            </li>
+            <?php endfor; ?>
+          </ul>
+        </nav>
+      </div>
+      <?php endif; ?>
+
+      <?php else: ?>
+      <div class="orders-empty-state">
+        <i class="bi bi-inbox" style="font-size:3rem;"></i>
+        <p class="mt-2">No hay obras registradas</p>
+        <button class="btn-geco-primary mt-2" onclick="agregarObra(<?= $proyecto_id_js ?>)">
+          <i class="bi bi-plus-circle"></i> Crear primera obra
+        </button>
+      </div>
+      <?php endif; ?>
+    </div><!-- /table-container-wrapper -->
+  </div>
+
 </div>
 
-<!-- FLOATING ACTION BUTTONS -->
-<div class="fab-container">  
-  <a onclick="history.back()" class="fab-button gray">
-    <i class="bi bi-arrow-left"></i>
-    <span class="fab-tooltip">Volver</span>
-  </a>
-</div>
+
 
 <script>
 // Inicializar tooltips de Bootstrap
 document.addEventListener('DOMContentLoaded', function() {
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
 
 // Función para agregar obra
 function agregarObra(proyectoId) {
-    if (!proyectoId) {
-        UI.toast.error("No se especificó un ID de proyecto válido.");
-        return;
-    }
-    
-    UI.loading("Cargando información...");
-    fetch(`get_info_proyecto.php?id=${proyectoId}`)
+    UI.loading("Cargando proyectos...");
+    fetch('get_project.php')
         .then(res => res.json())
-        .then(proyecto => {
+        .then(proyectos => {
             UI.loading.hide();
-            if (proyecto.error) {
-                UI.toast.error(proyecto.error);
+            if (!proyectos || proyectos.error) {
+                UI.toast.error("Error al cargar proyectos");
                 return;
             }
-            
+
+            let selectHtml = '';
+            if (proyectoId) {
+                const p = proyectos.find(x => x.id == proyectoId);
+                const pNombre = p ? p.nombre_proyecto : 'Proyecto Seleccionado';
+                selectHtml = `
+                    <input type="hidden" name="proyecto_id" value="${proyectoId}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Proyecto</label>
+                        <input type="text" class="form-control" value="${pNombre}" readonly>
+                    </div>
+                `;
+            } else {
+                let options = '<option value="">-- Seleccionar Proyecto --</option>';
+                proyectos.forEach(p => {
+                    options += `<option value="${p.id}">${p.nombre_proyecto}</option>`;
+                });
+                selectHtml = `
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Proyecto <span class="text-danger">*</span></label>
+                        <select name="proyecto_id" class="form-select" required>${options}</select>
+                    </div>
+                `;
+            }
+
             UI.modal({
                 title: "Nueva Obra",
                 size: "lg",
                 html: `
-                    <form id="formAgregarObra">
-                        <input type="hidden" name="proyecto_id" value="${proyectoId}">
+                    <form id="formAgregarObra" class="p-2">
+                        ${selectHtml}
                         <div class="mb-3">
-                            <label class="form-label">Número de Obra <span class="text-danger">*</span></label>
-                            <input type="text" name="numero_obra" class="form-control" required>
+                            <label class="form-label fw-semibold">Número de Obra <span class="text-danger">*</span></label>
+                            <input type="text" name="numero_obra" class="form-control" placeholder="Ej: OBRA-2026-01" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Nombre de Obra <span class="text-danger">*</span></label>
-                            <input type="text" name="nombre_obra" class="form-control" required>
+                            <label class="form-label fw-semibold">Nombre de Obra <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre_obra" class="form-control" placeholder="Nombre descriptivo de la obra" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Descripción de la Obra</label>
+                            <label class="form-label fw-semibold">Descripción de la Obra</label>
                             <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles de la obra..."></textarea>
                         </div>
                         <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Fecha Inicio <span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Fecha Inicio <span class="text-danger">*</span></label>
                                 <input type="date" name="fecha_inicio" class="form-control" required>
                             </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Fecha Fin <span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Fecha Fin <span class="text-danger">*</span></label>
                                 <input type="date" name="fecha_fin" class="form-control" required>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Monto Designado <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" name="monto_designado" class="form-control" required>
-                            <small class="text-muted">Parte del total: $${parseFloat(proyecto.monto_designado).toLocaleString('es-MX', {minimumFractionDigits: 2})}</small>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Costo Directo <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" name="costo_directo" class="form-control" required>
-                            <small class="text-muted">Presupuesto para órdenes de compra</small>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Monto Designado <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" name="monto_designado" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Costo Directo <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" name="costo_directo" class="form-control" required>
+                                <small class="text-muted d-block mt-1">Presupuesto para órdenes de compra</small>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Obra</button>
+                            <button type="submit" class="btn btn-success"><i class="bi bi-floppy me-1"></i>Guardar Obra</button>
                         </div>
                     </form>
                 `
@@ -346,7 +370,7 @@ function agregarObra(proyectoId) {
                         if(data.status === 'success'){
                             UI.modal.close();
                             UI.toast.success("Obra creada correctamente");
-                            setTimeout(() => location.reload(), 1500);
+                            setTimeout(() => location.reload(), 1200);
                         } else {
                             UI.toast.error(data.message || "Error al guardar la obra");
                         }
@@ -357,11 +381,12 @@ function agregarObra(proyectoId) {
                     });
             });
         })
-        .catch(error => {
+        .catch(err => {
             UI.loading.hide();
-            UI.toast.error("No se pudo cargar la información del proyecto");
+            UI.toast.error("No se pudieron cargar los proyectos");
         });
 }
+
 
 // Función para editar obra
 function editarObra(obraId) {
@@ -375,10 +400,14 @@ function editarObra(obraId) {
                 return;
             }
 
-            fetch('get_proyectos.php')
+            fetch('get_project.php')
                 .then(res => res.json())
                 .then(proyectos => {
                     UI.loading.hide();
+                    if (!proyectos || proyectos.error || !Array.isArray(proyectos)) {
+                        UI.toast.error("Error al cargar la lista de proyectos");
+                        return;
+                    }
                     let proyectosOptions = '';
                     proyectos.forEach(proyecto => {
                         proyectosOptions += `<option value="${proyecto.id}" ${proyecto.id == data.proyecto_id ? 'selected' : ''}>${proyecto.nombre_proyecto}</option>`;
@@ -388,46 +417,50 @@ function editarObra(obraId) {
                         title: "Editar Obra",
                         size: "lg",
                         html: `
-                            <form id="formEditarObra">
+                            <form id="formEditarObra" class="p-2">
                                 <input type="hidden" name="id" value="${data.id}">
                                 <div class="mb-3">
-                                    <label class="form-label">Proyecto <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">Proyecto <span class="text-danger">*</span></label>
                                     <select name="proyecto_id" class="form-select" required>${proyectosOptions}</select>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Número de Obra <span class="text-danger">*</span></label>
-                                    <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Número de Obra <span class="text-danger">*</span></label>
+                                        <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Nombre de Obra <span class="text-danger">*</span></label>
+                                        <input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Nombre de Obra <span class="text-danger">*</span></label>
-                                    <input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Descripción de la Obra</label>
+                                    <label class="form-label fw-semibold">Descripción de la Obra</label>
                                     <textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6 mb-3">
-                                        <label class="form-label">Fecha Inicio <span class="text-danger">*</span></label>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Fecha Inicio <span class="text-danger">*</span></label>
                                         <input type="date" name="fecha_inicio" class="form-control" value="${data.fecha_inicio}" required>
                                     </div>
-                                    <div class="col-6 mb-3">
-                                        <label class="form-label">Fecha Fin <span class="text-danger">*</span></label>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Fecha Fin <span class="text-danger">*</span></label>
                                         <input type="date" name="fecha_fin" class="form-control" value="${data.fecha_fin}" required>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Monto Designado <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Costo Directo <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
-                                    <small class="text-muted">Presupuesto para órdenes de compra</small>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Monto Designado <span class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Costo Directo <span class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
+                                        <small class="text-muted d-block mt-1">Presupuesto para órdenes de compra</small>
+                                    </div>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
                                     <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-                                    <button type="submit" class="btn btn-warning">Actualizar Obra</button>
+                                    <button type="submit" class="btn btn-warning text-white"><i class="bi bi-floppy me-1"></i>Actualizar Obra</button>
                                 </div>
                             </form>
                         `
@@ -443,7 +476,7 @@ function editarObra(obraId) {
                                 if (resp.status === "success") {
                                     UI.modal.close();
                                     UI.toast.success("Obra actualizada correctamente");
-                                    setTimeout(() => location.reload(), 1500);
+                                    setTimeout(() => location.reload(), 1200);
                                 } else {
                                     UI.toast.error(resp.message || "Error al actualizar la obra");
                                 }
@@ -453,7 +486,15 @@ function editarObra(obraId) {
                                 UI.toast.error("Error de conexión");
                             });
                     });
+                })
+                .catch(() => {
+                    UI.loading.hide();
+                    UI.toast.error("Error al cargar la lista de proyectos");
                 });
+        })
+        .catch(() => {
+            UI.loading.hide();
+            UI.toast.error("Error al cargar los datos de la obra");
         });
 }
 
@@ -474,7 +515,7 @@ function eliminarObra(obraId) {
                     UI.loading.hide();
                     if(resp.status === "success"){
                         UI.toast.success("Obra eliminada correctamente");
-                        setTimeout(() => location.reload(), 1500);
+                        setTimeout(() => location.reload(), 1200);
                     } else {
                         UI.toast.error(resp.message || "No se pudo eliminar la obra");
                     }
@@ -534,7 +575,7 @@ function initAJAX() {
 
                 if (pushState) window.history.pushState({}, '', url);
                 
-                // Reinicializar tooltips si es necesario
+                // Reinicializar tooltips
                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                 tooltipTriggerList.map(function(tooltipTriggerEl) {
                     return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -583,7 +624,4 @@ function initAJAX() {
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
-<script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-
-</body>
-</html>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

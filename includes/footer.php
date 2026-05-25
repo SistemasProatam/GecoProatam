@@ -24,7 +24,6 @@ require_once __DIR__ . '/../version.php';
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   
   <!-- Sistema UI + Session Timeout -->
-  <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
   <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
 
   <!-- Layout Scripts -->

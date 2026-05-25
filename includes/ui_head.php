@@ -6,4 +6,4 @@
  */
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
-<script src="<?= BASE_URL ?>/assets/scripts/ui.js" defer></script>
+<script src="<?= BASE_URL ?>/assets/scripts/ui.js?v=1.5" defer></script>

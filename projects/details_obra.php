@@ -12,7 +12,7 @@ require_once __DIR__ . "/../conexion.php";
 $obra_id = $_GET['id'] ?? 0;
 
 if ($obra_id <= 0) {
-  header("Location: list_obras.php"); // Corregido el nombre del archivo si es necesario
+  header("Location: list_obras.php");
   exit;
 }
 
@@ -258,136 +258,253 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit;
 }
 ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Detalles de Obra - <?= htmlspecialchars($obra['nombre_obra']) ?></title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
-  <style>
-    /* Estilos específicos para subcontratos en esta página */
-    .sc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-    .sc-card { border: 1px solid rgba(0,0,0,.09); border-radius: 12px; overflow: hidden; background: #fff; transition: box-shadow .2s, transform .2s; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
-    .sc-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
-    .sc-card-head { padding: 14px 16px 12px; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; align-items: flex-start; gap: 10px; }
-    .sc-avatar { width: 38px; height: 38px; border-radius: 9px; background: rgba(63, 117, 85, .12); display: flex; align-items: center; justify-content: center; color: #3f7555; font-size: 16px; flex-shrink: 0; }
-    .sc-name { font-size: .88rem; font-weight: 700; color: #0f172a; line-height: 1.3; }
-    .sc-sub { font-size: .72rem; color: #8fa3b8; margin-top: 2px; }
-    .sc-body { padding: 12px 16px; }
-    .sc-foot { padding: 9px 16px; background: rgba(0,0,0,.02); border-top: 1px solid rgba(0,0,0,.05); display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
-    .monto-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
-    .monto-item { text-align: center; }
-    .monto-lbl { font-size: .62rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #0f172a; margin-bottom: 2px; }
-    .monto-val { font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 700; color: #0f172a; }
-    .mv-blue { color: #1a60a8; } .mv-amber { color: #b47800; } .mv-green { color: #1a7555; } .mv-red { color: #c0392b; }
-    .mv-purple { color: #6d28d9; }
-    .tag-cnt { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: rgba(63,117,85,.1); color: #3f7555; border: 1px solid rgba(63,117,85,.2); }
-    .tag-ext { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: rgba(109,40,217,.08); color: #6d28d9; border: 1px solid rgba(109,40,217,.2); cursor: pointer; transition: background .15s; }
-    .tag-ext:hover { background: rgba(109,40,217,.15); }
-    .sc-total-real { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(63,117,85,.05); border-radius: 8px; margin-top: 4px; font-size: .85rem; font-weight: 700; color: #3f7555; }
-    .sc-ext-panel { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,.1); }
-    .sc-ext-panel.open { display: block; }
-    .ext-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.03); }
-    .ext-item:last-child { border-bottom: none; }
-    .ext-item-monto { font-weight: 700; font-size: .8rem; color: #6d28d9; }
-    .ext-item-info { flex: 1; margin-left: 10px; }
-    .ext-item-desc { font-size: .72rem; color: #475569; }
-    .ext-item-fecha { font-size: .62rem; color: #94a3b8; }
-    .ext-item-del { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 2px 6px; }
-    .ext-item-del:hover { color: #e8445a; }
-    
-    /* Drag & Drop Editor */
-    .sc-editor-col { display: flex; flex-direction: column; height: 100%; min-height: 400px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
-    .dd-head { font-size: .75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; color: #64748b; display: flex; align-items: center; justify-content: space-between; }
-    .dd-zone { flex: 1; overflow-y: auto; background: #fff; border-radius: 6px; padding: 8px; min-height: 300px; }
-    .dd-zone.drag-over { background: rgba(63,117,85,.05); border: 2px dashed #3f7555; }
-    .concept-chip { padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 6px; background: #fff; cursor: grab; font-size: .8rem; display: flex; align-items: center; gap: 8px; transition: transform .1s; }
-    .concept-chip:hover { border-color: #3f7555; transform: scale(1.02); }
-    .chip-cod { font-family: monospace; font-weight: 700; color: #334155; }
-    .chip-um { font-size: .7rem; color: #94a3b8; }
-    .chip-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .chip-also { font-size: .65rem; color: #6d28d9; font-style: italic; }
-    .already { background: rgba(109,40,217,.05); border-color: rgba(109,40,217,.2); }
-    .dd-empty { text-align: center; padding: 40px 10px; color: #94a3b8; font-size: .8rem; }
-    .dd-search { margin-bottom: 8px; }
-  </style>
-</head>
-<body>
+<style>
+  /* Estilos específicos para subcontratos en esta página */
+  .sc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .sc-card { border: 1px solid rgba(0,0,0,.09); border-radius: 12px; overflow: hidden; background: #fff; transition: box-shadow .2s, transform .2s; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
+  .sc-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
+  .sc-card-head { padding: 14px 16px 12px; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; align-items: flex-start; gap: 10px; }
+  .sc-avatar { width: 38px; height: 38px; border-radius: 9px; background: var(--gray-600, #4b5563); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0; }
+  .sc-name { font-size: .88rem; font-weight: 700; color: #0f172a; line-height: 1.3; }
+  .sc-sub { font-size: .72rem; color: #8fa3b8; margin-top: 2px; }
+  .sc-body { padding: 12px 16px; }
+  .sc-foot { padding: 9px 16px; background: rgba(0,0,0,.02); border-top: 1px solid rgba(0,0,0,.05); display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+  .monto-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+  .monto-item { text-align: center; }
+  .monto-lbl { font-size: .62rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #0f172a; margin-bottom: 2px; }
+  .monto-val { font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 700; color: #0f172a; }
+  .mv-blue { color: #1a60a8; } .mv-amber { color: #b47800; } .mv-green { color: #1a7555; } .mv-red { color: #c0392b; }
+  .mv-purple { color: #6d28d9; }
+  .tag-cnt { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: rgba(63,117,85,.1); color: #3f7555; border: 1px solid rgba(63,117,85,.2); }
+  .tag-ext { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: rgba(109,40,217,.08); color: #6d28d9; border: 1px solid rgba(109,40,217,.2); cursor: pointer; transition: background .15s; }
+  .tag-ext:hover { background: rgba(109,40,217,.15); }
+  .sc-total-real { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(63,117,85,.05); border-radius: 8px; margin-top: 4px; font-size: .85rem; font-weight: 700; color: #3f7555; }
+  .sc-ext-panel { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,.1); }
+  .sc-ext-panel.open { display: block; }
+  .ext-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.03); }
+  .ext-item:last-child { border-bottom: none; }
+  .ext-item-monto { font-weight: 700; font-size: .8rem; color: #6d28d9; }
+  .ext-item-info { flex: 1; margin-left: 10px; }
+  .ext-item-desc { font-size: .72rem; color: #475569; }
+  .ext-item-fecha { font-size: .62rem; color: #94a3b8; }
+  .ext-item-del { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 2px 6px; }
+  .ext-item-del:hover { color: #e8445a; }
+  
+  /* Drag & Drop Editor */
+  .sc-editor-col { display: flex; flex-direction: column; height: 100%; min-height: 400px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
+  .dd-head { font-size: .75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; color: #64748b; display: flex; align-items: center; justify-content: space-between; }
+  .dd-zone { flex: 1; overflow-y: auto; background: #fff; border-radius: 6px; padding: 8px; min-height: 300px; }
+  .dd-zone.drag-over { background: rgba(63,117,85,.05); border: 2px dashed #3f7555; }
+  .concept-chip { padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 6px; background: #fff; cursor: grab; font-size: .8rem; display: flex; align-items: center; gap: 8px; transition: transform .1s; }
+  .concept-chip:hover { border-color: #3f7555; transform: scale(1.02); }
+  .chip-cod { font-family: monospace; font-weight: 700; color: #334155; }
+  .chip-um { font-size: .7rem; color: #94a3b8; }
+  .chip-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip-also { font-size: .65rem; color: #6d28d9; font-style: italic; }
+  .already { background: rgba(109,40,217,.05); border-color: rgba(109,40,217,.2); }
+  .dd-empty { text-align: center; padding: 40px 10px; color: #94a3b8; font-size: .8rem; }
+  .dd-search { margin-bottom: 8px; }
+
+  /* KPI Cards for Obra Details - Modern Soft-Pastel Standard */
+  .budget-kpi-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .kpi-card {
+    background: #fff;
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.5rem;
+    border: 1.5px solid var(--gray-100, #f3f4f6);
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.03));
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md, 0 8px 20px -3px rgba(0,0,0,0.06));
+    border-color: var(--card-hover-border) !important;
+  }
+
+  .kpi-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gray-500, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .kpi-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--s-800, #0f172a);
+    font-family: var(--font-heading, 'Outfit', sans-serif);
+    line-height: 1.2;
+  }
+  .kpi-subtitle {
+    font-size: 0.75rem;
+    color: var(--gray-500, #6b7280);
+  }
+  .progress { height: 6px; margin-top: 5px; }
+
+  /* Soft Pastel theme variations (no left borders, full color cards) */
+  .kpi-card--cd {
+    background: rgba(64, 118, 86, 0.04);
+    border-color: rgba(64, 118, 86, 0.12);
+    --card-hover-border: rgba(64, 118, 86, 0.3);
+  }
+  .kpi-card--cd .kpi-value { color: var(--p-500, #407656) !important; }
+
+  .kpi-card--utilizado {
+    background: rgba(245, 158, 11, 0.04);
+    border-color: rgba(245, 158, 11, 0.12);
+    --card-hover-border: rgba(245, 158, 11, 0.3);
+  }
+  .kpi-card--utilizado .kpi-value { color: #d97706 !important; }
+
+  .kpi-card--disponible.success {
+    background: rgba(34, 197, 94, 0.04);
+    border-color: rgba(34, 197, 94, 0.12);
+    --card-hover-border: rgba(34, 197, 94, 0.3);
+  }
+  .kpi-card--disponible.success .kpi-value { color: #16a34a !important; }
+
+  .kpi-card--disponible.danger {
+    background: rgba(239, 68, 68, 0.04);
+    border-color: rgba(239, 68, 68, 0.12);
+    --card-hover-border: rgba(239, 68, 68, 0.3);
+  }
+  .kpi-card--disponible.danger .kpi-value { color: #dc2626 !important; }
+
+  .kpi-card--progreso {
+    background: rgba(17, 53, 87, 0.04);
+    border-color: rgba(17, 53, 87, 0.12);
+    --card-hover-border: rgba(17, 53, 87, 0.3);
+  }
+  .kpi-card--progreso .kpi-value { color: var(--s-700, #113557) !important; }
+</style>
+
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<div class="hero-section">
-  <div class="container hero-content">
-    <div class="breadcrumb-custom">
-      <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-      <span>/</span>
-      <a href="list_project.php">Proyectos</a>
-      <span>/</span>
-      <a href="details_project.php?id=<?= $obra['proyecto_id'] ?>">Detalles del Proyecto</a>
-      <span>/</span>
-      <span>Detalles de Obra</span>
+<div class="orders-page-container">
+
+  <!-- Page Header -->
+  <div class="orders-page-header mb-4">
+    <div class="orders-page-header-info">
+      <nav class="orders-breadcrumb">
+        <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+        <span class="separator">›</span>
+        <a href="list_project.php">Proyectos</a>
+        <span class="separator">›</span>
+        <a href="details_project.php?id=<?= $obra['proyecto_id'] ?>">Detalles del Proyecto</a>
+        <span class="separator">›</span>
+        <span>Detalles de Obra</span>
+      </nav>
+      <h1 class="orders-page-title" style="font-size: 1.5rem;"><?= htmlspecialchars($obra['nombre_obra']) ?></h1>
+      <div class="text-muted small mt-1">
+        Proyecto: <?= htmlspecialchars($obra['nombre_proyecto']) ?> | Obra Nº: <?= htmlspecialchars($obra['numero_obra']) ?>
+      </div>
     </div>
     
-    <div class="row align-items-end">
-      <div class="col-lg-8">
-        <h3 class="hero-title" style="font-size: 20px"><?= htmlspecialchars($obra['nombre_obra']) ?></h3>
-        <div style="color: #ddd; font-size: 14px;">
-          <p>Proyecto: <?= htmlspecialchars($obra['nombre_proyecto']) ?> | #<?= htmlspecialchars($obra['numero_obra']) ?></p>
-        </div>
-      </div>
-      <div class="col-lg-4 text-end">
-        <div class="btn-group gap-1">
-          <button class="btn btn-sm btn-outline-light" onclick="editarObra(<?= $obra_id ?>)"><i class="bi bi-pencil"></i></button>
-          <button class="btn btn-sm btn-outline-light" onclick="gestionarArchivos(<?= $obra_id ?>)"><i class="bi bi-paperclip"></i></button>
-          <button class="btn btn-sm btn-outline-light" onclick="window.location.reload()"><i class="bi bi-arrow-clockwise"></i></button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="content-wrapper">
-  <div class="budget-dashboard mb-4">
-    <div class="dashboard-header"><div class="dashboard-title"><div class="title-icon"><i class="bi bi-pie-chart"></i></div><h3>Control de Obra</h3></div></div>
-    <div class="budget-stats">
-      <div class="budget-stat"><div class="budget-stat-label">Costo Directo</div><div class="budget-stat-value">$<?= number_format($obra['costo_directo'], 2) ?></div></div>
-      <div class="budget-stat"><div class="budget-stat-label">Utilizado</div><div class="budget-stat-value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></div></div>
-      <div class="budget-stat"><div class="budget-stat-label">Disponible</div><div class="budget-stat-value <?= $costo_disponible < 0 ? 'danger' : 'success' ?>">$<?= number_format($costo_disponible, 2) ?></div></div>
-      <div class="budget-stat"><div class="budget-stat-label">Progreso Financiero</div><div class="budget-stat-value"><?= number_format($porcentaje_utilizado, 1) ?>%</div></div>
+    <!-- Action Buttons -->
+    <div class="actions-group" style="gap: 8px;">
+      <a href="details_project.php?id=<?= $obra['proyecto_id'] ?>" class="btn-geco-outline">
+        <i class="bi bi-arrow-left"></i> Volver
+      </a>
+      <button class="btn-geco-secondary" onclick="editarObra(<?= $obra_id ?>)" title="Editar Obra">
+        <i class="bi bi-pencil-square"></i> Editar
+      </button>
+      <button class="btn-geco-secondary" onclick="gestionarArchivos(<?= $obra_id ?>)" title="Archivos PDF">
+        <i class="bi bi-paperclip"></i> Archivos
+      </button>
+      <button class="btn-geco-primary" onclick="window.location.reload()" title="Recargar">
+        <i class="bi bi-arrow-clockwise"></i> Recargar
+      </button>
     </div>
   </div>
 
-  <!-- TAB NAVIGATION -->
-  <ul class="nav nav-pills mb-3 gap-2" id="obraTabs" role="tablist">
-    <li class="nav-item" role="presentation"><button class="nav-link active" id="catalogos-tab" data-bs-toggle="pill" data-bs-target="#catalogos-pane" type="button" role="tab">Catálogos (<?= $obra['total_catalogos'] ?>)</button></li>
-    <li class="nav-item" role="presentation"><button class="nav-link" id="subcontratos-tab" data-bs-toggle="pill" data-bs-target="#subcontratos-pane" type="button" role="tab">Subcontratos</button></li>
+  <!-- KPI Budget Dashboard -->
+  <div class="budget-kpi-container">
+    <div class="kpi-card kpi-card--cd">
+      <span class="kpi-label">Costo Directo</span>
+      <span class="kpi-value">$<?= number_format($obra['costo_directo'], 2) ?></span>
+      <span class="kpi-subtitle">Presupuesto contratado</span>
+    </div>
+    
+    <div class="kpi-card kpi-card--utilizado">
+      <span class="kpi-label">Monto Utilizado</span>
+      <span class="kpi-value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></span>
+      <span class="kpi-subtitle">En órdenes de compra</span>
+    </div>
+    
+    <div class="kpi-card kpi-card--disponible <?= $costo_disponible < 0 ? 'danger' : 'success' ?>">
+      <span class="kpi-label">Monto Disponible</span>
+      <span class="kpi-value">$<?= number_format($costo_disponible, 2) ?></span>
+      <span class="kpi-subtitle">Presupuesto libre</span>
+    </div>
+
+    <div class="kpi-card kpi-card--progreso">
+      <span class="kpi-label">Progreso Financiero</span>
+      <span class="kpi-value"><?= number_format($porcentaje_utilizado, 1) ?>%</span>
+      <div class="progress flex-grow-1" style="height: 6px; width: 100%;">
+        <div class="progress-bar <?= $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success') ?>" 
+             role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-pills mb-4 gap-2" id="obraTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="catalogos-tab" data-bs-toggle="pill" data-bs-target="#catalogos-pane" type="button" role="tab">
+        <i class="bi bi-journal-text me-1"></i> Catálogos (<?= $obra['total_catalogos'] ?>)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="subcontratos-tab" data-bs-toggle="pill" data-bs-target="#subcontratos-pane" type="button" role="tab">
+        <i class="bi bi-people me-1"></i> Subcontratos
+      </button>
+    </li>
   </ul>
 
+  <!-- Tab Contents -->
   <div class="tab-content" id="obraTabsContent">
     <!-- TAB CATALOGOS -->
     <div class="tab-pane fade show active" id="catalogos-pane" role="tabpanel" tabindex="0">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Catálogos de Conceptos</h5>
-        <button class="btn btn-primary btn-sm" onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= addslashes($obra['nombre_obra']) ?>')"><i class="bi bi-plus-circle me-1"></i>Nuevo Catálogo</button>
+        <h5 class="fw-bold text-dark mb-0">Catálogos de Conceptos</h5>
+        <button class="btn-geco-primary btn-sm" onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= addslashes($obra['nombre_obra']) ?>')">
+          <i class="bi bi-plus-circle me-1"></i> Nuevo Catálogo
+        </button>
       </div>
       <?php if ($catalogos->num_rows > 0): ?>
         <div class="row g-3">
           <?php while ($cat = $catalogos->fetch_assoc()): ?>
             <div class="col-md-6 col-lg-4">
-              <div class="card h-100 shadow-sm border-0">
-                <div class="card-body">
-                  <h6 class="card-title fw-bold text-primary mb-1"><?= htmlspecialchars($cat['nombre_catalogo']) ?></h6>
-                  <p class="text-muted small mb-3"><?= htmlspecialchars($cat['descripcion'] ?: 'Sin descripción') ?></p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-dark border">Creado: <?= date('d/m/Y', strtotime($cat['fecha_creacion'])) ?></span>
-                    <div class="btn-group">
-                      <button class="btn btn-sm btn-outline-primary" onclick="abrirVistaConceptos(<?= $cat['id'] ?>, '<?= addslashes($cat['nombre_catalogo']) ?>', <?= $obra_id ?>, '<?= addslashes($obra['nombre_obra']) ?>')"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-outline-warning" onclick="editarCatalogo(<?= $cat['id'] ?>, '<?= addslashes($cat['nombre_catalogo']) ?>', '<?= addslashes($cat['descripcion']) ?>')"><i class="bi bi-pencil"></i></button>
-                      <button class="btn btn-sm btn-outline-danger" onclick="eliminarCatalogo(<?= $cat['id'] ?>)"><i class="bi bi-trash"></i></button>
-                    </div>
+              <div class="orders-card p-3 h-100 d-flex flex-column">
+                <h6 class="fw-bold text-dark mb-1"><?= htmlspecialchars($cat['nombre_catalogo']) ?></h6>
+                <p class="text-muted small mb-3"><?= htmlspecialchars($cat['descripcion'] ?: 'Sin descripción') ?></p>
+                <div class="d-flex justify-content-between align-items-center mt-auto border-top pt-2">
+                  <span class="status-badge text-muted" style="background:#f3f4f6; border-color:#e5e7eb;">
+                    Creado: <?= date('d/m/Y', strtotime($cat['fecha_creacion'])) ?>
+                  </span>
+                  <div class="actions-group">
+                    <button class="btn-action" style="color: var(--p-600);" onclick="abrirVistaConceptos(<?= $cat['id'] ?>, '<?= addslashes($cat['nombre_catalogo']) ?>', <?= $obra_id ?>, '<?= addslashes($obra['nombre_obra']) ?>')" title="Ver Conceptos">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn-action" style="color: #d97706;" onclick="editarCatalogo(<?= $cat['id'] ?>, '<?= addslashes($cat['nombre_catalogo']) ?>', '<?= addslashes($cat['descripcion']) ?>')" title="Editar Catálogo">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn-action" style="color: #ef4444;" onclick="eliminarCatalogo(<?= $cat['id'] ?>)" title="Eliminar Catálogo">
+                      <i class="bi bi-trash3"></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -395,7 +512,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <?php endwhile; ?>
         </div>
       <?php else: ?>
-        <div class="text-center py-5 bg-white rounded border mt-2"><i class="bi bi-folder2-open display-4 text-muted mb-3 d-block"></i><p>No hay catálogos registrados para esta obra.</p></div>
+        <div class="orders-empty-state">
+          <i class="bi bi-folder2-open" style="font-size: 3rem;"></i>
+          <p class="mt-2">No hay catálogos registrados para esta obra.</p>
+        </div>
       <?php endif; ?>
     </div>
 
@@ -407,24 +527,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <span><i class="bi bi-cash me-1"></i>Estimado: <strong id="sc-stat-est">$0</strong></span>
           <span><i class="bi bi-check2-circle me-1"></i>Real: <strong id="sc-stat-real">$0</strong></span>
         </div>
-        <button class="btn btn-success btn-sm" onclick="scAbrirNuevoModal()"><i class="bi bi-plus-circle me-1"></i>Nuevo Subcontrato</button>
+        <button class="btn-geco-primary btn-sm" onclick="scAbrirNuevoModal()">
+          <i class="bi bi-plus-circle me-1"></i> Nuevo Subcontrato
+        </button>
       </div>
       <div id="sc-grid">
-        <div class="text-center py-5"><div class="spinner-border text-success"></div><p class="mt-2">Cargando subcontratos...</p></div>
+        <div class="text-center py-5">
+          <div class="spinner-border text-success"></div>
+          <p class="mt-2">Cargando subcontratos...</p>
+        </div>
       </div>
     </div>
   </div>
+
 </div>
 
-<div class="fab-container-backbtn">
-  <a href="details_project.php?id=<?= $obra['proyecto_id'] ?>" class="fab-button-backbtn gray">
-    <i class="bi bi-arrow-left"></i>
-    <span class="fab-tooltip-backbtn">Volver al Proyecto</span>
-  </a>
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
 
 <script>
@@ -465,7 +585,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   function scRender() {
     const wrap = scEl('sc-grid');
-    if (!scLista.length) { wrap.innerHTML = '<div class="text-center py-5 bg-white border rounded"><i class="bi bi-people display-4 text-muted mb-3 d-block"></i><p>Sin subcontratos registrados.</p></div>'; return; }
+    if (!scLista.length) { wrap.innerHTML = '<div class="orders-empty-state"><i class="bi bi-people" style="font-size:3rem;"></i><p class="mt-2">Sin subcontratos registrados.</p></div>'; return; }
     let html = '<div class="sc-grid">';
     scLista.forEach(sc => {
       const numExt = parseInt(sc.num_extraordinarios) || 0;
@@ -491,10 +611,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="sc-ext-panel" id="sc-ext-${sc.id}"><div class="small fw-bold text-muted mb-2">Detalle Extraordinarios</div><div id="sc-ext-rows-${sc.id}"></div></div>
           </div>
           <div class="sc-foot">
-            <button class="btn btn-sm btn-outline-primary" onclick="extAbrir(${sc.id})"><i class="bi bi-star"></i></button>
-            <button class="btn btn-sm btn-outline-info" onclick="scAbrirEditor(${sc.id})"><i class="bi bi-list-check"></i></button>
-            <button class="btn btn-sm btn-outline-warning" onclick="scEditar(${sc.id})"><i class="bi bi-pencil"></i></button>
-            <button class="btn btn-sm btn-outline-danger" onclick="scEliminar(${sc.id})"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-sm btn-outline-primary" onclick="extAbrir(${sc.id})" title="Extraordinarios"><i class="bi bi-star"></i></button>
+            <button class="btn btn-sm btn-outline-info" onclick="scAbrirEditor(${sc.id})" title="Asignar Conceptos"><i class="bi bi-list-check"></i></button>
+            <button class="btn btn-sm btn-outline-warning" onclick="scEditar(${sc.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="scEliminar(${sc.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
           </div>
         </div>`;
     });
@@ -539,16 +659,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     UI.modal({
       title: sc ? "Editar Subcontrato" : "Nuevo Subcontrato",
       html: `
-        <form id="formSC">
+        <form id="formSC" class="p-2">
           <input type="hidden" name="id" value="${sc ? sc.id : ''}">
-          <div class="mb-3"><label class="form-label">Proveedor</label><select name="proveedor_id" class="form-select" required>${proveedoresOptions}</select></div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Proveedor *</label>
+            <select name="proveedor_id" class="form-select" required>${proveedoresOptions}</select>
+          </div>
           <div class="row">
-            <div class="col-6 mb-3"><label class="form-label">Monto Contrato</label><input type="number" step="0.01" name="total_estimado" class="form-control" value="${sc ? sc.total_estimado : ''}" required oninput="scModalCalcAnt()"></div>
-            <div class="col-6 mb-3"><label class="form-label">Anticipo (%)</label><input type="number" step="0.1" name="anticipo_pct" class="form-control" value="${sc ? sc.anticipo_pct : ''}" oninput="scModalCalcAnt()"></div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Monto Contrato *</label>
+              <input type="number" step="0.01" name="total_estimado" class="form-control" value="${sc ? sc.total_estimado : ''}" required oninput="scModalCalcAnt()">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Anticipo (%)</label>
+              <input type="number" step="0.1" name="anticipo_pct" class="form-control" value="${sc ? sc.anticipo_pct : ''}" oninput="scModalCalcAnt()">
+            </div>
           </div>
           <div class="mb-3 text-muted small" id="scAntMontoPreview"></div>
-          <div class="mb-3"><label class="form-label">Descripción</label><textarea name="descripcion" class="form-control" rows="2">${sc ? sc.descripcion : ''}</textarea></div>
-          <div class="d-flex justify-content-end gap-2 mt-4"><button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-primary">${sc ? 'Actualizar' : 'Crear'}</button></div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="2" placeholder="Detalles u observaciones del subcontrato...">${sc ? sc.descripcion : ''}</textarea>
+          </div>
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+            <button type="submit" class="btn btn-success"><i class="bi bi-floppy me-1"></i>Guardar Subcontrato</button>
+          </div>
         </form>`
     });
     if (sc) scModalCalcAnt();
@@ -626,10 +761,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         title: "Asignar Conceptos - " + (sc.proveedor_nombre || 'Sin proveedor'),
         size: "xl",
         html: `
-          <div class="row g-3">
+          <div class="row g-3 p-2">
             <div class="col-md-6">
               <div class="sc-editor-col">
-                <div class="dd-head">Disponibles <span class="badge bg-secondary" id="sc-cnt-disp">0</span></div>
+                <div class="dd-head">Disponibles <span class="badge bg-secondary animate-pulse" id="sc-cnt-disp">0</span></div>
                 <input class="form-control form-control-sm mb-2" id="sc-search-disp" placeholder="Buscar..." oninput="scFiltrarZonas()">
                 <div class="dd-zone" id="sc-zone-disp" ondragover="scOnDragOver(event)" ondrop="scOnDrop(event,'disp')" ondragleave="scOnDragLeave(event)"></div>
               </div>
@@ -642,11 +777,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </div>
             </div>
           </div>
-          <div class="d-flex justify-content-between align-items-center mt-4">
+          <div class="d-flex justify-content-between align-items-center mt-4 p-2">
             <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Doble clic para mover o arrastra los conceptos.</small>
             <div class="gap-2 d-flex">
               <button class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-              <button class="btn btn-primary" onclick="scGuardarConceptos()">Guardar Cambios</button>
+              <button class="btn btn-success" onclick="scGuardarConceptos()"><i class="bi bi-floppy me-1"></i>Guardar Cambios</button>
             </div>
           </div>`
       });
@@ -665,14 +800,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const zone = scEl(zoneId);
     const q = filtro.toLowerCase().trim();
     const vis = q ? lista.filter(c => c.nombre_concepto.toLowerCase().includes(q) || c.codigo_concepto.toLowerCase().includes(q)) : lista;
-    if (!vis.length) { zone.innerHTML = `<div class="dd-empty"><i class="bi bi-${esAsig ? 'inbox' : 'check2-all'}"></i> ${esAsig ? 'Vacio' : 'Sin disponibles'}</div>`; return; }
+    if (!vis.length) { zone.innerHTML = `<div class="dd-empty"><i class="bi bi-${esAsig ? 'inbox' : 'check2-all'}"></i> ${esAsig ? 'Vacío' : 'Sin disponibles'}</div>`; return; }
     zone.innerHTML = vis.map(c => {
       const enOtro = !esAsig && c.subcontratos_ids && c.subcontratos_ids.split(',').some(sid => sid !== '' && parseInt(sid) !== scEditorId);
       return `
         <div class="concept-chip ${enOtro ? 'already' : ''}" draggable="true" ondragstart="scDragId=${c.id}" ondragend="scDragId=null" ondblclick="scMoverConcepto(${c.id},'${esAsig ? 'disp' : 'asig'}')">
           <span class="chip-cod">${c.codigo_concepto}</span>
           <span class="chip-um">${c.unidad_medida || ''}</span>
-          <span class="chip-name">${c.cantidad}</span>
+          <span class="chip-name" title="${c.nombre_concepto}">${c.nombre_concepto}</span>
           ${enOtro ? '<span class="chip-also">otro</span>' : ''}
         </div>`;
     }).join('');
@@ -707,19 +842,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         title: "Gestión de Extraordinarios",
         size: "lg",
         html: `
-          <div class="row">
+          <div class="row p-2">
             <div class="col-md-5">
-              <div class="card p-3 bg-light border-0 mb-3">
+              <div class="card p-3 bg-light border-0 mb-3 rounded">
                 <h6 class="fw-bold small mb-3">Agregar Nuevo</h6>
-                <div class="mb-2"><label class="small text-muted">Monto</label><input type="number" step="0.01" id="ext-m-monto" class="form-control form-control-sm"></div>
-                <div class="mb-2"><label class="small text-muted">Fecha</label><input type="date" id="ext-m-fecha" class="form-control form-control-sm"></div>
-                <div class="mb-3"><label class="small text-muted">Descripción</label><input type="text" id="ext-m-desc" class="form-control form-control-sm"></div>
-                <button class="btn btn-primary btn-sm w-100" onclick="extAgregar()"><i class="bi bi-plus-lg me-1"></i>Agregar</button>
+                <div class="mb-2">
+                  <label class="small text-muted fw-semibold">Monto *</label>
+                  <input type="number" step="0.01" id="ext-m-monto" class="form-control form-control-sm" required placeholder="0.00">
+                </div>
+                <div class="mb-2">
+                  <label class="small text-muted fw-semibold">Fecha *</label>
+                  <input type="date" id="ext-m-fecha" class="form-control form-control-sm" required>
+                </div>
+                <div class="mb-3">
+                  <label class="small text-muted fw-semibold">Descripción *</label>
+                  <input type="text" id="ext-m-desc" class="form-control form-control-sm" required placeholder="Ej: Adicional de obra">
+                </div>
+                <button class="btn btn-success btn-sm w-100" onclick="extAgregar()"><i class="bi bi-plus-lg me-1"></i>Agregar</button>
               </div>
             </div>
             <div class="col-md-7">
               <div id="ext-m-lista" style="max-height:300px;overflow-y:auto;"></div>
-              <div class="mt-3 text-end fw-bold" id="ext-m-total">Total: $0.00</div>
+              <div class="mt-3 text-end fw-bold text-dark border-top pt-2" id="ext-m-total">Total: $0.00</div>
             </div>
           </div>`
       });
@@ -768,16 +912,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         title: "Editar Obra",
         size: "lg",
         html: `
-          <form id="formEditObra">
+          <form id="formEditObra" class="p-2">
             <input type="hidden" name="id" value="${data.id}"><input type="hidden" name="proyecto_id" value="${data.proyecto_id}">
-            <div class="mb-3"><label class="form-label">Nombre de la Obra</label><input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required></div>
-            <div class="mb-3"><label class="form-label">Número</label><input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required></div>
-            <div class="mb-3"><label class="form-label">Descripción</label><textarea name="descripcion" class="form-control" rows="3">${data.descripcion || ''}</textarea></div>
-            <div class="row">
-              <div class="col-6 mb-3"><label class="form-label">Costo Directo</label><input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required></div>
-              <div class="col-6 mb-3"><label class="form-label">Monto Designado</label><input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required></div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nombre de la Obra *</label>
+              <input type="text" name="nombre_obra" class="form-control" value="${data.nombre_obra}" required>
             </div>
-            <div class="d-flex justify-content-end gap-2 mt-4"><button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button><button type="submit" class="btn btn-warning">Actualizar</button></div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Número de Obra *</label>
+              <input type="text" name="numero_obra" class="form-control" value="${data.numero_obra}" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Descripción</label>
+              <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe los detalles de la obra...">${data.descripcion || ''}</textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Costo Directo *</label>
+                <input type="number" step="0.01" name="costo_directo" class="form-control" value="${data.costo_directo}" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Monto Designado *</label>
+                <input type="number" step="0.01" name="monto_designado" class="form-control" value="${data.monto_designado}" required>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
+              <button type="submit" class="btn btn-success"><i class="bi bi-floppy me-1"></i>Actualizar</button>
+            </div>
           </form>`
       });
       document.getElementById('formEditObra').addEventListener('submit', function(e) {
@@ -785,7 +947,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         UI.loading("Actualizando...");
         fetch('update_obra.php', { method: 'POST', body: new FormData(this) }).then(r => r.json()).then(r => {
           UI.loading.hide();
-          if (r.status === 'success') { UI.toast.success("Obra actualizada"); setTimeout(() => location.reload(), 1500); }
+          if (r.status === 'success') { UI.toast.success("Obra actualizada"); setTimeout(() => location.reload(), 1200); }
           else UI.toast.error(r.message);
         });
       });
@@ -797,14 +959,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     fetch(`get_archivos_obra.php?obra_id=${obraId}`).then(r => r.json()).then(data => {
       UI.loading.hide();
       let html = `
-        <div class="mb-4">
+        <div class="mb-4 p-2">
           <form id="formFiles" enctype="multipart/form-data">
             <input type="hidden" name="obra_id" value="${obraId}">
-            <div class="mb-3"><label class="form-label">Subir PDF</label><input type="file" name="archivo" class="form-control" accept=".pdf" required></div>
-            <button type="button" class="btn btn-primary w-100" onclick="subirArchivoObra()">Subir Archivo</button>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Subir archivo PDF</label>
+              <input type="file" name="archivo" class="form-control" accept=".pdf" required>
+            </div>
+            <button type="button" class="btn btn-primary w-100" onclick="subirArchivoObra()"><i class="bi bi-upload me-1"></i>Subir Archivo</button>
           </form>
         </div>
-        <hr><div class="list-group mt-3" id="fileList"></div>`;
+        <hr><div class="list-group mt-3 p-2" id="fileList"></div>`;
       UI.modal({ title: "Gestión de Archivos PDF", html: html });
       renderFiles(data.archivos);
     });
@@ -812,13 +977,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   function renderFiles(files) {
     const list = scEl('fileList');
-    if (!files || !files.length) { list.innerHTML = '<div class="text-center text-muted py-3">Sin archivos</div>'; return; }
+    if (!files || !files.length) { list.innerHTML = '<div class="text-center text-muted py-3"><i class="bi bi-folder2-open d-block mb-2" style="font-size:2rem;"></i>Sin archivos</div>'; return; }
     list.innerHTML = files.map(f => `
-      <div class="list-group-item d-flex justify-content-between align-items-center">
-        <div class="text-truncate" style="max-width:250px;"><i class="bi bi-file-pdf text-danger me-2"></i>${f.nombre_archivo}</div>
-        <div class="btn-group">
-          <button class="btn btn-sm btn-outline-info" onclick="window.open('${f.ruta_archivo}','_blank')"><i class="bi bi-eye"></i></button>
-          <button class="btn btn-sm btn-outline-danger" onclick="eliminarArchivoObra(${f.id})"><i class="bi bi-trash"></i></button>
+      <div class="list-group-item d-flex justify-content-between align-items-center rounded mb-2 border">
+        <div class="text-truncate" style="max-width:250px;"><i class="bi bi-file-pdf text-danger me-2" style="font-size:1.2rem;"></i><strong>${f.nombre_archivo}</strong></div>
+        <div class="btn-group gap-1">
+          <button class="btn btn-sm btn-outline-info" onclick="window.open('${f.ruta_archivo}','_blank')" title="Ver PDF"><i class="bi bi-eye"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="eliminarArchivoObra(${f.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
         </div>
       </div>`).join('');
   }
@@ -841,9 +1006,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
   }
 
+  function abrirVistaConceptos(catalogoId, catalogoNombre, obraId, obraNombre) {
+    window.location.href = `conceptos_view.php?catalogo_id=${catalogoId}&obra_id=${obraId}`;
+  }
+
   function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-</body>
-</html>
+
