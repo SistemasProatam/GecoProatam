@@ -1,14 +1,12 @@
 /* ================================================================
-   ORDERS MODULE — Specialized Styles
-   GECO / PROATAM Design System
+   GECO Design System
    Imports components.css for global styles.
-   Used by: list_oc · see_oc · new_order · edit_oc
    ================================================================ */
 
 @import url("./core/components.css");
 @import url("./core/pages.css");
 
-/* ─── ORDERS BUDGET STAT BOXES ────────────────────────────────── */
+/* ─── BUDGET STAT BOXES ────────────────────────────────── */
 .oc-stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -43,7 +41,7 @@
 .oc-stat-box__value.text-warning { color: #b45309; }
 .oc-stat-box__value.text-info { color: var(--info, #3b82f6); }
 
-/* ─── ORDERS TWO-COLUMN FORM LAYOUT ───────────────────────────── */
+/* ─── TWO-COLUMN FORM LAYOUT ───────────────────────────── */
 .oc-form-layout {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -69,7 +67,7 @@
   }
 }
 
-/* ─── ORDERS PAYMENT SUMMARY ──────────────────────────────────── */
+/* ─── PAYMENT SUMMARY ──────────────────────────────────── */
 .oc-finance {
   background: var(--s-700, #113557);
   border-radius: var(--radius-md, 14px);
@@ -181,7 +179,7 @@
   font-size: var(--fs-sm, 0.95rem);
 }
 
-/* ─── ORDERS TABLE ITEMS (new_order · edit_oc) ────────────────── */
+/* ─── TABLE ITEMS (new_order · edit_oc) ────────────────── */
 .oc-card-body--items {
   padding-top: 0;
   overflow: visible;
@@ -245,7 +243,7 @@
   vertical-align: middle;
 }
 
-/* ─── FILE UPLOAD DROPZONE ────────────────────────────────────── */
+/* ─── FILE UPLOAD DROP ZONE ────────────────────────────────────── */
 .oc-files-dropzone {
   background: var(--gray-50, #f9fafb);
   border: 1px dashed var(--gray-300, #d1d5db);
@@ -369,7 +367,6 @@
 .eval-not-approved { background-color: #f8d7da; color: #721c24; }
 
 /* ─── CSAT METRIC BLOCK ───────────────────────────────────────── */
-/* Usado en: catalog/historial_cliente.php                        */
 .csat-metric   { display: flex; align-items: flex-end; gap: 0.5rem; margin-bottom: 0.5rem; }
 .csat-score    { font-size: 2.8rem; font-weight: 800; color: var(--s-800, #0f172a); line-height: 1; }
 .csat-label    { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400, #9ca3af); margin-bottom: 0.25rem; }
@@ -377,7 +374,6 @@
 .csat-hint     { font-size: 0.8rem; color: var(--gray-400, #9ca3af); padding-top: 0.75rem; border-top: 1px solid var(--gray-100, #f3f4f6); }
 
 /* ─── LOADING OVERLAY (shared) ───────────────────────────────── */
-/* Usado en: new_requis.php, see_oc.php, see_requis.php          */
 #loadingOverlay {
   position: fixed;
   inset: 0;
@@ -403,7 +399,7 @@
   height: 3rem;
 }
 
-/* ─── OC DETAIL VIEW LAYOUT (see_oc.php) ────────────────────── */
+/* ─── OC DETAIL VIEW LAYOUT ────────────────────── */
 .oc-detail-grid {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -506,7 +502,6 @@
 @media(max-width: 576px) { .oc-fields { grid-template-columns: 1fr; } }
 
 /* ─── REQUISITION DETAIL — COMMENT & CONCEPT STYLES ─────────── */
-/* Usado en: see_requis.php                                       */
 .btn-estado { margin: 5px 5px 5px 0; }
 
 .comentario-rechazo {

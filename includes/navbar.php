@@ -44,7 +44,7 @@ function is_active($path) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
   
-  <!-- Estilos SaaS -->
+  <!-- Hojas de Estilo Base -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/tokens.css?v=1.2" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/layout.css?v=1.4" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/components.css?v=1.0" />

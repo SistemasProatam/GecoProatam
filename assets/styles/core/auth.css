@@ -300,7 +300,7 @@ body, html {
 .carousel-quote {
     max-width: 600px;
     animation: fadeInRight 0.8s ease-out;
-    margin-bottom: 5rem; /* Pushes the quote text up to create breathing room above the dots */
+    margin-bottom: 5rem;
 }
 
 .quote-text {
@@ -361,13 +361,9 @@ body, html {
 }
 
 /* ─── PASSWORD REQUIREMENTS LIST ────────────────────────────── */
-/* Usado en: change_password.php, reset_password.php            */
 .req-list li { transition: color 0.3s; }
 .req-list li.valid { color: var(--success-color, #198754) !important; font-weight: 500; }
-.req-list li.valid i::before { content: "\F26A"; /* bi-check-circle-fill */ }
-
-/* ─── OTP CODE INPUT ─────────────────────────────────────────── */
-/* Usado en: verify_token.php                                    */
+.req-list li.valid i::before { content: "\F26A"; }
 .button-57 i {
     display: block;
     margin-right: 0.50em;

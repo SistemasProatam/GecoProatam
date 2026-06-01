@@ -1,6 +1,5 @@
 /* ================================================================
-   PROATAM DESIGN SYSTEM COMPONENTS
-   Modern SaaS Aesthetics (Consumes tokens.css)
+   GECO DESIGN SYSTEM COMPONENTS
    ================================================================ */
 
 @import url("./tokens.css");
@@ -359,7 +358,6 @@ a i, a:hover i, a:focus i {
   outline: none;
 }
 
-/* Readonly fields styling */
 .orders-page-container .form-control[readonly],
 .orders-page-container .form-control:read-only,
 .orders-page-container input[readonly].form-control,
@@ -383,7 +381,7 @@ a i, a:hover i, a:focus i {
   outline: none;
 }
 
-/* ─── UX COMPLIANCE: DISABLED STATES (NO HARDCODED COLORS) ────── */
+/* ─── UX COMPLIANCE: DISABLED STATES ────── */
 .orders-page-container .form-control:disabled,
 .orders-page-container .form-select:disabled,
 .form-control:disabled,
@@ -396,7 +394,7 @@ a i, a:hover i, a:focus i {
   color: var(--gray-400) !important;
   border-color: var(--gray-200) !important;
   cursor: not-allowed !important;
-  opacity: 1 !important; /* Override standard browser drop opacity */
+  opacity: 1 !important;
   box-shadow: none !important;
   transform: none !important;
 }
@@ -908,8 +906,7 @@ a i, a:hover i, a:focus i {
   color: var(--s-700, #113557);
 }
 
-/* ─── INFO BANNER (Letreros "Necesitas ayuda?") ───────────────── */
-/* Aplicar a cualquier letrero informativo del sistema            */
+/* ─── INFO BANNER ───────────────── */
 .orders-info-banner {
   display: flex;
   align-items: flex-start;
@@ -940,7 +937,7 @@ a i, a:hover i, a:focus i {
   color: var(--p-500, #407656);
 }
 
-/* ─── CARD MODIFIER: No hover (for purely informational cards) ── */
+/* ─── CARD MODIFIER: No hover (for informational cards) ── */
 .orders-card--no-hover {
   pointer-events: none;
   cursor: default;
@@ -951,7 +948,7 @@ a i, a:hover i, a:focus i {
   box-shadow: none !important;
 }
 
-/* ─── AUTOCOMPLETE DROPDOWN (shared across modules) ─────────────*/
+/* ─── AUTOCOMPLETE DROPDOWN ─────────────────────*/
 .autocomplete-list {
   position: absolute;
   top: 100%;
@@ -1145,7 +1142,7 @@ a i, a:hover i, a:focus i {
   box-shadow: var(--shadow-sm);
 }
 
-/* Dropzone de Activos */
+/* Drop zone de Activos */
 .file-drop-zone {
   border: 2px dashed var(--gray-300, #d1d5db);
   border-radius: var(--radius-md, 12px);
@@ -1225,7 +1222,7 @@ a i, a:hover i, a:focus i {
   color: var(--error);
 }
 
-/* ─── ACTIVO BADGE (Activo seleccionado en búsquedas) ────────── */
+/* ─── ACTIVO BADGE ────────── */
 .activo-autocomplete {
   position: relative;
 }
@@ -1257,11 +1254,6 @@ a i, a:hover i, a:focus i {
   color: var(--error, #e8445a);
 }
 
-/* ================================================================
-   SISTEMA GLOBAL: ENCABEZADO DE SECCIÓN EN CARDS
-   Reemplaza el patrón: fw-bold text-muted text-uppercase + style inline
-   Uso: details_project, details_obra y demás vistas de detalle.
-   ================================================================ */
 .orders-card-section-title {
   display: flex;
   align-items: center;
@@ -1281,11 +1273,6 @@ a i, a:hover i, a:focus i {
   font-size: 0.85rem;
 }
 
-/* ================================================================
-   SISTEMA GLOBAL: KPI CARDS PASTEL SUAVES
-   Uso: details_project, details_obra, plan_obra, dashboard, etc.
-   Reglas: Sin íconos en el bloque numérico. Solo número + label.
-   ================================================================ */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1391,19 +1378,10 @@ a i, a:hover i, a:focus i {
   .kpi-grid--2 { grid-template-columns: 1fr; }
 }
 
-/* ================================================================
-   SISTEMA GLOBAL: AJUSTE DE PADDING EN PAGE HEADERS
-   El breadcrumb + título tendrán un espaciado inferior reducido
-   para que no haya exceso de aire entre el header y el contenido.
-   ================================================================ */
 .orders-page-header {
   margin-bottom: 1.25rem !important;
 }
 
-/* ================================================================
-   SISTEMA GLOBAL: CAROUSEL DOTS — Círculos, no guiones
-   Aplica a cualquier Bootstrap carousel del sistema.
-   ================================================================ */
 .carousel-indicators [data-bs-target] {
   width: 8px !important;
   height: 8px !important;
@@ -1419,18 +1397,10 @@ a i, a:hover i, a:focus i {
   background-color: #fff !important;
 }
 
-/* Separación entre el autor/cita y los dots */
 .carousel-caption {
   padding-bottom: 2.5rem !important;
 }
 
-/* ================================================================
-   SISTEMA GLOBAL: ICONOGRAFÍA ESTANDARIZADA
-   - Sin fondo en íconos de acción.
-   - Íconos en quick-access cards: sin fondo, centrados.
-   ================================================================ */
-
-/* Íconos en tarjetas de acceso rápido (index.php) */
 .quick-access-icon {
   background: none !important;
   box-shadow: none !important;
@@ -1438,10 +1408,6 @@ a i, a:hover i, a:focus i {
   padding: 0 !important;
 }
 
-/* ================================================================
-   SISTEMA GLOBAL: CAMPO DETALLE (reemplaza inline styles)
-   Usado por details_activo renderGecoCampo y similares.
-   ================================================================ */
 .geco-field {
   display: flex;
   flex-direction: column;
