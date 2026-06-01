@@ -132,6 +132,7 @@ if ($obra_id > 0) {
 }
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/plan_obra.css?v=1.1">
 
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>

@@ -3,8 +3,8 @@
    Imports components.css for global styles.
    ================================================================ */
 
-@import url("./core/components.css");
-@import url("./core/pages.css");
+@import url("./components.css");
+@import url("./pages.css");
 
 /* ─── BUDGET STAT BOXES ────────────────────────────────── */
 .oc-stat-grid {
