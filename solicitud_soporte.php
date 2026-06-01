@@ -61,68 +61,7 @@ while ($row = $result_activos->fetch_assoc()) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
 
-<style>
-/* Estilos personalizados de Autocompletado de Activos apegados a GECO */
-.activo-autocomplete {
-  position: relative;
-}
-.autocomplete-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 1px solid var(--gray-200,#e5e7eb);
-  border-top: none;
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 1050;
-  display: none;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-}
-.autocomplete-item {
-  padding: 10px 16px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--gray-100,#f3f4f6);
-  font-size: 0.82rem;
-  transition: all 0.2s;
-  color: var(--gray-700,#374151);
-}
-.autocomplete-item strong {
-  color: var(--s-700,#113557);
-}
-.autocomplete-item:hover {
-  background: rgba(64,118,86,0.04);
-  color: var(--p-800,#1b4332);
-}
-.activo-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(64,118,86,0.06);
-  border: 1.5px dashed var(--p-300,#86efac);
-  border-radius: 10px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  color: var(--p-800,#1b4332);
-  margin-top: 6px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-.activo-badge .remove-activo {
-  cursor: pointer;
-  color: var(--gray-400,#9ca3af);
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
-}
-.activo-badge .remove-activo:hover {
-  color: #dc3545;
-}
-</style>
 
 <?php include __DIR__ . "/includes/navbar.php"; ?>
 
@@ -141,11 +80,9 @@ while ($row = $result_activos->fetch_assoc()) {
   </div>
 
   <!-- Ayuda Banner -->
-  <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-4" style="background: rgba(64,118,86,0.06); border-radius: 12px; padding: 16px;">
-    <i class="bi bi-info-circle-fill" style="font-size: 1.5rem; color: var(--p-500,#407656) !important;"></i>
-    <div style="font-size: 0.88rem; color: var(--s-800,#0f172a);">
-      <strong>¿Necesitas ayuda?</strong> Estamos para apoyarte. Completa el formulario y nos pondremos en contacto contigo a través de tu correo corporativo.
-    </div>
+  <div class="orders-info-banner mb-4">
+    <i class="fa-solid fa-circle-info"></i>
+    <div><strong>¿Necesitas ayuda?</strong> Estamos para apoyarte. Completa el formulario y nos pondremos en contacto contigo a través de tu correo corporativo.</div>
   </div>
 
   <!-- Formulario -->
@@ -154,7 +91,7 @@ while ($row = $result_activos->fetch_assoc()) {
     <!-- Card 1: Información del Solicitante -->
     <div class="oc-card mb-4">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-person-circle"></i> Información del Solicitante</span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-circle-user"></i> Información del Solicitante</span>
       </div>
       <div class="oc-card-body">
         <div class="row g-3">
@@ -186,20 +123,20 @@ while ($row = $result_activos->fetch_assoc()) {
     <!-- Card 2: Activo Relacionado (Opcional) -->
     <div class="oc-card mb-4">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-box-seam"></i> Activo Relacionado <small class="text-muted fw-normal ms-1" style="font-size:0.75rem; text-transform:none; letter-spacing:0;">(opcional)</small></span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-cube"></i> Activo Relacionado <small class="text-muted fw-normal ms-1" style="font-size:0.75rem; text-transform:none; letter-spacing:0;">(opcional)</small></span>
       </div>
       <div class="oc-card-body">
         <div class="form-group">
           <!-- Badge para el activo seleccionado -->
           <div id="activoBadge" class="activo-badge mb-3" style="<?= $activo_pre ? 'display: inline-flex;' : 'display: none;' ?>">
-            <i class="bi bi-box-seam me-1"></i>
+            <i class="fa-solid fa-cube me-1"></i>
             <span id="activoBadgeText">
               <?php if ($activo_pre): ?>
                 <strong><?= htmlspecialchars($activo_pre['codigo']) ?></strong> – <?= htmlspecialchars($activo_pre['nombre']) ?> <small class="text-muted">(<?= htmlspecialchars($activo_pre['tipo']) ?>)</small>
               <?php endif; ?>
             </span>
             <span class="remove-activo ms-3" onclick="limpiarActivo()" title="Quitar activo">
-              <i class="bi bi-x-circle-fill"></i>
+              <i class="fa-solid fa-circle-xmark"></i>
             </span>
           </div>
 
@@ -216,7 +153,7 @@ while ($row = $result_activos->fetch_assoc()) {
               <div class="autocomplete-list" id="autocompleteList"></div>
             </div>
             <div class="form-text text-muted mt-2">
-              <i class="bi bi-info-circle me-1"></i> Si el problema está relacionado con un activo registrado, selecciónelo aquí.
+              <i class="fa-solid fa-circle-info me-1"></i> Si el problema está relacionado con un activo registrado, selecciónelo aquí.
             </div>
           </div>
         </div>
@@ -226,7 +163,7 @@ while ($row = $result_activos->fetch_assoc()) {
     <!-- Card 3: Detalles del Problema -->
     <div class="oc-card mb-4">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-exclamation-triangle"></i> Detalles del Problema</span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-triangle-exclamation"></i> Detalles del Problema</span>
       </div>
       <div class="oc-card-body">
         <div class="form-group mb-3">
@@ -271,29 +208,26 @@ while ($row = $result_activos->fetch_assoc()) {
     <!-- Card 4: Archivos Adjuntos -->
     <div class="oc-card mb-4">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Archivos Adjuntos <small class="text-muted fw-normal ms-1" style="font-size:0.75rem; text-transform:none; letter-spacing:0;">(opcional)</small></span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-paperclip"></i> Archivos Adjuntos <small class="text-muted fw-normal ms-1" style="font-size:0.75rem; text-transform:none; letter-spacing:0;">(opcional)</small></span>
       </div>
       <div class="oc-card-body">
         <div class="form-text text-muted mb-3">
-          <i class="bi bi-info-circle me-1"></i> Puedes adjuntar imágenes, documentos o capturas de pantalla de error. Máximo 5 archivos, hasta 5 MB cada uno.
+          <i class="fa-solid fa-circle-info me-1"></i> Puedes adjuntar imágenes, documentos o capturas de pantalla de error. Máximo 5 archivos, hasta 5 MB cada uno.
         </div>
 
-        <div class="row g-2 align-items-center mb-4">
-          <div class="col">
-            <input type="file" class="form-control" id="singleFileInput" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
-          </div>
-          <div class="col-auto">
-            <button class="btn btn-geco-primary px-4" type="button" onclick="agregarAdjunto()">
-              <i class="bi bi-plus-circle me-1"></i> Agregar
-            </button>
-          </div>
+        <div class="oc-files-input-group mb-3">
+          <input type="file" class="form-control" id="singleFileInput" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+          <button class="btn-geco-secondary" type="button" onclick="agregarAdjunto()">
+            <i class="fa-solid fa-paperclip"></i> Adjuntar
+          </button>
         </div>
 
-        <div id="adjuntosContainer" class="p-3 rounded bg-light border">
-          <h6 class="fw-bold mb-3" style="font-size: 0.85rem; color: var(--s-700,#113557);">Archivos seleccionados: <span id="contadorAdjuntos" class="badge bg-secondary rounded-pill">0</span></h6>
-          <ul id="adjuntosList" class="list-group list-group-flush rounded border" style="background:#fff;">
-            <li class="list-group-item text-center text-muted py-3">
-              <i class="bi bi-inbox me-1" style="font-size: 1.2rem;"></i> No hay archivos agregados
+        <div id="adjuntosContainer" class="oc-files-dropzone">
+          <h6 class="oc-files-dropzone__title">Archivos seleccionados: <span id="contadorAdjuntos" class="status-badge status-badge--pendiente">0</span></h6>
+          <ul id="adjuntosList" class="list-unstyled mt-2 mb-0">
+            <li class="orders-empty-state" style="padding: 1.5rem;">
+              <i class="fa-solid fa-paperclip"></i>
+              <p>No hay archivos adjuntos</p>
             </li>
           </ul>
         </div>
@@ -303,11 +237,11 @@ while ($row = $result_activos->fetch_assoc()) {
     <!-- Acciones -->
     <div class="d-flex flex-column align-items-center gap-3 mt-4 mb-5">
       <div class="text-muted text-center" style="font-size: 0.8rem;">
-        <i class="bi bi-envelope-check me-1"></i> La respuesta y actualizaciones de esta solicitud se enviarán a su correo corporativo registrado.
+        <i class="fa-solid fa-envelope-circle-check me-1"></i> La respuesta y actualizaciones de esta solicitud se enviarán a su correo corporativo registrado.
       </div>
       <div class="d-flex justify-content-center w-100">
         <button type="submit" class="btn-geco-primary px-5 py-2" id="submitBtn" style="min-width: 220px;">
-          <i class="bi bi-send me-1"></i> Enviar Solicitud
+          <i class="fa-solid fa-paper-plane me-1"></i> Enviar Solicitud
         </button>
       </div>
     </div>
@@ -436,15 +370,21 @@ while ($row = $result_activos->fetch_assoc()) {
         contador.textContent = adjuntosSeleccionados.length;
 
         if (!adjuntosSeleccionados.length) {
-            lista.innerHTML = '<li class="list-group-item text-center text-muted py-3">' +
-                '<i class="bi bi-inbox me-1"></i> No hay archivos agregados</li>';
+            lista.innerHTML = `
+                <li class="list-group-item text-center text-muted py-3" style="background:transparent;border:none;">
+                    <i class="fa-solid fa-inbox fs-4 d-block mb-1"></i> No hay archivos agregados
+                </li>
+            `;
             return;
         }
         lista.innerHTML = adjuntosSeleccionados.map((f, i) =>
-            `<li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
-                <span><i class="bi bi-file-earmark-text text-muted me-2"></i> ${f.name}
-                    <small class="text-muted ms-2">(${(f.size/1024/1024).toFixed(2)} MB)</small>
+            `<li class="d-flex justify-content-between align-items-center py-2 px-1" style="border-bottom: 1px solid var(--gray-100);">
+                <span><i class="fa-regular fa-file-lines me-2" style="color:var(--gray-400);"></i>${f.name}
+                    <small class="ms-2" style="color:var(--gray-400);">(${(f.size/1024/1024).toFixed(2)} MB)</small>
                 </span>
+                <button type="button" class="btn-action btn-action--delete" onclick="quitarAdjunto(${i})" title="Eliminar adjunto">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
             </li>`
         ).join('');
     }
@@ -493,7 +433,7 @@ while ($row = $result_activos->fetch_assoc()) {
         // Estado del botón
         const textoOriginal = submitBtn.innerHTML;
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enviando...';
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Enviando...';
 
         try {
             const response = await fetch('enviar_soporte.php', {

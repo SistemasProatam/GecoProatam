@@ -83,13 +83,8 @@ while ($proyecto = $proyectosResult->fetch_assoc()) {
 // Total páginas
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<style>
-  .badge-presupuesto { font-size: 0.75em; padding: 0.25em 0.5em; }
-  .presupuesto-info  { font-size: 0.85em; line-height: 1.4; }
-  .progress          { height: 6px; margin-top: 5px; }
-  .progress-bar      { transition: width 0.3s ease; }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -111,33 +106,28 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
     </div>
     <div class="d-flex gap-2">
       <a href="list_project.php" class="btn-geco-outline">
-        <i class="bi bi-arrow-left"></i> Volver a Proyectos
+        <i class="fa-solid fa-arrow-left"></i> Volver a Proyectos
       </a>
       <button class="btn-geco-primary" type="button" onclick="agregarObra(<?= $proyecto_id_js ?>)">
-        <i class="bi bi-plus-circle"></i> Nueva Obra
+        <i class="fa-solid fa-circle-plus"></i> Nueva Obra
       </button>
     </div>
   </div>
-
+ 
   <!-- Filters Card -->
   <div class="orders-card mb-4">
-    <div class="p-3 d-flex flex-wrap gap-3 align-items-center">
-      <!-- Buscador (Ajax compatible) -->
-      <form id="search-form" class="orders-filter-bar d-flex gap-2 flex-grow-1" method="GET" style="margin-bottom: 0;">
-        <input type="hidden" name="proyecto_id" value="<?= htmlspecialchars($proyecto_id) ?>">
-        <div class="search-input-wrap flex-grow-1">
-          <i class="bi bi-search search-icon"></i>
-          <input class="form-control" type="search" name="q" placeholder="Buscar obra..." value="<?= htmlspecialchars($busqueda) ?>">
+    <form id="search-form" method="GET">
+      <input type="hidden" name="proyecto_id" id="hidden-proyecto-id" value="<?= htmlspecialchars($proyecto_id) ?>">
+      <div class="orders-filter-bar">
+        <div class="orders-filter-search">
+          <div class="search-input-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" name="q" placeholder="Buscar obra por nombre, número o proyecto..." value="<?= htmlspecialchars($busqueda) ?>">
+          </div>
         </div>
-        <button class="btn-geco-primary" type="submit">Buscar</button>
-      </form>
-
-      <!-- Selector de Filtros (Ajax compatible) -->
-      <form id="filter-form" method="GET" class="d-flex align-items-center" style="margin-bottom: 0; min-width: 280px;">
-        <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
-        <div class="w-100">
-          <select name="proyecto_id" class="form-select">
-            <option value="">-- Todos los proyectos --</option>
+        <div class="orders-filter-selects">
+          <select name="proyecto_id" class="form-select" id="select-proyecto-id">
+            <option value="">Todos los proyectos</option>
             <?php foreach ($proyectos as $p): ?>
               <option value="<?= $p['id'] ?>" <?= $proyecto_id == $p['id'] ? 'selected' : '' ?>>
                 <?= htmlspecialchars($p['nombre_proyecto']) ?>
@@ -145,17 +135,13 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
             <?php endforeach; ?>
           </select>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
-
+ 
   <!-- Table Card -->
   <div class="orders-card">
-    <div id="table-container-wrapper" class="p-3">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="fw-bold text-muted"><?= $totalRegistros ?> obras encontradas</span>
-      </div>
-
+    <div id="table-container-wrapper" class="p-0">
       <?php if($result && $result->num_rows > 0): ?>
       <div class="orders-table-wrap">
         <table class="orders-table">
@@ -164,9 +150,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
               <th>Obra</th>
               <th>Proyecto</th>
               <th>Periodo</th>
-              <th>Catálogos</th>
               <th>Presupuesto CD</th>
-              <th style="width: 150px; text-align: right;">Acciones</th>
+              <th class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -193,42 +178,31 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                 </span>
               </td>
               <td>
-                <?php if($row['total_catalogos'] > 0): ?>
-                <span class="status-badge" style="color:#407656; background:rgba(64,118,86,0.06); border-color:rgba(64,118,86,0.3);">
-                  <i class="bi bi-journal-text me-1"></i> <?= $row['total_catalogos'] ?> catálogo(s)
-                </span>
-                <?php else: ?>
-                <span class="status-badge" style="color:#64748b; background:rgba(148,163,184,0.08); border-color:rgba(148,163,184,0.3);">
-                  Sin catálogos
-                </span>
-                <?php endif; ?>
-              </td>
-              <td>
-                <div class="d-flex flex-column" style="min-width: 160px;">
+                <div class="d-flex flex-column">
                   <div class="d-flex justify-content-between small mb-1">
-                    <span class="text-muted">CD: $<?= number_format($costo_directo, 2) ?></span>
-                    <span class="fw-semibold <?= $costo_disponible < 0 ? 'text-danger' : 'text-success' ?>">
+                    <span class="cell-muted">CD: $<?= number_format($costo_directo, 2) ?></span>
+                    <span class="fw-semibold <?= $costo_disponible < 0 ? 'text-danger' : '' ?>">
                       $<?= number_format($costo_disponible, 2) ?> disp.
                     </span>
                   </div>
-                  <div class="progress">
-                    <div class="progress-bar <?= $progress_class ?>" role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
+                  <div class="progress" style="height:5px;border-radius:4px;background:var(--gray-100);">
+                    <div class="progress-bar <?= $progress_class ?>" role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%; border-radius:4px; transition:width 0.3s ease;"></div>
                   </div>
                 </div>
               </td>
-              <td>
-                <div class="actions-group justify-content-end">
+              <td class="text-end">
+                <div class="actions-group">
                   <!-- Editar Obra -->
-                  <button class="btn-action" style="color: #d97706;" onclick="editarObra(<?= $row['id'] ?>)" title="Editar Obra">
-                    <i class="bi bi-pencil-square"></i>
+                  <button class="btn-action btn-action--edit" onclick="editarObra(<?= $row['id'] ?>)" title="Editar Obra">
+                    <i class="fa-solid fa-pen-to-square"></i>
                   </button>
                   <!-- Ver Detalles -->
                   <a href="details_obra.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver Detalles de la Obra">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="fa-solid fa-circle-info"></i>
                   </a>
                   <!-- Eliminar Obra -->
-                  <button class="btn-action" style="color: #ef4444;" onclick="eliminarObra(<?= $row['id'] ?>)" title="Eliminar Obra">
-                    <i class="bi bi-trash3"></i>
+                  <button class="btn-action btn-action--delete" onclick="eliminarObra(<?= $row['id'] ?>)" title="Eliminar Obra">
+                    <i class="fa-solid fa-trash-can"></i>
                   </button>
                 </div>
               </td>
@@ -238,26 +212,38 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         </table>
       </div>
 
-      <?php if($totalPaginas > 1): ?>
-      <div class="orders-pagination-bar mt-3 p-3 border-top d-flex justify-content-center">
-        <nav aria-label="Paginación">
-          <ul class="pagination mb-0">
+      <!-- Pagination Bar -->
+      <div class="orders-pagination-bar">
+        <div class="orders-pagination-left">
+          <span class="orders-pagination-info">
+            <?php
+              $inicio_reg = $totalRegistros > 0 ? $offset + 1 : 0;
+              $fin_reg    = min($offset + $por_pagina, $totalRegistros);
+            ?>
+            Mostrando <strong><?= $inicio_reg ?>-<?= $fin_reg ?></strong> de <strong><?= $totalRegistros ?></strong> obras
+          </span>
+        </div>
+        <?php if($totalPaginas > 1): ?>
+        <div class="orders-pagination-controls">
+          <nav class="orders-pagination-nav">
+            <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= urlencode($proyecto_id) ?>&page=1">&laquo;</a>
+            <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= urlencode($proyecto_id) ?>&page=<?= max(1,$pagina-1) ?>">&lsaquo;</a>
             <?php for($i=1; $i<=$totalPaginas; $i++): ?>
-            <li class="page-item <?= $i==$pagina?'active':'' ?>">
-              <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= $proyecto_id ?>&page=<?= $i ?>"><?= $i ?></a>
-            </li>
+            <a class="page-btn page-link <?= $i==$pagina?'active':'' ?>" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= urlencode($proyecto_id) ?>&page=<?= $i ?>"><?= $i ?></a>
             <?php endfor; ?>
-          </ul>
-        </nav>
+            <a class="page-btn page-link <?= $pagina>=$totalPaginas ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= urlencode($proyecto_id) ?>&page=<?= min($totalPaginas,$pagina+1) ?>">&rsaquo;</a>
+            <a class="page-btn page-link <?= $pagina>=$totalPaginas ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&proyecto_id=<?= urlencode($proyecto_id) ?>&page=<?= $totalPaginas ?>">&raquo;</a>
+          </nav>
+        </div>
+        <?php endif; ?>
       </div>
-      <?php endif; ?>
 
       <?php else: ?>
       <div class="orders-empty-state">
-        <i class="bi bi-inbox" style="font-size:3rem;"></i>
-        <p class="mt-2">No hay obras registradas</p>
-        <button class="btn-geco-primary mt-2" onclick="agregarObra(<?= $proyecto_id_js ?>)">
-          <i class="bi bi-plus-circle"></i> Crear primera obra
+        <i class="fa-solid fa-inbox"></i>
+        <p>No hay obras registradas</p>
+        <button class="btn-geco-primary" onclick="agregarObra(<?= $proyecto_id_js ?>)">
+          <i class="fa-solid fa-circle-plus"></i> Crear primera obra
         </button>
       </div>
       <?php endif; ?>
@@ -354,7 +340,7 @@ function agregarObra(proyectoId) {
                         </div>
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-                            <button type="submit" class="btn btn-success"><i class="bi bi-floppy me-1"></i>Guardar Obra</button>
+                            <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar Obra</button>
                         </div>
                     </form>
                 `
@@ -460,7 +446,7 @@ function editarObra(obraId) {
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
                                     <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-                                    <button type="submit" class="btn btn-warning text-white"><i class="bi bi-floppy me-1"></i>Actualizar Obra</button>
+                                    <button type="submit" class="btn btn-warning text-white"><i class="fa-solid fa-floppy-disk me-1"></i>Actualizar Obra</button>
                                 </div>
                             </form>
                         `
@@ -545,10 +531,9 @@ function verObras(proyectoId) {
 // Función para actualizar la lista vía AJAX
 function initAJAX() {
     const searchForm = document.getElementById('search-form');
-    const filterForm = document.getElementById('filter-form');
     const container = document.getElementById('table-container-wrapper');
 
-    if (!searchForm || !filterForm || !container) return;
+    if (!searchForm || !container) return;
 
     function updateList(url, pushState = true) {
         container.style.opacity = '0.5';
@@ -565,21 +550,19 @@ function initAJAX() {
                     container.innerHTML = newContent.innerHTML;
                 }
 
+                // Sync search form values from response
                 const newSearch = doc.getElementById('search-form');
-                const newFilter = doc.getElementById('filter-form');
-                if (newSearch) syncForm(searchForm, newSearch);
-                if (newFilter) syncForm(filterForm, newFilter);
+                if (newSearch) {
+                    newSearch.querySelectorAll('input, select').forEach(input => {
+                        const target = searchForm.querySelector(`[name="${input.name}"]`);
+                        if (target) target.value = input.value;
+                    });
+                }
 
                 container.style.opacity = '1';
                 container.style.pointerEvents = 'auto';
 
                 if (pushState) window.history.pushState({}, '', url);
-                
-                // Reinicializar tooltips
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
             })
             .catch(err => {
                 console.error('Error:', err);
@@ -588,40 +571,32 @@ function initAJAX() {
             });
     }
 
-    function syncForm(current, source) {
-        source.querySelectorAll('input, select').forEach(input => {
-            const target = current.querySelector(`[name="${input.name}"]`);
-            if (target) target.value = input.value;
-        });
-    }
-
     document.addEventListener('click', function(e) {
-        const pageLink = e.target.closest('.page-link');
-        if (pageLink) {
+        const pageBtn = e.target.closest('.page-btn');
+        if (pageBtn) {
+            if (pageBtn.classList.contains('disabled')) return;
             e.preventDefault();
-            updateList(pageLink.href);
+            updateList(pageBtn.href);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
 
-    [searchForm, filterForm].forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const params = new URLSearchParams(new FormData(filterForm));
-            const searchData = new FormData(searchForm);
-            params.set('q', searchData.get('q') || "");
-            
-            params.set('page', '1');
-            updateList('?' + params.toString());
-        });
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const params = new URLSearchParams(new FormData(searchForm));
+        params.set('page', '1');
+        updateList('?' + params.toString());
     });
 
-    filterForm.querySelectorAll('select').forEach(select => {
-        select.addEventListener('change', () => filterForm.requestSubmit());
-    });
+    // Autosubmit al cambiar el select de proyecto
+    const selectProyecto = document.getElementById('select-proyecto-id');
+    if (selectProyecto) {
+        selectProyecto.addEventListener('change', () => searchForm.requestSubmit());
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

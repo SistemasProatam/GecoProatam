@@ -24,14 +24,14 @@ if ($resU) while ($rowU = $resU->fetch_assoc()) $unidades[] = $rowU;
 $sql_entidades = "SELECT id, nombre FROM entidades ORDER BY nombre ASC";
 $result_entidades = $conn->query($sql_entidades);
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div class="orders-page-container">
 
     <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
-    <div class="orders-page-header mb-4">
+    <div class="orders-page-header mb-3">
         <div class="orders-page-header-info">
             <nav class="orders-breadcrumb">
                 <a href="<?= BASE_URL ?>/index.php">Inicio</a>
@@ -41,12 +41,12 @@ $result_entidades = $conn->query($sql_entidades);
                 <span>Nueva Cotización</span>
             </nav>
             <h1 class="orders-page-title">Generar Cotización</h1>
-            <p class="mt-1 text-muted" style="font-size: 0.9rem;">
+            <p class="mt-1 mb-0 text-muted" style="font-size: 0.9rem;">
                 Folio actual: <strong style="color: var(--s-700);" id="folioDisplay">...</strong>
             </p>
         </div>
         <button type="button" class="btn-geco-outline" onclick="location.href='list_cotizaciones.php'">
-            <i class="bi bi-arrow-left"></i> Volver
+            <i class="fa-solid fa-arrow-left"></i> Volver
         </button>
     </div>
 
@@ -63,7 +63,7 @@ $result_entidades = $conn->query($sql_entidades);
         <!-- CARD 1: INFORMACIÓN GENERAL -->
         <div class="oc-card mb-4">
             <div class="oc-card-header">
-                <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General de la Cotización</span>
+                <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General de la Cotización</span>
             </div>
             <div class="oc-card-body">
                 <p class="oc-card-intro" style="margin-top: -8px; margin-bottom: 20px;">Complete los datos generales del receptor y emisor de esta cotización. Los campos con <span class="required">*</span> son requeridos.</p>
@@ -100,7 +100,7 @@ $result_entidades = $conn->query($sql_entidades);
         <!-- CARD 2: CONCEPTOS Y PARTIDAS -->
         <div class="oc-card mb-4">
             <div class="oc-card-header">
-                <span class="oc-card-header__title"><i class="bi bi-list-task"></i> Conceptos y Partidas</span>
+                <span class="oc-card-header__title"><i class="fa-solid fa-list-check"></i> Conceptos y Partidas</span>
             </div>
             <div class="oc-card-body">
                 <p class="oc-card-intro" style="margin-top: -8px; margin-bottom: 20px;">Desglose las partidas o servicios a cotizar en la siguiente tabla. Todos los importes se recalcularán automáticamente.</p>
@@ -123,110 +123,110 @@ $result_entidades = $conn->query($sql_entidades);
                 </div>
 
                 <button type="button" class="btn-geco-secondary btn-sm" onclick="agregarFila()">
-                    <i class="bi bi-plus-lg"></i> Agregar Concepto
+                    <i class="fa-solid fa-circle-plus"></i> Agregar Concepto
                 </button>
 
-                <!-- Totales Row -->
-                <div class="row justify-content-end mt-4">
-                    <div class="col-md-6 col-lg-4">
-                        <div style="background: var(--gray-50, #f9fafb); border: 1px solid var(--gray-200, #e5e7eb); border-radius: 12px; padding: 1.25rem;">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Subtotal:</span>
-                                <span id="dispSubtotal" class="fw-bold" style="color: var(--gray-800);">$0.00</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-muted">IVA:</span>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <select id="selectIva" class="form-select form-select-sm" style="width: 75px;" onchange="recalcular()">
-                                        <option value="16">16%</option>
-                                        <option value="8">8%</option>
-                                        <option value="0">0%</option>
-                                    </select>
-                                    <span id="dispIva" class="fw-bold" style="color: var(--gray-800);">$0.00</span>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between fs-5 pt-2" style="border-top: 1.5px dashed var(--gray-200, #e5e7eb); color: var(--s-700, #113557);">
-                                <strong>TOTAL:</strong>
-                                <strong id="dispTotal" class="fs-4">$0.00</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
 
         <!-- CARD 3: ALCANCES Y TÉRMINOS COMERCIALES -->
-        <div class="oc-card mb-4">
-            <div class="oc-card-header">
-                <span class="oc-card-header__title"><i class="bi bi-check-square"></i> Alcances y Términos Comerciales</span>
-            </div>
-            <div class="oc-card-body">
-                <div class="mb-4">
-                    <label class="oc-form-label">Alcances Incluidos</label>
-                    <p class="oc-form-hint--block" style="margin-top: -4px; margin-bottom: 15px;">Seleccione los alcances generales cubiertos por esta cotización.</p>
-                    
-                    <div class="row g-3">
-                        <?php 
-                        $alcancesOpc = [
-                            'ejecucion'   => 'Ejecución de obra',
-                            'materiales'  => 'Suministro de materiales',
-                            'supervision' => 'Supervisión técnica',
-                            'limpieza'    => 'Limpieza final',
-                            'garantia'    => 'Garantía de vicios ocultos',
-                            'herramienta' => 'Herramienta y equipo',
-                            'seguridad'   => 'Seguridad industrial',
-                            'entrega'     => 'Memoria fotográfica'
-                        ];
-                        foreach ($alcancesOpc as $k => $v): 
-                        ?>
-                            <div class="col-md-6 col-lg-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="alcances[]" value="<?= $k ?>" id="chk_<?= $k ?>" checked>
-                                    <label class="form-check-label" for="chk_<?= $k ?>" style="font-size: 0.9rem; color: var(--gray-700); cursor: pointer;">
-                                        <?= $v ?>
-                                    </label>
+        <div class="oc-form-layout mb-4">
+            <div class="oc-form-layout-main">
+                <div class="oc-card h-100">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="fa-solid fa-square-check"></i> Alcances Incluidos</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <p class="oc-card-hint--block">Seleccione los alcances generales cubiertos por esta cotización.</p>
+                        <div class="row g-3">
+                            <?php 
+                            $alcancesOpc = [
+                                'ejecucion'   => 'Ejecución de obra',
+                                'materiales'  => 'Suministro de materiales',
+                                'supervision' => 'Supervisión técnica',
+                                'limpieza'    => 'Limpieza final',
+                                'garantia'    => 'Garantía de vicios ocultos',
+                                'herramienta' => 'Herramienta y equipo',
+                                'seguridad'   => 'Seguridad industrial',
+                                'entrega'     => 'Memoria fotográfica'
+                            ];
+                            foreach ($alcancesOpc as $k => $v): 
+                            ?>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="alcances[]" value="<?= $k ?>" id="chk_<?= $k ?>" checked>
+                                        <label class="form-check-label" for="chk_<?= $k ?>" style="font-size: 0.9rem; color: var(--gray-700); cursor: pointer;">
+                                            <?= $v ?>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    
-                    <div class="mt-3">
-                        <label class="oc-form-label small" style="font-size: 0.8rem; color: var(--gray-500);">Alcances Adicionales o Exclusiones</label>
-                        <textarea name="alcances_extra" class="form-control" rows="2" placeholder="Describa otros alcances, aclaraciones o exclusiones de forma detallada..."></textarea>
-                    </div>
-                </div>
-
-                <hr style="border-color: var(--gray-200); margin: 2rem 0; opacity: 0.8;">
-
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="oc-form-label">Tiempo de Ejecución</label>
-                        <input type="text" name="tiempo" class="form-control" placeholder="Ej. 15 días hábiles">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="oc-form-label">Forma de Pago</label>
-                        <input type="text" name="forma_pago" class="form-control" placeholder="Ej. 50% anticipo, 50% entrega">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="oc-form-label">Vigencia de la Oferta</label>
-                        <input type="text" name="vigencia" class="form-control" value="30 días naturales">
-                    </div>
-                    <div class="col-12">
-                        <label class="oc-form-label">Notas Adicionales</label>
-                        <textarea name="notas" class="form-control" rows="3" placeholder="Comentarios comerciales o notas adicionales que aparecerán en la cotización..."></textarea>
+                            <?php endforeach; ?>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="oc-form-label small" style="font-size: 0.8rem; color: var(--gray-500);">Alcances Adicionales o Exclusiones</label>
+                            <textarea name="alcances_extra" class="form-control" rows="3" placeholder="Describa otros alcances, aclaraciones o exclusiones de forma detallada..."></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="oc-form-layout-side">
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="fa-solid fa-file-contract"></i> Términos Comerciales</span>
+                    </div>
+                    <div class="oc-card-body">
+                        <div class="d-flex flex-column gap-3">
+                            <div>
+                                <label class="oc-form-label">Tiempo de Ejecución</label>
+                                <input type="text" name="tiempo" class="form-control" placeholder="Ej. 15 días hábiles">
+                            </div>
+                            <div>
+                                <label class="oc-form-label">Forma de Pago</label>
+                                <input type="text" name="forma_pago" class="form-control" placeholder="Ej. 50% anticipo, 50% entrega">
+                            </div>
+                            <div>
+                                <label class="oc-form-label">Vigencia de la Oferta</label>
+                                <input type="text" name="vigencia" class="form-control" value="30 días naturales">
+                            </div>
+                            <div>
+                                <label class="oc-form-label">Notas Adicionales</label>
+                                <textarea name="notas" class="form-control" rows="3" placeholder="Comentarios comerciales o notas adicionales..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- FORM ACTIONS -->
-        <div class="d-flex justify-content-center gap-3 mt-4 mb-5">
-            <a href="list_cotizaciones.php" class="btn-geco-outline px-5 py-2.5" style="border-radius: 10px; font-weight: 600;">
-                Cancelar
-            </a>
-            <button type="button" class="btn-geco-primary px-5 py-2.5" onclick="guardarYDescargar()" style="border-radius: 10px; font-weight: 600;">
-                <i class="bi bi-file-earmark-pdf me-2"></i> Generar Cotización
-            </button>
+                <div class="oc-finance">
+                    <div class="oc-finance-title"><i class="fa-solid fa-calculator"></i> Resumen Financiero</div>
+                    <div class="oc-finance-row">
+                        <span>Subtotal:</span>
+                        <span id="dispSubtotal">$0.00</span>
+                    </div>
+                    <div class="oc-finance-row">
+                        <span class="d-flex align-items-center gap-2">
+                            IVA:
+                            <select id="selectIva" class="form-select form-select-sm oc-finance-iva-select text-white bg-transparent border-0" style="color: white !important;" onchange="recalcular()">
+                                <option value="16" class="text-dark">16%</option>
+                                <option value="8" class="text-dark">8%</option>
+                                <option value="0" class="text-dark">0%</option>
+                            </select>
+                        </span>
+                        <span id="dispIva">$0.00</span>
+                    </div>
+                    <div class="oc-finance-total">
+                        <span class="lbl">TOTAL:</span>
+                        <span class="amt" id="dispTotal">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="oc-form-submit-actions mt-4">
+                    <button type="button" class="btn-geco-primary px-5 py-2.5" onclick="guardarYDescargar()" style="width: 100%; border-radius: 10px; font-weight: 600;">
+                        <i class="fa-solid fa-download me-2"></i> Generar Cotización
+                    </button>
+                </div>
+            </div>
         </div>
     </form>
 
@@ -247,8 +247,8 @@ $result_entidades = $conn->query($sql_entidades);
           <td><input type="number" name="precio[]" class="form-control form-control-sm text-end" value="0" step="0.01" oninput="recalcular()"></td>
           <td class="text-end fw-bold" style="color: var(--s-700); vertical-align: middle;" id="imp-${filaCount}">$0.00</td>
           <td class="text-center" style="vertical-align: middle;">
-              <button type="button" class="btn-action" style="border-color: rgba(220, 53, 69, 0.2); color: #dc3545;" onclick="this.closest('tr').remove(); recalcular()">
-                  <i class="bi bi-trash"></i>
+              <button type="button" class="btn-action btn-action--delete" onclick="this.closest('tr').remove(); recalcular()">
+                  <i class="fa-solid fa-trash-can"></i>
               </button>
           </td>`;
         document.getElementById('tbodyConceptos').appendChild(tr);
@@ -306,3 +306,4 @@ $result_entidades = $conn->query($sql_entidades);
 </div>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

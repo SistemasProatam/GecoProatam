@@ -125,12 +125,12 @@ unset($nodo);
 
 function nivelEstilo(int $nivel): array {
     $paleta = [
-        1 => ['bg' => 'var(--s-700, #113557)', 'color' => '#ffffff', 'border' => 'var(--s-900, #020617)', 'icon' => 'bi-folder-fill',      'fw' => 700, 'fs' => '1rem'],
-        2 => ['bg' => 'var(--s-50, #f1f5f9)', 'color' => 'var(--s-800, #0f172a)', 'border' => 'var(--s-300, #94a3b8)', 'icon' => 'bi-folder2-open',     'fw' => 600, 'fs' => '0.9rem'],
-        3 => ['bg' => 'var(--p-50, #f0f7f2)', 'color' => 'var(--p-800, #233e30)', 'border' => 'var(--p-300, #8ecc9f)', 'icon' => 'bi-chevron-right',    'fw' => 600, 'fs' => '0.85rem'],
-        4 => ['bg' => '#fffbeb', 'color' => '#78350f', 'border' => '#fde68a', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.82rem'],
-        5 => ['bg' => '#fdf2f8', 'color' => '#701a75', 'border' => '#fbcfe8', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.80rem'],
-        6 => ['bg' => '#faf5ff', 'color' => '#4a044e', 'border' => '#e9d5ff', 'icon' => 'bi-chevron-right',    'fw' => 500, 'fs' => '0.78rem'],
+        1 => ['bg' => 'var(--s-700, #113557)', 'color' => '#ffffff', 'border' => 'var(--s-900, #020617)', 'icon' => 'fa-folder',      'fw' => 700, 'fs' => '1rem'],
+        2 => ['bg' => 'var(--s-50, #f1f5f9)', 'color' => 'var(--s-800, #0f172a)', 'border' => 'var(--s-300, #94a3b8)', 'icon' => 'fa-folder-open',     'fw' => 600, 'fs' => '0.9rem'],
+        3 => ['bg' => 'var(--p-50, #f0f7f2)', 'color' => 'var(--p-800, #233e30)', 'border' => 'var(--p-300, #8ecc9f)', 'icon' => 'fa-chevron-right',    'fw' => 600, 'fs' => '0.85rem'],
+        4 => ['bg' => '#fffbeb', 'color' => '#78350f', 'border' => '#fde68a', 'icon' => 'fa-chevron-right',    'fw' => 500, 'fs' => '0.82rem'],
+        5 => ['bg' => '#fdf2f8', 'color' => '#701a75', 'border' => '#fbcfe8', 'icon' => 'fa-chevron-right',    'fw' => 500, 'fs' => '0.80rem'],
+        6 => ['bg' => '#faf5ff', 'color' => '#4a044e', 'border' => '#e9d5ff', 'icon' => 'fa-chevron-right',    'fw' => 500, 'fs' => '0.78rem'],
     ];
     $idx = (($nivel - 1) % count($paleta)) + 1;
     return $paleta[$idx];
@@ -160,7 +160,7 @@ function renderNodo(array &$nodo): void {
         <div class="nodo-header d-flex align-items-center justify-content-between px-3 py-2 mb-2"
             style="background:<?= $est['bg'] ?>; border-left:4px solid <?= $est['border'] ?>; color:<?= $est['color'] ?>;">
             <div class="d-flex align-items-center gap-2">
-                <i class="bi <?= $est['icon'] ?>"></i>
+                <i class="fa-solid <?= $est['icon'] ?>"></i>
                 <span style="font-size:<?= $est['fs'] ?>;font-weight:<?= $est['fw'] ?>;">
                     <?= htmlspecialchars($nodo['clave']) ?>
                     <?php if (!empty($nodo['titulo']) && $nodo['titulo'] !== $nodo['clave']): ?>
@@ -198,7 +198,7 @@ function renderConcepto(array $c, int $indent_px): void {
                     </div>
                     <div class="fw-semibold text-dark" style="font-size:.88rem;line-height:1.3;"><?= htmlspecialchars($c['nombre_concepto']) ?></div>
                     <div class="d-flex flex-wrap gap-3 mt-1" style="font-size:.78rem;color:#6c757d;">
-                        <?php if ($c['unidad_medida']): ?><span><i class="bi bi-rulers me-1"></i><?= htmlspecialchars($c['unidad_medida']) ?></span><?php endif; ?>
+                        <?php if ($c['unidad_medida']): ?><span><i class="fa-solid fa-ruler-combined me-1"></i><?= htmlspecialchars($c['unidad_medida']) ?></span><?php endif; ?>
                         <?php if (!empty($c['cantidad'])): ?><span>Cant: <strong class="text-dark"><?= number_format($c['cantidad'], 3) ?></strong></span><?php endif; ?>
                         <?php if (!empty($c['precio_unitario'])): ?><span>P.U.: <strong class="text-dark">$<?= number_format($c['precio_unitario'], 2) ?></strong></span><?php endif; ?>
                         <?php if (!empty($c['importe'])): ?><span>Importe: <strong class="text-dark">$<?= number_format($c['importe'], 2) ?></strong></span><?php endif; ?>
@@ -216,9 +216,9 @@ function renderConcepto(array $c, int $indent_px): void {
                             <?php endif; ?>
                         </div>
                         <div class="actions-group">
-                            <button class="btn-action btn-action--edit" onclick="abrirModalEditar(<?= $c['id'] ?>)" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn-action btn-action--view" onclick="verDetalleConceptoView(<?= $c['id'] ?>, '<?= htmlspecialchars(addslashes($c['codigo_concepto'])) ?>')" title="Detalle"><i class="bi bi-info-circle"></i></button>
-                            <button class="btn-action btn-action--delete" onclick="eliminarConceptoView(<?= $c['id'] ?>)" title="Eliminar"><i class="bi bi-trash3"></i></button>
+                            <button class="btn-action btn-action--edit" onclick="abrirModalEditar(<?= $c['id'] ?>)" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-action btn-action--view" onclick="verDetalleConceptoView(<?= $c['id'] ?>, '<?= htmlspecialchars(addslashes($c['codigo_concepto'])) ?>')" title="Detalle"><i class="fa-solid fa-circle-info"></i></button>
+                            <button class="btn-action btn-action--delete" onclick="eliminarConceptoView(<?= $c['id'] ?>)" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
                 </div>
@@ -229,132 +229,9 @@ function renderConcepto(array $c, int $indent_px): void {
 }
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-<style>
-    .item-orden-pagada {
-        border-left: 4px solid var(--p-500, #407656) !important;
-        background: rgba(64, 118, 86, 0.02) !important;
-    }
-    
-    .concepto-item {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1.5px solid var(--gray-100, #f3f4f6) !important;
-        border-radius: var(--radius-md, 10px);
-        background: #fff;
-    }
-    .concepto-item:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.05)) !important;
-        border-color: var(--p-200, #bce1c7) !important;
-    }
-    
-    .nodo-header {
-        border-radius: var(--radius-md, 10px) !important;
-        box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.02));
-        font-family: var(--font-heading, 'Outfit', sans-serif);
-        transition: all 0.2s ease;
-    }
-    .nodo-header:hover {
-        opacity: 0.95;
-    }
-    
-    /* KPI Stats Grid */
-    .budget-kpi-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.25rem;
-        margin-bottom: 2rem;
-    }
-    .kpi-card {
-        background: #fff;
-        border-radius: var(--radius-lg, 16px);
-        padding: 1.5rem;
-        border: 1.5px solid var(--gray-100, #f3f4f6);
-        box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.03));
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .kpi-card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-md, 0 8px 20px -3px rgba(0,0,0,0.06));
-        border-color: var(--card-hover-border) !important;
-    }
-    
-    .kpi-label {
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: var(--gray-500, #6b7280);
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-    }
-    .kpi-value {
-        font-size: 1.75rem;
-        font-weight: 800;
-        color: var(--s-800, #0f172a);
-        font-family: var(--font-heading, 'Outfit', sans-serif);
-        line-height: 1.2;
-    }
-    .kpi-subtitle {
-        font-size: 0.75rem;
-        color: var(--gray-500, #6b7280);
-    }
-    
-    .kpi-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: var(--radius-md, 10px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        transition: all 0.2s ease;
-    }
 
-    /* Soft Pastel theme variations (no left borders, full color cards) */
-    .kpi-card--conceptos {
-        background: rgba(64, 118, 86, 0.04);
-        border-color: rgba(64, 118, 86, 0.12);
-        --card-hover-border: rgba(64, 118, 86, 0.3);
-    }
-    .kpi-card--conceptos .kpi-value, .kpi-card--conceptos .kpi-icon { color: var(--p-500, #407656) !important; }
-    .kpi-card--conceptos .kpi-icon { background: rgba(64, 118, 86, 0.08); }
-
-    .kpi-card--nodos {
-        background: rgba(17, 53, 87, 0.04);
-        border-color: rgba(17, 53, 87, 0.12);
-        --card-hover-border: rgba(17, 53, 87, 0.3);
-    }
-    .kpi-card--nodos .kpi-value, .kpi-card--nodos .kpi-icon { color: var(--s-700, #113557) !important; }
-    .kpi-card--nodos .kpi-icon { background: rgba(17, 53, 87, 0.08); }
-
-    .kpi-card--niveles {
-        background: rgba(245, 158, 11, 0.04);
-        border-color: rgba(245, 158, 11, 0.12);
-        --card-hover-border: rgba(245, 158, 11, 0.3);
-    }
-    .kpi-card--niveles .kpi-value, .kpi-card--niveles .kpi-icon { color: #d97706 !important; }
-    .kpi-card--niveles .kpi-icon { background: rgba(245, 158, 11, 0.08); }
-
-    .kpi-card--monto {
-        background: rgba(34, 197, 94, 0.04);
-        border-color: rgba(34, 197, 94, 0.12);
-        --card-hover-border: rgba(34, 197, 94, 0.3);
-    }
-    .kpi-card--monto .kpi-value, .kpi-card--monto .kpi-icon { color: #16a34a !important; }
-    .kpi-card--monto .kpi-icon { background: rgba(34, 197, 94, 0.08); }
-
-    /* Custom Action Delete */
-    .btn-action--delete:hover {
-        border-color: rgba(239, 68, 68, 0.3) !important;
-        color: #ef4444 !important;
-        background: rgba(239, 68, 68, 0.04) !important;
-    }
-</style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -380,47 +257,98 @@ function renderConcepto(array $c, int $indent_px): void {
         </div>
         <div class="d-flex gap-2">
             <a href="details_obra.php?id=<?= $obra_id ?>" class="btn-geco-outline">
-                <i class="bi bi-arrow-left"></i> Volver a la Obra
+                <i class="fa-solid fa-arrow-left"></i> Volver a la Obra
             </a>
             <button class="btn-geco-outline" onclick="editarCatalogoView()">
-                <i class="bi bi-pencil-square"></i> Editar Catálogo
+                <i class="fa-solid fa-pen-to-square"></i> Editar Catálogo
             </button>
         </div>
     </div>
 
     <!-- KPI Dashboard -->
-    <div class="budget-kpi-container">
-        <div class="kpi-card kpi-card--conceptos">
+    <div class="kpi-grid mb-4">
+        <div class="kpi-card kpi-card--blue">
             <div class="d-flex justify-content-between align-items-start">
-                <span class="kpi-label">Conceptos</span>
-                <div class="kpi-icon kpi-icon--conceptos"><i class="bi bi-tag-fill"></i></div>
+                <span class="kpi-card__label">Conceptos</span>
+                <div class="kpi-icon"><i class="fa-solid fa-tag"></i></div>
             </div>
-            <span class="kpi-value"><?= $stats['total_conceptos'] ?></span>
-            <span class="kpi-subtitle">Partidas registradas</span>
+            <span class="kpi-card__value"><?= $stats['total_conceptos'] ?></span>
+            <span class="kpi-card__sub">Partidas registradas</span>
         </div>
-        <div class="kpi-card kpi-card--nodos">
+        <div class="kpi-card kpi-card--purple">
             <div class="d-flex justify-content-between align-items-start">
-                <span class="kpi-label">Nodos / Capas</span>
-                <div class="kpi-icon kpi-icon--nodos"><i class="bi bi-diagram-3-fill"></i></div>
+                <span class="kpi-card__label">Nodos / Capas</span>
+                <div class="kpi-icon"><i class="fa-solid fa-sitemap"></i></div>
             </div>
-            <span class="kpi-value"><?= $stats['total_nodos'] ?></span>
-            <span class="kpi-subtitle">Niveles en la estructura</span>
+            <span class="kpi-card__value"><?= $stats['total_nodos'] ?></span>
+            <span class="kpi-card__sub">Niveles en la estructura</span>
         </div>
-        <div class="kpi-card kpi-card--niveles">
+        <div class="kpi-card kpi-card--amber">
             <div class="d-flex justify-content-between align-items-start">
-                <span class="kpi-label">Profundidad</span>
-                <div class="kpi-icon kpi-icon--niveles"><i class="bi bi-layers-fill"></i></div>
+                <span class="kpi-card__label">Profundidad</span>
+                <div class="kpi-icon"><i class="fa-solid fa-layer-group"></i></div>
             </div>
-            <span class="kpi-value"><?= $stats['niveles_usados'] ?></span>
-            <span class="kpi-subtitle">Nivel máximo alcanzado</span>
+            <span class="kpi-card__value"><?= $stats['niveles_usados'] ?></span>
+            <span class="kpi-card__sub">Nivel máximo alcanzado</span>
         </div>
-        <div class="kpi-card kpi-card--monto">
+        <div class="kpi-card kpi-card--green">
             <div class="d-flex justify-content-between align-items-start">
-                <span class="kpi-label">Monto Contratado</span>
-                <div class="kpi-icon kpi-icon--monto"><i class="bi bi-cash-stack"></i></div>
+                <span class="kpi-card__label">Monto Contratado</span>
+                <div class="kpi-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
             </div>
-            <span class="kpi-value text-success">$<?= number_format($stats['monto_total_general'], 2) ?></span>
-            <span class="kpi-subtitle">Acumulado en conceptos</span>
+            <span class="kpi-card__value">$<?= number_format($stats['monto_total_general'], 2) ?></span>
+            <span class="kpi-card__sub">Acumulado en conceptos</span>
+        </div>
+    </div>
+
+    <!-- Info Panels (General & Obra) -->
+    <div class="row g-4 mb-4">
+        <!-- Información del Catálogo -->
+        <div class="col-md-6">
+            <div class="orders-card p-4 h-100">
+                <h6 class="fw-bold text-muted text-uppercase border-bottom pb-2 mb-3" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                    <i class="fa-solid fa-book text-success me-2"></i>Información del Catálogo
+                </h6>
+                <div class="d-flex flex-column gap-3">
+                    <div>
+                        <span class="text-muted d-block small fw-semibold">Nombre</span>
+                        <span class="text-dark fw-bold"><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></span>
+                    </div>
+                    <div>
+                        <span class="text-muted d-block small fw-semibold">Descripción</span>
+                        <span class="text-dark small"><?= htmlspecialchars($catalogo['descripcion'] ?: 'Sin descripción registrada para este catálogo.') ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información de la Obra -->
+        <div class="col-md-6">
+            <div class="orders-card p-4 h-100">
+                <h6 class="fw-bold text-muted text-uppercase border-bottom pb-2 mb-3" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                    <i class="fa-solid fa-helmet-safety text-success me-2"></i>Información de la Obra
+                </h6>
+                <div class="d-flex flex-column gap-3">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <span class="text-muted d-block small fw-semibold">Obra</span>
+                            <span class="text-dark fw-semibold small text-truncate"><?= $obra_info ? htmlspecialchars($obra_info['nombre_obra']) : 'No asignada' ?></span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small fw-semibold">Proyecto</span>
+                            <span class="text-dark fw-semibold small text-truncate"><?= $obra_info ? htmlspecialchars($obra_info['nombre_proyecto']) : 'No asignado' ?></span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small fw-semibold">Licitación</span>
+                            <span class="text-dark fw-semibold small text-truncate"><?= $obra_info ? htmlspecialchars($obra_info['numero_licitacion']) : 'N/A' ?></span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small fw-semibold">Contrato</span>
+                            <span class="text-dark fw-semibold small text-truncate"><?= $obra_info ? htmlspecialchars($obra_info['numero_contrato']) : 'N/A' ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -429,7 +357,7 @@ function renderConcepto(array $c, int $indent_px): void {
         <!-- Filter Bar -->
         <div class="orders-filter-bar border-bottom d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-list-ul me-2 text-primary"></i>Conceptos</h5>
+                <h5 class="fw-bold text-dark mb-0"><i class="fa-solid fa-list me-2 text-success"></i>Conceptos</h5>
                 <select id="filtroItems" class="form-select form-select-sm" style="width:auto;" onchange="toggleFilter(this.value)">
                     <option value="todos">Todos los conceptos</option>
                     <option value="conItems">Con órdenes de compra</option>
@@ -437,8 +365,8 @@ function renderConcepto(array $c, int $indent_px): void {
                 </select>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn-geco-primary btn-sm" onclick="mostrarFormConcepto()"><i class="bi bi-plus-circle me-1"></i>Nuevo Concepto</button>
-                <button class="btn-geco-secondary btn-sm" onclick="importarExcelConceptos()"><i class="bi bi-upload me-1"></i>Importar Excel</button>
+                <button class="btn-geco-primary btn-sm" onclick="mostrarFormConcepto()"><i class="fa-solid fa-circle-plus me-1"></i>Nuevo Concepto</button>
+                <button class="btn-geco-secondary btn-sm" onclick="importarExcelConceptos()"><i class="fa-solid fa-upload me-1"></i>Importar Excel</button>
             </div>
         </div>
 
@@ -455,7 +383,7 @@ function renderConcepto(array $c, int $indent_px): void {
             <?php endif; ?>
             <?php if (empty($raices) && empty($conceptos_sin_nodo)): ?>
                 <div class="orders-empty-state">
-                    <i class="bi bi-folder2-open" style="font-size: 3rem;"></i>
+                    <i class="fa-solid fa-folder-open" style="font-size: 3rem;"></i>
                     <p class="mt-2">No hay conceptos registrados en este catálogo.</p>
                 </div>
             <?php endif; ?>
@@ -504,7 +432,7 @@ function abrirModalEditar(id) {
                         
                         <div class="oc-form-subsection mt-0 pt-0 border-0">
                             <div class="oc-form-subsection__title">
-                                <i class="bi bi-info-circle"></i> Identificación
+                                <i class="fa-solid fa-circle-info"></i> Identificación
                             </div>
                             <div class="row g-3">
                                 <div class="col-md-4">
@@ -528,7 +456,7 @@ function abrirModalEditar(id) {
 
                         <div class="oc-form-subsection">
                             <div class="oc-form-subsection__title">
-                                <i class="bi bi-diagram-3"></i> Jerarquía
+                                <i class="fa-solid fa-sitemap"></i> Jerarquía
                             </div>
                             <div class="row g-3">
                                 <div class="col-12">
@@ -541,7 +469,7 @@ function abrirModalEditar(id) {
 
                         <div class="oc-form-subsection">
                             <div class="oc-form-subsection__title">
-                                <i class="bi bi-cash-coin"></i> Costos
+                                <i class="fa-solid fa-money-bill-wave"></i> Costos
                             </div>
                             <div class="row g-3">
                                 <div class="col-md-3">
@@ -565,7 +493,7 @@ function abrirModalEditar(id) {
 
                         <div class="oc-form-subsection">
                             <div class="oc-form-subsection__title">
-                                <i class="bi bi-calendar-event"></i> Periodo
+                                <i class="fa-solid fa-calendar-days"></i> Periodo
                             </div>
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -581,7 +509,7 @@ function abrirModalEditar(id) {
 
                         <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
                             <button type="button" class="btn btn-secondary px-3" onclick="UI.modal.close()">Cancelar</button>
-                            <button type="submit" class="btn-geco-primary"><i class="bi bi-floppy me-1"></i>Guardar Cambios</button>
+                            <button type="submit" class="btn-geco-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar Cambios</button>
                         </div>
                     </form>
                 </div>`
@@ -601,3 +529,4 @@ function abrirModalEditar(id) {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

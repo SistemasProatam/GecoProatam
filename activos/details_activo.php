@@ -118,128 +118,15 @@ function labelTipoDoc($tipo) {
 
 function iconoDoc($nombre) {
     $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
-    $map = ['pdf'=>'bi-file-pdf','doc'=>'bi-file-word','docx'=>'bi-file-word',
-            'xls'=>'bi-file-excel','xlsx'=>'bi-file-excel','txt'=>'bi-file-text',
-            'jpg'=>'bi-file-image','jpeg'=>'bi-file-image','png'=>'bi-file-image',
-            'gif'=>'bi-file-image','webp'=>'bi-file-image'];
-    return $map[$ext] ?? 'bi-file-earmark';
+    $map = ['pdf'=>'fa-regular fa-file-pdf','doc'=>'fa-regular fa-file-word','docx'=>'fa-regular fa-file-word',
+            'xls'=>'fa-regular fa-file-excel','xlsx'=>'fa-regular fa-file-excel','txt'=>'fa-regular fa-file-lines',
+            'jpg'=>'fa-regular fa-file-image','jpeg'=>'fa-regular fa-file-image','png'=>'fa-regular fa-file-image',
+            'gif'=>'fa-regular fa-file-image','webp'=>'fa-regular fa-file-image'];
+    return $map[$ext] ?? 'fa-regular fa-file';
 }
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-
-<style>
-    /* Custom status badges for condition */
-    .status-badge--bueno {
-        color: #15803d;
-        background: rgba(34, 197, 94, 0.06);
-        border-color: rgba(34, 197, 94, 0.25);
-    }
-    .status-badge--regular {
-        color: #b45309;
-        background: rgba(245, 158, 11, 0.06);
-        border-color: rgba(245, 158, 11, 0.25);
-    }
-    .status-badge--malo {
-        color: #be123c;
-        background: rgba(244, 63, 94, 0.06);
-        border-color: rgba(244, 63, 94, 0.25);
-    }
-
-    /* Custom premium card layouts for details */
-    .hero-img-wrap {
-        width: 100%;
-        max-height: 380px;
-        overflow: hidden;
-        border-radius: 12px;
-        border: 1px solid var(--gray-200,#e5e7eb);
-        background: #f8fafc;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-    .hero-img-wrap img {
-        width: 100%;
-        height: 320px;
-        object-fit: cover;
-        cursor: pointer;
-        transition: transform .25s ease;
-    }
-    .hero-img-wrap img:hover {
-        transform: scale(1.02);
-    }
-
-    /* Documents & Gallery */
-    .documents-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 16px;
-    }
-    .document-card {
-        background: var(--gray-50,#f9fafb);
-        border: 1px solid var(--gray-200,#e5e7eb);
-        border-radius: 12px;
-        padding: 16px;
-        text-align: center;
-        transition: all 0.2s ease-in-out;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 145px;
-    }
-    .document-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border-color: var(--p-300,#86efac);
-        background: #fff;
-    }
-    .document-icon {
-        font-size: 1.8rem;
-        color: var(--p-500,#407656);
-        margin-bottom: 8px;
-        display: inline-block;
-    }
-    .document-card h6 {
-        font-size: 0.82rem;
-        font-weight: 700;
-        margin-bottom: 4px;
-        color: var(--s-800,#0f172a);
-    }
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 16px;
-    }
-    .gallery-card {
-        background: #fff;
-        border: 1px solid var(--gray-200,#e5e7eb);
-        border-radius: 12px;
-        padding: 8px;
-        text-align: center;
-        transition: all 0.2s;
-    }
-    .gallery-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border-color: var(--p-300,#86efac);
-    }
-    .gallery-card img {
-        width: 100%;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    .gallery-card small {
-        display: block;
-        margin-top: 6px;
-        font-size: 0.72rem;
-        font-weight: 600;
-        color: var(--gray-400);
-        text-transform: uppercase;
-    }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php
 include __DIR__ . "/../includes/navbar.php";
@@ -299,10 +186,10 @@ function renderEstatusBadge($estatus) {
         </div>
         <div class="d-flex gap-2">
             <a href="list_activos.php" class="btn-geco-outline">
-                <i class="bi bi-arrow-left"></i> Volver al Listado
+                <i class="fa-solid fa-arrow-left"></i> Volver al Listado
             </a>
             <a href="edit_activo.php?id=<?= $id ?>" class="btn-geco-primary">
-                <i class="bi bi-pencil"></i> Editar Activo
+                <i class="fa-solid fa-pen-to-square"></i> Editar Activo
             </a>
         </div>
     </div>
@@ -310,7 +197,7 @@ function renderEstatusBadge($estatus) {
     <!-- ===== Mensajes de registro ===== -->
     <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill"></i> Activo registrado exitosamente.
+            <i class="fa-solid fa-circle-check"></i> Activo registrado exitosamente.
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -322,7 +209,7 @@ function renderEstatusBadge($estatus) {
             <!-- Foto Principal Card -->
             <div class="oc-card mb-4">
                 <div class="oc-card-header">
-                    <span class="oc-card-header__title"><i class="bi bi-image"></i> Foto Principal</span>
+                    <span class="oc-card-header__title"><i class="fa-regular fa-image"></i> Foto Principal</span>
                 </div>
                 <div class="oc-card-body">
                     <div class="hero-img-wrap">
@@ -333,7 +220,7 @@ function renderEstatusBadge($estatus) {
                                  title="Clic para ampliar" />
                         <?php else: ?>
                             <div class="text-center py-5 text-muted" style="width: 100%;">
-                                <i class="bi bi-image" style="font-size: 3rem; opacity: 0.4; display: block; margin-bottom: 8px;"></i>
+                                <i class="fa-regular fa-image" style="font-size: 3rem; opacity: 0.4; display: block; margin-bottom: 8px;"></i>
                                 <span style="font-size: 0.88rem;">Sin foto principal</span>
                             </div>
                         <?php endif; ?>
@@ -370,13 +257,13 @@ function renderEstatusBadge($estatus) {
                                  title="Código QR del activo">
                             <div>
                                 <div style="font-size: 0.88rem; font-weight: 700; color: var(--s-800); margin-bottom: 4px;">
-                                    <i class="bi bi-qr-code"></i> Código QR del Activo
+                                    <i class="fa-solid fa-qrcode"></i> Código QR del Activo
                                 </div>
                                 <p style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 8px; line-height: 1.3;">
                                     Escanea este código para acceder rápidamente a la información móvil del activo.
                                 </p>
                                 <a href="print_qr.php?id=<?= $id ?>" target="_blank" class="btn-geco-outline" style="font-size: 0.75rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
-                                    <i class="bi bi-printer"></i> Imprimir Etiqueta
+                                    <i class="fa-solid fa-print"></i> Imprimir Etiqueta
                                 </a>
                             </div>
                         </div>
@@ -391,7 +278,7 @@ function renderEstatusBadge($estatus) {
             <!-- Información General Card -->
             <div class="oc-card mb-4">
                 <div class="oc-card-header">
-                    <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General</span>
+                    <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General</span>
                 </div>
                 <div class="oc-card-body">
                     <div class="row g-3">
@@ -423,7 +310,7 @@ function renderEstatusBadge($estatus) {
             <?php if ($detalle_vehiculo): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-truck"></i> Detalles del Vehículo</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-truck"></i> Detalles del Vehículo</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="row g-3">
@@ -446,7 +333,7 @@ function renderEstatusBadge($estatus) {
                             <div class="col-12 mt-4 mb-2">
                                 <div class="oc-form-subsection">
                                     <div class="oc-form-subsection__title">
-                                        <i class="bi bi-shield-check"></i> Seguro México
+                                        <i class="fa-solid fa-shield-halved"></i> Seguro México
                                     </div>
                                 </div>
                             </div>
@@ -460,7 +347,7 @@ function renderEstatusBadge($estatus) {
                             <div class="col-12 mt-4 mb-2">
                                 <div class="oc-form-subsection">
                                     <div class="oc-form-subsection__title">
-                                        <i class="bi bi-shield-check"></i> Seguro USA
+                                        <i class="fa-solid fa-shield-halved"></i> Seguro USA
                                     </div>
                                 </div>
                             </div>
@@ -478,7 +365,7 @@ function renderEstatusBadge($estatus) {
             <?php if ($detalle_maquinaria): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-gear-wide-connected"></i> Detalles de Maquinaria</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-gears"></i> Detalles de Maquinaria</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="row g-3">
@@ -504,7 +391,7 @@ function renderEstatusBadge($estatus) {
             <?php if ($detalle_mobiliario): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-archive"></i> Detalles de Mobiliario</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-couch"></i> Detalles de Mobiliario</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="row g-3">
@@ -532,7 +419,7 @@ function renderEstatusBadge($estatus) {
             <?php if ($detalle_inmueble): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-building"></i> Detalles del Inmueble</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-building"></i> Detalles del Inmueble</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="row g-3">
@@ -560,7 +447,7 @@ function renderEstatusBadge($estatus) {
             <?php if ($detalle_herramienta): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-tools"></i> Detalles de Herramienta</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-screwdriver-wrench"></i> Detalles de Herramienta</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="row g-3">
@@ -586,7 +473,7 @@ function renderEstatusBadge($estatus) {
             <?php if ($detalle_tic): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-laptop"></i> Detalles de TICs</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-laptop"></i> Detalles de TICs</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="row g-3">
@@ -622,7 +509,7 @@ function renderEstatusBadge($estatus) {
             <!-- Documentos Adjuntos -->
             <div class="oc-card mb-4">
                 <div class="oc-card-header">
-                    <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Documentos Adjuntos</span>
+                    <span class="oc-card-header__title"><i class="fa-solid fa-paperclip"></i> Documentos Adjuntos</span>
                 </div>
                 <div class="oc-card-body">
                     <?php if (!empty($documentos)): ?>
@@ -635,21 +522,22 @@ function renderEstatusBadge($estatus) {
                             ?>
                                 <div class="document-card">
                                     <div>
-                                        <i class="bi <?= $iconClass ?> document-icon"></i>
+                                        <i class="<?= $iconClass ?> document-icon"></i>
                                         <h6><?= $tipoLabel ?></h6>
                                         <span style="font-size: 0.72rem; color: var(--gray-400); word-break: break-all; display: block;"><?= $nombre ?></span>
                                     </div>
                                     <div class="mt-2">
                                         <a href="<?= $ruta ?>" target="_blank" class="btn btn-sm w-100" style="background: rgba(64,118,86,0.06); color: var(--p-700,#2a523a); border: 1px solid rgba(64,118,86,0.15); font-size: 0.78rem; font-weight: 600;">
-                                            <i class="bi bi-eye me-1"></i> Ver / Descargar
+                                            <i class="fa-regular fa-eye me-1"></i> Ver / Descargar
                                         </a>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
                     <?php else: ?>
-                        <div class="text-center py-4 text-muted" style="font-size: 0.88rem;">
-                            <i class="bi bi-info-circle me-1"></i> No hay documentos asociados a este activo.
+                        <div class="orders-empty-state">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <p>No hay documentos asociados a este activo.</p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -665,7 +553,7 @@ function renderEstatusBadge($estatus) {
             <?php if (!empty($imgs_galeria)): ?>
                 <div class="oc-card mb-4">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-card-image"></i> Galería de Imágenes</span>
+                        <span class="oc-card-header__title"><i class="fa-regular fa-images"></i> Galería de Imágenes</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="gallery-grid">
@@ -745,3 +633,4 @@ function abrirImagen(el) {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

@@ -78,234 +78,9 @@ if (!function_exists('findImg')) {
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-<style>
-  /* GECO design improvements for Form sections and dynamic sections */
-  .section-title {
-    font-size: 0.88rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.06em !important;
-    color: var(--s-700, #113557) !important;
-    border-bottom: 2px solid var(--p-500, #407656) !important;
-    padding-bottom: 0.35rem !important;
-    margin-top: 2rem !important;
-    margin-bottom: 1.25rem !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-  }
-  .section-title i {
-    font-size: 1.1rem !important;
-    color: var(--p-500, #407656) !important;
-  }
-  
-  .section-detalle {
-    display: none;
-    animation: fadeIn .3s ease;
-  }
 
-  .section-detalle.visible {
-    display: block;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .codigo-preview {
-    background: var(--gray-50, #f9fafb);
-    border: 1px dashed var(--gray-300, #d1d5db);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
-    font-size: 0.9rem;
-    color: var(--gray-600, #4b5563);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 38px;
-  }
-
-  /* File Drop Zone with GECO style */
-  .file-drop-zone {
-    border: 2px dashed var(--gray-200, #e5e7eb);
-    border-radius: 10px;
-    padding: 14px 16px;
-    cursor: pointer;
-    transition: all .2s;
-    background: var(--gray-50, #f9fafb);
-    position: relative;
-  }
-
-  .file-drop-zone:hover {
-    border-color: var(--p-500, #407656);
-    background: rgba(64, 118, 86, 0.04);
-  }
-
-  .file-drop-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .file-drop-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    pointer-events: none;
-    font-size: .82rem;
-    color: var(--gray-500, #6b7280);
-  }
-
-  .file-drop-label i {
-    font-size: 1.1rem;
-    color: var(--p-500, #407656);
-  }
-
-  /* Chips de archivos */
-  .file-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
-  }
-
-  .file-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px 4px 8px;
-    border-radius: 20px;
-    font-size: .78rem;
-    font-weight: 500;
-    max-width: 240px;
-    overflow: hidden;
-    animation: chipIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
-  }
-
-  @keyframes chipIn {
-    from {
-      opacity: 0;
-      transform: scale(.8);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .file-chip.ok {
-    background: rgba(34, 197, 94, 0.08);
-    color: #15803d;
-    border: 1px solid rgba(34, 197, 94, 0.25);
-  }
-
-  .file-chip.error {
-    background: rgba(239, 68, 68, 0.08);
-    color: #b91c1c;
-    border: 1px solid rgba(239, 68, 68, 0.25);
-  }
-
-  .file-chip .chip-name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px;
-  }
-
-  .file-chip .chip-size {
-    opacity: .75;
-    white-space: nowrap;
-  }
-
-  .file-chip .chip-remove {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: inherit;
-    opacity: .7;
-    font-size: .85rem;
-    line-height: 1;
-    transition: opacity .15s;
-  }
-
-  .file-chip .chip-remove:hover {
-    opacity: 1;
-  }
-
-  /* Adjuntos dinámicos */
-  .adj-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--gray-200, #e5e7eb);
-    background: var(--gray-50, #f9fafb);
-    margin-bottom: 6px;
-    animation: chipIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
-  }
-
-  .adj-item.ok {
-    border-color: rgba(34, 197, 94, 0.25);
-    background: rgba(34, 197, 94, 0.03);
-  }
-
-  .adj-item.error {
-    border-color: rgba(239, 68, 68, 0.25);
-    background: rgba(239, 68, 68, 0.03);
-  }
-
-  .adj-icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
-
-  .adj-item.ok .adj-icon {
-    color: #15803d;
-  }
-
-  .adj-item.error .adj-icon {
-    color: #b91c1c;
-  }
-
-  .adj-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .adj-name {
-    font-size: .82rem;
-    font-weight: 500;
-    color: var(--s-900, #0f172a);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .adj-meta {
-    font-size: .75rem;
-    color: var(--gray-500, #6b7280);
-  }
-
-  .adj-item.error .adj-meta {
-    color: #b91c1c;
-    font-weight: 600;
-  }
-</style>
 
 <div class="orders-page-container">
 
@@ -939,188 +714,190 @@ if (!function_exists('findImg')) {
               <span>Cargue documentos PDF, Word o imagen. Máx. 10 MB por archivo (Catálogo hasta 1 GB).</span>
             </div>
 
-            <!-- Factura -->
-            <div class="mb-3">
-              <label class="oc-form-label">Factura / Comprobante de Compra</label>
-              <?php $f = findDoc($documentos, 'factura'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+            <div class="row g-3">
+              <!-- Factura -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Factura / Comprobante de Compra</label>
+                <?php $f = findDoc($documentos, 'factura'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nueva Factura</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_factura" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_factura','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nueva Factura</span></div>
+                <div class="file-chips" id="chips_doc_factura"></div>
               </div>
-              <div class="file-chips" id="chips_doc_factura"></div>
-            </div>
 
-            <!-- Pedimento -->
-            <div class="mb-3">
-              <label class="oc-form-label">Pedimento de Importación</label>
-              <?php $f = findDoc($documentos, 'pedimento'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Pedimento -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Pedimento de Importación</label>
+                <?php $f = findDoc($documentos, 'pedimento'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Pedimento</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_pedimento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_pedimento','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Pedimento</span></div>
+                <div class="file-chips" id="chips_doc_pedimento"></div>
               </div>
-              <div class="file-chips" id="chips_doc_pedimento"></div>
-            </div>
 
-            <!-- Seguro MX -->
-            <div class="mb-3">
-              <label class="oc-form-label">Póliza de Seguro <span class="comentario">(México)</span></label>
-              <?php $f = findDoc($documentos, 'poliza_seguro_mx'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Seguro MX -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Póliza de Seguro <span class="comentario">(México)</span></label>
+                <?php $f = findDoc($documentos, 'poliza_seguro_mx'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nueva Póliza Seguro MX</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nueva Póliza Seguro MX</span></div>
+                <div class="file-chips" id="chips_doc_poliza_seguro"></div>
               </div>
-              <div class="file-chips" id="chips_doc_poliza_seguro"></div>
-            </div>
 
-            <!-- Seguro USA -->
-            <div class="mb-3">
-              <label class="oc-form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
-              <?php $f = findDoc($documentos, 'poliza_seguro_usa'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Seguro USA -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
+                <?php $f = findDoc($documentos, 'poliza_seguro_usa'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nueva Póliza Seguro USA</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_poliza_seguro_usa" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFile(this,'doc_poliza_seguro_usa','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nueva Póliza Seguro USA</span></div>
+                <div class="file-chips" id="chips_doc_poliza_seguro_usa"></div>
               </div>
-              <div class="file-chips" id="chips_doc_poliza_seguro_usa"></div>
-            </div>
 
-            <!-- Manual Usuario -->
-            <div class="mb-3">
-              <label class="oc-form-label">Manual de Usuario / Operación</label>
-              <?php $f = findDoc($documentos, 'manual_usuario'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Manual Usuario -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Manual de Usuario / Operación</label>
+                <?php $f = findDoc($documentos, 'manual_usuario'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Manual</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_manual" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Manual</span></div>
+                <div class="file-chips" id="chips_doc_manual"></div>
               </div>
-              <div class="file-chips" id="chips_doc_manual"></div>
-            </div>
 
-            <!-- Manual Mantenimiento -->
-            <div class="mb-3">
-              <label class="oc-form-label">Manual de Mantenimiento</label>
-              <?php $f = findDoc($documentos, 'manual_mantenimiento'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Manual Mantenimiento -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Manual de Mantenimiento</label>
+                <?php $f = findDoc($documentos, 'manual_mantenimiento'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Manual de Mantenimiento</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_manual_mantenimiento" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_manual_mantenimiento','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Manual de Mantenimiento</span></div>
+                <div class="file-chips" id="chips_doc_manual_mantenimiento"></div>
               </div>
-              <div class="file-chips" id="chips_doc_manual_mantenimiento"></div>
-            </div>
 
-            <!-- Catálogo Refacciones -->
-            <div class="mb-3">
-              <label class="oc-form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
-              <?php $f = findDoc($documentos, 'catalogo_refacciones'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Catálogo Refacciones -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
+                <?php $f = findDoc($documentos, 'catalogo_refacciones'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Catálogo</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_catalogo_refacciones" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_catalogo_refacciones','catalogo',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Catálogo</span></div>
+                <div class="file-chips" id="chips_doc_catalogo_refacciones"></div>
               </div>
-              <div class="file-chips" id="chips_doc_catalogo_refacciones"></div>
-            </div>
 
-            <!-- Contrato/Escritura -->
-            <div class="mb-3">
-              <label class="oc-form-label">Contrato / Escritura</label>
-              <?php $f = findDoc($documentos, 'contrato'); if ($f): ?>
-                <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
-                  <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                  <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
-                    <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
-                  </a>
-                  <div class="form-check ms-auto mb-0">
-                    <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
-                    <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
-                      Eliminar actual
-                    </label>
+              <!-- Contrato/Escritura -->
+              <div class="col-md-6 col-lg-3">
+                <label class="oc-form-label">Contrato / Escritura</label>
+                <?php $f = findDoc($documentos, 'contrato'); if ($f): ?>
+                  <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
+                      <?= htmlspecialchars($f['nombre_original'] ?? basename($f['ruta_archivo'])) ?>
+                    </a>
+                    <div class="form-check ms-auto mb-0">
+                      <input class="form-check-input" type="checkbox" name="eliminar_doc[]" value="<?= $f['id'] ?>" id="del_doc_<?= $f['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold small" for="del_doc_<?= $f['id'] ?>" style="cursor:pointer;">
+                        Eliminar actual
+                      </label>
+                    </div>
                   </div>
+                <?php endif; ?>
+                <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" />
+                  <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Contrato</span></div>
                 </div>
-              <?php endif; ?>
-              <div class="file-drop-zone"><input type="file" id="input_doc_contrato" accept=".pdf,.doc,.docx" onchange="handleFile(this,'doc_contrato','normal',false)" />
-                <div class="file-drop-label"><i class="bi bi-file-earmark-arrow-up"></i><span>Seleccionar nuevo Contrato</span></div>
+                <div class="file-chips" id="chips_doc_contrato"></div>
               </div>
-              <div class="file-chips" id="chips_doc_contrato"></div>
             </div>
           </div>
         </div>
@@ -1158,23 +935,28 @@ if (!function_exists('findImg')) {
                 </div>
               <?php endif; ?>
               <small class="text-muted d-block mb-2">Subir nuevos archivos. Máx. 10 archivos, 10 MB c/u.</small>
-              <div class="input-group">
+              <div class="oc-files-input-group mb-3">
                 <input type="file" class="form-control" id="singleFileInputFiscal" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
                 <button class="btn-geco-secondary" type="button" onclick="agregarAdjunto('fiscal')">
-                  <i class="bi bi-plus-circle"></i> Agregar
+                  <i class="fa-solid fa-upload"></i> Subir
                 </button>
               </div>
-              <div id="adjuntosContainerFiscal" class="mt-2">
-                <h6 class="mb-2">Archivos agregados: <span id="contadorFiscal" class="badge bg-secondary">0</span></h6>
-                <div id="adjuntosListFiscal">
-                  <p class="text-muted text-center small mb-0"><i class="bi bi-inbox"></i> No hay archivos</p>
-                </div>
+              <div id="adjuntosContainerFiscal" class="oc-files-dropzone">
+                <h6 class="oc-files-dropzone__title">Archivos agregados: <span id="contadorFiscal" class="badge bg-secondary">0</span></h6>
+                <ul id="adjuntosListFiscal" class="list-group list-group-flush mt-2">
+                  <li class="list-group-item py-3 border-0 bg-transparent">
+                    <div class="orders-empty-state">
+                      <i class="fa-solid fa-circle-info"></i>
+                      <p>No hay archivos agregados</p>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
 
             <!-- Extra -->
             <div>
-              <label class="oc-form-label"><i class="bi bi-plus-square"></i> Documentación Extra / Adicional</label>
+              <label class="oc-form-label"><i class="fa-regular fa-square-plus"></i> Documentación Extra / Adicional</label>
               <?php 
               $docs_extra = array_filter($documentos, fn($d) => $d['tipo_documento'] === 'extra');
               if (!empty($docs_extra)): 
@@ -1184,7 +966,7 @@ if (!function_exists('findImg')) {
                     <?php foreach ($docs_extra as $d): ?>
                       <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 p-1 border rounded bg-white">
-                          <i class="bi bi-file-earmark-text text-secondary"></i>
+                          <i class="fa-regular fa-file-lines text-secondary"></i>
                           <a href="<?= htmlspecialchars($d['ruta_archivo']) ?>" target="_blank" class="text-truncate small text-dark fw-semibold" style="max-width: 150px;" title="<?= htmlspecialchars($d['nombre_original'] ?? basename($d['ruta_archivo'])) ?>">
                             <?= htmlspecialchars($d['nombre_original'] ?? basename($d['ruta_archivo'])) ?>
                           </a>
@@ -1199,17 +981,22 @@ if (!function_exists('findImg')) {
                 </div>
               <?php endif; ?>
               <small class="text-muted d-block mb-2">Subir nuevos archivos. Máx. 10 archivos, 10 MB c/u.</small>
-              <div class="input-group">
+              <div class="oc-files-input-group mb-3">
                 <input type="file" class="form-control" id="singleFileInputExtra" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
                 <button class="btn-geco-secondary" type="button" onclick="agregarAdjunto('extra')">
-                  <i class="bi bi-plus-circle"></i> Agregar
+                  <i class="fa-solid fa-upload"></i> Subir
                 </button>
               </div>
-              <div id="adjuntosContainerExtra" class="mt-2">
-                <h6 class="mb-2">Archivos agregados: <span id="contadorExtra" class="badge bg-secondary">0</span></h6>
-                <div id="adjuntosListExtra">
-                  <p class="text-muted text-center small mb-0"><i class="bi bi-inbox"></i> No hay archivos</p>
-                </div>
+              <div id="adjuntosContainerExtra" class="oc-files-dropzone">
+                <h6 class="oc-files-dropzone__title">Archivos agregados: <span id="contadorExtra" class="badge bg-secondary">0</span></h6>
+                <ul id="adjuntosListExtra" class="list-group list-group-flush mt-2">
+                  <li class="list-group-item py-3 border-0 bg-transparent">
+                    <div class="orders-empty-state">
+                      <i class="fa-solid fa-circle-info"></i>
+                      <p>No hay archivos agregados</p>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -1466,7 +1253,12 @@ if (!function_exists('findImg')) {
     document.getElementById(countId).textContent = pools[tipo].length;
 
     if (!pools[tipo].length) {
-      lista.innerHTML = '<p class="text-muted text-center small"><i class="bi bi-inbox"></i> No hay nuevos archivos</p>';
+      lista.innerHTML = `<li class="list-group-item py-3 border-0 bg-transparent">
+        <div class="orders-empty-state">
+          <i class="fa-solid fa-circle-info"></i>
+          <p>No hay archivos agregados</p>
+        </div>
+      </li>`;
       return;
     }
 
@@ -1612,3 +1404,4 @@ if (!function_exists('findImg')) {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

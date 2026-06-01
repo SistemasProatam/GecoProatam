@@ -131,200 +131,8 @@ if ($obra_id > 0) {
   $obra_nombre = $stmt->get_result()->fetch_assoc()['nombre'] ?? "";
 }
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<style>
-/* Page Layout */
-.orders-page-container {
-  width: 100%;
-}
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-/* Custom stats box layout for 5 columns */
-.oc-stat-grid.cols-5 {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
-}
-
-@media (max-width: 1200px) {
-  .oc-stat-grid.cols-5 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .oc-stat-grid.cols-5 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Custom dashboard-like cards for plan_obra */
-.oc-stat-grid .oc-stat-box {
-  border: 1.5px solid var(--card-border, var(--gray-200, #e5e7eb)) !important;
-  border-left: 1.5px solid var(--card-border, var(--gray-200, #e5e7eb)) !important; /* overrides any thick left border */
-  border-radius: 12px !important;
-  padding: 18px 20px !important;
-  background: var(--card-bg, #fff) !important;
-  transition: all 0.25s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.01), 0 1px 2px rgba(0,0,0,0.02);
-}
-
-.oc-stat-grid .oc-stat-box:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03);
-  border-color: var(--card-hover-border) !important;
-}
-
-/* Color variations corresponding to dashboard.css KPI cards */
-.sb-concepts {
-  --card-bg: rgba(139, 92, 246, 0.04);
-  --card-border: rgba(139, 92, 246, 0.12);
-  --card-hover-border: rgba(139, 92, 246, 0.3);
-}
-.sb-concepts .oc-stat-box__value { color: #7c3aed !important; }
-
-.sb-importe {
-  --card-bg: rgba(34, 197, 94, 0.04);
-  --card-border: rgba(34, 197, 94, 0.12);
-  --card-hover-border: rgba(34, 197, 94, 0.3);
-}
-.sb-importe .oc-stat-box__value { color: #16a34a !important; }
-
-.sb-referencia {
-  --card-bg: rgba(59, 130, 246, 0.04);
-  --card-border: rgba(59, 130, 246, 0.12);
-  --card-hover-border: rgba(59, 130, 246, 0.3);
-}
-.sb-referencia .oc-stat-box__value { color: #2563eb !important; }
-
-.sb-terminados {
-  --card-bg: rgba(245, 158, 11, 0.04);
-  --card-border: rgba(245, 158, 11, 0.12);
-  --card-hover-border: rgba(245, 158, 11, 0.3);
-}
-.sb-terminados .oc-stat-box__value { color: #d97706 !important; }
-
-.sb-avance {
-  --card-bg: rgba(16, 185, 129, 0.04);
-  --card-border: rgba(16, 185, 129, 0.12);
-  --card-hover-border: rgba(16, 185, 129, 0.3);
-}
-.sb-avance .oc-stat-box__value { color: #10b981 !important; }
-
-/* Row states */
-.orders-table tbody tr.is-done {
-  background-color: rgba(16, 185, 129, 0.02) !important;
-}
-.orders-table tbody tr.is-done td {
-  color: var(--gray-400, #9ca3af) !important;
-}
-.orders-table tbody tr.is-ref {
-  background-color: rgba(59, 130, 246, 0.02) !important;
-  border-left: 3.5px solid #3b82f6 !important;
-}
-
-/* Difference badges */
-.badge-diff {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.72rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.diff-antes {
-  background: rgba(16, 185, 129, 0.08);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.diff-despues {
-  background: rgba(239, 68, 68, 0.08);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.diff-ok {
-  background: rgba(59, 130, 246, 0.08);
-  color: #2563eb;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-/* Collapsible Provider Cards body */
-.oc-card-body.d-none {
-  display: none !important;
-}
-
-/* Custom Glassmorphism Modal Styles */
-.mo {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 1100;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.mo.open {
-  display: flex;
-}
-
-.mb {
-  background: white;
-  border-radius: 16px;
-  padding: 2.25rem;
-  width: 100%;
-  max-width: 600px;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
-  animation: modalIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-}
-
-@keyframes modalIn {
-  from {
-    transform: scale(0.95) translateY(10px);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
-.mc {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.mc:hover {
-  background-color: var(--gray-100, #f3f4f6);
-}
-
-.hover-primary:hover {
-  color: var(--p-600, #335f45) !important;
-  background-color: rgba(64, 118, 86, 0.05) !important;
-}
-
-.cursor-pointer {
-  cursor: pointer !important;
-}
-</style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -350,19 +158,19 @@ if ($obra_id > 0) {
       <div class="row g-3 w-100 align-items-end">
         <div class="col-md-3">
           <label class="lbl mb-2" style="font-size: 0.72rem; font-weight: 700; color: var(--gray-400); text-transform: uppercase;">Proyecto</label>
-          <select id="sel-pro" class="form-select" style="border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.85rem; padding: 0.55rem 0.75rem;" onchange="getObras()"></select>
+          <select id="sel-pro" class="form-select" onchange="getObras()"></select>
         </div>
         <div class="col-md-3">
           <label class="lbl mb-2" style="font-size: 0.72rem; font-weight: 700; color: var(--gray-400); text-transform: uppercase;">Obra</label>
-          <select id="sel-obra" class="form-select" style="border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.85rem; padding: 0.55rem 0.75rem;" disabled onchange="getCats()"></select>
+          <select id="sel-obra" class="form-select" disabled onchange="getCats()"></select>
         </div>
         <div class="col-md-4">
           <label class="lbl mb-2" style="font-size: 0.72rem; font-weight: 700; color: var(--gray-400); text-transform: uppercase;">Catálogo</label>
-          <select id="sel-cat" class="form-select" style="border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.85rem; padding: 0.55rem 0.75rem;" disabled></select>
+          <select id="sel-cat" class="form-select" disabled></select>
         </div>
         <div class="col-md-2">
-          <button class="btn-geco-primary w-100 justify-content-center" style="padding: 0.62rem 1.2rem; border-radius: 8px;" onclick="cargarPlan()">
-            <i class="bi bi-search"></i> Cargar Plan
+          <button class="btn-geco-primary w-100 justify-content-center" onclick="cargarPlan()">
+            <i class="fa-solid fa-magnifying-glass"></i> Cargar Plan
           </button>
         </div>
       </div>
@@ -388,36 +196,41 @@ if ($obra_id > 0) {
 
   <!-- Dashboard Grid -->
   <div class="orders-card mb-4 p-4" id="stats" style="display:none">
-    <div class="oc-stat-grid cols-5">
-      <div class="oc-stat-box sb-concepts">
-        <div class="oc-stat-box__label">Conceptos</div>
-        <div id="s-tot" class="oc-stat-box__value">0</div>
+    <div class="kpi-grid kpi-grid--5">
+      <div class="kpi-card kpi-card--blue">
+        <i class="fa-solid fa-clipboard-list kpi-icon"></i>
+        <div class="kpi-card__label">Conceptos</div>
+        <div id="s-tot" class="kpi-card__value">0</div>
       </div>
-      <div class="oc-stat-box sb-importe">
-        <div class="oc-stat-box__label">Importe</div>
-        <div id="s-imp" class="oc-stat-box__value">$0.00</div>
+      <div class="kpi-card kpi-card--green">
+        <i class="fa-solid fa-money-bill-wave kpi-icon"></i>
+        <div class="kpi-card__label">Importe</div>
+        <div id="s-imp" class="kpi-card__value">$0.00</div>
       </div>
-      <div class="oc-stat-box sb-referencia">
-        <div class="oc-stat-box__label">Referencia (80%)</div>
-        <div id="s-ref" class="oc-stat-box__value">$0.00</div>
+      <div class="kpi-card kpi-card--amber">
+        <i class="fa-solid fa-percent kpi-icon"></i>
+        <div class="kpi-card__label">Referencia (80%)</div>
+        <div id="s-ref" class="kpi-card__value">$0.00</div>
       </div>
-      <div class="oc-stat-box sb-terminados">
-        <div class="oc-stat-box__label">Terminados</div>
-        <div id="s-done" class="oc-stat-box__value">0</div>
+      <div class="kpi-card kpi-card--purple">
+        <i class="fa-solid fa-circle-check kpi-icon"></i>
+        <div class="kpi-card__label">Terminados</div>
+        <div id="s-done" class="kpi-card__value">0</div>
       </div>
-      <div class="oc-stat-box sb-avance">
-        <div class="oc-stat-box__label">Avance Real</div>
-        <div id="s-pct" class="oc-stat-box__value">0%</div>
+      <div class="kpi-card kpi-card--slate">
+        <i class="fa-solid fa-chart-line kpi-icon"></i>
+        <div class="kpi-card__label">Avance Real</div>
+        <div id="s-pct" class="kpi-card__value">0%</div>
       </div>
     </div>
   </div>
 
   <!-- Plan Body -->
   <div id="plan-body">
-    <div class="orders-card p-5 text-center" style="border-radius: 14px;">
+    <div class="orders-card">
       <div class="orders-empty-state">
-        <i class="bi bi-search" style="font-size: 3rem; color: var(--gray-300, #d1d5db);"></i>
-        <p class="mt-3 text-muted fw-bold" style="font-size: 0.95rem;">Selecciona los filtros para comenzar</p>
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <p>Selecciona los filtros de búsqueda para comenzar a visualizar el plan.</p>
       </div>
     </div>
   </div>
@@ -427,7 +240,7 @@ if ($obra_id > 0) {
 <!-- Custom Glassmorphism Modal -->
 <div class="mo" id="modal">
   <div class="mb border-0">
-    <button class="mc" onclick="closeM()"><i class="bi bi-x-lg" style="font-size: 1.1rem; color: var(--gray-400);"></i></button>
+    <button class="mc" onclick="closeM()"><i class="fa-solid fa-xmark" style="font-size: 1.1rem; color: var(--gray-400);"></i></button>
     
     <h4 id="m-name" class="fw-bold mb-4 text-dark" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; line-height: 1.4; padding-right: 2rem;"></h4>
     
@@ -553,12 +366,12 @@ if ($obra_id > 0) {
       h += `<div class="oc-card">
               <div class="oc-card-header cursor-pointer" onclick="this.nextElementSibling.classList.toggle('d-none')">
                 <div class="oc-card-header__title">
-                  <i class="bi bi-box-seam"></i>
+                  <i class="fa-solid fa-box"></i>
                   <span>${p}</span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="status-badge status-badge--aprobado" style="text-transform: none; font-size: 0.75rem;">${catCount} categorías</span>
-                  <i class="bi bi-chevron-down opacity-50 ms-1"></i>
+                  <span class="text-muted small fw-semibold">${catCount} categorías</span>
+                  <i class="fa-solid fa-chevron-down opacity-50 ms-1"></i>
                 </div>
               </div>
               <div class="oc-card-body">`;
@@ -566,13 +379,13 @@ if ($obra_id > 0) {
       for (let ct in tree[p]) {
         h += `<div class="oc-form-subsection mt-2 mb-3">
                 <h5 class="oc-form-subsection__title" style="margin-bottom: 0.5rem; font-size: 0.9rem;">
-                  <i class="bi bi-folder2-open me-2"></i> ${ct}
+                  <i class="fa-solid fa-folder-open me-2"></i> ${ct}
                 </h5>
               </div>`;
               
         for (let sub in tree[p][ct]) {
           h += `<div class="d-flex align-items-center gap-2 mb-2 ms-3">
-                  <i class="bi bi-arrow-return-right text-muted opacity-50"></i>
+                  <i class="fa-solid fa-arrow-right-long text-muted opacity-50"></i>
                   <span style="font-size: 0.8rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.03em;">${sub}</span>
                 </div>
                 <div class="orders-table-wrap mb-4" style="border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-left: 1rem;">
@@ -610,8 +423,8 @@ if ($obra_id > 0) {
                     </td>
                     <td class="text-center">${getDiff(c)}</td>
                     <td class="text-end">
-                      <button class="btn btn-sm btn-light border-0 bg-transparent text-primary hover-primary" style="padding: 0.25rem 0.5rem; border-radius: 6px;" onclick="openM(${c.id})">
-                        <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
+                      <button class="btn-action" style="color: var(--gray-400);" title="Editar Programación" onclick="openM(${c.id})" onmouseover="this.style.color='var(--p-500)'" onmouseout="this.style.color='var(--gray-400)'">
+                        <i class="fa-solid fa-pen-to-square"></i>
                       </button>
                     </td>
                   </tr>`;
@@ -626,15 +439,15 @@ if ($obra_id > 0) {
       h += `  </div>
             </div>`;
     }
-    $('plan-body').innerHTML = h || `<div class="orders-card p-5 text-center"><div class="orders-empty-state"><i class="bi bi-inbox" style="font-size: 3rem; color: var(--gray-300);"></i><p class="mt-3 text-muted fw-bold" style="font-size: 0.95rem;">Sin resultados</p></div></div>`;
+    $('plan-body').innerHTML = h || `<div class="orders-card p-5 text-center"><div class="orders-empty-state"><i class="fa-solid fa-inbox" style="font-size: 3rem; color: var(--gray-300);"></i><p class="mt-3 text-muted fw-bold" style="font-size: 0.95rem;">Sin resultados</p></div></div>`;
   }
 
   function getDiff(c) {
     if (!+c.terminado || c.dias_diferencia === null) return '-';
     const d = c.dias_diferencia;
-    if (d < 0) return `<span class="badge-diff diff-antes"><i class="bi bi-check-circle"></i> ${Math.abs(d)}d Antes</span>`;
-    if (d > 0) return `<span class="badge-diff diff-despues"><i class="bi bi-exclamation-triangle"></i> ${d}d Atraso</span>`;
-    return `<span class="badge-diff diff-ok"><i class="bi bi-clock-history"></i> A Tiempo</span>`;
+    if (d < 0) return `<span class="badge-diff diff-antes"><i class="fa-solid fa-circle-check"></i> ${Math.abs(d)}d Antes</span>`;
+    if (d > 0) return `<span class="badge-diff diff-despues"><i class="fa-solid fa-triangle-exclamation"></i> ${d}d Atraso</span>`;
+    return `<span class="badge-diff diff-ok"><i class="fa-solid fa-clock"></i> A Tiempo</span>`;
   }
 
   async function toggleRef(id, val) {
@@ -748,6 +561,7 @@ if ($obra_id > 0) {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+
 
 
 

@@ -106,59 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-<style>
-  .oc-section-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--gray-100, #f3f4f6);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    font-size: 0.82rem;
-    color: var(--gray-500, #6b7280);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .oc-section-header i {
-    font-size: 1rem;
-    color: var(--p-500, #407656);
-  }
-  .oc-section-body {
-    padding: 1.25rem 1.5rem;
-  }
-  .result-card {
-    background: var(--gray-50, #f9fafb);
-    border-radius: 10px;
-    padding: 1.5rem;
-    text-align: center;
-  }
-  .rating-options {
-    display: flex;
-    gap: 0.5rem;
-    margin: 0.75rem 0;
-  }
-  .rating-options > div {
-    flex: 1;
-    padding: 0.75rem 0.5rem;
-    border: 1.5px solid var(--gray-200, #e5e7eb);
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: center;
-    font-size: 0.8rem;
-    transition: all 0.2s;
-  }
-  .rating-options > div.selected {
-    border-color: var(--p-500, #407656);
-    background: rgba(64, 118, 86, 0.06);
-  }
-  .excellent { background-color: #d4edda; color: #155724; }
-  .good      { background-color: #d1ecf1; color: #0c5460; }
-  .conditional { background-color: #fff3cd; color: #856404; }
-  .not-approved { background-color: #f8d7da; color: #721c24; }
-</style>
+
 
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
@@ -178,277 +128,267 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div class="ms-auto">
       <button class="btn-geco-secondary" onclick="verHistorial()" title="Historial de evaluaciones">
-        <i class="bi bi-clock-history"></i> Historial
+        <i class="fa-solid fa-clock-rotate-left"></i> Historial
       </button>
     </div>
   </div>
 
   <!-- Alerts -->
   <?php if (isset($mensaje_exito)): ?>
-    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-      <?= $mensaje_exito ?>
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        UI.toast.success(<?= json_encode($mensaje_exito) ?>);
+      });
+    </script>
   <?php endif; ?>
 
   <?php if (isset($mensaje_error)): ?>
-    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-      <?= $mensaje_error ?>
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        UI.toast.error(<?= json_encode($mensaje_error) ?>);
+      });
+    </script>
   <?php endif; ?>
 
-  <!-- Main Form Card -->
-  <div class="orders-card mt-4">
-    <form method="POST" id="evaluationForm">
-
-      <!-- Section 1: Información General -->
-      <div class="oc-section-header">
-        <i class="bi bi-info-circle"></i>
-        Información General
-      </div>
-      <div class="oc-section-body">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Nombre o Razón Social del Proveedor:</label>
-              <input type="text" class="form-control"
-                     value="<?= htmlspecialchars($proveedor['razon_social']) ?>"
-                     readonly />
+  <!-- Main Form Container -->
+  <div class="mt-4">
+    <form method="POST" id="evaluationForm" onsubmit="return confirmarGuardado(this, event)">
+      
+      <!-- Section 1: Información General (Todo Width) -->
+      <div class="oc-card mb-4">
+        <div class="oc-card-header">
+          <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General</span>
+        </div>
+        <div class="oc-card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Nombre o Razón Social del Proveedor:</label>
+                <input type="text" class="form-control"
+                       value="<?= htmlspecialchars($proveedor['razon_social']) ?>"
+                       readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">CIF. o R.F.C.:</label>
+                <input type="text" class="form-control" name="supplierRFC"
+                       value="<?= htmlspecialchars($proveedor['rfc'] ?? '') ?>" required>
+              </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">CIF. o R.F.C.:</label>
-              <input type="text" class="form-control" name="supplierRFC"
-                     value="<?= htmlspecialchars($proveedor['rfc'] ?? '') ?>" required>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Lugar y Fecha de Elaboración:</label>
+                <input type="text" class="form-control" name="evaluationDate"
+                       value="PROATAM S.A. DE C.V. - <?= date('d/m/Y') ?>" required>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Lugar y Fecha de Elaboración:</label>
-              <input type="text" class="form-control" name="evaluationDate"
-                     value="PROATAM S.A. DE C.V. - <?= date('d/m/Y') ?>" required>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Contrato No.:</label>
-              <input type="text" class="form-control" name="contractNumber" required>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 2: Escala de Calificación -->
-      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
-        <i class="bi bi-speedometer2"></i>
-        Escala de Calificación
-      </div>
-      <div class="oc-section-body">
-        <div class="rating-options">
-          <div data-value="1">
-            <strong>1</strong><br>Muy Deficiente
-          </div>
-          <div data-value="2">
-            <strong>2</strong><br>Deficiente
-          </div>
-          <div data-value="3">
-            <strong>3</strong><br>Regular
-          </div>
-          <div data-value="4">
-            <strong>4</strong><br>Bueno
-          </div>
-          <div data-value="5">
-            <strong>5</strong><br>Excelente
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 3: Evaluación del Proveedor -->
-      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
-        <i class="bi bi-star"></i>
-        Evaluación del Proveedor
-      </div>
-      <div class="oc-section-body p-0">
-        <div class="orders-table-wrap">
-          <table class="orders-table">
-            <thead>
-              <tr>
-                <th>Criterio</th>
-                <th>Descripción</th>
-                <th>Ponderación</th>
-                <th>Calificación</th>
-                <th>Resultado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Calidad</td>
-                <td>Cumplimiento con especificaciones técnicas, ausencia de defectos.</td>
-                <td>30%</td>
-                <td>
-                  <select class="form-select rating-select" name="qualityRating" data-weight="30" id="qualityRating" required>
-                    <option value="0">Seleccionar</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </td>
-                <td id="qualityResult">0</td>
-              </tr>
-              <tr>
-                <td>Cumplimiento en Entregas</td>
-                <td>Puntualidad, cumplimiento de plazos acordados.</td>
-                <td>25%</td>
-                <td>
-                  <select class="form-select rating-select" name="deliveryRating" data-weight="25" id="deliveryRating" required>
-                    <option value="0">Seleccionar</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </td>
-                <td id="deliveryResult">0</td>
-              </tr>
-              <tr>
-                <td>Precio y Condiciones Comerciales</td>
-                <td>Competitividad de precios, claridad en pagos y facturación.</td>
-                <td>20%</td>
-                <td>
-                  <select class="form-select rating-select" name="priceRating" data-weight="20" id="priceRating" required>
-                    <option value="0">Seleccionar</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </td>
-                <td id="priceResult">0</td>
-              </tr>
-              <tr>
-                <td>Cumplimiento Legal y Normativo</td>
-                <td>Documentación vigente (fiscal, laboral, seguridad, ambiental).</td>
-                <td>15%</td>
-                <td>
-                  <select class="form-select rating-select" name="legalRating" data-weight="15" id="legalRating" required>
-                    <option value="0">Seleccionar</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </td>
-                <td id="legalResult">0</td>
-              </tr>
-              <tr>
-                <td>Atención y Servicio Postventa</td>
-                <td>Respuesta a incidencias, comunicación y soporte.</td>
-                <td>10%</td>
-                <td>
-                  <select class="form-select rating-select" name="serviceRating" data-weight="10" id="serviceRating" required>
-                    <option value="0">Seleccionar</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </td>
-                <td id="serviceResult">0</td>
-              </tr>
-              <tr class="table-secondary">
-                <td colspan="3" class="text-end"><strong>TOTAL</strong></td>
-                <td></td>
-                <td id="totalResult"><strong>0</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Section 4: Resultado Final -->
-      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
-        <i class="bi bi-speedometer2"></i>
-        Resultado Final
-      </div>
-      <div class="oc-section-body">
-        <div class="row">
-          <div class="col-md-6">
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th>PUNTAJE</th>
-                  <th>RESULTADO</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="excellent">
-                  <td>450 – 500</td>
-                  <td>Excelente</td>
-                </tr>
-                <tr class="good">
-                  <td>400 – 449</td>
-                  <td>Bueno</td>
-                </tr>
-                <tr class="conditional">
-                  <td>350 – 399</td>
-                  <td>Regular (Requiere seguimiento)</td>
-                </tr>
-                <tr class="not-approved">
-                  <td>&lt; 350</td>
-                  <td>No Aprobado</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="col-md-6">
-            <div class="result-card">
-              <h4 id="finalScore">Puntuación: 0</h4>
-              <div id="finalResult" class="mt-3 p-3 rounded">
-                <h5 id="resultText">-</h5>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Contrato No.:</label>
+                <input type="text" class="form-control" name="contractNumber" required>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Section 5: Observaciones y Responsable -->
-      <div class="oc-section-header" style="border-top:1px solid var(--gray-100,#f3f4f6);">
-        <i class="bi bi-chat-text"></i>
-        Observaciones
-      </div>
-      <div class="oc-section-body">
-        <div class="mb-3">
-          <textarea class="form-control" name="observations" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-          <label class="form-label"><i class="bi bi-person-check"></i> Responsable:</label>
-          <input type="text" class="form-control" name="responsibles"
-                 value="<?php echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
-                 readonly />
-        </div>
-      </div>
+      <div class="oc-form-layout">
+        <!-- ─── MAIN COLUMN (Left) ──────────────────────────────────────── -->
+        <div class="oc-form-layout-main">
+          
+          <!-- Section 3: Evaluación del Proveedor con Escala Adentro -->
+          <div class="oc-card mb-4">
+            <div class="oc-card-header">
+              <span class="oc-card-header__title"><i class="fa-solid fa-star"></i> Evaluación del Proveedor</span>
+            </div>
+            <div class="oc-card-body">
+              
+              <!-- Escala de Calificación dentro de la card de evaluación, arriba de la tabla -->
+              <div class="mb-4">
+                <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--s-800); margin-bottom: 0.5rem;">
+                  <i class="fa-solid fa-gauge-high"></i> Escala de Calificación
+                </label>
+                <div class="rating-options">
+                  <div data-value="1"><strong>1</strong><br>Muy Deficiente</div>
+                  <div data-value="2"><strong>2</strong><br>Deficiente</div>
+                  <div data-value="3"><strong>3</strong><br>Regular</div>
+                  <div data-value="4"><strong>4</strong><br>Bueno</div>
+                  <div data-value="5"><strong>5</strong><br>Excelente</div>
+                </div>
+              </div>
 
-      <!-- Submit -->
-      <div class="oc-section-body" style="border-top:1px solid var(--gray-100,#f3f4f6);">
-        <div style="max-width:300px; margin:auto; text-align:center;">
-          <button type="submit" class="btn-geco-primary w-100">
-            <i class="bi bi-floppy"></i> Guardar Evaluación
-          </button>
+              <div class="orders-table-wrap">
+                <table class="orders-table">
+                  <thead>
+                    <tr>
+                      <th>Criterio</th>
+                      <th>Descripción</th>
+                      <th>Ponderación</th>
+                      <th>Calificación</th>
+                      <th>Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Calidad</td>
+                      <td>Cumplimiento con especificaciones técnicas, ausencia de defectos.</td>
+                      <td>30%</td>
+                      <td>
+                        <select class="form-select rating-select" name="qualityRating" data-weight="30" id="qualityRating" required>
+                          <option value="0">Seleccionar</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </td>
+                      <td id="qualityResult">0</td>
+                    </tr>
+                    <tr>
+                      <td>Cumplimiento en Entregas</td>
+                      <td>Puntualidad, cumplimiento de plazos acordados.</td>
+                      <td>25%</td>
+                      <td>
+                        <select class="form-select rating-select" name="deliveryRating" data-weight="25" id="deliveryRating" required>
+                          <option value="0">Seleccionar</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </td>
+                      <td id="deliveryResult">0</td>
+                    </tr>
+                    <tr>
+                      <td>Precio y Condiciones Comerciales</td>
+                      <td>Competitividad de precios, claridad en pagos y facturación.</td>
+                      <td>20%</td>
+                      <td>
+                        <select class="form-select rating-select" name="priceRating" data-weight="20" id="priceRating" required>
+                          <option value="0">Seleccionar</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </td>
+                      <td id="priceResult">0</td>
+                    </tr>
+                    <tr>
+                      <td>Cumplimiento Legal y Normativo</td>
+                      <td>Documentación vigente (fiscal, laboral, seguridad, ambiental).</td>
+                      <td>15%</td>
+                      <td>
+                        <select class="form-select rating-select" name="legalRating" data-weight="15" id="legalRating" required>
+                          <option value="0">Seleccionar</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </td>
+                      <td id="legalResult">0</td>
+                    </tr>
+                    <tr>
+                      <td>Atención y Servicio Postventa</td>
+                      <td>Respuesta a incidencias, comunicación y soporte.</td>
+                      <td>10%</td>
+                      <td>
+                        <select class="form-select rating-select" name="serviceRating" data-weight="10" id="serviceRating" required>
+                          <option value="0">Seleccionar</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </td>
+                      <td id="serviceResult">0</td>
+                    </tr>
+                    <tr class="table-secondary">
+                      <td colspan="3" class="text-end"><strong>TOTAL</strong></td>
+                      <td></td>
+                      <td id="totalResult" style="color: var(--s-700);"><strong>0</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
         </div>
-      </div>
 
+        <!-- ─── SIDE COLUMN (Right) ────────────────────────────────────────── -->
+        <div class="oc-form-layout-side">
+          
+          <!-- Section 4: Resultado Final -->
+          <div class="oc-card mb-4">
+            <div class="oc-card-header">
+              <span class="oc-card-header__title"><i class="fa-solid fa-award"></i> Resultado Final</span>
+            </div>
+            <div class="oc-card-body p-0">
+              <table class="orders-table m-0" style="border-radius: 0;">
+                <thead>
+                  <tr>
+                    <th>PUNTAJE</th>
+                    <th>RESULTADO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="eval-excellent"><td>450 – 500</td><td>Excelente</td></tr>
+                  <tr class="eval-good"><td>400 – 449</td><td>Bueno</td></tr>
+                  <tr class="eval-conditional"><td>350 – 399</td><td>Regular (Seguimiento)</td></tr>
+                  <tr class="eval-not-approved"><td>&lt; 350</td><td>No Aprobado</td></tr>
+                </tbody>
+              </table>
+              <div class="p-3">
+                <div class="result-card">
+                  <h4 id="finalScore" class="m-0 fs-5 fw-bold" style="color: var(--s-700);">Puntuación: 0</h4>
+                  <div id="finalResult" class="mt-3 p-2 rounded">
+                    <h5 id="resultText" class="m-0 fs-6 fw-bold">-</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Observaciones y Responsable -->
+          <div class="oc-card mb-4">
+            <div class="oc-card-header">
+              <span class="oc-card-header__title"><i class="fa-solid fa-message"></i> Observaciones</span>
+            </div>
+            <div class="oc-card-body">
+              <div class="mb-3">
+                <textarea class="form-control" name="observations" rows="3" placeholder="Observaciones adicionales..."></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" style="font-size: 0.85rem;"><i class="fa-solid fa-user-check"></i> Responsable:</label>
+                <input type="text" class="form-control form-control-sm" name="responsibles"
+                       value="<?php echo htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+                       readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="oc-form-submit-actions mb-4">
+            <button type="submit" class="btn-geco-primary w-100" style="padding: 0.75rem; border-radius: 10px;">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar Evaluación
+            </button>
+          </div>
+
+        </div>
+
+      </div>
     </form>
-  </div><!-- /.orders-card -->
+  </div>
 
 </div><!-- /.orders-page-container -->
 
@@ -492,16 +432,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const resultText = document.getElementById('resultText');
     
     if (totalScore >= 450) {
-      resultElement.className = 'mt-3 p-3 rounded excellent';
+      resultElement.className = 'mt-3 p-2 rounded eval-excellent';
       resultText.textContent = 'EXCELENTE (PROVEEDOR CONFIABLE)';
     } else if (totalScore >= 400) {
-      resultElement.className = 'mt-3 p-3 rounded good';
+      resultElement.className = 'mt-3 p-2 rounded eval-good';
       resultText.textContent = 'BUENO';
     } else if (totalScore >= 350) {
-      resultElement.className = 'mt-3 p-3 rounded conditional';
+      resultElement.className = 'mt-3 p-2 rounded eval-conditional';
       resultText.textContent = 'REGULAR (REQUIERE SEGUIMIENTO)';
     } else {
-      resultElement.className = 'mt-3 p-3 rounded not-approved';
+      resultElement.className = 'mt-3 p-2 rounded eval-not-approved';
       resultText.textContent = 'NO APROBADO';
     }
   }
@@ -509,6 +449,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   function verHistorial() {
     window.location.href = `historial_evaluaciones.php?proveedor_id=<?= $proveedor_id ?>`;
   }
+
+  function confirmarGuardado(form, event) {
+    if (event) event.preventDefault();
+    UI.confirm({
+      title: '¿Guardar Evaluación?',
+      message: 'Una vez guardada, la evaluación quedará registrada en el historial del proveedor.',
+      confirmText: 'Sí, guardar',
+      cancelText: 'Cancelar'
+    }).then(confirmado => {
+      if (confirmado) {
+        UI.loading('Guardando...');
+        form.submit();
+      }
+    });
+    return false;
+  }
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
+

@@ -127,65 +127,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
 }
 ?>
 
-<style>
-  .presupuesto-info {
-    background: #f8f9fa;
-    border-radius: 5px;
-    padding: 10px;
-    margin-top: 5px;
-    font-size: 0.85em;
-  }
 
-  .presupuesto-alert {
-    padding: 8px 12px;
-    border-radius: 4px;
-    margin-top: 5px;
-  }
 
-  .progress {
-    height: 6px;
-    margin-top: 5px;
-  }
-
-  .btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-  }
-
-  .producto-autocomplete {
-    position: relative;
-  }
-
-  .autocomplete-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-top: none;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    display: none;
-  }
-
-  .autocomplete-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-  }
-
-  .autocomplete-item:hover {
-    background: #f8f9fa;
-  }
-
-  .autocomplete-item:last-child {
-    border-bottom: none;
-  }
-</style>
-
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.4">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -204,7 +148,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
             <h1 class="orders-page-title">Crear Nueva Orden de Compra</h1>
         </div>
         <button type="button" class="btn-geco-outline" onclick="history.back()">
-            <i class="bi bi-arrow-left"></i> Volver
+            <i class="fa-solid fa-arrow-left"></i> Volver
         </button>
     </div>
 
@@ -212,16 +156,16 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
 
           <div class="oc-card">
             <div class="oc-card-header">
-              <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General de la Orden</span>
+              <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General de la Orden</span>
             </div>
             <div class="oc-card-body">
               <p class="oc-card-intro">Complete los datos generales de la orden. Los campos marcados con <span class="required">*</span> son obligatorios.</p>
 
               <div class="orders-alert orders-alert--info mb-4">
-                <i class="bi bi-info-circle"></i>
+                <i class="fa-solid fa-circle-info"></i>
                 <div class="orders-alert__body">
-                  <p>Este formulario debe ser completado por el personal autorizado para solicitar compras o requerir pagos.</p>
-                  <span><strong>Importante:</strong> El envío no garantiza aprobación automática. Siga los procedimientos establecidos.</span>
+                  <p class="m-0">Este formulario debe ser completado por el personal autorizado para solicitar compras o requerir pagos.</p>
+                  <span class="mt-1 d-block"><strong>Importante:</strong> El envío no garantiza aprobación automática. Siga los procedimientos establecidos.</span>
                 </div>
               </div>
 
@@ -319,12 +263,12 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                     }
                     ?>
                   </select>
-                  <small class="oc-form-hint"><i class="bi bi-info-circle"></i> En caso de seleccionar un subcontrato, este valor se autocompletará.</small>
+                  <small class="oc-form-hint"><i class="fa-solid fa-circle-info"></i> En caso de seleccionar un subcontrato, este valor se autocompletará.</small>
                 </div>
               </div>
 
               <div id="subcontratoContainer" class="oc-form-subsection" style="display: none;">
-                <div class="oc-form-subsection__title"><i class="bi bi-file-earmark-text"></i> Subcontrato Asignado</div>
+                <div class="oc-form-subsection__title"><i class="fa-regular fa-file-lines"></i> Subcontrato Asignado</div>
                 <div class="row g-3">
                 <div class="col-12">
                   <label class="oc-form-label">Seleccionar Subcontrato <span class="required">*</span></label>
@@ -358,7 +302,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
               </div>
 
               <div id="infoObra" class="oc-form-subsection" style="display:none">
-                <div class="oc-form-subsection__title"><i class="bi bi-wallet2"></i> Presupuesto de Obra</div>
+                <div class="oc-form-subsection__title"><i class="fa-solid fa-wallet"></i> Presupuesto de Obra</div>
                 <div class="oc-stat-grid">
                   <div class="oc-stat-box">
                     <div class="oc-stat-box__label">Costo directo obra</div>
@@ -385,9 +329,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
           <!-- ─── CARD: PARTIDAS E ÍTEMS ──────────────────────────────── -->
           <div class="oc-card">
             <div class="oc-card-header">
-              <span class="oc-card-header__title"><i class="bi bi-list-ul"></i> Partidas e Ítems</span>
+              <span class="oc-card-header__title"><i class="fa-solid fa-list"></i> Partidas e Ítems</span>
               <button type="button" class="btn-geco-outline btn-geco-outline--sm" onclick="mostrarCatalogoProductos()">
-                <i class="bi bi-plus-circle"></i> Agregar Ítem
+                <i class="fa-solid fa-circle-plus"></i> Agregar Ítem
               </button>
             </div>
             <div class="oc-card-body oc-card-body--items">
@@ -420,11 +364,11 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
             <div class="oc-form-layout-main">
               <div class="oc-card">
                 <div class="oc-card-header">
-                  <span class="oc-card-header__title"><i class="bi bi-chat-text"></i> Descripciones y Observaciones</span>
+                  <span class="oc-card-header__title"><i class="fa-regular fa-comments"></i> Detalle, Descripciones y Observaciones</span>
                 </div>
                 <div class="oc-card-body">
                   <div class="mb-4">
-                    <label class="oc-form-label">Descripción General</label>
+                    <label class="oc-form-label" for="descripcion">Descripción General</label>
                     <p class="oc-form-hint--block">Describa de forma general y clara el bien o servicio que se requiere, indicando su uso o finalidad y cantidad aproximada.</p>
                     <textarea class="form-control" id="descripcion" name="descripcion_general" rows="4" placeholder="Ingrese descripción general del bien o servicio..."><?= htmlspecialchars($descripcion_requisicion) ?></textarea>
                   </div>
@@ -440,33 +384,36 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
             <div class="oc-form-layout-side">
               <div class="oc-card">
                 <div class="oc-card-header">
-                  <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Archivos Adjuntos</span>
+                  <span class="oc-card-header__title"><i class="fa-solid fa-paperclip"></i> Archivos Adjuntos</span>
                 </div>
                 <div class="oc-card-body">
                   <div class="orders-alert orders-alert--info mb-3">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="fa-solid fa-circle-info"></i>
                     <span>Cargue hasta 5 archivos de uno en uno. PDF, Word, Excel, imágenes. Máx. 10 MB por archivo.</span>
                   </div>
                   <div class="oc-files-input-group mb-3">
                     <input type="file" class="form-control" id="singleFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
                     <button class="btn-geco-secondary" type="button" onclick="agregarArchivo()">
-                      <i class="bi bi-upload"></i> Subir
+                      <i class="fa-solid fa-upload"></i> Subir
                     </button>
                   </div>
                   <div id="archivosContainer" class="oc-files-dropzone">
                     <h6 class="oc-files-dropzone__title">Archivos seleccionados: <span id="contadorArchivos" class="badge bg-secondary">0</span></h6>
-                    <ul id="fileList" class="list-group list-group-flush">
-                      <li class="list-group-item text-center text-muted" style="background:transparent;border:none;">
-                        <i class="bi bi-inbox fs-4 d-block mb-1"></i> No hay archivos agregados
+                    <ul id="fileList" class="list-group list-group-flush mt-2">
+                      <li id="emptyFilesState" class="list-group-item border-0 p-0">
+                          <div class="text-center text-muted p-4">
+                              <i class="fa-solid fa-inbox fs-4 d-block mb-1 opacity-50"></i>
+                              <span class="small">Sin archivos adjuntos</span>
+                          </div>
                       </li>
                     </ul>
                   </div>
 
               <?php if (!empty($archivos_requisicion)): ?>
                 <div class="mt-4 pt-3" style="border-top:1px solid var(--gray-100,#f3f4f6);">
-                  <h6 class="oc-form-label mb-2"><i class="bi bi-files"></i> Archivos de la Requisición</h6>
+                  <h6 class="oc-form-label mb-2"><i class="fa-regular fa-folder-open"></i> Archivos de la Requisición</h6>
                   <div class="orders-alert orders-alert--warning mb-3">
-                    <i class="bi bi-exclamation-triangle"></i>
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Los siguientes archivos provienen de la requisición. Puede eliminar los que no necesite.</span>
                   </div>
                   <div class="orders-table-wrap">
@@ -487,17 +434,17 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                           <tr data-archivo-id="<?= $archivo['id'] ?>">
                             <td><?= $i++ ?></td>
                             <td>
-                              <i class="bi bi-file-earmark-text text-primary me-1"></i>
+                              <i class="fa-regular fa-file-lines text-primary me-1"></i>
                               <?= htmlspecialchars($archivo['nombre_archivo']) ?>
                             </td>
                             <td class="cell-muted"><?= round($archivo['tamaño_archivo'] / 1024, 2) ?> KB</td>
                             <td class="cell-muted"><?= htmlspecialchars($archivo['tipo_mime']) ?></td>
                             <td>
                               <button type="button" class="btn btn-sm btn-outline-info" onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')" title="Ver archivo">
-                                <i class="bi bi-eye"></i> Ver
+                                <i class="fa-regular fa-eye"></i> Ver
                               </button>
                               <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarArchivoTemporal(<?= $archivo['id'] ?>, this)">
-                                <i class="bi bi-trash"></i> Eliminar
+                                <i class="fa-solid fa-trash-can"></i> Eliminar
                               </button>
                             </td>
                           </tr>
@@ -511,7 +458,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
               </div>
 
               <div class="oc-finance">
-                <div class="oc-finance-title"><i class="bi bi-calculator"></i> Resumen de Pago</div>
+                <div class="oc-finance-title"><i class="fa-solid fa-calculator"></i> Resumen de Pago</div>
                 <div class="oc-finance-row">
                   <span>Subtotal</span>
                   <span id="subtotalGeneral">$0.000</span>
@@ -519,10 +466,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
                 <div class="oc-finance-row">
                   <span class="d-flex align-items-center gap-2">
                     IVA:
-                    <select class="form-select form-select-sm oc-finance-iva-select" id="iva" name="iva" onchange="calcularIVA()">
-                      <option value="0" selected>Sin IVA</option>
-                      <option value="8">8%</option>
-                      <option value="16">16%</option>
+                    <select class="form-select form-select-sm oc-finance-iva-select text-white bg-transparent border-0" style="color: white !important;" id="iva" name="iva" onchange="calcularIVA()">
+                      <option value="0" class="text-dark" selected>Sin IVA</option>
+                      <option value="8" class="text-dark">8%</option>
+                      <option value="16" class="text-dark">16%</option>
                     </select>
                   </span>
                   <span id="ivaTotal">$0.000</span>
@@ -534,10 +481,10 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
               </div>
 
               <div id="alertContainer" class="mb-3"></div>
-              <p class="oc-form-submit-note"><i class="bi bi-info-circle"></i> Esta orden será evaluada por el Subdirector General y Gerente de Recursos Humanos.</p>
+              <p class="oc-form-submit-note"><i class="fa-solid fa-circle-info"></i> Esta orden será evaluada por el Subdirector General y Gerente de Recursos Humanos.</p>
               <div class="oc-form-submit-actions">
                 <button type="submit" class="btn-geco-primary" id="btnEnviar">
-                  <i class="bi bi-check-lg"></i> Guardar Orden de Compra
+                  <i class="fa-solid fa-check"></i> Guardar Orden de Compra
                 </button>
               </div>
             </div>

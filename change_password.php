@@ -27,11 +27,6 @@ if (!isset($_SESSION['change_pass']) || $_SESSION['change_pass'] !== true) {
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
-    <style>
-        .req-list li { transition: color 0.3s; }
-        .req-list li.valid { color: var(--success-color, #198754) !important; font-weight: 500; }
-        .req-list li.valid i::before { content: "\F26A"; /* bi-check-circle-fill */ }
-    </style>
 </head>
 
 <body>
@@ -118,7 +113,7 @@ if (!isset($_SESSION['change_pass']) || $_SESSION['change_pass'] !== true) {
                 <div class="auth-carousel">
                     <!-- Slide 1 -->
                     <div class="carousel-slide active">
-                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_main.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
                             <div class="carousel-quote">
                                 <blockquote class="quote-text">

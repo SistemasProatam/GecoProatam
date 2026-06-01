@@ -14,42 +14,42 @@ $entidades = [
     'nombre' => 'Productos y Servicios',
     'tabla' => 'productos_servicios',
     'campo_nombre' => 'nombre',
-    'icono' => 'bi-box-seam',
+    'icono' => 'fa-solid fa-box-open',
     'color' => 'primary'
   ],
   'unidades' => [
     'nombre' => 'Unidades',
     'tabla' => 'unidades',
     'campo_nombre' => 'nombre',
-    'icono' => 'bi-rulers',
+    'icono' => 'fa-solid fa-ruler-combined',
     'color' => 'success'
   ],
   'categorias' => [
     'nombre' => 'Categorías',
     'tabla' => 'categorias',
     'campo_nombre' => 'nombre',
-    'icono' => 'bi-tags',
+    'icono' => 'fa-solid fa-tags',
     'color' => 'info'
   ],
   'entidades' => [
     'nombre' => 'Entidades',
     'tabla' => 'entidades',
     'campo_nombre' => 'nombre',
-    'icono' => 'bi-building',
+    'icono' => 'fa-solid fa-building',
     'color' => 'warning'
   ],
   'proveedores' => [
     'nombre' => 'Proveedores',
     'tabla' => 'proveedores',
     'campo_nombre' => 'razon_social',
-    'icono' => 'bi-truck',
+    'icono' => 'fa-solid fa-truck',
     'color' => 'danger'
   ],
   'clientes' => [
     'nombre' => 'Clientes',
     'tabla' => 'clientes',
     'campo_nombre' => 'nombre',
-    'icono' => 'bi-people',
+    'icono' => 'fa-solid fa-users',
     'color' => 'secondary'
   ]
 ];
@@ -147,123 +147,10 @@ $iconColors = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<style>
-  /* Entity selector cards */
-  .entity-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-  @media (max-width: 992px) { .entity-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 576px)  { .entity-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  .entity-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 1rem 0.5rem;
-    background: #fff;
-    border: 1.5px solid var(--gray-200, #e5e7eb);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-  }
-  .entity-card:hover {
-    border-color: var(--p-400, #5db076);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(64,118,86,0.1);
-  }
-  .entity-card.active {
-    border-color: var(--p-500, #407656);
-    background: rgba(64,118,86,0.04);
-    box-shadow: 0 0 0 3px rgba(64,118,86,0.1);
-  }
-  .entity-card-icon {
-    font-size: 1.6rem;
-    line-height: 1;
-  }
-  .entity-card-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--s-700, #113557);
-    line-height: 1.2;
-  }
-
-  /* Row list item */
-  .catalog-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.25rem;
-    border-bottom: 1px solid var(--gray-100, #f3f4f6);
-    transition: background 0.15s;
-  }
-  .catalog-list-item:last-child { border-bottom: none; }
-  .catalog-list-item:hover { background: rgba(64,118,86,0.02); }
-  .catalog-list-item-name {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--s-800, #0f172a);
-  }
-  .catalog-list-item-sub {
-    font-size: 0.75rem;
-    color: var(--gray-400, #9ca3af);
-    margin-top: 0.1rem;
-  }
-
-  /* Type badge */
-  .type-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.55rem;
-    border-radius: 20px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .type-badge--producto {
-    color: #1d4ed8;
-    background: rgba(59,130,246,0.08);
-    border: 1px solid rgba(59,130,246,0.25);
-  }
-  .type-badge--servicio {
-    color: #7c3aed;
-    background: rgba(139,92,246,0.08);
-    border: 1px solid rgba(139,92,246,0.25);
-  }
-
-  /* btn-geco-outline */
-  .btn-geco-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    border: 1.5px solid var(--gray-200, #e5e7eb);
-    border-radius: 10px;
-    background: #fff;
-    color: var(--s-700, #113557);
-    font-family: inherit;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-  }
-  .btn-geco-outline:hover {
-    border-color: var(--p-400, #5db076);
-    color: var(--p-500, #407656);
-    background: rgba(64,118,86,0.04);
-  }
-</style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -281,81 +168,84 @@ $iconColors = [
     </div>
   </div>
 
-  <!-- ─── ENTITY SELECTOR ──────────────────────────────────────── -->
-  <div class="entity-grid">
-    <?php foreach ($entidades as $key => $entidad): ?>
-      <div class="entity-card <?= $entidad_seleccionada === $key ? 'active' : '' ?>"
-           onclick="seleccionarEntidad('<?= $key ?>')"
-           data-entidad="<?= $key ?>">
-        <div class="entity-card-icon" style="color:<?= $iconColors[$key] ?? '#6b7280' ?>">
-          <i class="bi <?= $entidad['icono'] ?>"></i>
-        </div>
-        <div class="entity-card-label"><?= $entidad['nombre'] ?></div>
-      </div>
-    <?php endforeach; ?>
-  </div>
+  <!-- ─── CONTENIDO LISTA ────────────────────────────────────── -->
+  <div id="contenido-lista" data-entidad-actual="<?= $entidad_seleccionada ?>">
 
-  <!-- ─── FILTERS + SEARCH ────────────────────────────────────── -->
-  <div class="orders-card mb-3" id="contenido-lista" data-entidad-actual="<?= $entidad_seleccionada ?>">
-
-    <!-- Hidden search form -->
-    <form id="search-form" method="GET" style="display:none;">
-      <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
-      <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo) ?>">
-      <input type="search" name="q"       value="<?= htmlspecialchars($busqueda) ?>">
-    </form>
-
-    <!-- Filter form -->
-    <form id="filter-form" method="GET">
-      <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
-      <input type="hidden" name="q"       value="<?= htmlspecialchars($busqueda) ?>">
-
-      <div class="orders-filter-bar">
-
-        <!-- Tabs de tipo (solo productos_servicios) -->
-        <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
-          <div class="orders-filter-tabs" id="tipoTabs">
-            <?php foreach (['' => 'Todos', 'producto' => 'Productos', 'servicio' => 'Servicios'] as $val => $lbl): ?>
-              <button type="button" class="tab-btn <?= $tipo === $val ? 'active' : '' ?>" data-tipo="<?= $val ?>"><?= $lbl ?></button>
-            <?php endforeach; ?>
+    <!-- CARD 1: SECCIONES DEL CATÁLOGO -->
+    <div class="orders-card mb-3">
+      <!-- ─── ENTITY SELECTOR ──────────────────────────────────────── -->
+      <div class="entity-grid" style="margin-bottom: 0;">
+        <?php foreach ($entidades as $key => $entidad): ?>
+          <div class="entity-card <?= $entidad_seleccionada === $key ? 'active' : '' ?>"
+               onclick="seleccionarEntidad('<?= $key ?>')"
+               data-entidad="<?= $key ?>">
+            <div class="entity-card-icon" style="color:<?= $iconColors[$key] ?? '#6b7280' ?>">
+              <i class="<?= $entidad['icono'] ?>"></i>
+            </div>
+            <div class="entity-card-label"><?= $entidad['nombre'] ?></div>
           </div>
-          <select name="tipo" id="tipoSelect" style="display:none;">
-            <option value="">Todos</option>
-            <option value="producto" <?= $tipo === 'producto' ? 'selected' : '' ?>>Productos</option>
-            <option value="servicio" <?= $tipo === 'servicio' ? 'selected' : '' ?>>Servicios</option>
-          </select>
-        <?php endif; ?>
+        <?php endforeach; ?>
+      </div>
+    </div>
 
-        <!-- Cliente: historial -->
-        <?php if ($entidad_seleccionada === 'clientes'): ?>
-          <a href="historial_cliente.php" class="btn-geco-outline">
-            <i class="bi bi-clock-history"></i> Historial evaluaciones
-          </a>
-        <?php endif; ?>
+    <!-- CARD 2: FILTROS DE BÚSQUEDA -->
+    <div class="orders-card mb-3">
+      <!-- Hidden search form -->
+      <form id="search-form" method="GET" style="display:none;">
+        <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
+        <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo) ?>">
+        <input type="search" name="q"       value="<?= htmlspecialchars($busqueda) ?>">
+      </form>
 
-        <!-- Search + Agregar -->
-        <div class="orders-filter-search" style="margin-left:auto; display:flex; align-items:center; gap:0.75rem;">
-          <div class="search-input-wrap">
-            <i class="bi bi-search"></i>
-            <input type="text" id="visibleSearchInput"
-                   placeholder="Buscar <?= strtolower($entidad_config['nombre']) ?>..."
-                   value="<?= htmlspecialchars($busqueda) ?>">
+      <!-- Filter form -->
+      <form id="filter-form" method="GET">
+        <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
+        <input type="hidden" name="q"       value="<?= htmlspecialchars($busqueda) ?>">
+
+        <div class="orders-filter-bar">
+
+          <!-- Tabs de tipo (solo productos_servicios) -->
+          <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
+            <div class="orders-filter-tabs" id="tipoTabs">
+              <?php foreach (['' => 'Todos', 'producto' => 'Productos', 'servicio' => 'Servicios'] as $val => $lbl): ?>
+                <button type="button" class="tab-btn <?= $tipo === $val ? 'active' : '' ?>" data-tipo="<?= $val ?>"><?= $lbl ?></button>
+              <?php endforeach; ?>
+            </div>
+            <select name="tipo" id="tipoSelect" style="display:none;">
+              <option value="">Todos</option>
+              <option value="producto" <?= $tipo === 'producto' ? 'selected' : '' ?>>Productos</option>
+              <option value="servicio" <?= $tipo === 'servicio' ? 'selected' : '' ?>>Servicios</option>
+            </select>
+          <?php endif; ?>
+
+          <!-- Cliente: historial -->
+          <?php if ($entidad_seleccionada === 'clientes'): ?>
+            <a href="historial_cliente.php" class="btn-geco-outline">
+              <i class="fa-solid fa-clock-rotate-left"></i> Historial evaluaciones
+            </a>
+          <?php endif; ?>
+
+          <!-- Search + Agregar -->
+          <div class="orders-filter-search" style="margin-left:auto; display:flex; align-items:center; gap:0.75rem;">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="visibleSearchInput"
+                     placeholder="Buscar <?= strtolower($entidad_config['nombre']) ?>..."
+                     value="<?= htmlspecialchars($busqueda) ?>">
+            </div>
+            <button id="btnAgregarItem" class="btn-geco-primary" type="button" onclick="agregarItem()">
+              <i class="fa-solid fa-plus"></i> Agregar
+            </button>
           </div>
-          <button id="btnAgregarItem" class="btn-geco-primary" type="button" onclick="agregarItem()">
-            <i class="bi bi-plus-lg"></i> Agregar
-          </button>
+
         </div>
+      </form>
+    </div>
 
-      </div>
-    </form>
-
-    <!-- ─── TABLE ──────────────────────────────────────────────── -->
-    <div id="table-container-wrapper">
-
-      <!-- Counter row -->
-      <div style="padding: 0.6rem 1.25rem; border-bottom: 1px solid var(--gray-100,#f3f4f6); font-size:0.8rem; color:var(--gray-500,#6b7280);">
-        <strong style="color:var(--s-700,#113557)"><?= $totalRegistros ?></strong> <?= strtolower($entidad_config['nombre']) ?> registrados
-      </div>
+    <!-- CARD 3: TABLA DE DATOS -->
+    <div class="orders-card">
+      <!-- ─── TABLE ──────────────────────────────────────────────── -->
+      <div id="table-container-wrapper">
 
       <?php if ($result && $result->num_rows > 0): ?>
         <div class="orders-table-wrap">
@@ -388,8 +278,8 @@ $iconColors = [
                   </td>
                   <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
                     <td>
-                      <span class="type-badge type-badge--<?= $row['tipo'] ?>">
-                        <?= ucfirst($row['tipo']) ?>
+                      <span style="font-weight: 600; font-size: 0.85rem; color: <?= $row['tipo'] == 'producto' ? 'var(--p-600)' : 'var(--s-600)' ?>;">
+                        <?= ucfirst(htmlspecialchars($row['tipo'])) ?>
                       </span>
                     </td>
                   <?php endif; ?>
@@ -399,20 +289,19 @@ $iconColors = [
                   <td>
                     <div class="actions-group">
                       <button class="btn-action btn-action--view" onclick="mostrarItem(<?= $row['id'] ?>)">
-                        <i class="bi bi-eye"></i>
+                        <i class="fa-regular fa-eye"></i>
                       </button>
                       <?php if ($entidad_seleccionada === 'proveedores'): ?>
                         <button class="btn-action btn-action--edit" onclick="evaluarProveedor(<?= $row['id'] ?>)"
                                 style="color:#f59e0b; border-color:rgba(245,158,11,0.3);">
-                          <i class="bi bi-star"></i>
+                          <i class="fa-solid fa-star"></i>
                         </button>
                       <?php endif; ?>
                       <button class="btn-action btn-action--edit" onclick="editarItem(<?= $row['id'] ?>)">
-                        <i class="bi bi-pencil"></i>
+                        <i class="fa-solid fa-pen-to-square"></i>
                       </button>
-                      <button class="btn-action" onclick="eliminarItem(<?= $row['id'] ?>)"
-                              style="color:#ef4444; border-color:rgba(239,68,68,0.2);">
-                        <i class="bi bi-trash3"></i>
+                      <button class="btn-action btn-action--delete" onclick="eliminarItem(<?= $row['id'] ?>)">
+                        <i class="fa-solid fa-trash-can"></i>
                       </button>
                     </div>
                   </td>
@@ -466,13 +355,15 @@ $iconColors = [
 
       <?php else: ?>
         <div class="orders-empty-state">
-          <i class="bi bi-inbox"></i>
+          <i class="fa-solid fa-inbox"></i>
           <p>No hay <?= strtolower($entidad_config['nombre']) ?> registrados</p>
         </div>
       <?php endif; ?>
 
-    </div><!-- /table-container-wrapper -->
-  </div><!-- /orders-card -->
+      </div><!-- /table-container-wrapper -->
+    </div><!-- /orders-card -->
+
+  </div><!-- /contenido-lista -->
 
   <!-- ─── SCRIPTS ──────────────────────────────────────────────── -->
   <script>
@@ -648,18 +539,21 @@ $iconColors = [
     }
 
     function mostrarItem(id) {
+      UI.loading('Cargando detalle...');
       fetch(`details_${entidadActual}.php?id=${id}`)
         .then(res => res.text())
         .then(data => {
-          Swal.fire({
+          UI.loading.hide();
+          UI.modal({
             title: `Detalle`,
             html: `<div style="text-align:left;">${data}</div>`,
-            width: 600,
-            showCloseButton: true,
-            focusConfirm: false
+            size: 'md'
           });
         })
-        .catch(() => Swal.fire('Error', 'No se pudo cargar la información', 'error'));
+        .catch(() => {
+          UI.loading.hide();
+          UI.toast.error('No se pudo cargar la información');
+        });
     }
 
     function agregarItem() {
@@ -725,31 +619,47 @@ $iconColors = [
           </form>`;
       }
 
-      Swal.fire({
+      const m = UI.modal({
         title: `Agregar ${entidadActual.replace('_', ' ').toUpperCase()}`,
         html: formHtml,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-          const form = document.getElementById('formAgregarItem');
-          return fetch(`insert_${entidadActual}.php`, { method: 'POST', body: new FormData(form) })
-            .then(r => r.json())
-            .then(data => {
-              if (data.status === 'success') {
-                Swal.fire('¡Éxito!', data.message, 'success').then(() => location.reload());
-              } else { Swal.showValidationMessage(data.message || 'Error al guardar'); }
-            })
-            .catch(() => Swal.showValidationMessage('Error de conexión'));
-        }
+        size: 'md',
+        footer: `
+          <button type="button" class="btn-geco-outline" onclick="UI.modal.close()">Cancelar</button>
+          <button type="button" class="btn-geco-primary" id="btn-save-item">Guardar</button>
+        `
       });
+
+      document.getElementById('btn-save-item').onclick = () => {
+        const form = document.getElementById('formAgregarItem');
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        
+        UI.loading('Guardando...');
+        fetch(`insert_${entidadActual}.php`, { method: 'POST', body: new FormData(form) })
+          .then(r => r.json())
+          .then(data => {
+            UI.loading.hide();
+            if (data.status === 'success') {
+              UI.modal.close();
+              UI.toast.success(data.message);
+              setTimeout(() => location.reload(), 1000);
+            } else { 
+              UI.toast.error(data.message || 'Error al guardar'); 
+            }
+          })
+          .catch(() => {
+            UI.loading.hide();
+            UI.toast.error('Error de conexión');
+          });
+      };
     }
 
     function editarItem(id) {
+      UI.loading('Cargando registro...');
       fetch(`edit_${entidadActual}.php?id=${id}`)
         .then(r => r.json())
         .then(resp => {
-          if (resp.status !== 'success') { Swal.fire('Error', resp.message || 'No se pudo cargar el registro', 'error'); return; }
+          UI.loading.hide();
+          if (resp.status !== 'success') { UI.toast.error(resp.message || 'No se pudo cargar el registro'); return; }
           const data = resp.data;
           let formHtml = '';
           switch (entidadActual) {
@@ -836,51 +746,72 @@ $iconColors = [
               </form>`;
           }
 
-          Swal.fire({
+          const m = UI.modal({
             title: `Editar ${entidadActual.replace('_', ' ').toUpperCase()}`,
             html: formHtml,
-            width: 600,
-            showCancelButton: true,
-            confirmButtonText: 'Actualizar',
-            cancelButtonText: 'Cancelar',
-            focusConfirm: false,
-            preConfirm: () => {
-              return fetch(`update_${entidadActual}.php`, { method: 'POST', body: new FormData(document.getElementById('formEditarItem')) })
-                .then(r => r.json())
-                .then(resp => {
-                  if (resp.status === 'success') {
-                    Swal.fire('¡Éxito!', resp.message, 'success').then(() => location.reload());
-                  } else { Swal.showValidationMessage(resp.message || 'Error al actualizar'); }
-                })
-                .catch(err => Swal.showValidationMessage('Error de conexión: ' + err.message));
-            }
+            size: 'md',
+            footer: `
+              <button type="button" class="btn-geco-outline" onclick="UI.modal.close()">Cancelar</button>
+              <button type="button" class="btn-geco-primary" id="btn-update-item">Actualizar</button>
+            `
           });
+
+          document.getElementById('btn-update-item').onclick = () => {
+            const form = document.getElementById('formEditarItem');
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+            
+            UI.loading('Actualizando...');
+            fetch(`update_${entidadActual}.php`, { method: 'POST', body: new FormData(form) })
+              .then(r => r.json())
+              .then(resp => {
+                UI.loading.hide();
+                if (resp.status === 'success') {
+                  UI.modal.close();
+                  UI.toast.success(resp.message);
+                  setTimeout(() => location.reload(), 1000);
+                } else { 
+                  UI.toast.error(resp.message || 'Error al actualizar'); 
+                }
+              })
+              .catch(err => {
+                UI.loading.hide();
+                UI.toast.error('Error de conexión: ' + err.message);
+              });
+          };
         })
-        .catch(() => Swal.fire('Error', 'No se pudo cargar la información', 'error'));
+        .catch(() => {
+          UI.loading.hide();
+          UI.toast.error('No se pudo cargar la información');
+        });
     }
 
-    function eliminarItem(id) {
-      Swal.fire({
+    async function eliminarItem(id) {
+      const confirmado = await UI.confirm({
         title: '¿Eliminar este registro?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e8445a',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-      }).then(result => {
-        if (result.isConfirmed) {
-          fetch(`delete_${entidadActual}.php?id=${id}`)
-            .then(r => r.json())
-            .then(data => {
-              if (data.status === 'success') {
-                Swal.fire('Eliminado', data.message, 'success').then(() => location.reload());
-              } else { Swal.fire('Error', data.message, 'error'); }
-            })
-            .catch(() => Swal.fire('Error', 'Error de conexión', 'error'));
-        }
+        message: 'Esta acción no se puede deshacer',
+        danger: true,
+        confirmText: 'Sí, eliminar',
+        cancelText: 'Cancelar'
       });
+
+      if (confirmado) {
+        UI.loading('Eliminando...');
+        fetch(`delete_${entidadActual}.php?id=${id}`)
+          .then(r => r.json())
+          .then(data => {
+            UI.loading.hide();
+            if (data.status === 'success') {
+              UI.toast.success(data.message);
+              setTimeout(() => location.reload(), 1000);
+            } else { 
+              UI.toast.error(data.message); 
+            }
+          })
+          .catch(() => {
+            UI.loading.hide();
+            UI.toast.error('Error de conexión');
+          });
+      }
     }
 
     function evaluarProveedor(id) {

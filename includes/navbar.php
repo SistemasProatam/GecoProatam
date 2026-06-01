@@ -41,11 +41,13 @@ function is_active($path) {
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
   
   <!-- Estilos SaaS -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/tokens.css?v=1.2" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/layout.css?v=1.4" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/components.css?v=1.0" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.2" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/list.css?v=1.2" />
   
@@ -206,8 +208,8 @@ function is_active($path) {
                     <span class="material-symbols-rounded">menu</span>
                 </button>
                 
-                <div class="header-search">
-                    <span class="material-symbols-rounded">search</span>
+                <div class="search-input-wrap header-search-wrap">
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="globalSearchInput" placeholder="Buscar módulos..." autocomplete="off">
                     
                     <!-- Dropdown de resultados -->

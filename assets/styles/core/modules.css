@@ -1,0 +1,540 @@
+/* ================================================================
+   ORDERS MODULE — Specialized Styles
+   GECO / PROATAM Design System
+   Imports components.css for global styles.
+   Used by: list_oc · see_oc · new_order · edit_oc
+   ================================================================ */
+
+@import url("./core/components.css");
+@import url("./core/pages.css");
+
+/* ─── ORDERS BUDGET STAT BOXES ────────────────────────────────── */
+.oc-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-3, 0.75rem);
+}
+
+.oc-stat-box {
+  background: var(--gray-50, #f9fafb);
+  border: var(--border-width, 1px) solid var(--border-color, #e5e7eb);
+  border-radius: var(--radius-sm, 10px);
+  padding: 0.75rem 0.85rem;
+}
+
+.oc-stat-box__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gray-400, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.oc-stat-box__value {
+  font-size: var(--fs-sm, 0.9rem);
+  font-weight: 700;
+  margin: 0;
+  color: var(--s-800, #0f172a);
+}
+
+.oc-stat-box__value.text-success { color: var(--p-500, #407656); }
+.oc-stat-box__value.text-primary { color: #1d4ed8; }
+.oc-stat-box__value.text-warning { color: #b45309; }
+.oc-stat-box__value.text-info { color: var(--info, #3b82f6); }
+
+/* ─── ORDERS TWO-COLUMN FORM LAYOUT ───────────────────────────── */
+.oc-form-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.oc-form-layout-main,
+.oc-form-layout-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.oc-form-layout-side .oc-card {
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 1101px) {
+  .oc-form-layout-side {
+    position: sticky;
+    top: 1rem;
+  }
+}
+
+/* ─── ORDERS PAYMENT SUMMARY ──────────────────────────────────── */
+.oc-finance {
+  background: var(--s-700, #113557);
+  border-radius: var(--radius-md, 14px);
+  padding: 1.1rem 1.25rem;
+  color: var(--white, #fff);
+  margin-bottom: 1.25rem;
+}
+
+.oc-finance-title {
+  font-size: var(--fs-xs, 0.72rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.65);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1, 0.4rem);
+}
+
+.oc-finance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.oc-finance-row .oc-finance-iva-select {
+  width: auto;
+  min-width: 100px;
+  padding: 0.35rem 2rem 0.35rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.14);
+  color: var(--white, #fff);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23ffffff' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 12px;
+}
+
+.oc-finance-row .oc-finance-iva-select:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.oc-finance-row .oc-finance-iva-select:focus {
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+
+.oc-finance-row .oc-finance-iva-select option {
+  background-color: var(--white, #fff);
+  color: var(--s-800, #0f172a);
+}
+
+.oc-finance-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.oc-finance-total .lbl {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+}
+
+.oc-finance-total .amt {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--white, #fff);
+}
+
+.oc-form-submit-note {
+  font-size: 0.78rem;
+  color: var(--gray-500, #6b7280);
+  text-align: center;
+  margin: 0 0 1rem;
+  line-height: 1.4;
+}
+
+.oc-form-submit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.oc-form-submit-actions .btn-geco-primary {
+  width: 100%;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  font-size: var(--fs-sm, 0.95rem);
+}
+
+/* ─── ORDERS TABLE ITEMS (new_order · edit_oc) ────────────────── */
+.oc-card-body--items {
+  padding-top: 0;
+  overflow: visible;
+}
+
+.orders-table-wrap--items {
+  overflow-x: auto;
+  overflow-y: visible;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
+}
+
+.orders-table--items {
+  min-width: 880px;
+}
+
+.orders-table--items thead th:nth-child(2) {
+  min-width: 220px;
+}
+
+.orders-table--items thead th:last-child,
+.orders-table--items tbody td:last-child {
+  text-align: center;
+  padding-right: 1rem;
+}
+
+.orders-table--items tbody td {
+  overflow: visible;
+  vertical-align: middle;
+  padding: 0.7rem 0.75rem;
+}
+
+.orders-table--items tbody td .form-control,
+.orders-table--items tbody td .form-select {
+  min-height: 38px;
+  font-size: var(--fs-sm, 0.85rem);
+  padding: 0.4rem 0.6rem;
+}
+
+.orders-table--items .producto-autocomplete {
+  position: relative;
+  min-width: 200px;
+  width: 100%;
+}
+
+.orders-table--items .producto-autocomplete .descripcion {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+}
+
+.orders-table--items .subtotal {
+  font-weight: 700;
+  color: var(--s-700, #113557);
+  white-space: nowrap;
+}
+
+.orders-table--items .cell-actions {
+  width: 52px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ─── FILE UPLOAD DROPZONE ────────────────────────────────────── */
+.oc-files-dropzone {
+  background: var(--gray-50, #f9fafb);
+  border: 1px dashed var(--gray-300, #d1d5db);
+  border-radius: var(--radius-sm, 10px);
+  padding: 1rem;
+}
+
+.oc-files-dropzone__title {
+  font-size: var(--fs-sm, 0.85rem);
+  font-weight: 600;
+  color: var(--gray-700, #374151);
+  margin-bottom: 0.75rem;
+}
+
+.oc-files-input-group {
+  display: flex;
+  gap: 0;
+}
+
+.oc-files-input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.oc-files-input-group .btn-geco-secondary {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  flex-shrink: 0;
+}
+
+/* ─── RESPONISVE ADAPTATIONS ──────────────────────────────────── */
+@media (max-width: 1100px) {
+  .oc-form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .oc-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .oc-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .oc-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ─── CATALOG SYSTEM ──────────────────────────────────────────── */
+.entity-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 992px) { .entity-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 576px)  { .entity-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.entity-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-align: center;
+}
+.entity-card:hover {
+  background: rgba(0,0,0,0.02);
+}
+.entity-card.active {
+  background: rgba(64,118,86,0.06);
+}
+.entity-card-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.entity-card-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--s-700, #113557);
+  line-height: 1.2;
+}
+
+/* --- SUPPLIER EVALUATION -------------------------------------- */
+.result-card {
+  background: var(--gray-50, #f9fafb);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+}
+.rating-options {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+.rating-options > div {
+  flex: 1;
+  padding: 0.5rem 0.25rem;
+  border: 1.5px solid var(--gray-200, #e5e7eb);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+.rating-options > div.selected {
+  border-color: var(--p-500, #407656);
+  background: rgba(64, 118, 86, 0.06);
+}
+.eval-excellent { background-color: #d4edda; color: #155724; }
+.eval-good      { background-color: #d1ecf1; color: #0c5460; }
+.eval-conditional { background-color: #fff3cd; color: #856404; }
+.eval-not-approved { background-color: #f8d7da; color: #721c24; }
+
+/* ─── CSAT METRIC BLOCK ───────────────────────────────────────── */
+/* Usado en: catalog/historial_cliente.php                        */
+.csat-metric   { display: flex; align-items: flex-end; gap: 0.5rem; margin-bottom: 0.5rem; }
+.csat-score    { font-size: 2.8rem; font-weight: 800; color: var(--s-800, #0f172a); line-height: 1; }
+.csat-label    { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400, #9ca3af); margin-bottom: 0.25rem; }
+.csat-subtitle { font-size: 0.9rem; color: var(--gray-500, #6b7280); margin-bottom: 0.75rem; }
+.csat-hint     { font-size: 0.8rem; color: var(--gray-400, #9ca3af); padding-top: 0.75rem; border-top: 1px solid var(--gray-100, #f3f4f6); }
+
+/* ─── LOADING OVERLAY (shared) ───────────────────────────────── */
+/* Usado en: new_requis.php, see_oc.php, see_requis.php          */
+#loadingOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-box {
+  background: var(--white, #ffffff);
+  padding: 25px 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* ─── OC DETAIL VIEW LAYOUT (see_oc.php) ────────────────────── */
+.oc-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.oc-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem 1.5rem;
+}
+
+.oc-field label {
+  display: block;
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--gray-400, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.2rem;
+}
+
+.oc-field .val {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--s-800, #0f172a);
+}
+
+.oc-side-card {
+  background: #fff;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.oc-side-card:last-child { margin-bottom: 0; }
+
+.oc-side-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-100, #f3f4f6);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--s-700, #113557);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.oc-side-body { padding: 0.9rem 1rem; }
+.oc-side-field { margin-bottom: 0.75rem; }
+.oc-side-field:last-child { margin-bottom: 0; }
+
+.oc-side-field label {
+  display: block;
+  font-size: 0.63rem;
+  font-weight: 700;
+  color: var(--gray-400, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.15rem;
+}
+
+.oc-side-field .val { font-size: 0.82rem; font-weight: 600; color: var(--s-800, #0f172a); line-height: 1.3; }
+
+.type-badge {
+  display: inline-flex;
+  padding: 0.18rem 0.55rem;
+  border-radius: 20px;
+  font-size: 0.67rem;
+  font-weight: 700;
+}
+
+.type-badge.producto { background: rgba(59,130,246,.1); color: #1d4ed8; border: 1px solid rgba(59,130,246,.25); }
+.type-badge.servicio { background: rgba(139,92,246,.1); color: #6d28d9; border: 1px solid rgba(139,92,246,.25); }
+
+.oc-empty { text-align: center; padding: 1.5rem; color: var(--gray-400, #9ca3af); }
+.oc-empty i { font-size: 1.8rem; display: block; margin-bottom: .4rem; opacity: .45; }
+.oc-empty p { font-size: .78rem; margin: 0; }
+
+.oc-comment {
+  background: var(--gray-50, #f9fafb);
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-left: 3px solid var(--s-700, #113557);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: .82rem;
+  color: var(--gray-700, #374151);
+}
+
+.oc-comment.danger { border-left-color: #e8445a; background: rgba(232,68,90,.04); }
+
+@media(max-width: 960px) {
+  .oc-detail-grid { grid-template-columns: 1fr; }
+  .oc-fields { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width: 576px) { .oc-fields { grid-template-columns: 1fr; } }
+
+/* ─── REQUISITION DETAIL — COMMENT & CONCEPT STYLES ─────────── */
+/* Usado en: see_requis.php                                       */
+.btn-estado { margin: 5px 5px 5px 0; }
+
+.comentario-rechazo {
+  background-color: var(--status-badge-bg--rechazado, #fee2e2);
+  border-left: 4px solid var(--status-badge-color--rechazado, #ef4444);
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.comentario-header {
+  font-weight: bold;
+  color: var(--status-badge-color--rechazado, #ef4444);
+  margin-bottom: 8px;
+}
+
+.concepto-info {
+  font-size: 0.85rem;
+  color: var(--gray-500, #6c757d);
+  margin-top: 4px;
+}
+
+.concepto-badge {
+  background-color: var(--gray-100, #f3f4f6);
+  color: var(--gray-700, #374151);
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-right: 4px;
+}

@@ -11,4 +11,4 @@ $db   = "proatam";
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-define('BASE_URL', '/PROATAM_LOCAL');
+define('BASE_URL', '/PROATAMUI');

@@ -218,6 +218,41 @@ body, html {
     margin: 0;
 }
 
+/* ─── TOGGLE PASSWORD BUTTON ─────────────────────────────────── */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color var(--trans-fast);
+}
+
+.toggle-password:hover {
+    color: var(--s-700);
+}
+
+/* ─── FORGOT LINK ────────────────────────────────────────────── */
+.forgot-link {
+    font-size: 0.65rem;
+    color: var(--p-500);
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color var(--trans-fast);
+}
+
+.forgot-link:hover {
+    color: var(--p-600);
+}
+
 /* ─── IMAGE PANEL (Right) ───────────────────────────────────── */
 .auth-image-panel {
     height: 100vh;
@@ -265,6 +300,7 @@ body, html {
 .carousel-quote {
     max-width: 600px;
     animation: fadeInRight 0.8s ease-out;
+    margin-bottom: 5rem; /* Pushes the quote text up to create breathing room above the dots */
 }
 
 .quote-text {
@@ -287,25 +323,27 @@ body, html {
 
 .carousel-dots {
     position: absolute;
-    bottom: 6vh;
+    bottom: 5vh;
     left: 6vh;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     z-index: 10;
 }
 
 .dot {
-    width: 30px;
-    height: 4px;
-    background-color: rgba(255,255,255,0.3);
-    border-radius: 2px;
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255,255,255,0.35);
+    border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dot.active {
     background-color: var(--p-400);
-    width: 50px;
+    width: 10px;
+    transform: scale(1.35);
+    box-shadow: 0 0 8px rgba(93, 176, 118, 0.4);
 }
 
 /* ─── ANIMATIONS ────────────────────────────────────────────── */
@@ -321,3 +359,70 @@ body, html {
     .auth-panel { height: auto; padding: 6vh 20px; }
     .auth-image-panel { display: none !important; }
 }
+
+/* ─── PASSWORD REQUIREMENTS LIST ────────────────────────────── */
+/* Usado en: change_password.php, reset_password.php            */
+.req-list li { transition: color 0.3s; }
+.req-list li.valid { color: var(--success-color, #198754) !important; font-weight: 500; }
+.req-list li.valid i::before { content: "\F26A"; /* bi-check-circle-fill */ }
+
+/* ─── OTP CODE INPUT ─────────────────────────────────────────── */
+/* Usado en: verify_token.php                                    */
+.button-57 i {
+    display: block;
+    margin-right: 0.50em;
+    transform-origin: center center;
+    transition: transform 0.3s ease-in-out;
+    transform: rotate(0deg) scale(1.1);
+}
+
+.form-text {
+    font-size: 0.875em;
+    color: #6c757d;
+    text-align: center;
+}
+
+.code-input-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px dashed var(--gray-300);
+    border-radius: 8px;
+    background-color: var(--gray-50);
+}
+
+.code-input {
+    width: 45px;
+    height: 55px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 2px solid var(--gray-300);
+    border-radius: 8px;
+    background: white;
+    color: var(--gray-800);
+    transition: all 0.2s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: var(--p-500);
+    box-shadow: 0 0 0 3px rgba(17, 52, 86, 0.1);
+    transform: translateY(-2px);
+}
+
+.code-input.filled {
+    border-color: var(--p-400);
+    background-color: #f8fafc;
+}
+
+.code-count {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+

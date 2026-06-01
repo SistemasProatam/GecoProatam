@@ -131,34 +131,7 @@ $preguntas = [
   'p5' => 'Manejo de imprevistos',
 ];
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-  /* CSAT metric block */
-  .csat-metric { display:flex; align-items:flex-end; gap:0.5rem; margin-bottom:0.5rem; }
-  .csat-score  { font-size:2.8rem; font-weight:800; color:var(--s-800,#0f172a); line-height:1; }
-  .csat-label  { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--gray-400,#9ca3af); margin-bottom:0.25rem; }
-  .csat-subtitle { font-size:0.9rem; color:var(--gray-500,#6b7280); margin-bottom:0.75rem; }
-  .csat-hint   { font-size:0.8rem; color:var(--gray-400,#9ca3af); padding-top:0.75rem; border-top:1px solid var(--gray-100,#f3f4f6); }
-
-  /* Back button */
-  .btn-geco-outline {
-    display:inline-flex; align-items:center; gap:0.4rem;
-    padding:0.5rem 1rem;
-    border:1.5px solid var(--gray-200,#e5e7eb);
-    border-radius:10px; background:#fff;
-    color:var(--s-700,#113557); font-size:0.82rem; font-weight:600;
-    cursor:pointer; text-decoration:none; transition:all 0.2s;
-  }
-  .btn-geco-outline:hover { background:var(--gray-50,#f9fafb); color:var(--s-700,#113557); text-decoration:none; }
-
-  /* Result badges */
-  .badge-excelente   { background-color:#28a745; color:#fff; }
-  .badge-bueno       { background-color:#17a2b8; color:#fff; }
-  .badge-regular     { background-color:#ffc107; color:#000; }
-  .badge-no_aprobado { background-color:#dc3545; color:#fff; }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
@@ -176,7 +149,7 @@ $preguntas = [
       </nav>
       <h1 class="orders-page-title">Historial de Evaluaciones de Clientes</h1>
     </div>
-    <a href="list_catalog.php?entidad=clientes" class="btn-geco-outline">← Volver</a>
+    <a href="list_catalog.php?entidad=clientes" class="btn-geco-outline"><i class="fa-solid fa-arrow-left"></i> Volver</a>
   </div>
 
   <!-- CSAT Card -->
@@ -195,58 +168,47 @@ $preguntas = [
     </div>
   </div>
 
-  <!-- Filters + Table Card -->
-  <div class="orders-card">
-
-    <!-- Filter Bar -->
+  <!-- Filters Card -->
+  <div class="orders-card mb-3">
     <div class="orders-filter-bar">
-      <!-- Search -->
-      <form id="search-form" method="GET" class="search-input-wrap" style="flex:1; min-width:220px;">
-        <input type="hidden" name="cliente_id" value="<?= $cliente_id ?>">
-        <input type="hidden" name="proyecto_id" value="<?= $proyecto_id ?>">
-        <i class="bi bi-search search-icon" style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--gray-400,#9ca3af); pointer-events:none;"></i>
-        <input
-          class="form-control js-auto-search"
-          type="search"
-          name="q"
-          placeholder="Buscar cliente, proyecto o contrato..."
-          value="<?= htmlspecialchars($busqueda) ?>"
-          style="padding-left:2.2rem;"
-        >
-      </form>
-
-      <!-- Dropdowns -->
-      <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2">
+      <form id="filter-form" method="GET" class="d-flex align-items-center gap-3 w-100 flex-wrap">
         <input type="hidden" name="page" value="1">
-        <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
+        
+        <!-- Search -->
+        <div class="search-input-wrap" style="flex: 1; max-width: 400px; min-width: 250px;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="js-auto-search" type="search" name="q" placeholder="Buscar cliente, proyecto o contrato..." value="<?= htmlspecialchars($busqueda) ?>">
+        </div>
 
-        <select name="cliente_id" class="form-select js-auto-filter" style="min-width:170px; font-size:0.85rem;">
-          <option value="0">Todos los clientes</option>
-          <?php while ($cliente_option = $clientes_result->fetch_assoc()): ?>
-            <option value="<?= $cliente_option['id'] ?>" <?= $cliente_id === intval($cliente_option['id']) ? 'selected' : '' ?>>
-              <?= htmlspecialchars($cliente_option['nombre']) ?>
-            </option>
-          <?php endwhile; ?>
-        </select>
+        <!-- Selects -->
+        <div class="d-flex align-items-center gap-2">
+          <select name="cliente_id" class="form-select js-auto-filter" style="width: 220px; font-size: 0.85rem;">
+            <option value="0">Todos los clientes</option>
+            <?php while ($cliente_option = $clientes_result->fetch_assoc()): ?>
+              <option value="<?= $cliente_option['id'] ?>" <?= $cliente_id === intval($cliente_option['id']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($cliente_option['nombre']) ?>
+              </option>
+            <?php endwhile; ?>
+          </select>
 
-        <select name="proyecto_id" class="form-select js-auto-filter" style="min-width:170px; font-size:0.85rem;">
-          <option value="0">Todos los proyectos</option>
-          <?php while ($proyecto_option = $proyectos_result->fetch_assoc()): ?>
-            <option value="<?= $proyecto_option['id'] ?>" <?= $proyecto_id === intval($proyecto_option['id']) ? 'selected' : '' ?>>
-              <?= htmlspecialchars($proyecto_option['nombre_proyecto']) ?>
-              <?php if (!empty($proyecto_option['numero_contrato'])): ?>
-                - <?= htmlspecialchars($proyecto_option['numero_contrato']) ?>
-              <?php endif; ?>
-            </option>
-          <?php endwhile; ?>
-        </select>
+          <select name="proyecto_id" class="form-select js-auto-filter" style="width: 220px; font-size: 0.85rem;">
+            <option value="0">Todos los proyectos</option>
+            <?php while ($proyecto_option = $proyectos_result->fetch_assoc()): ?>
+              <option value="<?= $proyecto_option['id'] ?>" <?= $proyecto_id === intval($proyecto_option['id']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($proyecto_option['nombre_proyecto']) ?>
+                <?php if (!empty($proyecto_option['numero_contrato'])): ?>
+                  - <?= htmlspecialchars($proyecto_option['numero_contrato']) ?>
+                <?php endif; ?>
+              </option>
+            <?php endwhile; ?>
+          </select>
+        </div>
       </form>
     </div>
+  </div>
 
-    <!-- Record count -->
-    <div class="d-flex align-items-center px-3 pb-2" style="font-size:0.82rem; color:var(--gray-500,#6b7280);">
-      <span><?= $totalRegistros ?> registro<?= $totalRegistros !== 1 ? 's' : '' ?></span>
-    </div>
+  <!-- Table Card -->
+  <div class="orders-card">
 
     <!-- Table -->
     <div class="orders-table-wrap">
@@ -288,13 +250,13 @@ $preguntas = [
                   <?php if ($row['estado'] === 'contestado'): ?>
                     <?php
                       $badges = [
-                        'excelente'   => 'badge-excelente',
-                        'bueno'       => 'badge-bueno',
-                        'regular'     => 'badge-regular',
-                        'no_aprobado' => 'badge-no_aprobado',
+                        'excelente'   => 'eval-excellent',
+                        'bueno'       => 'eval-good',
+                        'regular'     => 'eval-conditional',
+                        'no_aprobado' => 'eval-not-approved',
                       ];
                     ?>
-                    <span class="badge <?= $badges[$row['resultado_final']] ?? 'bg-secondary' ?>">
+                    <span class="<?= $badges[$row['resultado_final']] ?? 'bg-secondary' ?> px-2 py-1 rounded" style="font-size:0.75rem; font-weight:600; border:1px solid currentColor;">
                       <?= number_format($row['promedio_puntuacion'], 1) ?> —
                       <?= ucfirst(str_replace('_', ' ', $row['resultado_final'])) ?>
                     </span>
@@ -307,11 +269,11 @@ $preguntas = [
                     <!-- Botón enviar: solo si está pendiente y hay email -->
                     <?php if ($row['estado'] === 'pendiente'): ?>
                       <?php if (!empty($row['email_cliente'])): ?>
-                        <button class="btn btn-sm btn-primary"
+                        <button class="btn-geco-primary"
                           onclick="enviarFormulario(<?= $row['historial_id'] ?>, <?= htmlspecialchars(json_encode($row['email_cliente']), ENT_QUOTES, 'UTF-8') ?>)"
                           title="Enviar encuesta al cliente"
-                          style="font-size:0.75rem;">
-                          <i class="fas fa-paper-plane"></i> Enviar
+                          style="font-size:0.75rem; padding: 0.35rem 0.65rem;">
+                          <i class="fa-solid fa-paper-plane"></i> Enviar
                         </button>
                       <?php else: ?>
                         <span class="badge bg-warning text-dark" title="El cliente no tiene email registrado">
@@ -322,17 +284,17 @@ $preguntas = [
                       <button class="btn btn-sm btn-outline-secondary" disabled
                         title="Esperando respuesta del cliente"
                         style="font-size:0.75rem;">
-                        <i class="fas fa-clock"></i> Pendiente
+                        <i class="fa-regular fa-clock"></i> Pendiente
                       </button>
                     <?php endif; ?>
 
                     <!-- Botón ver respuesta: solo si está contestado -->
                     <?php if ($row['estado'] === 'contestado'): ?>
-                      <button class="btn btn-sm btn-info text-white"
+                      <button class="btn-geco-secondary"
                         onclick="verRespuesta(<?= htmlspecialchars(json_encode($row)) ?>)"
                         title="Ver respuestas del cliente"
-                        style="font-size:0.75rem;">
-                        <i class="fas fa-eye"></i> Ver respuesta
+                        style="font-size:0.75rem; padding: 0.35rem 0.65rem;">
+                        <i class="fa-regular fa-eye"></i> Ver respuesta
                       </button>
                     <?php endif; ?>
                   </div>
@@ -343,7 +305,7 @@ $preguntas = [
             <tr>
               <td colspan="7">
                 <div class="orders-empty-state">
-                  <i class="fas fa-inbox fa-2x mb-2"></i>
+                  <i class="fa-solid fa-inbox fa-2x mb-2"></i>
                   <p>No hay proyectos terminados registrados</p>
                 </div>
               </td>
@@ -363,7 +325,15 @@ $preguntas = [
         ];
       ?>
       <div class="orders-pagination-bar">
-        <span class="pagination-info">Página <?= $pagina ?> de <?= $totalPaginas ?></span>
+        <div class="orders-pagination-left">
+          <span class="orders-pagination-info">
+            <?php
+              $ini = $totalRegistros > 0 ? $offset + 1 : 0;
+              $fin = min($offset + $por_pagina, $totalRegistros);
+            ?>
+            Mostrando <strong><?= $ini ?>–<?= $fin ?></strong> de <strong><?= $totalRegistros ?></strong>
+          </span>
+        </div>
         <div class="pagination-controls">
           <a class="page-btn <?= $pagina <= 1 ? 'disabled' : '' ?>"
             href="?<?= http_build_query(array_merge($queryBase, ['page' => $pagina - 1])) ?>">
@@ -403,55 +373,40 @@ $preguntas = [
     });
   });
 
-  function enviarFormulario(historialId, emailCliente) {
-    Swal.fire({
+  async function enviarFormulario(historialId, emailCliente) {
+    const confirmado = await UI.confirm({
       title: '¿Enviar encuesta?',
-      html: `Se enviará el formulario de satisfacción a <strong>${emailCliente}</strong>`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#0f6e56',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Sí, enviar',
-      cancelButtonText: 'Cancelar'
-    }).then(result => {
-      if (!result.isConfirmed) return;
-
-      Swal.fire({
-        title: 'Enviando...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      fetch('enviar_formulario_satisfaccion.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: `historial_id=${historialId}`
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Enviado',
-                text: data.message
-              })
-              .then(() => location.reload());
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: data.message
-            });
-          }
-        })
-        .catch(() => Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error de conexión'
-        }));
+      message: `Se enviará el formulario de satisfacción a <strong>${emailCliente}</strong>`,
+      confirmText: 'Sí, enviar',
+      cancelText: 'Cancelar',
+      icon: 'question'
     });
+    
+    if (!confirmado) return;
+
+    UI.loading('Enviando...');
+
+    fetch('enviar_formulario_satisfaccion.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `historial_id=${historialId}`
+      })
+      .then(r => r.json())
+      .then(data => {
+        UI.loading.hide();
+        if (data.success) {
+          UI.toast.success(data.message);
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          UI.toast.error(data.message);
+        }
+      })
+      .catch(() => {
+        UI.loading.hide();
+        UI.toast.error('Error de conexión');
+      });
   }
 
   function verRespuesta(row) {
@@ -480,9 +435,9 @@ $preguntas = [
                </div>` :
       '';
 
-    Swal.fire({
+    UI.modal({
       title: 'Respuesta del cliente',
-      width: 560,
+      size: 'md',
       html: `
                 <div style="text-align:left;">
                     <p style="margin:0 0 8px; color:#555;">
@@ -509,10 +464,9 @@ $preguntas = [
                         </tfoot>
                     </table>
                     ${observaciones}
-                </div>`,
-      showCloseButton: true,
-      showConfirmButton: false,
+                </div>`
     });
   }
 </script>
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

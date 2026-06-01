@@ -77,7 +77,7 @@ if (isset($_SESSION['user_id'])) {
                 <div class="auth-carousel">
                     <!-- Slide 1 -->
                     <div class="carousel-slide active">
-                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_main.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
                             <div class="carousel-quote">
                                 <blockquote class="quote-text">

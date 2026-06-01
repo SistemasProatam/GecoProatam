@@ -31,7 +31,7 @@
   border: 1px solid rgba(0,0,0,0.08);
   box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05);
   color: #1e293b;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.83rem;
   position: relative;
   overflow: hidden;
@@ -121,7 +121,7 @@
 .ui-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 9998;
@@ -145,7 +145,7 @@
   width: calc(100vw - 2rem);
   box-shadow: 0 24px 60px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15);
   animation: uiScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   text-align: center;
 }
 .ui-confirm-icon {
@@ -180,7 +180,7 @@
   border: 1.5px solid #d0d8e4;
   background: #fff;
   color: #5a6a7a;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -196,7 +196,7 @@
   border: none;
   background: #113557;
   color: #fff;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
@@ -215,7 +215,7 @@
   max-height: calc(100vh - 3rem);
   box-shadow: 0 24px 60px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15);
   animation: uiScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   overflow: hidden;
 }
 .ui-modal.ui-sm  { width: min(400px,  calc(100vw - 2rem)); }
@@ -274,7 +274,7 @@
   gap: 0.6rem;
   padding: 0.65rem 0.9rem;
   border-radius: 10px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   font-size: 0.83rem;
   font-weight: 500;
   margin-bottom: 0.75rem;
@@ -308,7 +308,7 @@
 #ui-loading-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 99997;
@@ -321,14 +321,14 @@
 }
 .ui-loading-spinner {
   width: 48px; height: 48px;
-  border: 3px solid rgba(17, 53, 87, 0.15);
+  border: 3px solid rgba(255, 255, 255, 0.15);
   border-top-color: #407656;
   border-radius: 50%;
   animation: uiSpin 0.7s linear infinite;
 }
 .ui-loading-text {
-  color: #113557;
-  font-family: 'Montserrat', sans-serif;
+  color: #ffffff;
+  font-family: var(--font-main);
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -342,7 +342,7 @@
   width: calc(100vw - 2rem);
   box-shadow: 0 24px 60px rgba(0,0,0,0.3);
   animation: uiScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   text-align: center;
 }
 .ui-session-icon {

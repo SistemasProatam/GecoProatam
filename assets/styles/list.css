@@ -1,19 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap");
+@import url("./core/tokens.css");
 
 :root {
-  --primary-color: #113557;
-  --secondary-color: #407656;
-  --primary-light: #1d4a75;
-  --third-color: #f8fafc;
-  --accent-color: #407656;
-  --light-accent: rgba(64, 118, 86, 0.1);
-  --accent-color-light: #64748b;
-  --dark-overlay: rgba(17, 53, 87, 0.9);
-  --text-light: rgba(255, 255, 255, 0.9);
-  --text-muted: rgba(255, 255, 255, 0.7);
-  --border-radius: 20px;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --primary-color: var(--s-700);
+  --secondary-color: var(--p-500);
+  --primary-light: var(--s-600);
+  --third-color: var(--gray-50);
+  --accent-color: var(--p-500);
+  --light-accent: color-mix(in srgb, var(--p-500) 10%, transparent);
+  --accent-color-light: var(--gray-500);
+  --dark-overlay: color-mix(in srgb, var(--s-700) 90%, transparent);
+  --text-light: color-mix(in srgb, var(--white) 90%, transparent);
+  --text-muted: color-mix(in srgb, var(--white) 70%, transparent);
+  --border-radius: var(--radius-lg);
+  --shadow: var(--shadow-sm);
+  --transition: var(--trans-normal);
 }
 
 /* Styles for list views */
@@ -571,9 +571,9 @@
 
 /* Deshabilitados */
 .pagination .page-item.disabled .page-link {
-  color: #999999;
-  background-color: #f0f9f8;
-  border-color: #cccccc;
+  color: var(--gray-400);
+  background-color: var(--gray-100);
+  border-color: var(--gray-200);
   cursor: not-allowed;
 }
 

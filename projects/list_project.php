@@ -53,14 +53,8 @@ $result = $stmt->get_result();
 
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-  .badge-presupuesto { font-size: 0.75em; padding: 0.25em 0.5em; }
-  .presupuesto-info  { font-size: 0.85em; line-height: 1.4; }
-  .progress          { height: 6px; margin-top: 5px; }
-  .progress-bar      { transition: width 0.3s ease; }
-</style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -77,29 +71,30 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <h1 class="orders-page-title">Registro de Proyectos</h1>
     </div>
     <button class="btn-geco-primary" type="button" onclick="agregarProyecto()">
-      <i class="bi bi-plus-circle"></i> Nuevo Proyecto
+      <i class="fa-solid fa-circle-plus"></i> Nuevo Proyecto
     </button>
   </div>
-
-  <!-- Search and Stats Card -->
+ 
+  <!-- Filtros + Buscador en una sola línea -->
   <div class="orders-card mb-4">
-    <div class="p-3">
-      <form id="search-form" class="orders-filter-bar d-flex gap-2" method="GET">
-        <div class="search-input-wrap flex-grow-1">
-          <i class="bi bi-search search-icon"></i>
-          <input class="form-control" type="search" name="q" placeholder="Buscar proyecto por nombre, licitación o contrato..." value="<?= htmlspecialchars($busqueda) ?>">
+    <form id="search-form" method="GET">
+      <div class="orders-filter-bar">
+        <div class="orders-filter-search">
+          <div class="search-input-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" name="q" placeholder="Buscar proyecto por nombre, licitación o contrato..." value="<?= htmlspecialchars($busqueda) ?>">
+          </div>
         </div>
-        <button class="btn-geco-primary" type="submit">Buscar</button>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
-
+ 
   <!-- Table Card -->
   <div class="orders-card">
-    <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
-      <span class="fw-bold text-muted"><?= $totalRegistros ?> proyectos registrados</span>
+    <div class="p-3 border-bottom d-none">
+      <!-- Contador movido a la parte inferior -->
     </div>
-
+ 
     <div id="table-container-wrapper">
       <?php if($result && $result->num_rows > 0): ?>
       <div class="orders-table-wrap">
@@ -111,7 +106,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
               <th>Periodo</th>
               <th>Obras</th>
               <th>Presupuesto Disponible</th>
-              <th style="width: 120px; text-align: right;">Acciones</th>
+              <th class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -141,38 +136,34 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
               </td>
               <td>
                 <?php if($row['total_obras'] > 0): ?>
-                <span class="status-badge" style="color:#0284c7; background:rgba(14,165,233,0.08); border-color:rgba(14,165,233,0.3);">
-                  <i class="bi bi-tools me-1"></i> <?= $row['total_obras'] ?> obra(s)
-                </span>
+                <span class="cell-muted"><?= $row['total_obras'] ?> obra<?= $row['total_obras'] != 1 ? 's' : '' ?></span>
                 <?php else: ?>
-                <span class="status-badge" style="color:#64748b; background:rgba(148,163,184,0.08); border-color:rgba(148,163,184,0.3);">
-                  Sin obras
-                </span>
+                <span class="cell-muted">Sin obras</span>
                 <?php endif; ?>
               </td>
               <td>
                 <div class="d-flex flex-column" style="min-width: 150px;">
                   <div class="d-flex justify-content-between small mb-1">
-                    <span class="text-muted">CD Asignado: $<?= number_format($costo_directo, 2) ?></span>
-                    <span class="fw-semibold <?= $costo_disponible < 0 ? 'text-danger' : 'text-success' ?>">
+                    <span class="cell-muted">CD: $<?= number_format($costo_directo, 2) ?></span>
+                    <span class="fw-semibold <?= $costo_disponible < 0 ? 'text-danger' : '' ?>">
                       $<?= number_format($costo_disponible, 2) ?> disp.
                     </span>
                   </div>
-                  <div class="progress" style="height:6px;">
-                    <div class="progress-bar <?= $progress_class ?>" role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
+                  <div class="progress" style="height:5px;border-radius:4px;background:var(--gray-100);">
+                    <div class="progress-bar <?= $progress_class ?>" role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%; border-radius:4px; transition:width 0.3s ease;"></div>
                   </div>
                 </div>
               </td>
-              <td>
-                <div class="actions-group justify-content-end">
-                  <a href="list_obras.php?proyecto_id=<?= $row['id'] ?>" class="btn-action" style="color: var(--p-600);" title="Gestionar Obras">
-                    <i class="bi bi-cone-striped"></i>
+              <td class="text-end">
+                <div class="actions-group">
+                  <a href="list_obras.php?proyecto_id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver Obras del Proyecto">
+                    <i class="fa-solid fa-helmet-safety"></i>
                   </a>
                   <a href="details_project.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver Detalles del Proyecto">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="fa-solid fa-circle-info"></i>
                   </a>
-                  <button class="btn-action" style="color: #ef4444;" onclick="eliminarProyecto(<?= $row['id'] ?>)" title="Eliminar Proyecto">
-                    <i class="bi bi-trash3"></i>
+                  <button class="btn-action btn-action--delete" onclick="eliminarProyecto(<?= $row['id'] ?>)" title="Eliminar Proyecto">
+                    <i class="fa-solid fa-trash-can"></i>
                   </button>
                 </div>
               </td>
@@ -182,24 +173,36 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
         </table>
       </div>
 
-      <?php if($totalPaginas > 1): ?>
-      <div class="orders-pagination-bar mt-3 p-3 border-top d-flex justify-content-center">
-        <nav aria-label="Paginación">
-          <ul class="pagination mb-0">
+      <!-- Pagination Bar -->
+      <div class="orders-pagination-bar">
+        <div class="orders-pagination-left">
+          <span class="orders-pagination-info">
+            <?php
+            $inicio_reg = $totalRegistros > 0 ? $offset + 1 : 0;
+            $fin_reg    = min($offset + $por_pagina, $totalRegistros);
+            ?>
+            Mostrando <strong><?= $inicio_reg ?>-<?= $fin_reg ?></strong> de <strong><?= $totalRegistros ?></strong> proyectos
+          </span>
+        </div>
+        <?php if($totalPaginas > 1): ?>
+        <div class="orders-pagination-controls">
+          <nav class="orders-pagination-nav">
+            <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&page=1">&laquo;</a>
+            <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&page=<?= max(1,$pagina-1) ?>">&lsaquo;</a>
             <?php for($i=1; $i<=$totalPaginas; $i++): ?>
-            <li class="page-item <?= $i==$pagina?'active':'' ?>">
-              <a class="page-link" href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>"><?= $i ?></a>
-            </li>
+            <a class="page-btn page-link <?= $i==$pagina?'active':'' ?>" href="?q=<?= urlencode($busqueda) ?>&page=<?= $i ?>"><?= $i ?></a>
             <?php endfor; ?>
-          </ul>
-        </nav>
+            <a class="page-btn page-link <?= $pagina>=$totalPaginas ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&page=<?= min($totalPaginas,$pagina+1) ?>">&rsaquo;</a>
+            <a class="page-btn page-link <?= $pagina>=$totalPaginas ? 'disabled' : '' ?>" href="?q=<?= urlencode($busqueda) ?>&page=<?= $totalPaginas ?>">&raquo;</a>
+          </nav>
+        </div>
+        <?php endif; ?>
       </div>
-      <?php endif; ?>
 
       <?php else: ?>
       <div class="orders-empty-state">
-        <i class="bi bi-inbox" style="font-size:3rem;"></i>
-        <p class="mt-2">No hay proyectos registrados</p>
+        <i class="fa-solid fa-inbox"></i>
+        <p>No hay proyectos registrados</p>
       </div>
       <?php endif; ?>
     </div><!-- /table-container-wrapper -->
@@ -279,7 +282,7 @@ function agregarProyecto() {
                   </div>
                   <div class="d-flex justify-content-end gap-2 mt-4">
                     <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-floppy me-1"></i>Guardar Proyecto</button>
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar Proyecto</button>
                   </div>
                 </form>`,
             });
@@ -354,8 +357,8 @@ function initAJAX() {
     }
 
     document.addEventListener('click', function(e) {
-        const pl = e.target.closest('.page-link');
-        if (pl) { e.preventDefault(); updateList(pl.href); window.scrollTo({top:0,behavior:'smooth'}); }
+        const pl = e.target.closest('.page-btn');
+        if (pl && !pl.classList.contains('disabled')) { e.preventDefault(); updateList(pl.href); window.scrollTo({top:0,behavior:'smooth'}); }
     });
     searchForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -367,3 +370,4 @@ function initAJAX() {
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

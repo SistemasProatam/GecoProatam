@@ -53,7 +53,7 @@ session_start();
             <div class="col-lg-7 col-xl-8 d-none d-lg-block auth-image-panel">
                 <div class="auth-carousel">
                     <div class="carousel-slide active">
-                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_main.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
                             <div class="carousel-quote">
                                 <blockquote class="quote-text">

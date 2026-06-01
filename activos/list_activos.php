@@ -95,26 +95,9 @@ function urlFiltros(array $extras = []): string {
 }
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-<style>
-    /* Custom status badges for condition */
-    .status-badge--bueno {
-        color: #15803d;
-        background: rgba(34, 197, 94, 0.06);
-        border-color: rgba(34, 197, 94, 0.25);
-    }
-    .status-badge--regular {
-        color: #b45309;
-        background: rgba(245, 158, 11, 0.06);
-        border-color: rgba(245, 158, 11, 0.25);
-    }
-    .status-badge--malo {
-        color: #be123c;
-        background: rgba(244, 63, 94, 0.06);
-        border-color: rgba(244, 63, 94, 0.25);
-    }
-</style>
+
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -131,27 +114,26 @@ function urlFiltros(array $extras = []): string {
             <h1 class="orders-page-title">Registro de Activos</h1>
         </div>
         <a href="new_activo.php" class="btn-geco-primary">
-            <i class="bi bi-plus-circle"></i> Agregar Activo
+            <i class="fa-solid fa-circle-plus"></i> Agregar Activo
         </a>
     </div>
 
     <!-- ===== Alertas de sesión ===== -->
     <?php if ($msg_success): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle"></i> <?= $msg_success ?>
+            <i class="fa-solid fa-circle-check"></i> <?= $msg_success ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($msg_error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> <?= $msg_error ?>
+            <i class="fa-solid fa-triangle-exclamation"></i> <?= $msg_error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
-    <!-- ===== Tarjeta Principal con Filtros y Tabla ===== -->
-    <div class="orders-card">
-        
+    <!-- ===== CARD 1: FILTROS ===== -->
+    <div class="orders-card mb-3">
         <!-- ===== Filtros y Buscador Combinados ===== -->
         <div class="orders-filter-bar">
             <!-- Buscador (Izquierda) -->
@@ -159,7 +141,7 @@ function urlFiltros(array $extras = []): string {
                 <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo_id) ?>">
                 <input type="hidden" name="estatus" value="<?= htmlspecialchars($estatus) ?>">
                 <div class="search-input-wrap">
-                    <i class="bi bi-search"></i>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="search" name="q" placeholder="Buscar por código o nombre..." value="<?= htmlspecialchars($busqueda) ?>">
                 </div>
             </form>
@@ -187,12 +169,15 @@ function urlFiltros(array $extras = []): string {
 
                 <?php if ($busqueda || $tipo_id || $estatus): ?>
                     <a href="list_activos.php" class="btn btn-outline-secondary btn-sm rounded-3 px-3 py-1.5" style="font-size:0.8rem; display: inline-flex; align-items: center; gap: 0.3rem;">
-                        <i class="bi bi-x-circle"></i> Limpiar
+                        <i class="fa-solid fa-circle-xmark"></i> Limpiar
                     </a>
                 <?php endif; ?>
             </form>
         </div>
+    </div>
 
+    <!-- ===== CARD 2: TABLA ===== -->
+    <div class="orders-card">
         <div id="table-container-wrapper">
             <!-- ===== Lista / Tabla ===== -->
             <?php if ($result && $result->num_rows > 0): ?>
@@ -220,7 +205,7 @@ function urlFiltros(array $extras = []): string {
                                     <td>
                                         <span class="cell-muted">
                                             <?php if ($row['ubicacion']): ?>
-                                                <i class="bi bi-geo-alt"></i> <?= htmlspecialchars($row['ubicacion']) ?>
+                                                <i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($row['ubicacion']) ?>
                                             <?php else: ?>
                                                 —
                                             <?php endif; ?>
@@ -244,11 +229,11 @@ function urlFiltros(array $extras = []): string {
                                         <div class="d-flex gap-1 justify-content-end">
                                             <a href="details_activo.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver detalle"
                                                data-bs-toggle="tooltip" data-bs-placement="top">
-                                                <i class="bi bi-info-circle"></i>
+                                                <i class="fa-solid fa-circle-info"></i>
                                             </a>
                                             <a href="edit_activo.php?id=<?= $row['id'] ?>" class="btn-action btn-action--edit" title="Editar activo"
                                                data-bs-toggle="tooltip" data-bs-placement="top">
-                                                <i class="bi bi-pencil"></i>
+                                                <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -262,7 +247,11 @@ function urlFiltros(array $extras = []): string {
                 <div class="orders-pagination-bar">
                     <div class="orders-pagination-left">
                         <span class="orders-pagination-info">
-                            Mostrando <strong><?= $totalRegistros ?></strong> activo<?= $totalRegistros != 1 ? 's' : '' ?> registrado<?= $totalRegistros != 1 ? 's' : '' ?>
+                            <?php
+                            $ini = $totalRegistros > 0 ? $offset + 1 : 0;
+                            $fin = min($offset + $por_pagina, $totalRegistros);
+                            ?>
+                            Mostrando <strong><?= $ini ?>–<?= $fin ?></strong> de <strong><?= $totalRegistros ?></strong> activos
                         </span>
                     </div>
 
@@ -271,7 +260,7 @@ function urlFiltros(array $extras = []): string {
                             <nav class="orders-pagination-nav">
                                 <!-- Anterior -->
                                 <a class="page-btn <?= $pagina <= 1 ? 'disabled' : '' ?>" href="<?= urlFiltros(['page' => $pagina - 1]) ?>">
-                                    <i class="bi bi-chevron-left"></i>
+                                    <i class="fa-solid fa-chevron-left"></i>
                                 </a>
 
                                 <?php
@@ -298,7 +287,7 @@ function urlFiltros(array $extras = []): string {
 
                                 <!-- Siguiente -->
                                 <a class="page-btn <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" href="<?= urlFiltros(['page' => $pagina + 1]) ?>">
-                                    <i class="bi bi-chevron-right"></i>
+                                    <i class="fa-solid fa-chevron-right"></i>
                                 </a>
                             </nav>
                         </div>
@@ -307,12 +296,12 @@ function urlFiltros(array $extras = []): string {
 
             <?php else: ?>
                 <!-- ===== Estado Vacío ===== -->
-                <div class="text-center text-muted py-5" style="background: var(--gray-50, #f9fafb);">
-                    <i class="bi bi-inbox" style="font-size: 3rem; color: var(--gray-300);"></i>
-                    <p class="mt-3 mb-2" style="font-size: 0.95rem; font-weight: 500;">No se encontraron activos registrados</p>
+                <div class="orders-empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>No se encontraron activos registrados</p>
                     <?php if ($busqueda || $tipo_id || $estatus): ?>
                         <a href="list_activos.php" class="btn btn-outline-secondary btn-sm rounded-pill px-4 mt-2" style="font-size: 0.8rem;">
-                            <i class="bi bi-x-circle"></i> Limpiar filtros
+                            <i class="fa-solid fa-circle-xmark"></i> Limpiar filtros
                         </a>
                     <?php endif; ?>
                 </div>
@@ -407,3 +396,4 @@ function initAJAX() {
 
 document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
+

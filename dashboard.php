@@ -142,7 +142,7 @@ $tipo_colores = [
     ['#ea580c', '#c2410c'], // GECO Orange
 ];
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/dashboard.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
@@ -166,16 +166,16 @@ $tipo_colores = [
             <!-- KPIs PRINCIPALES -->
             <div class="oc-card mb-section fade-up delay-1">
                 <div class="oc-card-header">
-                    <span class="oc-card-header__title"><i class="bi bi-grid-fill"></i> Resumen general</span>
+                    <span class="oc-card-header__title"><i class="fa-solid fa-grip"></i> Resumen general</span>
                 </div>
                 <div class="oc-card-body" style="padding: 24px;">
                     <div class="grid-stats">
                         <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
-                            <div class="kpi-card c-green">
-                                <i class="bi bi-folder2-open kpi-icon"></i>
-                                <div class="kpi-label">Proyectos</div>
-                                <div class="kpi-value"><?= $proyectos_vigentes ?></div>
-                                <div class="kpi-sub">
+                            <div class="kpi-card kpi-card--green">
+                                <i class="fa-solid fa-folder-open kpi-icon"></i>
+                                <div class="kpi-card__label">Proyectos</div>
+                                <div class="kpi-card__value"><?= $proyectos_vigentes ?></div>
+                                <div class="kpi-card__sub">
                                     <?= $proyectos_total ?> totales &nbsp;·&nbsp;
                                     <span><?= $proyectos_terminados ?> terminados</span>
                                 </div>
@@ -183,54 +183,54 @@ $tipo_colores = [
                         </a>
 
                         <a href="<?= BASE_URL ?>/projects/list_obras.php" class="kpi-card-link">
-                            <div class="kpi-card c-gold">
-                                <i class="bi bi-building kpi-icon"></i>
-                                <div class="kpi-label">Obras Registradas</div>
-                                <div class="kpi-value"><?= $obras_total ?></div>
-                                <div class="kpi-sub">Frentes de trabajo activos</div>
+                            <div class="kpi-card kpi-card--amber">
+                                <i class="fa-solid fa-building kpi-icon"></i>
+                                <div class="kpi-card__label">Obras Registradas</div>
+                                <div class="kpi-card__value"><?= $obras_total ?></div>
+                                <div class="kpi-card__sub">Frentes de trabajo activos</div>
                             </div>
                         </a>
 
                         <a href="<?= BASE_URL ?>/orders/list_oc.php" class="kpi-card-link">
-                            <div class="kpi-card c-sky">
-                                <i class="bi bi-cart3 kpi-icon"></i>
-                                <div class="kpi-label">Órdenes de Compra</div>
-                                <div class="kpi-value"><?= $oc_total ?></div>
-                                <div class="kpi-sub">Monto: <?= fmt($oc_monto) ?></div>
+                            <div class="kpi-card kpi-card--blue">
+                                <i class="fa-solid fa-cart-shopping kpi-icon"></i>
+                                <div class="kpi-card__label">Órdenes de Compra</div>
+                                <div class="kpi-card__value"><?= $oc_total ?></div>
+                                <div class="kpi-card__sub">Monto: <?= fmt($oc_monto) ?></div>
                             </div>
                         </a>
 
                         <a href="<?= BASE_URL ?>/orders/list_requis.php" class="kpi-card-link">
-                            <div class="kpi-card c-purple">
-                                <i class="bi bi-clipboard-check kpi-icon"></i>
-                                <div class="kpi-label">Requisiciones</div>
-                                <div class="kpi-value"><?= $req_total ?></div>
-                                <div class="kpi-sub"><?= $req_pendientes ?> pendientes de revisión</div>
+                            <div class="kpi-card kpi-card--purple">
+                                <i class="fa-solid fa-clipboard-check kpi-icon"></i>
+                                <div class="kpi-card__label">Requisiciones</div>
+                                <div class="kpi-card__value"><?= $req_total ?></div>
+                                <div class="kpi-card__sub"><?= $req_pendientes ?> pendientes de revisión</div>
                             </div>
                         </a>
 
-                        <div class="kpi-card c-rose">
-                            <i class="bi bi-person-badge kpi-icon"></i>
-                            <div class="kpi-label">Subcontratos</div>
-                            <div class="kpi-value"><?= $subcontratos_total ?></div>
-                            <div class="kpi-sub">Contratos externos vigentes</div>
+                        <div class="kpi-card kpi-card--red">
+                            <i class="fa-solid fa-id-badge kpi-icon"></i>
+                            <div class="kpi-card__label">Subcontratos</div>
+                            <div class="kpi-card__value"><?= $subcontratos_total ?></div>
+                            <div class="kpi-card__sub">Contratos externos vigentes</div>
                         </div>
 
                         <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
-                            <div class="kpi-card c-gold">
-                                <i class="bi bi-boxes kpi-icon"></i>
-                                <div class="kpi-label">Activos</div>
-                                <div class="kpi-value"><?= $activos_activos ?></div>
-                                <div class="kpi-sub">Valor: <?= fmt($activos_valor_total) ?></div>
+                            <div class="kpi-card kpi-card--amber">
+                                <i class="fa-solid fa-boxes-stacked kpi-icon"></i>
+                                <div class="kpi-card__label">Activos</div>
+                                <div class="kpi-card__value"><?= $activos_activos ?></div>
+                                <div class="kpi-card__sub">Valor: <?= fmt($activos_valor_total) ?></div>
                             </div>
                         </a>
 
                         <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
-                            <div class="kpi-card c-purple">
-                                <i class="bi bi-people kpi-icon"></i>
-                                <div class="kpi-label">Usuarios</div>
-                                <div class="kpi-value"><?= $usuarios_activos ?></div>
-                                <div class="kpi-sub">Personal en el sistema</div>
+                            <div class="kpi-card kpi-card--purple">
+                                <i class="fa-solid fa-users kpi-icon"></i>
+                                <div class="kpi-card__label">Usuarios</div>
+                                <div class="kpi-card__value"><?= $usuarios_activos ?></div>
+                                <div class="kpi-card__sub">Personal en el sistema</div>
                             </div>
                         </a>
                     </div>
@@ -240,49 +240,49 @@ $tipo_colores = [
             <!-- OC ESTADOS -->
             <div class="oc-card mb-section fade-up delay-2">
                 <div class="oc-card-header">
-                    <span class="oc-card-header__title"><i class="bi bi-cart-check"></i> Órdenes de compra · estado actual</span>
+                    <span class="oc-card-header__title"><i class="fa-solid fa-cart-arrow-down"></i> Órdenes de compra · estado actual</span>
                 </div>
                 <div class="oc-card-body" style="padding: 24px;">
                     <div class="status-metric-group">
                         
                         <div class="status-metric-item">
                             <span class="status-badge status-badge--pendiente">
-                                <i class="bi bi-clock"></i> Pendientes
+                                <i class="fa-regular fa-clock"></i> Pendientes
                             </span>
                             <span class="status-metric-count"><?= $oc_pendientes ?></span>
                         </div>
 
                         <div class="status-metric-item">
                             <span class="status-badge status-badge--revisado">
-                                <i class="bi bi-check2-circle"></i> Revisadas
+                                <i class="fa-solid fa-circle-check"></i> Revisadas
                             </span>
                             <span class="status-metric-count"><?= $oc_revisadas ?></span>
                         </div>
 
                         <div class="status-metric-item">
                             <span class="status-badge status-badge--aprobado">
-                                <i class="bi bi-check-circle"></i> Aprobadas
+                                <i class="fa-solid fa-circle-check"></i> Aprobadas
                             </span>
                             <span class="status-metric-count"><?= $oc_aprobadas ?></span>
                         </div>
 
                         <div class="status-metric-item">
                             <span class="status-badge status-badge--rechazado">
-                                <i class="bi bi-x-circle"></i> Rechazadas
+                                <i class="fa-solid fa-circle-xmark"></i> Rechazadas
                             </span>
                             <span class="status-metric-count"><?= $oc_rechazadas ?></span>
                         </div>
 
                         <div class="status-metric-item">
                             <span class="status-badge status-badge--pagado">
-                                <i class="bi bi-currency-dollar"></i> Pagadas
+                                <i class="fa-solid fa-circle-dollar-to-slot"></i> Pagadas
                             </span>
                             <span class="status-metric-count"><?= $oc_pagadas ?></span>
                         </div>
 
                         <div class="status-metric-item">
                             <span class="status-badge status-badge--devuelto">
-                                <i class="bi bi-arrow-counterclockwise"></i> Devueltas
+                                <i class="fa-solid fa-rotate-left"></i> Devueltas
                             </span>
                             <span class="status-metric-count"><?= $oc_devueltas ?></span>
                         </div>
@@ -296,7 +296,7 @@ $tipo_colores = [
                 <div class="panel fade-up delay-2">
                     <div class="panel-head">
                         <div class="panel-title">
-                            <i class="bi bi-bar-chart-line" style="margin-right:8px;"></i>
+                            <i class="fa-solid fa-chart-bar" style="margin-right:8px;"></i>
                             Órdenes de Compra · últimos 6 meses
                         </div>
                     </div>
@@ -311,7 +311,7 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-2">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-circle-half" style="margin-right:8px;"></i>Estado OC</div>
+                        <div class="panel-title"><i class="fa-solid fa-chart-pie" style="margin-right:8px;"></i>Estado OC</div>
                     </div>
                     <div class="panel-body" style="display:flex;flex-direction:column;align-items:center;gap:20px;">
                         <div class="donut-wrap" style="width:160px;height:160px;">
@@ -348,7 +348,7 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-3">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-receipt" style="color:var(--sky);margin-right:8px;"></i>Últimas Órdenes de Compra</div>
+                        <div class="panel-title"><i class="fa-solid fa-receipt" style="color:var(--sky);margin-right:8px;"></i>Últimas Órdenes de Compra</div>
                         <a href="<?= BASE_URL ?>/orders/list_oc.php" style="font-size:.74rem;color:var(--accent);text-decoration:none;">Ver todas →</a>
                     </div>
                     <div class="panel-body" style="padding:0;">
@@ -403,14 +403,14 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-4">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-alarm" style="color:var(--rose);margin-right:8px;"></i>Vencen en 30 días</div>
+                        <div class="panel-title"><i class="fa-solid fa-bell" style="color:var(--rose);margin-right:8px;"></i>Vencen en 30 días</div>
                     </div>
                     <div class="panel-body">
                         <?php
 
                         if (empty($proximos_vencer)): ?>
                             <div style="text-align:center;color:var(--ink2);padding:30px 0;font-size:.83rem;">
-                                <i class="bi bi-check-circle" style="font-size:1.8rem;color:var(--accent);display:block;margin-bottom:8px;"></i>
+                                <i class="fa-solid fa-circle-check" style="font-size:1.8rem;color:var(--accent);display:block;margin-bottom:8px;"></i>
                                 Sin proyectos próximos a vencer
                             </div>
                         <?php
@@ -448,7 +448,7 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-2">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-activity" style="color:var(--accent);margin-right:8px;"></i>Condición de Activos</div>
+                        <div class="panel-title"><i class="fa-solid fa-wave-square" style="color:var(--accent);margin-right:8px;"></i>Condición de Activos</div>
                         <div style="font-size:.75rem;"><?= $activos_activos ?> activos totales</div>
                     </div>
                     <div class="panel-body">
@@ -458,7 +458,7 @@ $tipo_colores = [
 
                 <div class="panel fade-up delay-3">
                     <div class="panel-head">
-                        <div class="panel-title"><i class="bi bi-table" style="color:var(--gold);margin-right:8px;"></i>Resumen de Activos por Tipo</div>
+                        <div class="panel-title"><i class="fa-solid fa-table-list" style="color:var(--gold);margin-right:8px;"></i>Resumen de Activos por Tipo</div>
                         <a href="<?= BASE_URL ?>/activos/list_activos.php" style="font-size:.74rem;color:var(--accent);text-decoration:none;">Ver todos →</a>
                     </div>
                     <div class="panel-body" style="padding:0;">
@@ -760,3 +760,5 @@ $tipo_colores = [
     </script>
 
     <?php include __DIR__ . "/includes/footer.php"; ?>
+
+

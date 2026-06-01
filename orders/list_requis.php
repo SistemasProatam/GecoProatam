@@ -18,7 +18,7 @@ if (isset($_GET['msg'])) {
     switch ($_GET['msg']) {
         case 'estado_actualizado_con_email':
             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle"></i>
+                    <i class="fa-solid fa-circle-check"></i>
                     <strong>¡Éxito!</strong> Estado actualizado correctamente y notificación enviada por correo para la requisición <strong>' . $folio . '</strong>.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
@@ -26,7 +26,7 @@ if (isset($_GET['msg'])) {
 
         case 'estado_actualizado_sin_email':
             echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i>
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                     <strong>Atención:</strong> Estado actualizado para la requisición <strong>' . $folio . '</strong>, pero no se pudo enviar la notificación por correo.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
@@ -34,7 +34,7 @@ if (isset($_GET['msg'])) {
 
         case 'estado_actualizado_error_email':
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-x-circle"></i>
+                    <i class="fa-solid fa-circle-xmark"></i>
                     <strong>Error:</strong> El estado se actualizó para <strong>' . $folio . '</strong>, pero ocurrió un error al enviar la notificación.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>';
@@ -134,7 +134,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
     $entidadesOptions .= "<option value='{$ent['id']}' $selected>" . htmlspecialchars($ent['nombre']) . "</option>";
 }
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -151,7 +151,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
             <h1 class="orders-page-title">Registro de Requisiciones</h1>
         </div>
         <button class="btn-geco-primary" type="button" onclick="window.location.href='new_requis.php'">
-            <i class="bi bi-plus-lg"></i> Agregar Requisición
+            <i class="fa-solid fa-circle-plus"></i> Agregar Requisición
         </button>
     </div>
 
@@ -205,7 +205,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                 <!-- Right: Search Input -->
                 <div class="orders-filter-search">
                     <div class="search-input-wrap">
-                        <i class="bi bi-search"></i>
+                        <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" id="visibleSearchInput"
                                placeholder="Buscar por folio o entidad..."
                                value="<?= htmlspecialchars($busqueda) ?>">
@@ -238,15 +238,15 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                 <td>
                                     <?php
                                     $badge_map = [
-                                        'pendiente' => ['status-badge--pendiente', 'bi-clock', 'Pendiente'],
-                                        'espera'    => ['status-badge--pendiente', 'bi-clock', 'En Espera'],
-                                        'aprobado'  => ['status-badge--aprobado', 'bi-check-circle', 'Aprobado'],
-                                        'aprobada'  => ['status-badge--aprobado', 'bi-check-circle', 'Aprobada'],
-                                        'rechazado' => ['status-badge--rechazado', 'bi-x-circle', 'Rechazado'],
-                                        'rechazada' => ['status-badge--rechazado', 'bi-x-circle', 'Rechazada']
+                                        'pendiente' => ['status-badge--pendiente', 'fa-regular fa-clock', 'Pendiente'],
+                                        'espera'    => ['status-badge--pendiente', 'fa-regular fa-clock', 'En Espera'],
+                                        'aprobado'  => ['status-badge--aprobado', 'fa-solid fa-circle-check', 'Aprobado'],
+                                        'aprobada'  => ['status-badge--aprobado', 'fa-solid fa-circle-check', 'Aprobada'],
+                                        'rechazado' => ['status-badge--rechazado', 'fa-solid fa-circle-xmark', 'Rechazado'],
+                                        'rechazada' => ['status-badge--rechazado', 'fa-solid fa-circle-xmark', 'Rechazada']
                                     ];
-                                    $b = $badge_map[$row['estado']] ?? ['status-badge--pendiente', 'bi-circle', ucfirst($row['estado'])];
-                                    echo '<span class="status-badge ' . $b[0] . '"><i class="bi ' . $b[1] . '"></i> ' . $b[2] . '</span>';
+                                    $b = $badge_map[$row['estado']] ?? ['status-badge--pendiente', 'fa-regular fa-circle', ucfirst($row['estado'])];
+                                    echo '<span class="status-badge ' . $b[0] . '"><i class="' . $b[1] . '"></i> ' . $b[2] . '</span>';
                                     ?>
                                 </td>
                                 <td class="cell-date"><?= date('d/m/Y H:i', strtotime($row['fecha_solicitud'])) ?></td>
@@ -258,12 +258,12 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                                         <!-- SOLO mostrar boton de orden de compra si está APROBADO/APROBADA y el departamento tiene permiso -->
                                         <?php if (($row['estado'] === 'aprobado' || $row['estado'] === 'aprobada') && $puede_crear_oc): ?>
                                             <a href="new_order.php?requisicion_id=<?= $row['id'] ?>" class="btn-action btn-action--edit" style="background-color: #e8f5e9; color: #2e7d32; border-color: #c8e6c9;">
-                                                <i class="bi bi-file-earmark-plus"></i>
+                                                <i class="fa-solid fa-file-circle-plus"></i>
                                             </a>
                                         <?php endif; ?>
 
                                         <a href="see_requis.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="fa-regular fa-eye"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -273,7 +273,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                         <tr>
                             <td colspan="6">
                                 <div class="orders-empty-state">
-                                    <i class="bi bi-inbox" style="font-size: 2.5rem; color: var(--gray-400);"></i>
+                                    <i class="fa-solid fa-inbox" style="font-size: 2.5rem; color: var(--gray-400);"></i>
                                     <p>No hay requisiciones registradas</p>
                                 </div>
                             </td>

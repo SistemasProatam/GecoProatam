@@ -73,7 +73,7 @@ while($dep = $departamentos->fetch_assoc()){
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div class="orders-page-container">
@@ -89,18 +89,25 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <h1 class="orders-page-title">Registro de Usuarios</h1>
     </div>
     <a href="add_user.php" class="btn-geco-primary">
-      <i class="bi bi-plus-circle"></i> Agregar Usuario
+      <i class="fa-solid fa-user-plus"></i> Agregar Usuario
     </a>
   </div>
 
-  <!-- Main Card -->
-  <div class="orders-card">
-    
+  <!-- ===== CARD 1: FILTROS ===== -->
+  <div class="orders-card mb-3">
     <!-- Filter Bar -->
     <form id="filter-search-form" method="GET">
-      <div class="orders-filter-bar mb-3">
+      <div class="orders-filter-bar" style="margin-bottom: 0;">
         
-        <!-- Left: Filters (Selects) -->
+        <!-- Left: Search -->
+        <div class="orders-filter-search" style="margin-right: auto; flex: 1; max-width: 400px;">
+          <div class="search-input-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" name="q" placeholder="Buscar usuario..." value="<?= htmlspecialchars($busqueda) ?>">
+          </div>
+        </div>
+
+        <!-- Right: Filters (Selects) -->
         <div class="orders-filter-selects">
           <select name="departamento" class="form-select" style="min-width: 250px;">
             <option value="">-- Todos los departamentos --</option>
@@ -108,17 +115,12 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
           </select>
         </div>
 
-        <!-- Right: Search -->
-        <div class="orders-filter-search">
-          <div class="search-input-wrap">
-            <i class="bi bi-search"></i>
-            <input type="text" name="q" placeholder="Buscar usuario..." value="<?= htmlspecialchars($busqueda) ?>">
-          </div>
-        </div>
-
       </div>
     </form>
+  </div>
 
+  <!-- ===== CARD 2: TABLA ===== -->
+  <div class="orders-card">
     <!-- Table Wrapper -->
     <div id="table-container-wrapper">
 
@@ -159,13 +161,13 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                   <td>
                     <div class="actions-group justify-content-end">
                       <a href="details_user.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view">
-                        <i class="bi bi-info-circle"></i>
+                        <i class="fa-regular fa-eye"></i>
                       </a>
                       <a href="edit_user.php?id=<?= $row['id'] ?>" class="btn-action btn-action--edit">
-                        <i class="bi bi-pencil"></i>
+                        <i class="fa-solid fa-pen-to-square"></i>
                       </a>
                       <button class="btn-action btn-action--delete" onclick="eliminarUsuario(<?= $row['id'] ?>)">
-                        <i class="bi bi-trash3"></i>
+                        <i class="fa-solid fa-trash-can"></i>
                       </button>
                     </div>
                   </td>
@@ -202,9 +204,8 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 
       <?php else: ?>
         <div class="orders-empty-state">
-          <i class="bi bi-people" style="font-size: 3rem;"></i>
-          <h6>No se encontraron usuarios</h6>
-          <p>Prueba ajustando los filtros o criterios de búsqueda.</p>
+          <i class="fa-solid fa-users"></i>
+          <p>No se encontraron usuarios registrados. Prueba ajustando los filtros o criterios de búsqueda.</p>
         </div>
       <?php endif; ?>
     </div> <!-- /table-container-wrapper -->
@@ -238,7 +239,7 @@ function eliminarUsuario(id) {
             title: 'No se puede eliminar',
             icon: 'error',
             html: `<p><strong>Razón:</strong> ${data.message}</p>
-                   <p class="text-muted small"><i class="bi bi-info-circle"></i>
+                   <p class="text-muted small"><i class="fa-solid fa-circle-info"></i>
                    Para eliminar este usuario, primero debe eliminar o reasignar los registros relacionados.</p>`,
           });
         }
@@ -337,6 +338,7 @@ document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+
 
 
 

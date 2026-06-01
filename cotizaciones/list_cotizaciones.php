@@ -58,19 +58,7 @@ $entidadColores = [
   'DAVID GOMEZ' => '#fbae17',
 ];
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<style>
-  .badge-entidad {
-    padding: 4px 10px;
-    border-radius: 6px;
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-block;
-  }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -87,7 +75,7 @@ $entidadColores = [
             <h1 class="orders-page-title">Historial de Cotizaciones</h1>
         </div>
         <a href="cotizacion.php" class="btn-geco-primary">
-            <i class="bi bi-plus-lg"></i> Nueva Cotización
+            <i class="fa-solid fa-circle-plus"></i> Nueva Cotización
         </a>
     </div>
 
@@ -95,17 +83,12 @@ $entidadColores = [
     <div class="orders-card mb-4">
         <form id="search-form" method="GET">
             <div class="orders-filter-bar">
-                <!-- Left side: Total counter -->
-                <div class="orders-filter-tabs">
-                    <span class="orders-pagination-info" style="font-weight: 500; font-size: 0.9rem; color: var(--text-secondary);">
-                        Total: <strong><?= $totalRegistros ?></strong> cotizaciones
-                    </span>
-                </div>
 
-                <!-- Right: Search Input -->
-                <div class="orders-filter-search" style="margin-left: auto;">
+
+                <!-- Left: Search Input -->
+                <div class="orders-filter-search">
                     <div class="search-input-wrap">
-                        <i class="bi bi-search"></i>
+                        <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" name="q" id="visibleSearchInput"
                                placeholder="Buscar folio, atención, compañía..."
                                value="<?= htmlspecialchars($busqueda) ?>">
@@ -140,9 +123,7 @@ $entidadColores = [
                         ?>
                             <tr id="item-<?= $id ?>">
                                 <td>
-                                    <span class="badge-entidad" style="background: <?= $entColor ?>;">
-                                        <?= htmlspecialchars($ent) ?>
-                                    </span>
+                                    <strong><?= htmlspecialchars($ent) ?></strong>
                                 </td>
                                 <td class="cell-folio"><?= htmlspecialchars($folio) ?></td>
                                 <td><strong><?= htmlspecialchars($row['atencion']) ?></strong></td>
@@ -159,22 +140,22 @@ $entidadColores = [
                                         <a href="descargar_cotizacion.php?id=<?= $id ?>" 
                                            class="btn-action btn-action--download" 
                                            title="Descargar PDF">
-                                            <i class="bi bi-file-earmark-pdf"></i>
+                                            <i class="fa-solid fa-download"></i>
                                         </a>
                                         <button class="btn-action btn-action--view" 
                                                 onclick="verCotizacion(<?= $id ?>, '<?= $folio ?>')" 
                                                 title="Ver Vista Previa">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="fa-regular fa-eye"></i>
                                         </button>
                                         <button class="btn-action btn-action--edit" 
                                                 onclick="editarCotizacion(<?= $id ?>)" 
                                                 title="Editar Cotización">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <button class="btn-action btn-action--delete" 
                                                 onclick="eliminarCotizacion(<?= $id ?>, '<?= $folio ?>')" 
                                                 title="Eliminar Cotización">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="fa-solid fa-trash-can"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -184,7 +165,7 @@ $entidadColores = [
                         <tr>
                             <td colspan="7">
                                 <div class="orders-empty-state">
-                                    <i class="bi bi-inbox" style="font-size: 2.5rem; color: var(--gray-400);"></i>
+                                    <i class="fa-solid fa-inbox" style="font-size: 2.5rem; color: var(--gray-400);"></i>
                                     <p>No se encontraron cotizaciones registradas</p>
                                 </div>
                             </td>
@@ -274,10 +255,10 @@ $entidadColores = [
     <script>
       function verCotizacion(id, folio) {
         UI.modal({
-          title: `<i class="bi bi-file-earmark-pdf me-2"></i> ${folio}`,
+          title: `<i class="fa-solid fa-file-pdf me-2"></i> ${folio}`,
           size: "xl",
           html: `<iframe src="descargar_cotizacion.php?id=${id}&inline=1" style="width:100%;height:75vh;border:none;background:#fff;"></iframe>`,
-          footer: `<a href="descargar_cotizacion.php?id=${id}" class="btn btn-success"><i class="bi bi-download me-1"></i> Descargar</a>`
+          footer: `<a href="descargar_cotizacion.php?id=${id}" class="btn btn-success"><i class="fa-solid fa-download me-1"></i> Descargar</a>`
         });
       }
 
@@ -385,3 +366,4 @@ $entidadColores = [
 </div>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

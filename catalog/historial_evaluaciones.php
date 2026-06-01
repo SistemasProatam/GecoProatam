@@ -60,31 +60,7 @@ if (isset($_SESSION['mensaje_error'])) {
     unset($_SESSION['mensaje_error']);
 }
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<style>
-  .btn-geco-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    border: 1.5px solid var(--gray-200, #e5e7eb);
-    border-radius: 10px;
-    background: #fff;
-    color: var(--s-700, #113557);
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-  .btn-geco-outline:hover {
-    background: #f1f5f9;
-    border-color: #c7d2dc;
-    color: var(--s-700, #113557);
-    text-decoration: none;
-  }
-</style>
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
@@ -102,7 +78,7 @@ if (isset($_SESSION['mensaje_error'])) {
       </nav>
       <h1 class="orders-page-title">Historial — <?= htmlspecialchars($proveedor['razon_social'] ?? 'Proveedor') ?></h1>
     </div>
-    <a href="list_catalog.php?entidad=proveedores" class="btn-geco-outline">← Volver</a>
+    <a href="list_catalog.php?entidad=proveedores" class="btn-geco-outline"><i class="fa-solid fa-arrow-left"></i> Volver</a>
   </div>
 
   <!-- Alerts -->
@@ -139,13 +115,14 @@ if (isset($_SESSION['mensaje_error'])) {
             <?php while ($eval = $evaluaciones->fetch_assoc()): ?>
               <?php
                 $resultado = $eval['resultado_final'] ?? '';
-                $badge_styles = [
-                  'excelente'   => 'color:#15803d; background:rgba(34,197,94,0.06); border-color:rgba(34,197,94,0.3);',
-                  'bueno'       => 'color:#1d4ed8; background:rgba(59,130,246,0.08); border-color:rgba(59,130,246,0.3);',
-                  'regular'     => 'color:#92400e; background:rgba(217,119,6,0.06); border-color:rgba(217,119,6,0.3);',
-                  'no_aprobado' => 'color:#b91c1c; background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.3);',
-                ];
-                $badge_style = $badge_styles[$resultado] ?? '';
+                $badge_class = '';
+                switch ($resultado) {
+                    case 'excelente':   $badge_class = 'status-badge--aprobado'; break;
+                    case 'bueno':       $badge_class = 'status-badge--revisado'; break;
+                    case 'regular':     $badge_class = 'status-badge--pendiente'; break;
+                    case 'no_aprobado': $badge_class = 'status-badge--rechazado'; break;
+                    default:            $badge_class = '';
+                }
               ?>
               <tr>
                 <td><?= date('d/m/Y H:i', strtotime($eval['fecha_creacion'])) ?></td>
@@ -153,7 +130,7 @@ if (isset($_SESSION['mensaje_error'])) {
                 <td><?= htmlspecialchars($eval['contrato_numero']) ?></td>
                 <td><strong><?= number_format($eval['total_puntuacion'], 1) ?></strong></td>
                 <td>
-                  <span class="status-badge" style="<?= $badge_style ?>">
+                  <span class="status-badge <?= $badge_class ?>">
                     <?= ucfirst(str_replace('_', ' ', $resultado)) ?>
                   </span>
                 </td>
@@ -162,15 +139,14 @@ if (isset($_SESSION['mensaje_error'])) {
                     <button class="btn-action btn-action--view"
                             onclick="verDetalle(<?= $eval['id'] ?>)"
                             title="Ver detalles de evaluación">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <i class="fa-regular fa-eye"></i>
                     </button>
                     <form method="POST" style="display:inline;" onsubmit="return confirmarEliminacion(this)">
                       <input type="hidden" name="evaluacion_id" value="<?= $eval['id'] ?>">
                       <input type="hidden" name="eliminar_evaluacion" value="1">
-                      <button type="submit" class="btn-action"
-                              style="color:#b91c1c;"
+                      <button type="submit" class="btn-action btn-action--delete"
                               title="Eliminar evaluación">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                        <i class="fa-solid fa-trash-can"></i>
                       </button>
                     </form>
                   </div>
@@ -181,7 +157,7 @@ if (isset($_SESSION['mensaje_error'])) {
             <tr>
               <td colspan="6">
                 <div class="orders-empty-state">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <i class="fa-solid fa-folder-open mb-3 d-block" style="font-size:3rem;"></i>
                   <p>No hay evaluaciones registradas para este proveedor.</p>
                   <a href="evaluacion_proveedor.php?id=<?= $proveedor_id ?>" class="btn-geco-primary">
                     + Crear primera evaluación
@@ -198,7 +174,7 @@ if (isset($_SESSION['mensaje_error'])) {
 </div>
 
 <script>
-// Función para ver detalle con SweetAlert
+// Función para ver detalle con UI modal
 function verDetalle(evaluacionId) {
     // Hacer petición AJAX para obtener los detalles
     fetch(`obtener_detalle_evaluacion.php?id=${evaluacionId}`)
@@ -258,7 +234,7 @@ function verDetalle(evaluacionId) {
                         <div class="row mb-2">
                             <div class="col-6"><strong>RESULTADO FINAL:</strong></div>
                             <div class="col-6">
-                                <span class="badge ${getBadgeClass(eval.resultado_final)}">
+                                <span class="${getBadgeClass(eval.resultado_final)}">
                                     ${eval.resultado_final.toUpperCase().replace('_', ' ')}
                                 </span>
                             </div>
@@ -279,56 +255,48 @@ function verDetalle(evaluacionId) {
                     </div>
                 `;
                 
-                Swal.fire({
+                UI.modal({
                     title: 'Detalle de Evaluación',
                     html: contenido,
-                    width: 600,
-                    padding: '1.5rem',
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'border-rounded'
-                    }
+                    size: 'md'
                 });
             } else {
-                Swal.fire('Error', 'No se pudo cargar la información de la evaluación', 'error');
+                UI.toast.error('No se pudo cargar la información de la evaluación');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            Swal.fire('Error', 'Error al cargar los detalles', 'error');
+            UI.toast.error('Error al cargar los detalles');
         });
 }
 
 // Función para obtener clase del badge según resultado
 function getBadgeClass(resultado) {
     const clases = {
-        'excelente': 'bg-success',
-        'bueno': 'bg-info', 
-        'regular': 'bg-warning text-dark',
-        'no_aprobado': 'bg-danger'
+        'excelente': 'status-badge status-badge--aprobado',
+        'bueno': 'status-badge status-badge--revisado', 
+        'regular': 'status-badge status-badge--pendiente',
+        'no_aprobado': 'status-badge status-badge--rechazado'
     };
-    return clases[resultado] || 'bg-secondary';
+    return clases[resultado] || 'status-badge';
 }
 
 // Función para confirmar eliminación
 function confirmarEliminacion(form) {
-    Swal.fire({
+    UI.confirm({
         title: '¿Estás seguro?',
-        text: "Esta acción no se puede deshacer",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        message: 'Esta acción no se puede deshacer',
+        danger: true,
+        confirmText: 'Sí, eliminar',
+        cancelText: 'Cancelar'
+    }).then((confirmado) => {
+        if (confirmado) {
             form.submit();
         }
     });
-    return false;
+    return false; // Evita el envío automático
 }
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
+

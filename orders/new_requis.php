@@ -60,35 +60,8 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
-<style>
-   /* Overlay de carga pantalla completa */
-#loadingOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-/* Contenedor del spinner */
-.loading-box {
-    background: #ffffff;
-    padding: 25px 40px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    text-align: center;
-    font-size: 17px;
-    font-weight: bold;
-}
-
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
-}
-</style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -107,7 +80,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
             <h1 class="orders-page-title">Nueva Requisición</h1>
         </div>
         <a href="list_requis.php" class="btn-geco-outline">
-            <i class="bi bi-arrow-left"></i> Volver
+            <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
     </div>
 
@@ -117,13 +90,13 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
         <!-- ─── CARD: INFORMACIÓN GENERAL ───────────────────────────── -->
         <div class="oc-card">
             <div class="oc-card-header">
-                <span class="oc-card-header__title"><i class="bi bi-info-circle"></i> Información General de la Requisición</span>
+                <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General de la Requisición</span>
             </div>
             <div class="oc-card-body">
                 <p class="oc-card-intro">Complete los datos generales de la requisición. Los campos marcados con <span class="required">*</span> son obligatorios.</p>
 
                 <div class="orders-alert orders-alert--info mb-4">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="fa-solid fa-circle-info"></i>
                     <div class="orders-alert__body">
                         <p class="m-0">Este formulario debe ser completado por el personal autorizado para solicitar la compra de bienes o servicios, o para requerir el pago de facturas y compromisos adquiridos por la organización.</p>
                         <span class="mt-1 d-block"><strong>Importante:</strong> El envío de este formulario no garantiza la aprobación automática del pago o compra. Asegúrese de cumplir con los procedimientos y tiempos establecidos por la organización.</span>
@@ -197,7 +170,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
         <!-- ─── CARD: UBICACIÓN DEL PRESUPUESTO ──────────────────────── -->
         <div class="oc-card">
             <div class="oc-card-header">
-                <span class="oc-card-header__title"><i class="bi bi-diagram-3"></i> Ubicación del Presupuesto</span>
+                <span class="oc-card-header__title"><i class="fa-solid fa-sitemap"></i> Ubicación del Presupuesto</span>
             </div>
             <div class="oc-card-body">
                 <p class="oc-card-intro">Especifique el proyecto, obra y catálogo correspondiente para la afectación presupuestal.</p>
@@ -235,9 +208,9 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
         <!-- ─── CARD: ITEMS DE LA REQUISICIÓN ────────────────────────── -->
         <div class="oc-card">
             <div class="oc-card-header">
-                <span class="oc-card-header__title"><i class="bi bi-list-ul"></i> Items de la Requisición</span>
+                <span class="oc-card-header__title"><i class="fa-solid fa-list"></i> Items de la Requisición</span>
                 <button type="button" class="btn-geco-outline btn-geco-outline--sm" onclick="mostrarCatalogoProductos()">
-                    <i class="bi bi-plus-circle"></i> Agregar Item
+                    <i class="fa-solid fa-circle-plus"></i> Agregar Item
                 </button>
             </div>
             <div class="oc-card-body oc-card-body--items">
@@ -267,7 +240,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
             <div class="oc-form-layout-main">
                 <div class="oc-card">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-chat-text"></i> Detalle, Descripciones y Observaciones</span>
+                        <span class="oc-card-header__title"><i class="fa-regular fa-comments"></i> Detalle, Descripciones y Observaciones</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="mb-4">
@@ -312,11 +285,11 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
             <div class="oc-form-layout-side">
                 <div class="oc-card">
                     <div class="oc-card-header">
-                        <span class="oc-card-header__title"><i class="bi bi-paperclip"></i> Archivos Adjuntos</span>
+                        <span class="oc-card-header__title"><i class="fa-solid fa-paperclip"></i> Archivos Adjuntos</span>
                     </div>
                     <div class="oc-card-body">
                         <div class="orders-alert orders-alert--info mb-3">
-                            <i class="bi bi-info-circle"></i>
+                            <i class="fa-solid fa-circle-info"></i>
                             <span>Cargue hasta 5 archivos de uno en uno. PDF, Word, Excel, imágenes. Máx. 10 MB por archivo.</span>
                         </div>
                         
@@ -327,7 +300,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                               id="singleFileInput"
                               accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
                             <button class="btn-geco-secondary" type="button" onclick="agregarArchivo()">
-                              <i class="bi bi-upload"></i> Subir
+                              <i class="fa-solid fa-upload"></i> Subir
                             </button>
                         </div>
 
@@ -335,8 +308,11 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                         <div id="archivosContainer" class="oc-files-dropzone">
                             <h6 class="oc-files-dropzone__title">Archivos seleccionados: <span id="contadorArchivos" class="badge bg-secondary">0</span></h6>
                             <ul id="fileList" class="list-group list-group-flush mt-2">
-                                <li class="list-group-item text-center text-muted" style="background:transparent;border:none;">
-                                    <i class="bi bi-inbox fs-4 d-block mb-1"></i> No hay archivos agregados
+                                <li id="emptyFilesState" class="list-group-item border-0 p-0">
+                                    <div class="text-center text-muted p-4">
+                                        <i class="fa-solid fa-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                        <span class="small">Sin archivos adjuntos</span>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -344,10 +320,10 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                 </div>
                 
                 <!-- ─── SUBMIT ACTIONS ──────────────────────────────────────── -->
-                <p class="oc-form-submit-note"><i class="bi bi-info-circle"></i> Esta requisición será evaluada por el Supervisor de Proyectos.</p>
+                <p class="oc-form-submit-note"><i class="fa-solid fa-circle-info"></i> Esta requisición será evaluada por el Supervisor de Proyectos.</p>
                 <div class="oc-form-submit-actions" style="align-items: center;">
                     <button type="submit" class="btn-geco-primary" id="btnEnviar" style="max-width: 320px; width: 100%;">
-                        <i class="bi bi-floppy"></i> Guardar Requisición
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Requisición
                     </button>
                 </div>
             </div>
@@ -386,14 +362,14 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                       <tr>
                         <td><?= htmlspecialchars($producto['nombre']) ?></td>
                         <td>
-                          <span class="badge bg-<?= $producto['tipo'] == 'producto' ? 'primary' : 'success' ?>">
+                          <span style="font-weight: 600; font-size: 0.85rem; color: <?= $producto['tipo'] == 'producto' ? 'var(--p-600)' : 'var(--s-600)' ?>;">
                             <?= ucfirst($producto['tipo']) ?>
                           </span>
                         </td>
                         <td>
                           <button type="button" class="btn btn-sm btn-primary" 
                                    onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
-                            <i class="bi bi-plus"></i> Seleccionar
+                            <i class="fa-solid fa-circle-plus"></i> Seleccionar
                           </button>
                         </td>
                       </tr>
@@ -456,3 +432,4 @@ document.getElementById('ordenCompraForm')?.addEventListener('submit', function(
 <script src="<?= BASE_URL ?>/assets/scripts/new_requis.js"></script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

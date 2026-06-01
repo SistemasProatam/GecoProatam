@@ -26,65 +26,6 @@ if (empty($email)) {
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
-    <style>
-        .button-57 i {
-            display: block;
-            margin-right: 0.50em;
-            transform-origin: center center;
-            transition: transform 0.3s ease-in-out;
-            transform: rotate(0deg) scale(1.1);
-        }
-
-        .form-text {
-            font-size: 0.875em;
-            color: #6c757d;
-            text-align: center;
-        }
-
-        .code-input-container {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px dashed var(--gray-300);
-            border-radius: 8px;
-            background-color: var(--gray-50);
-        }
-
-        .code-input {
-            width: 45px;
-            height: 55px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border: 2px solid var(--gray-300);
-            border-radius: 8px;
-            background: white;
-            color: var(--gray-800);
-            transition: all 0.2s ease;
-        }
-
-        .code-input:focus {
-            outline: none;
-            border-color: var(--p-500);
-            box-shadow: 0 0 0 3px rgba(17, 52, 86, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .code-input.filled {
-            border-color: var(--p-400);
-            background-color: #f8fafc;
-        }
-
-        .code-count {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--gray-400);
-            margin-top: -10px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -151,7 +92,7 @@ if (empty($email)) {
                 <div class="auth-carousel">
                     <!-- Slide 1 -->
                     <div class="carousel-slide active">
-                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_main.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
                             <div class="carousel-quote">
                                 <blockquote class="quote-text">

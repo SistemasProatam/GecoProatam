@@ -82,8 +82,8 @@ function actualizarListaArchivos() {
   
   if (archivosAcumulados.length === 0) {
     fileList.innerHTML = `
-      <li class="list-group-item text-center text-muted">
-        <i class="bi bi-inbox"></i> No hay archivos agregados
+      <li class="list-group-item text-center text-muted py-3" style="background:transparent;border:none;">
+        <i class="fa-solid fa-inbox fs-4 d-block mb-1"></i> No hay archivos agregados
       </li>
     `;
     return;
@@ -91,38 +91,37 @@ function actualizarListaArchivos() {
   
   archivosAcumulados.forEach((file, index) => {
     const li = document.createElement('li');
-    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+    li.className = 'list-group-item d-flex justify-content-between align-items-center py-2 px-3';
     
     // Determinar icono y color según extensión
     const extension = file.name.split('.').pop().toLowerCase();
-    let icono = 'file-earmark';
+    let icono = 'fa-regular fa-file';
     let colorClass = 'text-secondary';
     
     if (extension === 'pdf') {
-      icono = 'file-earmark-pdf';
+      icono = 'fa-regular fa-file-pdf';
       colorClass = 'text-danger';
     } else if (['doc', 'docx'].includes(extension)) {
-      icono = 'file-earmark-word';
+      icono = 'fa-regular fa-file-word';
       colorClass = 'text-primary';
     } else if (['xls', 'xlsx'].includes(extension)) {
-      icono = 'file-earmark-excel';
+      icono = 'fa-regular fa-file-excel';
       colorClass = 'text-success';
     } else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-      icono = 'file-earmark-image';
+      icono = 'fa-regular fa-file-image';
       colorClass = 'text-warning';
     }
     
-    const fileSize = (file.size / 1024).toFixed(2);
+    const fileSize = (file.size / 1024 / 1024).toFixed(2);
     
     li.innerHTML = `
-      <div>
-        <span class="badge bg-secondary me-2">${index + 1}</span>
-        <i class="bi bi-${icono} ${colorClass} me-2"></i>
+      <span>
+        <i class="${icono} ${colorClass} me-2"></i>
         <strong>${file.name}</strong>
-        <span class="badge bg-light text-dark ms-2">${fileSize} KB</span>
-      </div>
-      <button type="button" class="btn btn-sm btn-danger" onclick="eliminarArchivo(${index})">
-        <i class="bi bi-trash"></i> Quitar
+        <small class="text-muted ms-2">(${fileSize} MB)</small>
+      </span>
+      <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="eliminarArchivo(${index})" style="text-decoration:none;">
+        <i class="fa-solid fa-trash-can"></i>
       </button>
     `;
     

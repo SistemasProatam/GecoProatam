@@ -138,7 +138,7 @@ if ($obrasRes) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -155,7 +155,7 @@ if ($obrasRes) {
             <h1 class="orders-page-title">Registro de Órdenes</h1>
         </div>
         <a href="new_order.php" class="btn-geco-primary">
-            <i class="bi bi-plus-lg"></i> Agregar Nueva
+            <i class="fa-solid fa-plus"></i> Agregar Nueva
         </a>
     </div>
 
@@ -206,7 +206,7 @@ if ($obrasRes) {
                 <!-- Right: Search Input -->
                 <div class="orders-filter-search">
                     <div class="search-input-wrap">
-                        <i class="bi bi-search"></i>
+                        <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" id="visibleSearchInput"
                                placeholder="Buscar folio, proveedor..."
                                value="<?= htmlspecialchars($busqueda) ?>">
@@ -222,7 +222,7 @@ if ($obrasRes) {
         <!-- Success alert -->
         <?php if (isset($_GET['msg']) && $_GET['msg'] === 'success'): ?>
             <div class="orders-alert orders-alert--success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill"></i>
+                <i class="fa-solid fa-circle-check"></i>
                 <span>
                     <strong>¡Éxito!</strong> Orden de compra
                     <?php if (isset($_GET['folio'])): ?>
@@ -265,15 +265,15 @@ if ($obrasRes) {
                                 <td>
                                     <?php
                                     $badge_map = [
-                                        'pendiente'  => ['status-badge--pendiente', 'bi-clock',              'Pendiente'],
-                                        'revisado'   => ['status-badge--revisado',  'bi-check2-circle',      'Revisado'],
-                                        'aprobado'   => ['status-badge--aprobado',  'bi-check-circle',       'Aprobado'],
-                                        'rechazado'  => ['status-badge--rechazado', 'bi-x-circle',           'Rechazado'],
-                                        'pagado'     => ['status-badge--pagado',    'bi-currency-dollar',    'Pagado'],
-                                        'devuelto'   => ['status-badge--devuelto',  'bi-arrow-counterclockwise', 'Devuelto'],
+                                        'pendiente'  => ['status-badge--pendiente', 'fa-regular fa-clock',              'Pendiente'],
+                                        'revisado'   => ['status-badge--revisado',  'fa-regular fa-circle-check',      'Revisado'],
+                                        'aprobado'   => ['status-badge--aprobado',  'fa-solid fa-circle-check',       'Aprobado'],
+                                        'rechazado'  => ['status-badge--rechazado', 'fa-solid fa-circle-xmark',       'Rechazado'],
+                                        'pagado'     => ['status-badge--pagado',    'fa-solid fa-dollar-sign',    'Pagado'],
+                                        'devuelto'   => ['status-badge--devuelto',  'fa-solid fa-rotate-left', 'Devuelto'],
                                     ];
-                                    $b = $badge_map[$oc['estado']] ?? ['status-badge--revisado', 'bi-circle', ucfirst($oc['estado'])];
-                                    echo '<span class="status-badge ' . $b[0] . '"><i class="bi ' . $b[1] . '"></i> ' . $b[2] . '</span>';
+                                    $b = $badge_map[$oc['estado']] ?? ['status-badge--revisado', 'fa-regular fa-circle', ucfirst($oc['estado'])];
+                                    echo '<span class="status-badge ' . $b[0] . '"><i class="' . $b[1] . '"></i> ' . $b[2] . '</span>';
                                     ?>
                                 </td>
                                 <td class="cell-date"><?= date('d/m/Y H:i', strtotime($oc['fecha_solicitud'])) ?></td>
@@ -284,26 +284,28 @@ if ($obrasRes) {
                                     <div class="actions-group">
                                         <?php if ($oc['estado'] == 'devuelto'): ?>
                                             <button class="btn-action btn-action--download"
-                                                    onclick="descargarPDF(<?= $oc['id'] ?>)">
-                                                <i class="bi bi-download"></i>
+                                                    onclick="descargarPDF(<?= $oc['id'] ?>)"
+                                                    title="Descargar PDF">
+                                                <i class="fa-solid fa-download"></i>
                                             </button>
                                         <?php endif; ?>
 
                                         <?php if ($oc['estado'] == 'pagado'): ?>
                                             <button class="btn-action btn-action--download"
-                                                    onclick="descargarPDF(<?= $oc['id'] ?>)">
-                                                <i class="bi bi-download"></i>
+                                                    onclick="descargarPDF(<?= $oc['id'] ?>)"
+                                                    title="Descargar PDF">
+                                                <i class="fa-solid fa-download"></i>
                                             </button>
                                         <?php endif; ?>
 
                                         <button class="btn-action btn-action--edit"
                                                 onclick="window.location.href='edit_oc.php?id=<?= $oc['id'] ?>'">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
 
                                         <button class="btn-action btn-action--view"
                                                 onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="fa-regular fa-eye"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -313,7 +315,7 @@ if ($obrasRes) {
                         <tr>
                             <td colspan="8">
                                 <div class="orders-empty-state">
-                                    <i class="bi bi-inbox"></i>
+                                    <i class="fa-solid fa-inbox"></i>
                                     <p>No hay órdenes de compra registradas</p>
                                 </div>
                             </td>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . "/../includes/session_manager.php";
 require_once __DIR__ . "/../includes/check_session.php";
 
@@ -40,7 +40,7 @@ try {
     $qrRutaActual = $row_ruta['qr_ruta_imagen'] ?? null;
 } catch (Throwable $e) { }
 
-// Regenerar el PNG si no está en disco
+// Regenerar el PNG si no estÃ¡ en disco
 if (!$qrRutaActual || !file_exists(__DIR__ . '/..' . $qrRutaActual)) {
     $nuevaRuta = QRGenerator::generarYGuardar($activo['qr_token']);
     if ($nuevaRuta) {
@@ -63,79 +63,12 @@ $nombreArchivo = 'QR_' . preg_replace('/[^A-Z0-9_-]/i', '_', $activo['codigo']);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Imprimir QR – <?= htmlspecialchars($activo['codigo']) ?></title>
+  <title>Imprimir QR â€“ <?= htmlspecialchars($activo['codigo']) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
-
-    .screen-actions {
-      max-width: 680px;
-      margin: 24px auto 0;
-      padding: 0 16px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .qr-card-wrap {
-      display: flex;
-      justify-content: center;
-      padding: 24px 16px 40px;
-    }
-    .qr-card {
-      background: #fff;
-      border: 2px solid #dee2e6;
-      border-radius: 16px;
-      padding: 28px 32px 24px;
-      width: 340px;
-      box-shadow: 0 4px 20px rgba(0,0,0,.10);
-      text-align: center;
-    }
-    .qr-card .logo-wrap { margin-bottom: 16px; }
-    .qr-card .logo-wrap img { max-height: 52px; max-width: 200px; object-fit: contain; }
-    .qr-card .logo-texto {
-      font-size: 1.15rem; font-weight: 800; color: #113456;
-      letter-spacing: 2px; text-transform: uppercase;
-    }
-    .qr-card .divider { border: none; border-top: 2px solid #e2e8f0; margin: 12px 0; }
-    .qr-card .qr-img {
-      width: 220px; height: 220px;
-      margin: 0 auto 14px; display: block;
-      border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px;
-    }
-    .qr-card .activo-tipo {
-      font-size: .72rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: #6c757d; margin-bottom: 4px;
-    }
-    .qr-card .activo-nombre {
-      font-size: .98rem; font-weight: 700; color: #212529;
-      line-height: 1.3; margin-bottom: 8px;
-    }
-    .qr-card .activo-codigo {
-      display: inline-block; font-family: monospace; font-size: 1rem;
-      font-weight: 700; background: #f0f4f8; border: 1px dashed #adb5bd;
-      border-radius: 6px; padding: 4px 14px; letter-spacing: 2px;
-      color: #113456; margin-bottom: 12px;
-    }
-    .qr-card .scan-hint { font-size: .7rem; color: #adb5bd; margin-top: 8px; }
-
-    /* Estado de carga del botón PNG */
-    .btn-png-loading { opacity: .7; pointer-events: none; }
-
-    @media print {
-      body { background: #fff; margin: 0; }
-      .screen-actions { display: none !important; }
-      .qr-card-wrap { padding: 0; justify-content: center; }
-      .qr-card { border: 1.5px solid #ccc; box-shadow: none; border-radius: 10px; page-break-inside: avoid; }
-      .multi-print .qr-card-wrap {
-        display: grid; grid-template-columns: repeat(2, 340px);
-        gap: 16px; justify-content: center; padding: 16px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/print_qr.css">
 </head>
 <body>
 
@@ -187,7 +120,7 @@ endif; ?>
 
       <div class="scan-hint">
         <i class="bi bi-qr-code-scan"></i>
-        Escanea para ver información del activo
+        Escanea para ver informaciÃ³n del activo
       </div>
 
     </div>
@@ -210,8 +143,8 @@ endif; ?>
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Generando...';
 
       html2canvas(card, {
-        scale: 3,          // Alta resolución (3× = ~1020px de ancho → nítido en Word)
-        useCORS: true,     // Necesario para imágenes cross-origin
+        scale: 3,          // Alta resoluciÃ³n (3Ã— = ~1020px de ancho â†’ nÃ­tido en Word)
+        useCORS: true,     // Necesario para imÃ¡genes cross-origin
         backgroundColor: '#ffffff',
         logging: false
       }).then(function(canvas) {
@@ -233,6 +166,7 @@ endif; ?>
 
 </body>
 </html>
+
 
 
 

@@ -787,169 +787,9 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
 <div class="orders-page-container">
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.1">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/new_order.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
-<style>
-/* ─── SEE OC — Layout ────────────────────────────────────────── */
-.oc-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 1.25rem;
-  align-items: start;
-}
-.oc-card {
-  background: #fff;
-  border: 1px solid var(--gray-200, #e5e7eb);
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 1.25rem;
-}
-.oc-card:last-child { margin-bottom: 0; }
-.oc-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid var(--gray-100, #f3f4f6);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--s-700, #113557);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.oc-card-body { padding: 1.25rem; }
-/* Fields grid */
-.oc-fields {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem 1.5rem;
-}
-.oc-field label {
-  display: block;
-  font-size: 0.67rem;
-  font-weight: 700;
-  color: var(--gray-400, #9ca3af);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 0.2rem;
-}
-.oc-field .val {
-  font-size: 0.87rem;
-  font-weight: 600;
-  color: var(--s-800, #0f172a);
-}
-/* Finance sidebar */
-.oc-finance {
-  background: var(--s-700, #113557);
-  border-radius: 14px;
-  padding: 1.1rem 1.25rem;
-  color: #fff;
-  margin-bottom: 1.25rem;
-}
-.oc-finance-title {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.65);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(255,255,255,0.12);
-  margin-bottom: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.oc-finance-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.4rem 0;
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.75);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.oc-finance-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding-top: 0.75rem;
-  margin-top: 0.5rem;
-  border-top: 1px solid rgba(255,255,255,0.2);
-}
-.oc-finance-total .lbl { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.9); text-transform: uppercase; }
-.oc-finance-total .amt { font-size: 1.35rem; font-weight: 800; color: #fff; }
-/* Sidebar small card */
-.oc-side-card {
-  background: #fff;
-  border: 1px solid var(--gray-200, #e5e7eb);
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-.oc-side-card:last-child { margin-bottom: 0; }
-.oc-side-header {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--gray-100, #f3f4f6);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--s-700, #113557);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.oc-side-body { padding: 0.9rem 1rem; }
-.oc-side-field { margin-bottom: 0.75rem; }
-.oc-side-field:last-child { margin-bottom: 0; }
-.oc-side-field label {
-  display: block;
-  font-size: 0.63rem;
-  font-weight: 700;
-  color: var(--gray-400, #9ca3af);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 0.15rem;
-}
-.oc-side-field .val { font-size: 0.82rem; font-weight: 600; color: var(--s-800, #0f172a); line-height: 1.3; }
-/* Type badge in items table */
-.type-badge {
-  display: inline-flex;
-  padding: 0.18rem 0.55rem;
-  border-radius: 20px;
-  font-size: 0.67rem;
-  font-weight: 700;
-}
-.type-badge.producto { background: rgba(59,130,246,.1); color: #1d4ed8; border: 1px solid rgba(59,130,246,.25); }
-.type-badge.servicio { background: rgba(139,92,246,.1); color: #6d28d9; border: 1px solid rgba(139,92,246,.25); }
-/* Empty state */
-.oc-empty { text-align:center; padding:1.5rem; color:var(--gray-400,#9ca3af); }
-.oc-empty i { font-size:1.8rem; display:block; margin-bottom:.4rem; opacity:.45; }
-.oc-empty p { font-size:.78rem; margin:0; }
-/* Comment box */
-.oc-comment {
-  background: var(--gray-50, #f9fafb);
-  border: 1px solid var(--gray-200, #e5e7eb);
-  border-left: 3px solid var(--s-700, #113557);
-  border-radius: 8px;
-  padding: .75rem 1rem;
-  font-size: .82rem;
-  color: var(--gray-700, #374151);
-}
-.oc-comment.danger { border-left-color: #e8445a; background: rgba(232,68,90,.04); }
-/* Loading overlay */
-#loadingOverlay {
-  position:fixed; inset:0; background:rgba(0,0,0,.55);
-  display:none; justify-content:center; align-items:center; z-index:9999;
-}
-.loading-box {
-  background:#fff; padding:25px 40px; border-radius:12px;
-  box-shadow:0 0 15px rgba(0,0,0,.3); text-align:center; font-size:17px; font-weight:bold;
-}
-.spinner-border { width:3rem; height:3rem; }
-@media(max-width:960px){ .oc-detail-grid { grid-template-columns:1fr; } .oc-fields { grid-template-columns:1fr 1fr; } }
-@media(max-width:576px){ .oc-fields { grid-template-columns:1fr; } }
-</style>
+
 
     <!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
 
@@ -966,32 +806,32 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
                 <h1 class="orders-page-title">OC <?= htmlspecialchars($orden_compra['folio']) ?></h1>
                 <?php
                 $badge_map = [
-                    'pendiente'  => ['status-badge--pendiente', 'bi-clock',                   'Pendiente'],
-                    'revisado'   => ['status-badge--revisado',  'bi-check2-circle',            'Revisado'],
-                    'aprobado'   => ['status-badge--aprobado',  'bi-check-circle',             'Aprobado'],
-                    'rechazado'  => ['status-badge--rechazado', 'bi-x-circle',                'Rechazado'],
-                    'pagado'     => ['status-badge--pagado',    'bi-currency-dollar',          'Pagado'],
-                    'devuelto'   => ['status-badge--devuelto',  'bi-arrow-counterclockwise',  'Devuelto'],
-                    'comprobante_subido' => ['status-badge--revisado','bi-file-earmark-check','Comprobante Subido'],
+                    'pendiente'  => ['status-badge--pendiente', 'fa-regular fa-clock',                   'Pendiente'],
+                    'revisado'   => ['status-badge--revisado',  'fa-regular fa-circle-check',            'Revisado'],
+                    'aprobado'   => ['status-badge--aprobado',  'fa-solid fa-circle-check',             'Aprobado'],
+                    'rechazado'  => ['status-badge--rechazado', 'fa-solid fa-circle-xmark',                'Rechazado'],
+                    'pagado'     => ['status-badge--pagado',    'fa-solid fa-dollar-sign',          'Pagado'],
+                    'devuelto'   => ['status-badge--devuelto',  'fa-solid fa-rotate-left',  'Devuelto'],
+                    'comprobante_subido' => ['status-badge--revisado','fa-solid fa-file-circle-check','Comprobante Subido'],
                 ];
-                $b = $badge_map[$orden_compra['estado']] ?? ['status-badge--revisado','bi-circle', ucfirst($orden_compra['estado'])];
-                echo '<span class="status-badge ' . $b[0] . '"><i class="bi ' . $b[1] . '"></i> ' . $b[2] . '</span>';
+                $b = $badge_map[$orden_compra['estado']] ?? ['status-badge--revisado','fa-regular fa-circle', ucfirst($orden_compra['estado'])];
+                echo '<span class="status-badge ' . $b[0] . '"><i class="' . $b[1] . '"></i> ' . $b[2] . '</span>';
                 ?>
             </div>
         </div>
         <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start;">
             <?php if (($orden_compra['estado'] == 'devuelto' && $_SESSION['user_id'] == $orden_compra['solicitante_id']) || (($_SESSION['departamento'] ?? '') === 'Tecnico de Sistemas')): ?>
                 <a href="edit_oc.php?id=<?= $orden_compra['id'] ?>" class="btn-geco-secondary">
-                    <i class="bi bi-pencil"></i> Editar Orden
+                    <i class="fa-solid fa-pen-to-square"></i> Editar Orden
                 </a>
             <?php endif; ?>
             <?php if (in_array($orden_compra['estado'], ['devuelto', 'pagado'])): ?>
-                <a href="<?= BASE_URL ?>/orders/download_pdf_oc.php?id=<?= $orden_compra['id'] ?>" class="btn-geco-secondary" style="background:#fff;color:var(--s-700,#113557);border:1.5px solid var(--gray-200,#e5e7eb);" target="_blank">
-                    <i class="bi bi-download"></i> PDF
+                <a href="<?= BASE_URL ?>/orders/download_pdf_oc.php?id=<?= $orden_compra['id'] ?>" class="btn-geco-outline" target="_blank">
+                    <i class="fa-solid fa-download"></i> PDF
                 </a>
             <?php endif; ?>
-            <a href="list_oc.php" class="btn-geco-secondary" style="background:#fff;color:var(--s-700,#113557);border:1.5px solid var(--gray-200,#e5e7eb);">
-                <i class="bi bi-arrow-left"></i> Volver
+            <a href="list_oc.php" class="btn-geco-outline">
+                <i class="fa-solid fa-arrow-left"></i> Volver
             </a>
         </div>
     </div>
@@ -1003,7 +843,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
         $comprobante_status = $_GET['comprobante'] ?? '';
         $transferidos      = $_GET['transferidos'] ?? 0;
         $msg_class = 'orders-alert--success';
-        $msg_icon  = 'bi-check-circle-fill';
+        $msg_icon  = 'fa-solid fa-circle-check';
         $msg_text  = 'Estado actualizado correctamente';
         if ($comprobante_status === 'subido') {
             $msg_text = 'Comprobante de pago subido exitosamente';
@@ -1012,19 +852,19 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
             $msg_text .= " y se enviaron {$count} notificaciones por correo.";
         } elseif ($email_status === 'error') {
             $msg_class = 'orders-alert--warning';
-            $msg_icon  = 'bi-exclamation-triangle-fill';
+            $msg_icon  = 'fa-solid fa-circle-exclamation';
             $msg_text .= ', pero hubo un problema al enviar las notificaciones.';
         }
         ?>
         <div class="orders-alert <?= $msg_class ?> alert-dismissible fade show" role="alert">
-            <i class="bi <?= $msg_icon ?>"></i>
+            <i class="<?= $msg_icon ?>"></i>
             <span><?= $msg_text ?></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (isset($mensaje_error)): ?>
         <div class="orders-alert" style="background:rgba(232,68,90,.06);border-color:rgba(232,68,90,.3);color:#b91c1c;">
-            <i class="bi bi-exclamation-triangle-fill"></i>
+            <i class="fa-solid fa-triangle-exclamation"></i>
             <span><?= $mensaje_error ?></span>
         </div>
     <?php endif; ?>
@@ -1038,7 +878,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
             <!-- ─── INFORMACIÓN GENERAL ───────────────────────────────── -->
             <div class="oc-card">
                 <div class="oc-card-header">
-                    <i class="bi bi-info-circle"></i> Información General
+                    <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General</span>
                 </div>
                 <div class="oc-card-body">
                     <div class="oc-fields">
@@ -1103,8 +943,8 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <?php if (!empty($comentario_decision)): ?>
             <div class="oc-card" style="border-left: 3px solid var(--s-700, #113557);">
-                <div class="oc-card-header"><i class="bi bi-chat-dots"></i>
-                    Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?>
+                <div class="oc-card-header"><span class="oc-card-header__title"><i class="fa-regular fa-comment-dots"></i>
+                    Comentario del <?= $accion_decision === 'Revisó orden de compra' ? 'Revisor' : 'Aprobador' ?></span>
                 </div>
                 <div class="oc-card-body">
                     <p style="font-size:.82rem;color:var(--gray-600,#4b5563);margin:0;font-style:italic;">
@@ -1119,7 +959,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <?php if ($orden_compra['estado'] === 'rechazado' && !empty($comentario_rechazo)): ?>
             <div class="oc-card" style="border-left: 3px solid #e8445a;">
-                <div class="oc-card-header" style="color:#b91c1c;"><i class="bi bi-x-circle"></i> Motivo del Rechazo</div>
+                <div class="oc-card-header" style="color:#b91c1c;"><span class="oc-card-header__title"><i class="fa-solid fa-circle-xmark"></i> Motivo del Rechazo</span></div>
                 <div class="oc-card-body">
                     <p style="font-size:.82rem;color:#7f1d1d;margin:0;font-style:italic;">
                         "<?= nl2br(htmlspecialchars($comentario_rechazo)) ?>"
@@ -1131,7 +971,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <!-- ─── ITEMS DE LA ORDEN ───────────────────────────────── -->
             <div class="oc-card">
-                <div class="oc-card-header"><i class="bi bi-list-ul"></i> Items de la Orden</div>
+                <div class="oc-card-header"><span class="oc-card-header__title"><i class="fa-solid fa-list"></i> Items de la Orden</span></div>
                 <div class="orders-table-wrap">
 
 
@@ -1176,7 +1016,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <?php if (!empty($orden_compra['descripcion'])): ?>
             <div class="oc-card">
-                <div class="oc-card-header"><i class="bi bi-file-text"></i> Descripción</div>
+                <div class="oc-card-header"><span class="oc-card-header__title"><i class="fa-regular fa-file-lines"></i> Descripción</span></div>
                 <div class="oc-card-body">
                     <p style="font-size:.85rem;color:var(--gray-700,#374151);margin:0;white-space:pre-wrap;"><?= htmlspecialchars($orden_compra['descripcion']) ?></p>
                 </div>
@@ -1185,7 +1025,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <?php if (!empty($orden_compra['observaciones'])): ?>
             <div class="oc-card">
-                <div class="oc-card-header"><i class="bi bi-chat-text"></i> Observaciones</div>
+                <div class="oc-card-header"><span class="oc-card-header__title"><i class="fa-regular fa-comments"></i> Observaciones</span></div>
                 <div class="oc-card-body">
                     <p style="font-size:.85rem;color:var(--gray-700,#374151);margin:0;white-space:pre-wrap;"><?= htmlspecialchars($orden_compra['observaciones']) ?></p>
                 </div>
@@ -1199,7 +1039,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <!-- Finance summary -->
             <div class="oc-finance">
-                <div class="oc-finance-title"><i class="bi bi-calculator"></i> Resumen Financiero</div>
+                <div class="oc-finance-title"><i class="fa-solid fa-calculator"></i> Resumen Financiero</div>
                 <div class="oc-finance-row">
                     <span>Subtotal</span>
                     <span>$<?= number_format($orden_compra['subtotal'] ?: $total_general, 2) ?></span>
@@ -1221,7 +1061,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <!-- Ubicación Presupuesto -->
             <div class="oc-side-card">
-                <div class="oc-side-header"><i class="bi bi-diagram-3"></i> Ubicación Presupuesto</div>
+                <div class="oc-side-header"><i class="fa-solid fa-sitemap"></i> Ubicación Presupuesto</div>
                 <div class="oc-side-body">
                     <?php if ($orden_compra['nombre_proyecto']): ?>
                     <div class="oc-side-field">
@@ -1266,38 +1106,38 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
             <!-- Archivos Adjuntos sidebar card -->
             <div class="oc-side-card">
-                <div class="oc-side-header"><i class="bi bi-paperclip"></i> Archivos Adjuntos</div>
+                <div class="oc-side-header"><i class="fa-solid fa-paperclip"></i> Archivos Adjuntos</div>
                 <div class="oc-side-body" style="padding:0;">
                 <?php if ($archivos->num_rows > 0): ?>
                     <?php while ($archivo = $archivos->fetch_assoc()):
                         $ext = strtolower(pathinfo($archivo['nombre_archivo'], PATHINFO_EXTENSION));
                         $ficon = match(true) {
-                            in_array($ext,['pdf'])           => 'bi-file-earmark-pdf',
-                            in_array($ext,['doc','docx'])    => 'bi-file-earmark-word',
-                            in_array($ext,['xls','xlsx'])    => 'bi-file-earmark-excel',
-                            in_array($ext,['jpg','jpeg','png','gif']) => 'bi-file-earmark-image',
-                            in_array($ext,['zip','rar'])     => 'bi-file-earmark-zip',
-                            default                          => 'bi-file-earmark'
+                            in_array($ext,['pdf'])           => 'fa-regular fa-file-pdf',
+                            in_array($ext,['doc','docx'])    => 'fa-regular fa-file-word',
+                            in_array($ext,['xls','xlsx'])    => 'fa-regular fa-file-excel',
+                            in_array($ext,['jpg','jpeg','png','gif']) => 'fa-regular fa-file-image',
+                            in_array($ext,['zip','rar'])     => 'fa-regular fa-file-zipper',
+                            default                          => 'fa-regular fa-file'
                         };
                     ?>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem;border-bottom:1px solid var(--gray-100,#f3f4f6);">
                         <div style="display:flex;align-items:center;gap:.5rem;min-width:0;">
-                            <i class="bi <?= $ficon ?>" style="font-size:1rem;color:var(--gray-500,#6b7280);flex-shrink:0;"></i>
+                            <i class="<?= $ficon ?>" style="font-size:1rem;color:var(--gray-500,#6b7280);flex-shrink:0;"></i>
                             <span style="font-size:.75rem;font-weight:600;color:var(--s-800,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
                         </div>
                         <div style="display:flex;gap:.35rem;flex-shrink:0;">
                             <button type="button" class="btn-action" onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')" title="Ver">
-                                <i class="bi bi-eye"></i>
+                                <i class="fa-regular fa-eye"></i>
                             </button>
                             <a href="<?= BASE_URL ?>/orders/download_archivo_oc.php?id=<?= $archivo['id'] ?>" class="btn-action" title="Descargar">
-                                <i class="bi bi-download"></i>
+                                <i class="fa-solid fa-download"></i>
                             </a>
                         </div>
                     </div>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <div class="oc-empty" style="padding:1.5rem;">
-                        <i class="bi bi-inbox"></i>
+                        <i class="fa-solid fa-inbox"></i>
                         <p>No hay archivos adjuntos</p>
                     </div>
                 <?php endif; ?>
@@ -1307,14 +1147,14 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
             <!-- Comprobante de Pago -->
             <?php if (!empty($orden_compra['comprobante_pago'])): ?>
             <div class="oc-side-card" style="border-left:3px solid #6d28d9;">
-                <div class="oc-side-header" style="color:#6d28d9;"><i class="bi bi-receipt"></i> Comprobante de Pago</div>
+                <div class="oc-side-header" style="color:#6d28d9;"><i class="fa-solid fa-receipt"></i> Comprobante de Pago</div>
                 <div class="oc-side-body">
                     <div style="display:flex;gap:.5rem;">
                         <button type="button" class="btn-geco-primary" style="font-size:.78rem;padding:.4rem .8rem;" onclick="verComprobante(<?= $id ?>)">
-                            <i class="bi bi-eye"></i> Ver
+                            <i class="fa-regular fa-eye"></i> Ver
                         </button>
-                        <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1" class="btn-geco-secondary" style="font-size:.78rem;padding:.4rem .8rem;">
-                            <i class="bi bi-download"></i> Descargar
+                        <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1" class="btn-geco-outline" style="font-size:.78rem;padding:.4rem .8rem;">
+                            <i class="fa-solid fa-download"></i> Descargar
                         </a>
                     </div>
                 </div>
@@ -1335,18 +1175,18 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
     <!-- ─── ACCIONES: Gerente de Operaciones (Pendiente) ─────────── -->
     <?php if ($orden_compra['estado'] === 'pendiente' && $departamento === 'Gerente de Operaciones'): ?>
     <div class="oc-card" style="border-left:3px solid #3b82f6;">
-        <div class="oc-card-header" style="color:#1d4ed8;"><i class="bi bi-gear"></i> Acciones — Gerente de Operaciones</div>
+        <div class="oc-card-header" style="color:#1d4ed8;"><span class="oc-card-header__title"><i class="fa-solid fa-gears"></i> Acciones — Gerente de Operaciones</span></div>
         <div class="oc-card-body">
-            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="bi bi-envelope"></i> <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante y al Subdirector General.</p>
+            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="fa-solid fa-envelope"></i> <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante y al Subdirector General.</p>
             <form method="POST">
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
-                    <button type="button" class="btn-geco-primary" onclick="seleccionarEstado('revisado')" style="background:#1d4ed8;"><i class="bi bi-check2-circle"></i> Marcar como Revisado</button>
-                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('devuelto')"><i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar</button>
+                    <button type="button" class="btn-geco-primary" onclick="seleccionarEstado('revisado')" style="background:#1d4ed8;"><i class="fa-regular fa-circle-check"></i> Marcar como Revisado</button>
+                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('devuelto')"><i class="fa-solid fa-rotate-left"></i> Devolver para Editar</button>
                 </div>
                 <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
                 <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;">Comentario (Opcional)</label>
                 <textarea class="form-control mt-1 mb-2" name="comentario" rows="2" placeholder="Comentario sobre la decisión..."></textarea>
-                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled><i class="bi bi-check-lg"></i> Confirmar Decisión</button>
+                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled><i class="fa-solid fa-check"></i> Confirmar Decisión</button>
             </form>
         </div>
     </div>
@@ -1355,19 +1195,19 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
     <!-- ─── ACCIONES: Subdirector General (Revisado) ──────────────── -->
     <?php if ($orden_compra['estado'] === 'revisado' && $departamento === 'Subdirector General'): ?>
     <div class="oc-card" style="border-left:3px solid #407656;">
-        <div class="oc-card-header" style="color:#407656;"><i class="bi bi-gear"></i> Acciones — Subdirector General</div>
+        <div class="oc-card-header" style="color:#407656;"><span class="oc-card-header__title"><i class="fa-solid fa-gears"></i> Acciones — Subdirector General</span></div>
         <div class="oc-card-body">
-            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="bi bi-envelope"></i> <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante y al Gerente de Recursos Humanos.</p>
+            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="fa-solid fa-envelope"></i> <strong>Notificación automática:</strong> Al cambiar el estado se notificará al solicitante y al Gerente de Recursos Humanos.</p>
             <form method="POST">
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
-                    <button type="button" class="btn-geco-primary" onclick="seleccionarEstado('aprobado')"><i class="bi bi-check-circle"></i> Aprobar</button>
-                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('rechazado')" style="background:#e8445a;color:#fff;border-color:transparent;"><i class="bi bi-x-circle"></i> Rechazar</button>
-                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('devuelto')"><i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar</button>
+                    <button type="button" class="btn-geco-primary" onclick="seleccionarEstado('aprobado')"><i class="fa-solid fa-circle-check"></i> Aprobar</button>
+                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('rechazado')" style="background:#e8445a;color:#fff;border-color:transparent;"><i class="fa-solid fa-circle-xmark"></i> Rechazar</button>
+                    <button type="button" class="btn-geco-secondary" onclick="seleccionarEstado('devuelto')"><i class="fa-solid fa-rotate-left"></i> Devolver para Editar</button>
                 </div>
                 <input type="hidden" name="nuevo_estado" id="nuevo_estado" required>
                 <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;">Comentario (Opcional)</label>
                 <textarea class="form-control mt-1 mb-2" name="comentario" rows="2" placeholder="Comentario sobre la decisión..."></textarea>
-                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled><i class="bi bi-check-lg"></i> Confirmar Decisión</button>
+                <button type="submit" name="cambiar_estado" class="btn-geco-primary" id="btnConfirmar" disabled><i class="fa-solid fa-check"></i> Confirmar Decisión</button>
             </form>
         </div>
     </div>
@@ -1376,9 +1216,9 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
     <!-- ─── COMPROBANTE: Gerente RRHH (Aprobado) ─────────────────── -->
     <?php if ($orden_compra['estado'] === 'aprobado' && $puede_subir_comprobante): ?>
     <div class="oc-card" style="border-left:3px solid #6d28d9;">
-        <div class="oc-card-header" style="color:#6d28d9;"><i class="bi bi-receipt"></i> Subir Comprobante de Pago</div>
+        <div class="oc-card-header" style="color:#6d28d9;"><span class="oc-card-header__title"><i class="fa-solid fa-receipt"></i> Subir Comprobante de Pago</span></div>
         <div class="oc-card-body">
-            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="bi bi-info-circle"></i> Adjunte el comprobante (PDF, JPG, PNG — máx. 10MB). Al subir, la orden quedará marcada como <strong>Pagada</strong>.</p>
+            <p style="font-size:.8rem;color:var(--gray-500,#6b7280);margin:0 0 1rem;"><i class="fa-solid fa-circle-info"></i> Adjunte el comprobante (PDF, JPG, PNG — máx. 10MB). Al subir, la orden quedará marcada como <strong>Pagada</strong>.</p>
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="nuevo_estado" value="pagado">
                 <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;">Archivo del Comprobante <span style="color:#e8445a;">*</span></label>
@@ -1386,7 +1226,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
                 <small class="text-muted">PDF, JPG, PNG | Máx. 10MB</small>
                 <label style="font-size:.78rem;font-weight:600;color:var(--gray-500,#6b7280);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:1rem;">Comentario (Opcional)</label>
                 <textarea class="form-control mt-1 mb-2" name="comentario" rows="2" placeholder="Observaciones sobre el pago..."></textarea>
-                <button type="submit" name="subir_comprobante_y_pagar" class="btn-geco-primary"><i class="bi bi-check-circle-fill"></i> Subir Comprobante y Confirmar Pago</button>
+                <button type="submit" name="subir_comprobante_y_pagar" class="btn-geco-primary"><i class="fa-solid fa-circle-check"></i> Subir Comprobante y Confirmar Pago</button>
             </form>
         </div>
     </div>
@@ -1399,13 +1239,13 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
     $estados_devolver = ['aprobado', 'comprobante_subido', 'pagado'];
     $estado_permite_devolver = in_array($orden_compra['estado'], $estados_devolver);
     if ($estado_permite_devolver && $puede_devolver): ?>
-    <div class="oc-card"">
-        <div class="oc-card-header" style="color:#92400e;"><i class="bi bi-arrow-counterclockwise"></i> Devolver Orden</div>
+    <div class="oc-card">
+        <div class="oc-card-header" style="color:#92400e;"><span class="oc-card-header__title"><i class="fa-solid fa-rotate-left"></i> Devolver Orden</span></div>
         <div class="oc-card-body">
             <form method="POST" class="d-inline" onsubmit="handleDevolver(event)">
                 <input type="hidden" name="nuevo_estado" value="devuelto">
                 <textarea name="comentario" class="d-none" id="comentario_devolver"></textarea>
-                <button type="submit" name="cambiar_estado" class="btn-geco-secondary"><i class="bi bi-arrow-counterclockwise"></i> Devolver para Editar</button>
+                <button type="submit" name="cambiar_estado" class="btn-geco-secondary"><i class="fa-solid fa-rotate-left"></i> Devolver para Editar</button>
             </form>
         </div>
     </div>
@@ -1437,24 +1277,24 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
       const btnConfirmar = document.getElementById('btnConfirmar');
       if (estado === 'aprobado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Aprobación';
-        btnConfirmar.className = 'btn btn-success';
+        btnConfirmar.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar Aprobación';
+        btnConfirmar.className = 'btn-geco-primary';
       } else if (estado === 'revisado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check2-circle"></i> Confirmar Revisión';
-        btnConfirmar.className = 'btn btn-info';
+        btnConfirmar.innerHTML = '<i class="fa-regular fa-circle-check"></i> Confirmar Revisión';
+        btnConfirmar.className = 'btn-geco-primary';
       } else if (estado === 'rechazado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-x-lg"></i> Confirmar Rechazo';
-        btnConfirmar.className = 'btn btn-danger';
+        btnConfirmar.innerHTML = '<i class="fa-solid fa-xmark"></i> Confirmar Rechazo';
+        btnConfirmar.className = 'btn-geco-danger';
       } else if (estado === 'devuelto') {
-        btnConfirmar.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Confirmar Devolución';
-        btnConfirmar.className = 'btn btn-warning';
+        btnConfirmar.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Confirmar Devolución';
+        btnConfirmar.className = 'btn-geco-secondary';
       } else if (estado === 'pagado') {
-        btnConfirmar.innerHTML = '<i class="bi bi-check-lg"></i> Confirmar Pago';
-        btnConfirmar.className = 'btn btn-success';
+        btnConfirmar.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar Pago';
+        btnConfirmar.className = 'btn-geco-primary';
       }
     }
 
-    // Función para manejar la devolución con confirmación premium
+    // Función para manejar la devolución con confirmación
     function handleDevolver(e) {
       e.preventDefault();
       const form = e.target;
@@ -1502,4 +1342,5 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
   </div>
 
   <?php include __DIR__ . "/../includes/footer.php"; ?>
+
 

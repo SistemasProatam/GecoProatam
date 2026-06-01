@@ -311,1199 +311,250 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
-  <style>
-    .sc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px
-    }
-
-    .sc-card {
-      border: 1px solid rgba(0, 0, 0, .09);
-      border-radius: 12px;
-      overflow: hidden;
-      background: #fff;
-      transition: box-shadow .2s, transform .2s;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .05)
-    }
-
-    .sc-card:hover {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .10);
-      transform: translateY(-2px)
-    }
-
-    .sc-card-head {
-      padding: 14px 16px 12px;
-      border-bottom: 1px solid rgba(0, 0, 0, .06);
-      display: flex;
-      align-items: flex-start;
-      gap: 10px
-    }
-
-    .sc-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 9px;
-      background: rgba(63, 117, 85, .12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #3f7555;
-      font-size: 16px;
-      flex-shrink: 0
-    }
-
-    .sc-name {
-      font-size: .88rem;
-      font-weight: 700;
-      color: #0f172a;
-      line-height: 1.3
-    }
-
-    .sc-sub {
-      font-size: .72rem;
-      color: #8fa3b8;
-      margin-top: 2px
-    }
-
-    .sc-body {
-      padding: 12px 16px
-    }
-
-    .sc-foot {
-      padding: 9px 16px;
-      background: rgba(0, 0, 0, .02);
-      border-top: 1px solid rgba(0, 0, 0, .05);
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
-      flex-wrap: wrap
-    }
-
-    .monto-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 10px
-    }
-
-    .monto-item {
-      text-align: center
-    }
-
-    .monto-lbl {
-      font-size: .62rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #0f172a;
-      margin-bottom: 2px
-    }
-
-    .monto-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: .88rem;
-      font-weight: 700;
-      color: #0f172a
-    }
-
-    .mv-blue {
-      color: #1a60a8
-    }
-
-    .mv-amber {
-      color: #b47800
-    }
-
-    .mv-green {
-      color: #1a7555
-    }
-
-    .mv-red {
-      color: #c0392b
-    }
-
-    .mv-purple {
-      color: #6d28d9
-    }
-
-    .prog-wrap {
-      height: 5px;
-      background: rgba(0, 0, 0, .07);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-top: 4px
-    }
-
-    .prog-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, #3f7555, #5fbe8a);
-      transition: width .6s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .tag-cnt {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: .68rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(63, 117, 85, .1);
-      color: #3f7555;
-      border: 1px solid rgba(63, 117, 85, .2)
-    }
-
-    .tag-ext {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: .68rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(109, 40, 217, .08);
-      color: #6d28d9;
-      border: 1px solid rgba(109, 40, 217, .2);
-      cursor: pointer;
-      transition: background .15s
-    }
-
-    .tag-ext:hover {
-      background: rgba(109, 40, 217, .15)
-    }
-
-    /* editor */
-    .sc-editor-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .52);
-      z-index: 1060;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px)
-    }
-
-    .sc-editor-overlay.open {
-      display: flex
-    }
-
-    .sc-editor-box {
-      background: #fff;
-      border-radius: 16px;
-      width: 96%;
-      max-width: 940px;
-      max-height: 88vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .22);
-      animation: scFadeUp .28s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    @keyframes scFadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(14px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    .sc-editor-head {
-      padding: 18px 22px 14px;
-      border-bottom: 1px solid rgba(0, 0, 0, .07);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0
-    }
-
-    .sc-editor-body {
-      flex: 1;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr 1fr
-    }
-
-    .sc-editor-col {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 14px
-    }
-
-    .sc-editor-col:first-child {
-      border-right: 1px solid rgba(0, 0, 0, .07)
-    }
-
-    .sc-editor-foot {
-      padding: 12px 22px;
-      border-top: 1px solid rgba(0, 0, 0, .07);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-      font-size: .75rem;
-      color: #8fa3b8
-    }
-
-    .dd-head {
-      font-size: .72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: #8fa3b8;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px
-    }
-
-    .dd-cnt {
-      background: rgba(0, 0, 0, .07);
-      padding: 1px 7px;
-      border-radius: 20px;
-      font-size: .68rem;
-      font-weight: 600
-    }
-
-    .dd-cnt.green {
-      background: rgba(63, 117, 85, .15);
-      color: #3f7555
-    }
-
-    .dd-search {
-      width: 100%;
-      padding: 6px 10px;
-      border: 1px solid rgba(0, 0, 0, .1);
-      border-radius: 7px;
-      font-size: .8rem;
-      background: #f8f9fa;
-      margin-bottom: 7px;
-      font-family: inherit
-    }
-
-    .dd-search:focus {
-      outline: none;
-      border-color: #3f7555
-    }
-
-    .dd-zone {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px;
-      border-radius: 8px;
-      min-height: 260px;
-      max-height: 340px;
-      transition: background .15s
-    }
-
-    .dd-zone.drag-over {
-      background: rgba(63, 117, 85, .06);
-      outline: 2px dashed rgba(63, 117, 85, .35);
-      outline-offset: -3px
-    }
-
-    .concept-chip {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 9px;
-      border-radius: 7px;
-      border: 1px solid rgba(0, 0, 0, .07);
-      background: #fff;
-      cursor: grab;
-      margin-bottom: 4px;
-      transition: box-shadow .15s, border-color .15s;
-      user-select: none;
-      font-size: .78rem
-    }
-
-    .concept-chip:hover {
-      border-color: rgba(63, 117, 85, .35);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
-    }
-
-    .concept-chip.dragging {
-      opacity: .4
-    }
-
-    .concept-chip.already {
-      border-color: rgba(109, 40, 217, .25);
-      background: rgba(109, 40, 217, .04)
-    }
-
-    .chip-cat {
-      flex-shrink: 0;
-      font-size: .6rem;
-      font-weight: 700;
-      padding: 2px 5px;
-      border-radius: 4px;
-      background: rgba(63, 117, 85, .12);
-      color: #3f7555;
-      white-space: nowrap
-    }
-
-    .chip-cod {
-      font-size: .65rem;
-      color: #8fa3b8;
-      font-weight: 600;
-      white-space: nowrap;
-      flex-shrink: 0
-    }
-
-    .chip-nom {
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 500;
-      color: #0f172a
-    }
-
-    .chip-um {
-      font-size: .62rem;
-      color: #8fa3b8;
-      flex-shrink: 0
-    }
-
-    .chip-also {
-      font-size: .62rem;
-      color: #6d28d9;
-      flex-shrink: 0;
-      font-style: italic;
-      white-space: nowrap
-    }
-
-    .dd-empty {
-      text-align: center;
-      padding: 30px 10px;
-      color: #8fa3b8;
-      font-size: .78rem
-    }
-
-    .dd-empty i {
-      font-size: 1.6rem;
-      display: block;
-      margin-bottom: 6px;
-      opacity: .4
-    }
-
-    /* modal sc */
-    .sc-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .5);
-      z-index: 1070;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(3px)
-    }
-
-    .sc-modal-overlay.open {
-      display: flex
-    }
-
-    .sc-modal-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 26px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, .18);
-      position: relative;
-      animation: scFadeUp .25s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .sc-modal-title {
-      font-size: .98rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #3f7555
-    }
-
-    .sc-mc {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: none;
-      border: none;
-      color: #8fa3b8;
-      font-size: 17px;
-      cursor: pointer
-    }
-
-    .sc-mc:hover {
-      color: #e8445a
-    }
-
-    .sc-fg {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px
-    }
-
-    .sc-fgi {
-      display: flex;
-      flex-direction: column;
-      gap: 3px
-    }
-
-    .sc-fgi.full {
-      grid-column: 1/-1
-    }
-
-    .sc-lbl {
-      font-size: .7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #8fa3b8;
-      margin-bottom: 3px
-    }
-
-    .sc-inp {
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, .12);
-      border-radius: 7px;
-      color: #0f172a;
-      padding: 7px 11px;
-      font-family: inherit;
-      font-size: .84rem;
-      transition: border-color .2s;
-      width: 100%
-    }
-
-    .sc-inp:focus {
-      outline: none;
-      border-color: #3f7555
-    }
-
-    .sc-fa {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px
-    }
-
-    .anticipo-preview {
-      background: rgba(63, 117, 85, .07);
-      border: 1px solid rgba(63, 117, 85, .2);
-      border-radius: 7px;
-      padding: 8px 12px;
-      font-size: .8rem;
-      color: #3f7555;
-      font-weight: 600;
-      margin-top: 4px;
-      display: none
-    }
-
-    /* extraordinarios */
-    .ext-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .5);
-      z-index: 1080;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(3px)
-    }
-
-    .ext-overlay.open {
-      display: flex
-    }
-
-    .ext-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 0;
-      width: 100%;
-      max-width: 580px;
-      max-height: 85vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, .18);
-      animation: scFadeUp .25s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .ext-head {
-      padding: 18px 22px 14px;
-      border-bottom: 1px solid rgba(0, 0, 0, .07);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0
-    }
-
-    .ext-head-title {
-      font-size: .95rem;
-      font-weight: 700;
-      color: #0f172a
-    }
-
-    .ext-head-sub {
-      font-size: .74rem;
-      color: #8fa3b8;
-      margin-top: 2px
-    }
-
-    .ext-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px 22px
-    }
-
-    .ext-foot {
-      padding: 14px 22px;
-      border-top: 1px solid rgba(0, 0, 0, .07);
-      flex-shrink: 0
-    }
-
-    .ext-form {
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, .08);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 18px
-    }
-
-    .ext-form-title {
-      font-size: .74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #3f7555;
-      margin-bottom: 10px
-    }
-
-    .ext-fg {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px
-    }
-
-    .ext-fgi {
-      display: flex;
-      flex-direction: column;
-      gap: 3px
-    }
-
-    .ext-fgi.full {
-      grid-column: 1/-1
-    }
-
-    .ext-list-title {
-      font-size: .74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #8fa3b8;
-      margin-bottom: 10px
-    }
-
-    .ext-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(0, 0, 0, .07);
-      background: #fff;
-      margin-bottom: 8px
-    }
-
-    .ext-item-monto {
-      font-family: 'Outfit', sans-serif;
-      font-size: .92rem;
-      font-weight: 700;
-      color: #6d28d9;
-      white-space: nowrap;
-      flex-shrink: 0;
-      min-width: 90px
-    }
-
-    .ext-item-info {
-      flex: 1;
-      min-width: 0
-    }
-
-    .ext-item-desc {
-      font-size: .82rem;
-      font-weight: 500;
-      color: #0f172a;
-      margin-bottom: 2px
-    }
-
-    .ext-item-fecha {
-      font-size: .72rem;
-      color: #8fa3b8
-    }
-
-    .ext-item-del {
-      background: none;
-      border: none;
-      color: #8fa3b8;
-      cursor: pointer;
-      font-size: .9rem;
-      padding: 2px 6px;
-      border-radius: 5px;
-      transition: color .15s, background .15s;
-      flex-shrink: 0
-    }
-
-    .ext-item-del:hover {
-      color: #e8445a;
-      background: rgba(232, 68, 90, .08)
-    }
-
-    .ext-total-bar {
-      background: rgba(109, 40, 217, .07);
-      border: 1px solid rgba(109, 40, 217, .2);
-      border-radius: 8px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .ext-total-lbl {
-      font-size: .8rem;
-      font-weight: 600;
-      color: #6d28d9
-    }
-
-    .ext-total-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #6d28d9
-    }
-
-    /* extraordinarios inline en card */
-    .sc-ext-panel {
-      margin-top: 10px;
-      border-top: 1px solid rgba(109, 40, 217, .12);
-      padding-top: 10px;
-      display: none
-    }
-
-    .sc-ext-panel.open {
-      display: block
-    }
-
-    .sc-ext-toggle {
-      width: 100%;
-      background: rgba(109, 40, 217, .06);
-      border: 1px solid rgba(109, 40, 217, .15);
-      border-radius: 7px;
-      padding: 6px 10px;
-      font-size: .72rem;
-      font-weight: 600;
-      color: #6d28d9;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background .15s;
-      font-family: inherit
-    }
-
-    .sc-ext-toggle:hover {
-      background: rgba(109, 40, 217, .12)
-    }
-
-    .sc-ext-toggle i.arrow {
-      transition: transform .2s
-    }
-
-    .sc-ext-toggle.open i.arrow {
-      transform: rotate(180deg)
-    }
-
-    .sc-ext-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(0, 0, 0, .05);
-      font-size: .78rem
-    }
-
-    .sc-ext-row:last-child {
-      border-bottom: none
-    }
-
-    .sc-ext-monto {
-      font-weight: 700;
-      color: #6d28d9;
-      white-space: nowrap;
-      min-width: 80px;
-      font-family: 'Outfit', sans-serif
-    }
-
-    .sc-ext-info {
-      flex: 1;
-      min-width: 0
-    }
-
-    .sc-ext-desc {
-      color: #0f172a;
-      font-weight: 500
-    }
-
-    .sc-ext-fecha {
-      color: #8fa3b8;
-      font-size: .68rem;
-      margin-top: 1px
-    }
-
-    .sc-ext-del {
-      background: none;
-      border: none;
-      color: #ccc;
-      cursor: pointer;
-      padding: 2px 5px;
-      border-radius: 4px;
-      transition: color .15s, background .15s;
-      font-size: .78rem
-    }
-
-    .sc-ext-del:hover {
-      color: #e8445a;
-      background: rgba(232, 68, 90, .08)
-    }
-
-    .sc-total-real {
-      margin-top: 10px;
-      background: linear-gradient(90deg, rgba(26, 96, 168, .07), rgba(63, 117, 85, .07));
-      border: 1px solid rgba(63, 117, 85, .18);
-      border-radius: 8px;
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .sc-total-real-lbl {
-      font-size: .68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #1a7555
-    }
-
-    .sc-total-real-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: .95rem;
-      font-weight: 800;
-      color: #1a7555
-    }
-
-    .sc-desc-badge {
-      margin-top: 6px;
-      font-size: .73rem;
-      color: #475569;
-      line-height: 1.4;
-      padding: 5px 8px;
-      background: rgba(0, 0, 0, .03);
-      border-radius: 6px;
-      border-left: 2px solid #cbd5e1;
-      white-space: pre-wrap;
-      word-break: break-word
-    }
-
-    /* botones */
-    .btn-sc-p {
-      background: #3f7555;
-      border: none;
-      border-radius: 7px;
-      color: #fff;
-      padding: 8px 18px;
-      font-family: inherit;
-      font-size: .82rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: opacity .2s
-    }
-
-    .btn-sc-p:hover {
-      opacity: .88
-    }
-
-    .btn-sc-p.purple {
-      background: #6d28d9
-    }
-
-    .btn-sc-s {
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, .13);
-      border-radius: 7px;
-      color: #0f172a;
-      padding: 8px 18px;
-      font-family: inherit;
-      font-size: .82rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all .2s
-    }
-
-    .btn-sc-s:hover {
-      border-color: #3f7555;
-      color: #3f7555
-    }
-
-    .btn-sc-icon {
-      background: none;
-      border: 1px solid rgba(0, 0, 0, .11);
-      border-radius: 6px;
-      color: #8fa3b8;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-size: .8rem;
-      transition: all .15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px
-    }
-
-    .btn-sc-icon:hover {
-      border-color: #3f7555;
-      color: #3f7555
-    }
-
-    .btn-sc-icon.danger:hover {
-      border-color: #e8445a;
-      color: #e8445a
-    }
-
-    .btn-sc-icon.purple:hover {
-      border-color: #6d28d9;
-      color: #6d28d9
-    }
-
-    #sc-toast {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      background: #fff;
-      border-left: 4px solid #3f7555;
-      border-radius: 9px;
-      padding: 11px 16px;
-      font-size: .82rem;
-      font-weight: 500;
-      max-width: 320px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, .14);
-      z-index: 9999;
-      transform: translateY(60px);
-      opacity: 0;
-      transition: all .3s cubic-bezier(.16, 1, .3, 1);
-      pointer-events: none;
-      color: #0f172a
-    }
-
-    #sc-toast.show {
-      transform: translateY(0);
-      opacity: 1
-    }
-
-    #sc-toast.error {
-      border-color: #e8445a
-    }
-
-    #sc-toast.success {
-      border-color: #3f7555
-    }
-
-    #sc-toast.info {
-      border-color: #6d28d9
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg)
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_obra.css">
 </head>
 
 <body>
   <?php
-include __DIR__ . "/../includes/navbar.php"; ?>
+  include __DIR__ . "/../includes/navbar.php"; ?>
 
-  <!-- HERO SECTION -->
-  <div class="hero-section">
-    <div class="container hero-content">
-      <div class="breadcrumb-custom">
-        <a href="<?= BASE_URL ?>/index.php"><i class="bi bi-house-door"></i> Inicio</a>
-        <span>/</span>
-        <a href="list_obras.php">Registro de Obras</a>
-        <span>/</span>
-        <span>Detalles de Obra</span>
+  <div class="orders-page-container">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+      <div class="orders-page-header-info mb-3">
+        <nav class="orders-breadcrumb">
+          <a href="<?= BASE_URL ?>/index.php">Inicio</a>
+          <span class="separator">›</span>
+          <a href="list_obras.php">Obras</a>
+          <span class="separator">›</span>
+          <span>Detalles de Obra</span>
+        </nav>
+        <h1 class="orders-page-title"><?= htmlspecialchars($obra['nombre_obra']) ?></h1>
+        <div class="text-muted small mt-1">
+          Periodo: <?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?> | #<?= htmlspecialchars($obra['numero_obra']) ?> - <?= htmlspecialchars($obra['nombre_proyecto']) ?>
+        </div>
       </div>
 
-      <div class="row align-items-end">
-        <div class="col-lg-8">
-          <h3 class="hero-title" style="font-size: 18px"><?= htmlspecialchars($obra['nombre_obra']) ?></h3>
-          <div style="color: #ddd; font-size: 14px; margin-top: -5px;">
-            <p>Periodo:
-              <?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?>
-              -
-              <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?>
-            </p>
-            <p class="hero-subtitle">#<?= htmlspecialchars($obra['numero_obra']) ?>
-              -
-              <?= htmlspecialchars($obra['nombre_proyecto']) ?>
-            </p>
+      <!-- Action Buttons -->
+      <div class="actions-group justify-content-start mt-2">
+        <a href="list_obras.php" class="btn-geco-outline">
+          <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+        <button class="btn-geco-secondary" onclick="editarObra(<?= $obra_id ?>)" title="Editar Obra">
+          <i class="fa-solid fa-pen-to-square"></i> Editar
+        </button>
+        <button class="btn-geco-secondary" onclick="gestionarArchivos(<?= $obra_id ?>)" title="Archivos PDF">
+          <i class="fa-solid fa-paperclip"></i> Archivos
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI Budget Dashboard -->
+    <div class="kpi-grid kpi-grid--3 mb-4">
+      <div class="kpi-card kpi-card--green">
+        <p class="kpi-card__label">Costo Directo</p>
+        <p class="kpi-card__value">$<?= number_format($obra['costo_directo'], 2) ?></p>
+        <p class="kpi-card__sub">Presupuesto asignado a la obra</p>
+      </div>
+      
+      <div class="kpi-card kpi-card--amber">
+        <p class="kpi-card__label">Monto Utilizado</p>
+        <p class="kpi-card__value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></p>
+        <p class="kpi-card__sub">Asignado a subcontratos / OC</p>
+      </div>
+      
+      <div class="kpi-card <?= $costo_disponible < 0 ? 'kpi-card--red' : 'kpi-card--green' ?>">
+        <p class="kpi-card__label">Monto Disponible</p>
+        <p class="kpi-card__value">$<?= number_format($costo_disponible, 2) ?></p>
+        <p class="kpi-card__sub">Presupuesto libre</p>
+      </div>
+    </div>
+
+    <!-- Info Panels (General & Financial) -->
+    <div class="row g-4 mb-4">
+      <!-- Información General -->
+      <div class="col-md-6">
+        <div class="orders-card p-4 h-100">
+          <h6 class="orders-card-section-title">
+            <i class="fa-solid fa-circle-info"></i> Información General
+          </h6>
+          <div class="d-flex flex-column gap-3">
+            <div class="geco-field">
+              <span class="geco-field__label">Número de Obra</span>
+              <span class="geco-field__value"><?= htmlspecialchars($obra['numero_obra']) ?></span>
+            </div>
+            <div class="geco-field">
+              <span class="geco-field__label">Proyecto</span>
+              <span class="geco-field__value"><?= htmlspecialchars($obra['nombre_proyecto']) ?></span>
+            </div>
+            <div class="geco-field">
+              <span class="geco-field__label">Licitación</span>
+              <span class="geco-field__value"><?= htmlspecialchars($obra['numero_licitacion']) ?></span>
+            </div>
+            <div class="geco-field">
+              <span class="geco-field__label">Contrato</span>
+              <span class="geco-field__value"><?= htmlspecialchars($obra['numero_contrato']) ?></span>
+            </div>
+            <div class="geco-field">
+              <span class="geco-field__label">Periodo</span>
+              <span class="geco-field__value"><?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?></span>
+            </div>
+            <div class="geco-field">
+              <span class="geco-field__label">Descripción</span>
+              <span class="geco-field__value"><?= htmlspecialchars($obra['descripcion'] ?? 'Sin descripción') ?></span>
+            </div>
           </div>
         </div>
-        <!-- ACTION BUTTONS -->
-        <div class="btn-group" style="gap:5px;">
-          <button class="btn-ed" onclick="editarObra(<?= $obra_id ?>)"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Obra">
-            <i class="bi bi-pencil"></i>
-          </button>
-
-          <button class="btn-inf" onclick="gestionarArchivos(<?= $obra_id ?>)"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="Archivos PDF">
-            <i class="bi bi-paperclip"></i>
-          </button>
+      </div>
+      
+      <!-- Información Financiera -->
+      <div class="col-md-6">
+        <div class="orders-card p-4 h-100">
+          <h6 class="orders-card-section-title">
+            <i class="fa-solid fa-money-bill-trend-up"></i> Información Financiera
+          </h6>
+          <div class="d-flex flex-column gap-3">
+            <div class="geco-field">
+              <span class="geco-field__label">Monto Designado</span>
+              <span class="geco-field__value fw-bold">$<?= number_format($obra['monto_designado'], 2) ?></span>
+            </div>
+            <div class="geco-field">
+              <span class="geco-field__label">Costo Directo</span>
+              <span class="geco-field__value fw-bold" style="color: var(--p-600);">$<?= number_format($obra['costo_directo'], 2) ?></span>
+            </div>
+            
+            <div class="border-top pt-3">
+              <span class="geco-field__label d-block mb-2">Progreso de Presupuesto Directo</span>
+              <div class="d-flex align-items-center gap-3">
+                <div class="progress flex-grow-1" style="height: 8px; border-radius: 4px;">
+                  <div class="progress-bar <?= $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success') ?>" 
+                       role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
+                </div>
+                <span class="fw-bold small text-dark"><?= number_format($porcentaje_utilizado, 1) ?>%</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content-wrapper">
-
-    <!-- BUDGET DASHBOARD -->
-    <div class="budget-dashboard">
-      <div class="dashboard-header">
-        <div class="dashboard-title">
-          <div class="title-icon">
-            <i class="bi bi-pie-chart"></i>
-          </div>
-          <h3>Control de Presupuesto</h3>
-        </div>
+    <!-- Catálogos -->
+    <div class="orders-card mb-4">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="orders-card-section-title mb-0">
+          <i class="fa-solid fa-folder-open"></i> Catálogos de la Obra
+        </h6>
+        <button class="btn-geco-primary btn-sm" onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')">
+          <i class="fa-solid fa-circle-plus"></i> Nuevo Catálogo
+        </button>
       </div>
-
-      <!-- Estadísticas de Presupuesto -->
-      <div class="budget-stats">
-        <div class="budget-stat">
-          <div class="budget-stat-label">Costo Directo</div>
-          <div class="budget-stat-value">$<?= number_format($obra['costo_directo'], 2) ?></div>
-        </div>
-
-        <div class="budget-stat">
-          <div class="budget-stat-label">Utilizado</div>
-          <div class="budget-stat-value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></div>
-        </div>
-
-        <div class="budget-stat">
-          <div class="budget-stat-label">Disponible</div>
-          <div class="budget-stat-value" style="color: <?= $costo_disponible < 0 ? '#dc3545' : '#198754' ?>">
-            $<?= number_format($costo_disponible, 2) ?>
+      <div class="p-3">
+        <?php if ($catalogos->num_rows > 0): ?>
+          <div class="orders-table-wrap">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>Nombre Catálogo</th>
+                  <th>Descripción</th>
+                  <th>Fecha de Creación</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php while ($catalogo = $catalogos->fetch_assoc()): ?>
+                  <tr>
+                    <td>
+                      <span class="fw-bold text-dark"><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></span>
+                    </td>
+                    <td>
+                      <span class="text-muted small"><?= htmlspecialchars($catalogo['descripcion'] ?? 'Sin descripción') ?></span>
+                    </td>
+                    <td>
+                      <span class="text-muted small"><?= date('d/m/Y', strtotime($catalogo['fecha_creacion'])) ?></span>
+                    </td>
+                    <td class="text-center cell-actions" style="width: 140px;">
+                      <div class="d-flex justify-content-center gap-1">
+                        <a href="conceptos_view.php?catalogo_id=<?= $catalogo['id'] ?>&catalogo_nombre=<?= urlencode($catalogo['nombre_catalogo']) ?>&obra_id=<?= $obra_id ?>&obra_nombre=<?= urlencode($obra['nombre_obra']) ?>"
+                          class="btn-action"
+                          data-bs-toggle="tooltip" title="Gestionar Conceptos">
+                          <i class="fa-solid fa-folder-open"></i>
+                        </a>
+                        <button class="btn-action"
+                          onclick="editarCatalogo(<?= $catalogo['id'] ?>)"
+                          data-bs-toggle="tooltip" title="Editar Catálogo">
+                          <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-action text-danger border-danger-subtle"
+                          onclick="eliminarCatalogo(<?= $catalogo['id'] ?>, <?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')"
+                          data-bs-toggle="tooltip" title="Eliminar Catálogo">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endwhile; ?>
+              </tbody>
+            </table>
           </div>
-        </div>
+        <?php else: ?>
+          <div class="text-center text-muted py-5">
+            <i class="fa-solid fa-folder-open d-block mb-3" style="font-size: 3rem; color: var(--gray-300);"></i>
+            <p>No hay catálogos registrados</p>
+          </div>
+        <?php endif; ?>
       </div>
+    </div>
 
-      <!-- INFO PANELS -->
-      <div class="info-grid gap-4">
-
-        <!-- Información General -->
-        <div class="info-panel">
-          <div class="panel-header">
-            <div class="panel-icon">
-              <i class="bi bi-info-circle"></i>
-            </div>
-            <h4>Información General</h4>
-          </div>
-
-          <ul class="info-list">
-            <li class="info-item">
-              <span class="info-label">Número de Obra</span>
-              <span class="info-value"><?= htmlspecialchars($obra['numero_obra']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Proyecto</span>
-              <span class="info-value"><?= htmlspecialchars($obra['nombre_proyecto']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Licitación</span>
-              <span class="info-value"><?= htmlspecialchars($obra['numero_licitacion']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Contrato</span>
-              <span class="info-value"><?= htmlspecialchars($obra['numero_contrato']) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Periodo</span>
-              <span class="info-value"><?= date('d/m/Y', strtotime($obra['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($obra['fecha_fin'])) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Descripción</span>
-              <span class="info-value"><?= htmlspecialchars($obra['descripcion']) ?></span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Información Financiera -->
-        <div class="info-panel">
-          <div class="panel-header">
-            <div class="panel-icon">
-              <i class="bi bi-cash-stack"></i>
-            </div>
-            <h4>Información Financiera</h4>
-          </div>
-
-          <ul class="info-list">
-            <li class="info-item">
-              <span class="info-label">Monto Desginado</span>
-              <span class="info-value">$<?= number_format($obra['monto_designado'], 2) ?></span>
-            </li>
-            <li class="info-item">
-              <span class="info-label">Costo Directo</span>
-              <span class="info-value">$<?= number_format($obra['costo_directo'], 2) ?></span>
-            </li>
-          </ul>
-        </div>
+    <!-- SUBCONTRATOS -->
+    <div class="orders-card mb-4">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="orders-card-section-title mb-0">
+          <i class="fa-solid fa-handshake"></i> Subcontratos de la Obra
+        </h6>
+        <button class="btn-geco-primary btn-sm" onclick="scAbrirModal()">
+          <i class="fa-solid fa-circle-plus"></i> Nuevo subcontrato
+        </button>
       </div>
-
-      <!-- Catálogos -->
-      <div class="works-section">
-
-        <div class="section-header">
-          <div class="section-title-group">
-            <h4>Catálogo</h4>
-          </div>
-        </div>
-
-        <div class="card-body">
-          <?php
-if ($catalogos->num_rows > 0): ?>
-            <div class="list-group">
-              <?php
-while ($catalogo = $catalogos->fetch_assoc()): ?>
-                <div class="list-group-item">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1">
-                      <strong><?= htmlspecialchars($catalogo['nombre_catalogo']) ?></strong>
-                      <?php
-if ($catalogo['descripcion']): ?>
-                        <br><small class="text-muted"><?= htmlspecialchars($catalogo['descripcion']) ?></small>
-                      <?php
-endif; ?>
-                      <br><small class="text-muted">Creado: <?= date('d/m/Y', strtotime($catalogo['fecha_creacion'])) ?></small>
-                    </div>
-                    <div class="btn-group" style="gap:5px;">
-                      <a href="conceptos_view.php?catalogo_id=<?= $catalogo['id'] ?>&catalogo_nombre=<?= urlencode($catalogo['nombre_catalogo']) ?>&obra_id=<?= $obra_id ?>&obra_nombre=<?= urlencode($obra['nombre_obra']) ?>"
-                        class="btn-inf"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Gestionar Conceptos">
-                        <i class="bi bi-folder2-open"></i>
-                      </a>
-                      <button class="btn-ed"
-                        onclick="editarCatalogo(<?= $catalogo['id'] ?>)"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Catálogo">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <button class="btn-del"
-                        onclick="eliminarCatalogo(<?= $catalogo['id'] ?>, <?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Catálogo">
-                        <i class="bi bi-trash3"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              <?php
-endwhile; ?>
-            </div>
-          <?php
-else: ?>
-            <div class="text-center text-muted py-4">
-              <i class="bi bi-folder" style="font-size: 3rem;"></i>
-              <p class="mt-2">No hay catálogos registrados</p>
-              <button class="btn btn-success"
-                onclick="mostrarFormularioCatalogo(<?= $obra_id ?>, '<?= htmlspecialchars(addslashes($obra['nombre_obra'])) ?>')">
-                <i class="bi bi-plus-circle"></i> Crear Primer Catálogo
-              </button>
-            </div>
-          <?php
-endif; ?>
-        </div>
-      </div>
-
-      <!-- SUBCONTRATOS -->
-      <div class="works-section" style="margin-top:24px;">
-        <div class="section-header">
-          <div class="section-title-group">
-            <h4>Subcontratos</h4>
-          </div>
-          <button class="btn-sc-p" onclick="scAbrirModal()"><i class="bi bi-plus-lg"></i> Nuevo subcontrato</button>
-        </div>
+      <div class="p-3">
         <div class="row g-2 mb-3" id="sc-stats" style="display:none!important">
           <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Subcontratos</div>
-              <div class="budget-stat-value" id="sc-stat-total">0</div>
+            <div class="geco-field p-2 border rounded bg-light">
+              <span class="geco-field__label">Subcontratos</span>
+              <span class="geco-field__value fw-bold text-dark" id="sc-stat-total">0</span>
             </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Total Monto Contratos</div>
-              <div class="budget-stat-value" id="sc-stat-est">$0</div>
+            <div class="geco-field p-2 border rounded bg-light">
+              <span class="geco-field__label">Monto Contratos</span>
+              <span class="geco-field__value fw-bold text-dark" id="sc-stat-est">$0</span>
             </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Total Anticipos</div>
-              <div class="budget-stat-value" id="sc-stat-ant">$0</div>
+            <div class="geco-field p-2 border rounded bg-light">
+              <span class="geco-field__label">Total Anticipos</span>
+              <span class="geco-field__value fw-bold text-dark" id="sc-stat-ant">$0</span>
             </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="budget-stat">
-              <div class="budget-stat-label">Total Pagado</div>
-              <div class="budget-stat-value" id="sc-stat-real">$0</div>
+            <div class="geco-field p-2 border rounded bg-light">
+              <span class="geco-field__label">Total Pagado</span>
+              <span class="geco-field__value fw-bold text-dark" id="sc-stat-real">$0</span>
             </div>
           </div>
         </div>
         <div id="sc-grid">
-          <div class="text-center text-muted py-4">
-            <i class="bi bi-arrow-clockwise" style="font-size:1.6rem;display:block;margin-bottom:8px;animation:spin 1s linear infinite;"></i>
+          <div class="text-center text-muted py-5">
+            <i class="fa-solid fa-circle-notch fa-spin d-block mb-3" style="font-size:2rem; color: var(--p-500);"></i>
             Cargando subcontratos...
           </div>
         </div>
       </div>
-
     </div>
-  </div>
 
-  <!-- FLOATING ACTION BUTTONS -->
-  <div class="fab-container-backbtn">
-    <a onclick="history.back()" class="fab-button-backbtn">
-      <i class="bi bi-arrow-left"></i>
-      <span class="fab-tooltip-backbtn">Volver</span>
-    </a>
-  </div>
-
-  <div id="sc-toast"></div>
-
+  </div> <!-- End orders-page-container -->
   <!-- MODAL Subcontrato -->
   <div class="sc-modal-overlay" id="sc-modal">
     <div class="sc-modal-box">
@@ -2571,6 +1622,8 @@ include __DIR__ . "/../includes/footer.php"; ?>
 </body>
 
 </html>
+
+
 
 
 

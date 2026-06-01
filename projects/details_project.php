@@ -44,84 +44,10 @@ $costo_disponible_proyecto = $proyecto['costo_directo'] - $proyecto['costo_direc
 $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
   ($proyecto['costo_directo_utilizado'] / $proyecto['costo_directo']) * 100 : 0;
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<style>
-  .budget-kpi-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .kpi-card {
-    background: #fff;
-    border-radius: var(--radius-lg, 16px);
-    padding: 1.5rem;
-    border: 1.5px solid var(--gray-100, #f3f4f6);
-    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.03));
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md, 0 8px 20px -3px rgba(0,0,0,0.06));
-    border-color: var(--card-hover-border) !important;
-  }
 
-  .kpi-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--gray-500, #6b7280);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .kpi-value {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--s-800, #0f172a);
-    font-family: var(--font-heading, 'Outfit', sans-serif);
-    line-height: 1.2;
-  }
-  .kpi-subtitle {
-    font-size: 0.75rem;
-    color: var(--gray-500, #6b7280);
-  }
-  .progress { height: 6px; margin-top: 5px; }
-
-  /* Soft Pastel theme variations (no left borders, full color cards) */
-  .kpi-card--cd {
-    background: rgba(64, 118, 86, 0.04);
-    border-color: rgba(64, 118, 86, 0.12);
-    --card-hover-border: rgba(64, 118, 86, 0.3);
-  }
-  .kpi-card--cd .kpi-value { color: var(--p-500, #407656) !important; }
-
-  .kpi-card--utilizado {
-    background: rgba(245, 158, 11, 0.04);
-    border-color: rgba(245, 158, 11, 0.12);
-    --card-hover-border: rgba(245, 158, 11, 0.3);
-  }
-  .kpi-card--utilizado .kpi-value { color: #d97706 !important; }
-
-  .kpi-card--disponible.success {
-    background: rgba(34, 197, 94, 0.04);
-    border-color: rgba(34, 197, 94, 0.12);
-    --card-hover-border: rgba(34, 197, 94, 0.3);
-  }
-  .kpi-card--disponible.success .kpi-value { color: #16a34a !important; }
-
-  .kpi-card--disponible.danger {
-    background: rgba(239, 68, 68, 0.04);
-    border-color: rgba(239, 68, 68, 0.12);
-    --card-hover-border: rgba(239, 68, 68, 0.3);
-  }
-  .kpi-card--disponible.danger .kpi-value { color: #dc2626 !important; }
-</style>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -137,77 +63,77 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
         <span class="separator">›</span>
         <span>Detalles del Proyecto</span>
       </nav>
-      <h1 class="orders-page-title" style="font-size: 1.5rem;"><?= htmlspecialchars($proyecto['nombre_proyecto']) ?></h1>
+      <h1 class="orders-page-title"><?= htmlspecialchars($proyecto['nombre_proyecto']) ?></h1>
       <div class="text-muted small mt-1">
         Periodo: <?= date('d/m/Y', strtotime($proyecto['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($proyecto['fecha_fin'])) ?>
       </div>
     </div>
     
     <!-- Action Buttons -->
-    <div class="actions-group" style="gap: 8px;">
+    <div class="actions-group">
       <a href="list_project.php" class="btn-geco-outline">
-        <i class="bi bi-arrow-left"></i> Volver
+        <i class="fa-solid fa-arrow-left"></i> Volver
       </a>
       <button class="btn-geco-secondary" onclick="editarProyecto(<?= $proyecto_id ?>)" title="Editar Proyecto">
-        <i class="bi bi-pencil-square"></i> Editar
+        <i class="fa-solid fa-pen-to-square"></i> Editar
       </button>
       <button class="btn-geco-secondary" onclick="gestionarArchivos(<?= $proyecto_id ?>)" title="Archivos PDF">
-        <i class="bi bi-paperclip"></i> Archivos
+        <i class="fa-solid fa-paperclip"></i> Archivos
       </button>
       <button class="btn-geco-secondary" onclick="verObras(<?= $proyecto_id ?>)" title="Gestionar Obras">
-        <i class="bi bi-cone-striped"></i> Obras
+        <i class="fa-solid fa-helmet-safety"></i> Obras
       </button>
       <button class="btn-geco-primary" onclick="exportarExcelProyecto()" title="Generar Reporte Excel">
-        <i class="bi bi-filetype-xlsx"></i> Reporte Excel
+        <i class="fa-solid fa-file-excel"></i> Reporte Excel
       </button>
     </div>
   </div>
-
+ 
   <!-- KPI Budget Dashboard -->
-  <div class="budget-kpi-container">
-    <div class="kpi-card kpi-card--cd">
-      <span class="kpi-label">Costo Directo</span>
-      <span class="kpi-value">$<?= number_format($proyecto['costo_directo'], 2) ?></span>
-      <span class="kpi-subtitle">Presupuesto inicial contratado</span>
+  <div class="kpi-grid kpi-grid--3 mb-4">
+    <div class="kpi-card kpi-card--green">
+      <p class="kpi-card__label">Costo Directo</p>
+      <p class="kpi-card__value">$<?= number_format($proyecto['costo_directo'], 2) ?></p>
+      <p class="kpi-card__sub">Presupuesto inicial contratado</p>
     </div>
     
-    <div class="kpi-card kpi-card--utilizado">
-      <span class="kpi-label">Monto Utilizado</span>
-      <span class="kpi-value">$<?= number_format($proyecto['costo_directo_utilizado'], 2) ?></span>
-      <span class="kpi-subtitle">Asignado a obras</span>
+    <div class="kpi-card kpi-card--amber">
+      <p class="kpi-card__label">Monto Utilizado</p>
+      <p class="kpi-card__value">$<?= number_format($proyecto['costo_directo_utilizado'], 2) ?></p>
+      <p class="kpi-card__sub">Asignado a obras</p>
     </div>
     
-    <div class="kpi-card kpi-card--disponible <?= $costo_disponible_proyecto < 0 ? 'danger' : 'success' ?>">
-      <span class="kpi-label">Monto Disponible</span>
-      <span class="kpi-value">$<?= number_format($costo_disponible_proyecto, 2) ?></span>
-      <span class="kpi-subtitle">Presupuesto libre</span>
+    <div class="kpi-card <?= $costo_disponible_proyecto < 0 ? 'kpi-card--red' : 'kpi-card--green' ?>">
+      <p class="kpi-card__label">Monto Disponible</p>
+      <p class="kpi-card__value">$<?= number_format($costo_disponible_proyecto, 2) ?></p>
+      <p class="kpi-card__sub">Presupuesto libre</p>
     </div>
   </div>
-
+ 
   <!-- Info Panels (General & Financial) -->
   <div class="row g-4 mb-4">
     <!-- Información General -->
     <div class="col-md-6">
       <div class="orders-card p-4 h-100">
-        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
-          <i class="bi bi-info-circle text-success me-2"></i>Información General
-        </h5>
+        <h6 class="orders-card-section-title">
+          <i class="fa-solid fa-circle-info"></i> Información General
+        </h6>
         <div class="d-flex flex-column gap-3">
-          <div>
-            <span class="text-muted d-block small fw-semibold">Cliente</span>
-            <span class="text-dark fw-bold"><?= htmlspecialchars($proyecto['cliente_nombre'] ?? 'No asignado') ?></span>
+          <div class="geco-field">
+            <span class="geco-field__label">Cliente</span>
+            <span class="geco-field__value"><?= htmlspecialchars($proyecto['cliente_nombre'] ?? 'No asignado') ?></span>
           </div>
-          <div>
-            <span class="text-muted d-block small fw-semibold">Licitación</span>
-            <span class="text-dark fw-semibold"><?= htmlspecialchars($proyecto['numero_licitacion']) ?></span>
+          <div class="geco-field">
+            <span class="geco-field__label">Licitación</span>
+            <span class="geco-field__value"><?= htmlspecialchars($proyecto['numero_licitacion']) ?></span>
           </div>
-          <div>
-            <span class="text-muted d-block small fw-semibold">Contrato</span>
-            <span class="text-dark fw-semibold"><?= htmlspecialchars($proyecto['numero_contrato']) ?></span>
+          <div class="geco-field">
+            <span class="geco-field__label">Contrato</span>
+            <span class="geco-field__value"><?= htmlspecialchars($proyecto['numero_contrato']) ?></span>
           </div>
-          <div>
-            <span class="text-muted d-block small fw-semibold">Descripción</span>
-            <span class="text-dark small"><?= htmlspecialchars($proyecto['descripcion'] ?? 'Sin descripción') ?></span>
+          <div class="geco-field">
+            <span class="geco-field__label">Descripción</span>
+            <span class="geco-field__value"><?= htmlspecialchars($proyecto['descripcion'] ?? 'Sin descripción') ?></span>
           </div>
         </div>
       </div>
@@ -216,34 +142,40 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
     <!-- Información Financiera -->
     <div class="col-md-6">
       <div class="orders-card p-4 h-100">
-        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
-          <i class="bi bi-cash-stack text-success me-2"></i>Información Financiera
-        </h5>
+        <h6 class="orders-card-section-title">
+          <i class="fa-solid fa-money-bill-trend-up"></i> Información Financiera
+        </h6>
         <div class="d-flex flex-column gap-3">
-          <div class="row">
+          <div class="row g-3">
             <div class="col-6">
-              <span class="text-muted d-block small fw-semibold">Monto Designado</span>
-              <span class="text-dark fw-semibold">$<?= number_format($proyecto['monto_designado'], 2) ?></span>
+              <div class="geco-field">
+                <span class="geco-field__label">Monto Designado</span>
+                <span class="geco-field__value fw-bold">$<?= number_format($proyecto['monto_designado'], 2) ?></span>
+              </div>
             </div>
             <div class="col-6">
-              <span class="text-muted d-block small fw-semibold">Monto con IVA</span>
-              <span class="text-dark fw-semibold">$<?= number_format($proyecto['monto_con_iva'], 2) ?></span>
+              <div class="geco-field">
+                <span class="geco-field__label">Monto con IVA</span>
+                <span class="geco-field__value fw-bold">$<?= number_format($proyecto['monto_con_iva'], 2) ?></span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="geco-field">
+                <span class="geco-field__label">Anticipo</span>
+                <span class="geco-field__value fw-bold">$<?= number_format($proyecto['monto_anticipo'], 2) ?></span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="geco-field">
+                <span class="geco-field__label">Costo Directo</span>
+                <span class="geco-field__value fw-bold" style="color: var(--p-600);">$<?= number_format($proyecto['costo_directo'], 2) ?></span>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-6">
-              <span class="text-muted d-block small fw-semibold">Anticipo</span>
-              <span class="text-dark fw-semibold">$<?= number_format($proyecto['monto_anticipo'], 2) ?></span>
-            </div>
-            <div class="col-6">
-              <span class="text-muted d-block small fw-semibold">Costo Directo</span>
-              <span class="text-dark fw-bold">$<?= number_format($proyecto['costo_directo'], 2) ?></span>
-            </div>
-          </div>
-          <div class="border-top pt-2">
-            <span class="text-muted d-block small fw-semibold">Progreso de Presupuesto Directo</span>
-            <div class="d-flex align-items-center gap-3 mt-1">
-              <div class="progress flex-grow-1" style="height: 8px;">
+          <div class="border-top pt-3">
+            <span class="geco-field__label d-block mb-2">Progreso de Presupuesto Directo</span>
+            <div class="d-flex align-items-center gap-3">
+              <div class="progress flex-grow-1" style="height: 8px; border-radius: 4px;">
                 <div class="progress-bar <?= $porcentaje_utilizado_proyecto > 90 ? 'bg-danger' : ($porcentaje_utilizado_proyecto > 70 ? 'bg-warning' : 'bg-success') ?>" 
                      role="progressbar" style="width: <?= min($porcentaje_utilizado_proyecto, 100) ?>%"></div>
               </div>
@@ -258,19 +190,18 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
   <!-- Sub-table of Works -->
   <?php if ($proyecto['total_obras'] > 0): ?>
     <div class="orders-card mb-4">
-      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold text-dark mb-0">Obras del Proyecto</h5>
-        <span class="status-badge" style="color:#0284c7; background:rgba(14,165,233,0.08); border-color:rgba(14,165,233,0.3);"><?= $proyecto['total_obras'] ?> obras</span>
+      <div class="p-3 border-bottom">
+        <h6 class="orders-card-section-title mb-0"><i class="fa-solid fa-helmet-safety"></i> Obras del Proyecto</h6>
       </div>
       <div class="p-3">
         <div class="orders-table-wrap">
           <table class="orders-table">
             <thead>
               <tr>
-                <th style="width: 25%;">Obra</th>
-                <th style="width: 20%;">Periodo</th>
-                <th style="width: 20%;">Costo Directo Disp.</th>
-                <th style="width: 35%;">Progreso</th>
+                <th>Obra</th>
+                <th>Periodo</th>
+                <th>Costo Directo Disp.</th>
+                <th>Progreso</th>
               </tr>
             </thead>
             <tbody>
@@ -310,6 +241,13 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
               <?php endwhile; ?>
             </tbody>
           </table>
+        </div>
+      </div>
+      <div class="orders-pagination-bar">
+        <div class="orders-pagination-left">
+          <span class="orders-pagination-info">
+            Mostrando <strong>1-<?= $proyecto['total_obras'] ?></strong> de <strong><?= $proyecto['total_obras'] ?></strong> obras
+          </span>
         </div>
       </div>
     </div>
@@ -408,7 +346,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
                   </div>
                   <div class="d-flex justify-content-end gap-2 mt-4">
                     <button type="button" class="btn btn-secondary" onclick="UI.modal.close()">Cancelar</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-floppy me-1"></i>Guardar Cambios</button>
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar Cambios</button>
                   </div>
                 </form>
               `
@@ -462,7 +400,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
                 <small class="text-muted d-block mt-1">Tamaño máximo: 10MB</small>
               </div>
               <button type="button" class="btn btn-primary w-100" onclick="subirArchivo()">
-                <i class="bi bi-upload me-1"></i> Subir PDF
+                <i class="fa-solid fa-upload me-1"></i> Subir PDF
               </button>
             </form>
           </div>
@@ -475,17 +413,17 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
             archivosHtml += `
               <div class="list-group-item d-flex justify-content-between align-items-center rounded mb-2 border">
                 <div>
-                  <i class="bi bi-file-pdf text-danger me-2" style="font-size:1.2rem;"></i>
+                  <i class="fa-solid fa-file-pdf text-danger me-2" style="font-size:1.2rem;"></i>
                   <strong>${archivo.nombre_archivo}</strong>
                   <br>
                   <small class="text-muted">Subido: ${archivo.fecha_subida}</small>
                 </div>
                 <div class="btn-group gap-1">
                   <button class="btn btn-sm btn-outline-info" onclick="verPDF('${archivo.ruta_archivo}')" title="Ver PDF">
-                    <i class="bi bi-eye"></i>
+                    <i class="fa-regular fa-eye"></i>
                   </button>
                   <button class="btn btn-sm btn-outline-danger" onclick="eliminarArchivo(${archivo.id}, ${proyectoId})" title="Eliminar">
-                    <i class="bi bi-trash"></i>
+                    <i class="fa-solid fa-trash-can"></i>
                   </button>
                 </div>
               </div>
@@ -493,7 +431,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
           });
           archivosHtml += '</div>';
         } else {
-          archivosHtml += '<div class="text-center py-4 text-muted"><i class="bi bi-folder2-open d-block mb-2" style="font-size: 2rem;"></i> No hay archivos adjuntos</div>';
+          archivosHtml += '<div class="text-center py-4 text-muted"><i class="fa-solid fa-folder-open d-block mb-2" style="font-size: 2rem;"></i> No hay archivos adjuntos</div>';
         }
 
         UI.modal({
@@ -793,3 +731,4 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

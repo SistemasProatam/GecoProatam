@@ -36,7 +36,7 @@ while ($c = $res_contratos->fetch_assoc()) {
 $stmt_contratos->close();
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/orders-common.css?v=1.5">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -57,7 +57,7 @@ $stmt_contratos->close();
       <h1 class="orders-page-title">Editar Perfil — <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
     </div>
     <a href="details_user.php?id=<?= $user['id'] ?>" class="btn-geco-outline">
-      <i class="bi bi-arrow-left"></i> Volver al Perfil
+      <i class="fa-solid fa-arrow-left"></i> Volver al Perfil
     </a>
   </div>
 
@@ -68,7 +68,7 @@ $stmt_contratos->close();
     <!-- Sección: Información Básica -->
     <div class="oc-card">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-person"></i> Información Básica</span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-user"></i> Información Básica</span>
       </div>
       <div class="oc-card-body">
         <div class="row g-3">
@@ -83,7 +83,7 @@ $stmt_contratos->close();
           <div class="col-md-6">
             <label class="form-label small fw-bold">Correo Corporativo <span class="text-danger">*</span></label>
             <input type="email" name="correo_corporativo" class="form-control" value="<?= htmlspecialchars($user['correo_corporativo']) ?>" required>
-            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;"><i class="bi bi-info-circle"></i> Debe terminar en @proatam.com</small>
+            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-info"></i> Debe terminar en @proatam.com</small>
           </div>
           <div class="col-md-6">
             <label class="form-label small fw-bold">Correo Personal</label>
@@ -115,7 +115,7 @@ $stmt_contratos->close();
     <!-- Sección: Funciones y Actividades -->
     <div class="oc-card">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-list-task"></i> Funciones y Actividades</span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-list-check"></i> Funciones y Actividades</span>
       </div>
       <div class="oc-card-body">
         <div class="mb-3">
@@ -128,7 +128,7 @@ $stmt_contratos->close();
     <!-- Sección: Contacto de Emergencia -->
     <div class="oc-card">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-telephone"></i> Contacto de Emergencia</span>
+        <span class="oc-card-header__title"><i class="fa-solid fa-phone"></i> Contacto de Emergencia</span>
       </div>
       <div class="oc-card-body">
         <div class="row g-3">
@@ -149,9 +149,9 @@ $stmt_contratos->close();
     </div>
 
     <!-- Sección: Documentos del Expediente -->
-    <div class="oc-card">
+    <div class="oc-card mb-4">
       <div class="oc-card-header">
-        <span class="oc-card-header__title"><i class="bi bi-folder"></i> Documentos del Expediente</span>
+        <span class="oc-card-header__title"><i class="fa-regular fa-folder-open"></i> Documentos del Expediente</span>
       </div>
       <div class="oc-card-body">
         <div class="row g-3">
@@ -172,22 +172,22 @@ $stmt_contratos->close();
           foreach ($docs as $campo => $info):
               $existe = !empty($user[$campo]);
           ?>
-            <div class="col-md-6 col-lg-4">
-              <div class="doc-item-card p-3 border rounded bg-light">
+            <div class="col-md-6 col-lg-4 mb-3">
+              <div class="doc-item-card p-3 h-100">
                 <div class="d-flex flex-column justify-content-between h-100">
                   <div>
                     <label class="form-label small fw-bold mb-1 d-block text-dark"><?= $info['label'] ?></label>
                     <input type="file" name="<?= $campo ?>" class="form-control form-control-sm" accept="<?= $info['accept'] ?>">
                   </div>
                   <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-info-circle"></i> <?= $info['hint'] ?></span>
+                    <span class="text-muted" style="font-size: 0.7rem;"><i class="fa-solid fa-circle-info"></i> <?= $info['hint'] ?></span>
                     <?php if ($existe): ?>
                       <a href="../uploads/usuarios/<?= htmlspecialchars($user[$campo]) ?>" target="_blank" class="badge text-success border border-success bg-white py-1 px-2 text-decoration-none text-truncate" style="max-width: 140px; font-size: 0.72rem;">
-                        <i class="bi bi-check-circle-fill"></i> Existente
+                        <i class="fa-solid fa-circle-check"></i> Existente
                       </a>
                     <?php else: ?>
                       <span class="badge text-secondary border border-secondary bg-white py-1 px-2" style="font-size: 0.72rem;">
-                        <i class="bi bi-x-circle"></i> Sin cargar
+                        <i class="fa-solid fa-circle-xmark"></i> Sin cargar
                       </span>
                     <?php endif; ?>
                   </div>
@@ -196,69 +196,69 @@ $stmt_contratos->close();
             </div>
           <?php endforeach; ?>
         </div>
+      </div>
+    </div>
 
-        <!-- Contratos Laborales -->
-        <div class="border-top pt-4 mt-4">
-          <label class="form-label small fw-bold text-dark"><i class="bi bi-file-earmark-text me-1" style="color: var(--p-500,#407656);"></i> Contratos Laborales</label>
-          
-          <div id="contratos-container">
-            <?php if (!empty($contratos)): ?>
-              <?php foreach ($contratos as $c): ?>
-                <div class="contrato-existente-item p-3 border rounded bg-light mb-3" id="contrato_row_<?= $c['id'] ?>">
-                  <input type="hidden" name="contrato_id[]" value="<?= $c['id'] ?>">
-                  <div class="row g-2 align-items-center">
-                    <div class="col-md-5">
-                      <label class="form-label small fw-bold text-muted mb-1">Reemplazar archivo (PDF)</label>
-                      <input type="file" name="contratos_existentes_<?= $c['id'] ?>" class="form-control form-control-sm" accept=".pdf">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="form-label small fw-bold text-muted mb-1">Tipo de Contrato</label>
-                      <select name="tipos_contrato_existentes[]" class="form-select form-select-sm" required>
-                        <option value="Indeterminado" <?= $c['tipo_contrato'] === 'Indeterminado' ? 'selected' : '' ?>>Tiempo Indeterminado</option>
-                        <option value="Determinado" <?= $c['tipo_contrato'] === 'Determinado' ? 'selected' : '' ?>>Tiempo Determinado</option>
-                        <option value="Prueba" <?= $c['tipo_contrato'] === 'Prueba' ? 'selected' : '' ?>>Periodo de Prueba</option>
-                        <option value="Obra" <?= $c['tipo_contrato'] === 'Obra' ? 'selected' : '' ?>>Obra Determinada</option>
-                        <option value="Otro" <?= $c['tipo_contrato'] === 'Otro' ? 'selected' : '' ?>>Otro</option>
-                      </select>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
-                      <div class="form-check d-flex align-items-center gap-1 border rounded px-3 bg-white" style="font-size:0.8rem; height: 38px; cursor: pointer;">
-                        <input class="form-check-input mt-0 cursor-pointer" type="checkbox" name="eliminar_contrato[]" value="<?= $c['id'] ?>" id="del_<?= $c['id'] ?>">
-                        <label class="form-check-label text-danger fw-semibold cursor-pointer mb-0" for="del_<?= $c['id'] ?>">
-                          <i class="bi bi-trash"></i> Eliminar
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-12 mt-1">
-                      <a href="<?= htmlspecialchars($c['ruta_archivo']) ?>" target="_blank" class="d-inline-block text-truncate text-success fw-semibold" style="font-size: 0.72rem; max-width: 100%;">
-                        <i class="bi bi-file-earmark-check-fill"></i> <?= htmlspecialchars($c['nombre_archivo']) ?>
-                      </a>
+    <!-- Sección: Contratos Laborales -->
+    <div class="oc-card mb-4">
+      <div class="oc-card-header">
+        <span class="oc-card-header__title"><i class="fa-regular fa-file-lines"></i> Contratos Laborales</span>
+      </div>
+      <div class="oc-card-body">
+        <div id="contratos-container">
+          <?php if (!empty($contratos)): ?>
+            <?php foreach ($contratos as $c): ?>
+              <div class="contrato-existente-item p-3 border rounded bg-light mb-3" id="contrato_row_<?= $c['id'] ?>">
+                <input type="hidden" name="contrato_id[]" value="<?= $c['id'] ?>">
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted mb-1">Reemplazar archivo (PDF)</label>
+                    <input type="file" name="contratos_existentes_<?= $c['id'] ?>" class="form-control form-control-sm" accept=".pdf">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted mb-1">Tipo de Contrato</label>
+                    <select name="tipos_contrato_existentes[]" class="form-select form-select-sm" required>
+                      <option value="Indeterminado" <?= $c['tipo_contrato'] === 'Indeterminado' ? 'selected' : '' ?>>Tiempo Indeterminado</option>
+                      <option value="Determinado" <?= $c['tipo_contrato'] === 'Determinado' ? 'selected' : '' ?>>Tiempo Determinado</option>
+                      <option value="Prueba" <?= $c['tipo_contrato'] === 'Prueba' ? 'selected' : '' ?>>Periodo de Prueba</option>
+                      <option value="Obra" <?= $c['tipo_contrato'] === 'Obra' ? 'selected' : '' ?>>Obra Determinada</option>
+                      <option value="Otro" <?= $c['tipo_contrato'] === 'Otro' ? 'selected' : '' ?>>Otro</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
+                    <div class="form-check d-flex align-items-center gap-1 border rounded px-3 bg-white" style="font-size:0.8rem; height: 38px; cursor: pointer;">
+                      <input class="form-check-input mt-0 cursor-pointer" type="checkbox" name="eliminar_contrato[]" value="<?= $c['id'] ?>" id="del_<?= $c['id'] ?>">
+                      <label class="form-check-label text-danger fw-semibold cursor-pointer mb-0" for="del_<?= $c['id'] ?>">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                      </label>
                     </div>
                   </div>
+                  <div class="col-12 mt-1">
+                    <a href="<?= htmlspecialchars($c['ruta_archivo']) ?>" target="_blank" class="d-inline-block text-truncate text-success fw-semibold" style="font-size: 0.72rem; max-width: 100%;">
+                      <i class="fa-solid fa-file-circle-check"></i> <?= htmlspecialchars($c['nombre_archivo']) ?>
+                    </a>
+                  </div>
                 </div>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </div>
-
-          <button type="button" class="btn btn-sm btn-outline-secondary mt-2 px-3 fw-semibold" id="agregar-contrato" style="border-radius: 8px;">
-            <i class="bi bi-plus-lg me-1"></i> Agregar otro contrato
-          </button>
-          <span class="text-muted d-block mt-1" style="font-size: 0.75rem;"><i class="bi bi-info-circle"></i> Puedes subir múltiples contratos en formato PDF</span>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </div>
+
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2 px-3 fw-semibold" id="agregar-contrato" style="border-radius: 8px;">
+          <i class="fa-solid fa-plus me-1"></i> Agregar otro contrato
+        </button>
+        <span class="text-muted d-block mt-2" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-info"></i> Puedes subir múltiples contratos en formato PDF</span>
       </div>
     </div>
 
     <!-- Submit Actions -->
-    <div class="oc-card mb-4">
-      <div class="oc-card-body bg-light" style="padding: 1.5rem 2rem;">
-        <div class="d-flex justify-content-center gap-3">
-          <a href="details_user.php?id=<?= $user['id'] ?>" class="btn-geco-outline" style="min-width: 140px; justify-content:center;">
-            Cancelar
-          </a>
-          <button type="submit" class="btn-geco-primary" style="min-width: 180px; justify-content:center;">
-            <i class="bi bi-save me-2"></i> Guardar Cambios
-          </button>
-        </div>
+    <div class="mt-4 mb-5">
+      <p class="text-muted small mb-2"><i class="fa-solid fa-circle-info"></i> Verifique que toda la información del expediente digital sea correcta antes de guardar.</p>
+      <div class="d-flex justify-content-end gap-2">
+        <a href="details_user.php?id=<?= $user['id'] ?>" class="btn-geco-outline">Cancelar</a>
+        <button type="submit" class="btn-geco-primary">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+        </button>
       </div>
     </div>
 
@@ -266,29 +266,6 @@ $stmt_contratos->close();
 
 </div>
 
-<style>
-/* oc-card-header y oc-card-body heredados directamente de orders-common.css */
-.doc-item-card {
-  transition: all 0.2s;
-  background: var(--gray-50,#f9fafb) !important;
-  border: 1px solid var(--gray-200,#e5e7eb) !important;
-  min-height: 120px;
-}
-.doc-item-card:hover {
-  border-color: var(--p-300,#86efac) !important;
-  background: #fff !important;
-}
-.contrato-existente-item {
-  transition: all 0.2s;
-}
-.contrato-existente-item:hover {
-  border-color: var(--gray-300,#d1d5db) !important;
-}
-.form-check-input:checked {
-  background-color: var(--danger,#dc3545);
-  border-color: var(--danger,#dc3545);
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -353,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="col-md-2 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
                         <button type="button" class="btn btn-danger btn-sm btn-remove-contrato w-100" style="height: 38px;">
-                            <i class="bi bi-trash"></i> Eliminar
+                            <i class="fa-solid fa-trash-can"></i> Eliminar
                         </button>
                     </div>
                 </div>
@@ -375,3 +352,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
+

@@ -35,10 +35,11 @@ if (isset($_GET['error'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de Sesión</title>
+    <title>Inicio de Sesión | GECO PROATAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/tokens.css?v=1.2">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.2">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
     <script>
@@ -69,19 +70,19 @@ if (isset($_GET['error'])) {
                         <div class="auth-form-group">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label for="password" class="auth-label mb-0">CONTRASEÑA</label>
-                                <a href="forgot_password.php" class="forgot-link" style="font-size: 0.65rem; color: var(--p-500); text-decoration: none; font-weight: 800;">¿OLVIDASTE TU CONTRASEÑA?</a>
+                                <a href="forgot_password.php" class="forgot-link">¿OLVIDASTE TU CONTRASEÑA?</a>
                             </div>
                             <div class="position-relative">
                                 <input type="password" class="auth-control" id="password" name="password" placeholder="••••••••" required>
-                                <button type="button" class="toggle-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gray-400); cursor: pointer;">
-                                    <i class="bi bi-eye"></i>
+                                <button type="button" class="toggle-password">
+                                    <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
                         </div>
 
                         <button type="submit" class="auth-button">
                             <span>Iniciar Sesión</span>
-                            <i class="bi bi-arrow-right"></i>
+                            <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </form>
 
@@ -96,7 +97,7 @@ if (isset($_GET['error'])) {
                 <div class="auth-carousel">
                     <!-- Slide 1 -->
                     <div class="carousel-slide active">
-                        <img src="<?= BASE_URL ?>/assets/img/login_bg_premium.png" alt="Industrial" class="carousel-img">
+                        <img src="<?= BASE_URL ?>/assets/img/login_bg_main.png" alt="Industrial" class="carousel-img">
                         <div class="carousel-overlay">
                             <div class="carousel-quote">
                                 <blockquote class="quote-text">
@@ -152,10 +153,10 @@ if (isset($_GET['error'])) {
                 const icon = btn.querySelector('i');
                 if (input.type === 'password') {
                     input.type = 'text';
-                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
                 } else {
                     input.type = 'password';
-                    icon.classList.replace('bi-eye-slash', 'bi-eye');
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
                 }
             });
         });
