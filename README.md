@@ -88,7 +88,7 @@ UI.loading.hide();
 
 ---
 
-## Resumen de Reglas de Oro
-1. **Cero CSS en PHP**: Mantén los archivos PHP dedicados solo a lógica, HTML semántico y JS. Se usa la etiqueta **style=""** cuando se requiere, fuera de eso no se usa CSS en PHP.
-2. **Reutiliza componentes**: Antes de crear un CSS nuevo, revisa si `components.css` ya tiene una clase que sirva (botones, tablas, tarjetas). 
+## Detalles a considerar
+1. **No insertar CSS en PHP**: Mantén los archivos PHP dedicados solo a lógica, HTML semántico y JS. Se usa la etiqueta `style=""` cuando se requiere, fuera de eso no se usa CSS en PHP.
+2. **Reutilizar componentes**: Antes de crear un CSS nuevo, revisa si `components.css` ya tiene una clase que sirva (botones, tablas, tarjetas). 
 3. **Usa UI.js para avisos**: No llames a `alert()` de navegador. Usa `UI.toast` o `UI.confirm` para estandarizar la experiencia.
