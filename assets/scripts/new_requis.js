@@ -14,7 +14,7 @@ const catalogoSelect = document.getElementById('catalogo');
 // CATÁLOGO DE PRODUCTOS
 // ====================================
 function mostrarCatalogoProductos() {
-  const rows = productosServiciosData.map(p => `
+    const rows = productosServiciosData.map(p => `
     <tr>
       <td>${p.nombre}</td>
       <td><small>${p.descripcion || ''}</small></td>
@@ -27,10 +27,10 @@ function mostrarCatalogoProductos() {
     </tr>
   `).join('');
 
-  UI.modal({
-    title: 'Catálogo de Productos y Servicios',
-    size: 'lg',
-    html: `
+    UI.modal({
+        title: 'Catálogo de Productos y Servicios',
+        size: 'lg',
+        html: `
       <div class="mb-3">
         <input type="text" class="form-control" id="buscarCatalogoModal" placeholder="Buscar producto o servicio..." onkeyup="filtrarCatalogoModal(this.value)">
       </div>
@@ -50,35 +50,35 @@ function mostrarCatalogoProductos() {
         </table>
       </div>
     `
-  });
+    });
 }
 
-window.filtrarCatalogoModal = function(val) {
-  const q = val.toLowerCase();
-  const rows = document.querySelectorAll('#tablaCatalogoModal tbody tr');
-  rows.forEach(row => {
-    const text = row.innerText.toLowerCase();
-    row.style.display = text.includes(q) ? '' : 'none';
-  });
+window.filtrarCatalogoModal = function (val) {
+    const q = val.toLowerCase();
+    const rows = document.querySelectorAll('#tablaCatalogoModal tbody tr');
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+    });
 };
 
 function seleccionarProducto(productoId) {
     addItem();
-    
+
     const tableBody = document.querySelector('#itemsTable tbody');
     const lastRow = tableBody.lastElementChild;
-    
+
     if (lastRow) {
         const producto = productosServiciosData.find(p => p.id == productoId);
         const tipoSelect = lastRow.querySelector('.tipo-select');
         const productoSelect = lastRow.querySelector('.producto-select');
-        
+
         if (tipoSelect && productoSelect && producto) {
             tipoSelect.value = producto.tipo;
             productoSelect.value = productoId;
         }
     }
-    
+
     UI.modal.hide();
 }
 
@@ -90,22 +90,22 @@ function addItem() {
     const rowCount = tableBody.rows.length;
 
     const tipos = [...new Set(productosServiciosData.map(i => i.tipo))];
-    const tipoOptions = tipos.map(t => 
+    const tipoOptions = tipos.map(t =>
         `<option value="${t}">${t.charAt(0).toUpperCase() + t.slice(1)}</option>`
     ).join('');
 
-    const productoOptions = productosServiciosData.map(i => 
+    const productoOptions = productosServiciosData.map(i =>
         `<option value="${i.id}" data-tipo="${i.tipo}">${i.nombre}</option>`
     ).join('');
 
-    const unidadOptions = unidadesData.map(u => 
-      `<option value="${u.id}">${u.unidad}</option>`
+    const unidadOptions = unidadesData.map(u =>
+        `<option value="${u.id}">${u.unidad}</option>`
     ).join('');
 
     // Obtener el estado actual del catálogo seleccionado
     const catalogoId = catalogoSelect.value;
-    const conceptoPlaceholder = catalogoId ? 
-        'Cargando conceptos...' : 
+    const conceptoPlaceholder = catalogoId ?
+        'Cargando conceptos...' :
         'Primero seleccione un catálogo';
 
     const newRow = document.createElement('tr');
@@ -142,7 +142,7 @@ function addItem() {
             </button>
         </td>
     `;
-    
+
     tableBody.appendChild(newRow);
 
     //  Si hay un catálogo seleccionado, cargar conceptos para esta nueva fila
@@ -151,14 +151,14 @@ function addItem() {
     }
 
     const removeBtn = newRow.querySelector('.remove-item-btn');
-    removeBtn.addEventListener('click', function() { 
-        removeItem(this); 
+    removeBtn.addEventListener('click', function () {
+        removeItem(this);
     });
 
     const tipoSelect = newRow.querySelector('.tipo-select');
     const productoSelect = newRow.querySelector('.producto-select');
 
-    tipoSelect.addEventListener('change', function() {
+    tipoSelect.addEventListener('change', function () {
         const selectedTipo = this.value;
         Array.from(productoSelect.options).forEach(opt => {
             if (opt.value !== "") {
@@ -168,7 +168,7 @@ function addItem() {
         productoSelect.value = "";
     });
 
-    productoSelect.addEventListener('change', function() {
+    productoSelect.addEventListener('change', function () {
         const selectedProduct = productosServiciosData.find(i => i.id == this.value);
         if (selectedProduct) {
             tipoSelect.value = selectedProduct.tipo;
@@ -179,10 +179,10 @@ function addItem() {
 //  Nueva función auxiliar para cargar conceptos en una fila específica
 function cargarConceptosParaFila(row, catalogoId) {
     const conceptoSelect = row.querySelector('.concepto-select');
-    
+
     conceptoSelect.disabled = true;
     conceptoSelect.innerHTML = '<option value="">Cargando conceptos...</option>';
-    
+
     fetch(`get_conceptos_by_catalogo.php?catalogo_id=${catalogoId}`)
         .then(response => response.json())
         .then(conceptos => {
@@ -190,15 +190,15 @@ function cargarConceptosParaFila(row, catalogoId) {
                 conceptoSelect.innerHTML = `<option value="">Error: ${conceptos.error}</option>`;
                 return;
             }
-            
+
             const conceptosHTML = '<option value="">Seleccionar Concepto (Opcional)</option>' +
                 conceptos.map(concepto => {
-                    const displayText = concepto.numero_original ? 
-                        `#${concepto.numero_original} - ${concepto.codigo_concepto}` : 
+                    const displayText = concepto.numero_original ?
+                        `#${concepto.numero_original} - ${concepto.codigo_concepto}` :
                         concepto.codigo_concepto;
                     return `<option value="${concepto.id}">${displayText}</option>`;
                 }).join('');
-            
+
             conceptoSelect.innerHTML = conceptosHTML;
             conceptoSelect.disabled = false;
         })
@@ -230,39 +230,39 @@ function updateItemNumbers() {
 // ====================================
 // CASCADA: PROYECTO -> OBRA -> CATÁLOGO -> CONCEPTOS EN ITEMS
 // ====================================
-proyectoSelect.addEventListener('change', function() {
+proyectoSelect.addEventListener('change', function () {
     const proyectoId = this.value;
-    
+
     if (!proyectoId) {
         resetSelect(obraSelect, 'Primero seleccione un proyecto');
         resetSelect(catalogoSelect, 'Primero seleccione una obra');
         resetAllItemConceptos('Primero seleccione un catálogo');
         return;
     }
-    
+
     cargarObras(proyectoId);
 });
 
-obraSelect.addEventListener('change', function() {
+obraSelect.addEventListener('change', function () {
     const obraId = this.value;
-    
+
     if (!obraId) {
         resetSelect(catalogoSelect, 'Primero seleccione una obra');
         resetAllItemConceptos('Primero seleccione un catálogo');
         return;
     }
-    
+
     cargarCatalogos(obraId);
 });
 
-catalogoSelect.addEventListener('change', function() {
+catalogoSelect.addEventListener('change', function () {
     const catalogoId = this.value;
-    
+
     if (!catalogoId) {
         resetAllItemConceptos('Primero seleccione un catálogo');
         return;
     }
-    
+
     cargarConceptosEnItems(catalogoId);
 });
 
@@ -334,12 +334,12 @@ function cargarCatalogos() {
 
 function cargarConceptosEnItems(catalogoId) {
     const conceptoSelects = document.querySelectorAll('.concepto-select');
-    
+
     conceptoSelects.forEach(select => {
         select.disabled = true;
         select.innerHTML = '<option value="">Cargando conceptos...</option>';
     });
-    
+
     fetch(`get_conceptos_by_catalogo.php?catalogo_id=${catalogoId}`)
         .then(response => response.json())
         .then(conceptos => {
@@ -350,18 +350,18 @@ function cargarConceptosEnItems(catalogoId) {
                 });
                 return;
             }
-            
+
             const conceptosHTML = '<option value="">Seleccionar Concepto (Opcional)</option>' +
                 conceptos.map(concepto => {
-                    const displayText = concepto.numero_original ? 
-                        `#${concepto.numero_original} - ${concepto.codigo_concepto}` : 
+                    const displayText = concepto.numero_original ?
+                        `#${concepto.numero_original} - ${concepto.codigo_concepto}` :
                         concepto.codigo_concepto;
                     return `<option value="${concepto.id}">${displayText}</option>`;
                 }).join('');
-            
+
             conceptoSelects.forEach(select => {
                 select.innerHTML = conceptosHTML;
-                select.disabled = false; 
+                select.disabled = false;
             });
         })
         .catch(error => {
@@ -379,31 +379,31 @@ function cargarConceptosEnItems(catalogoId) {
 function agregarArchivo() {
     const singleFileInput = document.getElementById('singleFileInput');
     const file = singleFileInput.files[0];
-    
+
     if (!file) {
         mostrarAlerta('Por favor seleccione un archivo primero.', 'warning');
         return;
     }
-    
+
     if (archivosAcumulados.length >= MAX_FILES) {
         mostrarAlerta(`Ya alcanzó el límite de ${MAX_FILES} archivos.`, 'danger');
         singleFileInput.value = '';
         return;
     }
-    
+
     if (file.size > MAX_SIZE) {
         mostrarAlerta(`El archivo "${file.name}" excede el tamaño máximo de 10MB.`, 'danger');
         singleFileInput.value = '';
         return;
     }
-    
+
     const existe = archivosAcumulados.some(f => f.name === file.name && f.size === file.size);
     if (existe) {
         mostrarAlerta(`El archivo "${file.name}" ya fue agregado.`, 'warning');
         singleFileInput.value = '';
         return;
     }
-    
+
     archivosAcumulados.push(file);
     actualizarListaArchivos();
     singleFileInput.value = '';
@@ -413,10 +413,10 @@ function agregarArchivo() {
 function actualizarListaArchivos() {
     const fileList = document.getElementById('fileList');
     const contador = document.getElementById('contadorArchivos');
-    
+
     fileList.innerHTML = '';
     contador.textContent = archivosAcumulados.length;
-    
+
     if (archivosAcumulados.length === 0) {
         fileList.innerHTML = `
             <li class="list-group-item text-center text-muted py-3" style="background:transparent;border:none;">
@@ -425,15 +425,15 @@ function actualizarListaArchivos() {
         `;
         return;
     }
-    
+
     archivosAcumulados.forEach((file, index) => {
         const li = document.createElement('li');
         li.className = 'list-group-item d-flex justify-content-between align-items-center py-2 px-3';
-        
+
         const extension = file.name.split('.').pop().toLowerCase();
         let icono = 'fa-regular fa-file';
         let colorClass = 'text-secondary';
-        
+
         if (extension === 'pdf') {
             icono = 'fa-regular fa-file-pdf';
             colorClass = 'text-danger';
@@ -447,9 +447,9 @@ function actualizarListaArchivos() {
             icono = 'fa-regular fa-file-image';
             colorClass = 'text-warning';
         }
-        
+
         const fileSize = (file.size / 1024 / 1024).toFixed(2);
-        
+
         li.innerHTML = `
             <span>
                 <i class="${icono} ${colorClass} me-2"></i>
@@ -460,7 +460,7 @@ function actualizarListaArchivos() {
                 <i class="fa-solid fa-trash-can"></i>
             </button>
         `;
-        
+
         fileList.appendChild(li);
     });
 }
@@ -482,10 +482,10 @@ function mostrarAlerta(msg, tipo = 'info') {
 // ====================================
 // BÚSQUEDA EN CATÁLOGO
 // ====================================
-document.getElementById('buscarCatalogo').addEventListener('input', function() {
+document.getElementById('buscarCatalogo').addEventListener('input', function () {
     const termino = this.value.toLowerCase();
     const filas = document.getElementById('tbodyCatalogo').getElementsByTagName('tr');
-    
+
     for (let fila of filas) {
         const texto = fila.textContent.toLowerCase();
         fila.style.display = texto.includes(termino) ? '' : 'none';
@@ -503,12 +503,19 @@ function hideOverlay() {
     UI.loading.hide();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('ordenCompraForm');
     if (!form) return;
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault(); 
+    form.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
         showOverlay();
 
         // Validar campos obligatorios
@@ -518,39 +525,39 @@ document.addEventListener('DOMContentLoaded', function() {
         const entidad = document.getElementById('entidad').value;
         const solicitante = document.getElementById('solicitante').value;
         const categoria = document.getElementById('categoria').value;
-        
+
         // Validar tabla de items
         const itemsTable = document.querySelector('#itemsTable tbody');
         const tieneItems = itemsTable && itemsTable.children.length > 0;
-        
+
         // Mostrar errores
         const errores = [];
-        
-        if (!entidad) {errores.push("La entidad es obligatoria.");}
-        if (!solicitante) {errores.push("El solicitante es obligatorio.");}
-        if (!categoria) {errores.push("La categoría es obligatoria.");}
-        if (!proyecto) {errores.push("El proyecto es obligatorio.");}
-        if (!obra) {errores.push("La obra es obligatoria.");}
-        if (!catalogo) {errores.push("El catálogo es obligatorio.");}
-        if (!tieneItems) {errores.push("Debe agregar al menos un item a la requisición.");}
-        
+
+        if (!entidad) { errores.push("La entidad es obligatoria."); }
+        if (!solicitante) { errores.push("El solicitante es obligatorio."); }
+        if (!categoria) { errores.push("La categoría es obligatoria."); }
+        if (!proyecto) { errores.push("El proyecto es obligatorio."); }
+        if (!obra) { errores.push("La obra es obligatoria."); }
+        if (!catalogo) { errores.push("El catálogo es obligatorio."); }
+        if (!tieneItems) { errores.push("Debe agregar al menos un item a la requisición."); }
+
         // Si hay errores, mostrar alerta y evitar envío
         if (errores.length > 0) {
             hideOverlay();
             mostrarAlerta('<strong>Por favor corrija los siguientes errores:</strong><br>' + errores.join('<br>'), 'warning');
             return false;
         }
-        
+
         // Preparar FormData
         const formData = new FormData(this);
-        
+
         // Agregar archivos si existen
         if (archivosAcumulados.length > 0) {
             archivosAcumulados.forEach((file, index) => {
                 formData.append('archivos[]', file);
             });
         }
-        
+
         // Enviar datos vía AJAX
         fetch('save_requis.php', {
             method: 'POST',
@@ -559,26 +566,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => {
-            if (response.ok) return response.json();
-            throw new Error('Error en el servidor: ' + response.status);
-        })
-        .then(data => {
-            console.log('Respuesta del servidor:', data); // Para debugging
-            if (data.status === 'success') {
-                // Redirigir a la lista con mensaje de éxito
-                window.location.href = 'list_requis.php?msg=success&folio=' + encodeURIComponent(data.folio);
-            } else {
+            .then(response => {
+                if (response.ok) return response.json();
+                throw new Error('Error en el servidor: ' + response.status);
+            })
+            .then(data => {
+                console.log('Respuesta del servidor:', data); // Para debugging
+                if (data.status === 'success') {
+                    // Redirigir a la lista con mensaje de éxito
+                    window.location.href = 'list_requis.php?msg=success&folio=' + encodeURIComponent(data.folio);
+                } else {
+                    hideOverlay();
+                    mostrarAlerta(data.message || 'Error desconocido al guardar', 'danger');
+                }
+            })
+            .catch(error => {
                 hideOverlay();
-                mostrarAlerta(data.message || 'Error desconocido al guardar', 'danger');
-            }
-        })
-        .catch(error => {
-            hideOverlay();
-            console.error('Error en fetch:', error);
-            mostrarAlerta('Error al guardar la requisición: ' + error.message, 'danger');
-        });
-        
+                console.error('Error en fetch:', error);
+                mostrarAlerta('Error al guardar la requisición: ' + error.message, 'danger');
+            });
+
         return false;
     });
 });
@@ -586,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ====================================
 // INICIALIZACIÓN
 // ====================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Fecha de solicitud
     const fechaInput = document.getElementById('fecha_solicitud');
     const ahora = new Date();
@@ -601,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     const formateado = new Intl.DateTimeFormat('sv-SE', opciones).format(ahora);
     fechaInput.value = formateado.replace(" ", "T");
-    
+
     // Inicializar lista de archivos vacía
     actualizarListaArchivos();
 });

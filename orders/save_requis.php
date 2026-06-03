@@ -13,6 +13,11 @@ require_once __DIR__ . '/../EmailHandler.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['user_id'])) {
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Usuario no autenticado']);
+            exit;
+        }
         die("Error: usuario no autenticado.");
     }
 
@@ -100,7 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)";
 
     $stmt = $conn->prepare($sql);
-    if (!$stmt) die("Error en la preparación: " . $conn->error);
+    if (!$stmt) {
+        $errorMsg = "Error en la preparación: " . $conn->error;
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => $errorMsg]);
+            exit;
+        }
+        die($errorMsg);
+    }
 
     // Debug para ver qué parámetros se están enviando
     error_log("Folio: " . $folio);
@@ -130,7 +143,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fecha_solicitud
     );
 
-    if (!$stmt->execute()) die("Error al guardar la requisición: " . $stmt->error);
+    if (!$stmt->execute()) {
+        $errorMsg = "Error al guardar la requisición: " . $stmt->error;
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => $errorMsg]);
+            exit;
+        }
+        die($errorMsg);
+    }
 
     $requisicion_id = $stmt->insert_id;
 
@@ -288,6 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Preparar datos para notificación
     $datosRequisicion = [
+        'id' => $requisicion_id,
         'folio' => $requisicion_data['folio'],
         'solicitante' => $requisicion_data['nombres'] . ' ' . $requisicion_data['apellidos'],
         'fecha_solicitud' => $requisicion_data['fecha_solicitud'],
@@ -322,6 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($supervisores as $supervisor) {
                 $datosEmail = [
+                    'id' => $datosRequisicion['id'],
                     'nombre' => $supervisor['nombre_completo'],
                     'folio' => $datosRequisicion['folio'],
                     'solicitante' => $datosRequisicion['solicitante'],
@@ -332,7 +355,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'observaciones' => $datosRequisicion['observaciones'],
                     'ubicacion' => $datosRequisicion['ubicacion'],
                     'items' => $datosRequisicion['items'],
-                    'url_sistema' => 'https://proatamgoc.duckdns.org/requisiciones/list_requis.php'
+                    'url_sistema' => 'https://gecoproatam.com/requisiciones/list_requis.php'
                 ];
 
                 $emailHandler->enviarNotificacionRequisicion(
@@ -389,6 +412,3 @@ function generarTextoUbicacion($requisicion_data)
 
     return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicación específica";
 }
-
-
-

@@ -64,30 +64,38 @@ if ($result->num_rows === 0) {
     exit;
 }
 
-// Si llegamos aquí, el usuario existe
-$row = $result->fetch_assoc();
+// Si hay múltiples usuarios con el mismo correo, debemos probar la contraseña con cada uno
+$login_success = false;
+$user_data = null;
 
-// Verificar contraseña
-if (password_verify($password, $row['password'])) {
+while ($row = $result->fetch_assoc()) {
+    if (password_verify($password, $row['password'])) {
+        $login_success = true;
+        $user_data = $row;
+        break; // Encontramos al usuario correcto
+    }
+}
+
+if ($login_success) {
     // Guardar datos en sesión
-    $_SESSION['user_id'] = $row['id'];
-    $_SESSION['nombres'] = $row['nombres'];
-    $_SESSION['apellidos'] = $row['apellidos'];
-    $_SESSION['correo_corporativo'] = $row['correo_corporativo'];
-    $_SESSION['departamento_id'] = $row['departamento_id'];
-    $_SESSION['departamento'] = $row['departamento_nombre'] ?? '';
+    $_SESSION['user_id'] = $user_data['id'];
+    $_SESSION['nombres'] = $user_data['nombres'];
+    $_SESSION['apellidos'] = $user_data['apellidos'];
+    $_SESSION['correo_corporativo'] = $user_data['correo_corporativo'];
+    $_SESSION['departamento_id'] = $user_data['departamento_id'];
+    $_SESSION['departamento'] = $user_data['departamento_nombre'] ?? '';
 
     // Si la contraseña es temporal, setear la bandera change_pass
-    if ($row['password_temporal']) {
+    if ($user_data['password_temporal']) {
         $_SESSION['change_pass'] = true;
     }
 
     // Redirección según departamento
     $redirect = "index.php"; // Por defecto
 
-    if ($row['password_temporal']) {
+    if ($user_data['password_temporal']) {
         $redirect = BASE_URL . "/change_password.php";
-    } else if ($row['departamento_nombre'] === 'Gerente de Operaciones') {
+    } else if ($user_data['departamento_nombre'] === 'Gerente de Operaciones') {
         $redirect = BASE_URL . "/orders/list_requis.php";
     }
 
@@ -115,4 +123,3 @@ echo json_encode([
     "message" => "Correo o contraseña incorrectos"
 ]);
 exit;
-

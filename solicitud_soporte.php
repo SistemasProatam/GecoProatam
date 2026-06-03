@@ -11,45 +11,45 @@ require_once __DIR__ . "/conexion.php";
 $user_id = $_SESSION['user_id'] ?? null;
 
 $user_data = [
-    'nombres'            => '',
-    'apellidos'          => '',
-    'correo_corporativo' => '',
-    'departamento'       => 'Sin departamento'
+  'nombres'            => '',
+  'apellidos'          => '',
+  'correo_corporativo' => '',
+  'departamento'       => 'Sin departamento'
 ];
 
 if ($user_id) {
-    $sql  = "SELECT u.nombres, u.apellidos, u.correo_corporativo, d.nombre as departamento
+  $sql  = "SELECT u.nombres, u.apellidos, u.correo_corporativo, d.nombre as departamento
              FROM usuarios u
              LEFT JOIN departamentos d ON u.departamento_id = d.id
              WHERE u.id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $user_data = $result->fetch_assoc();
-        $_SESSION['user_email'] = $user_data['correo_corporativo'];
-    }
-    $stmt->close();
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("i", $user_id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  if ($result->num_rows > 0) {
+    $user_data = $result->fetch_assoc();
+    $_SESSION['user_email'] = $user_data['correo_corporativo'];
+  }
+  $stmt->close();
 }
 
 // Activo pre-seleccionado desde detalle_activo.php (opcional)
 $activo_pre = null;
 $activo_pre_id = intval($_GET['activo_id'] ?? 0);
 if ($activo_pre_id) {
-    $stmt_a = $conn->prepare(
-        "SELECT a.id, a.codigo, a.nombre, t.nombre AS tipo
+  $stmt_a = $conn->prepare(
+    "SELECT a.id, a.codigo, a.nombre, t.nombre AS tipo
          FROM activos a JOIN activo_tipos t ON a.tipo_id = t.id
          WHERE a.id = ?"
-    );
-    $stmt_a->bind_param("i", $activo_pre_id);
-    $stmt_a->execute();
-    $activo_pre = $stmt_a->get_result()->fetch_assoc();
+  );
+  $stmt_a->bind_param("i", $activo_pre_id);
+  $stmt_a->execute();
+  $activo_pre = $stmt_a->get_result()->fetch_assoc();
 }
 
 // Listado completo de activos para el buscador
 $result_activos = $conn->query(
-    "SELECT a.id, a.codigo, a.nombre, t.nombre AS tipo
+  "SELECT a.id, a.codigo, a.nombre, t.nombre AS tipo
      FROM activos a
      JOIN activo_tipos t ON a.tipo_id = t.id
      WHERE a.estatus = 'activo'
@@ -57,7 +57,7 @@ $result_activos = $conn->query(
 );
 $activos_array = [];
 while ($row = $result_activos->fetch_assoc()) {
-    $activos_array[] = $row;
+  $activos_array[] = $row;
 }
 ?>
 
@@ -99,21 +99,21 @@ while ($row = $result_activos->fetch_assoc()) {
             <div class="form-group">
               <label class="form-label small fw-bold">Nombre completo <span class="text-danger">*</span></label>
               <input type="text" name="nombres" id="nombres" class="form-control" required
-                  value="<?= htmlspecialchars($user_data['nombres'] . ' ' . $user_data['apellidos']) ?>">
+                value="<?= htmlspecialchars($user_data['nombres'] . ' ' . $user_data['apellidos']) ?>">
             </div>
           </div>
           <div class="col-md-6 col-lg-4">
             <div class="form-group">
               <label class="form-label small fw-bold">Correo Corporativo <span class="text-danger">*</span></label>
               <input type="email" name="correo_corporativo" id="correo_corporativo" class="form-control" required
-                  value="<?= htmlspecialchars($user_data['correo_corporativo']) ?>">
+                value="<?= htmlspecialchars($user_data['correo_corporativo']) ?>">
             </div>
           </div>
           <div class="col-md-6 col-lg-4">
             <div class="form-group">
               <label class="form-label small fw-bold">Departamento / Área <span class="text-danger">*</span></label>
               <input type="text" name="departamento" id="departamento" class="form-control" required
-                  value="<?= htmlspecialchars($user_data['departamento']) ?>">
+                value="<?= htmlspecialchars($user_data['departamento']) ?>">
             </div>
           </div>
         </div>
@@ -255,130 +255,130 @@ while ($row = $result_activos->fetch_assoc()) {
 <?php include __DIR__ . "/includes/footer.php"; ?>
 
 <script>
-    // Catálogo de activos desde PHP
-    const ACTIVOS = <?= json_encode($activos_array) ?>;
+  // Catálogo de activos desde PHP
+  const ACTIVOS = <?= json_encode($activos_array) ?>;
 
-    // Autocomplete de activos
-    const inputBusqueda = document.getElementById('activoBusqueda');
-    const listaAuto = document.getElementById('autocompleteList');
+  // Autocomplete de activos
+  const inputBusqueda = document.getElementById('activoBusqueda');
+  const listaAuto = document.getElementById('autocompleteList');
 
-    if (inputBusqueda) {
-        inputBusqueda.addEventListener('input', function() {
-            const q = this.value.toLowerCase().trim();
-            listaAuto.innerHTML = '';
+  if (inputBusqueda) {
+    inputBusqueda.addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      listaAuto.innerHTML = '';
 
-            if (q.length < 2) {
-                listaAuto.style.display = 'none';
-                return;
-            }
+      if (q.length < 2) {
+        listaAuto.style.display = 'none';
+        return;
+      }
 
-            const filtrados = ACTIVOS.filter(a =>
-                a.codigo.toLowerCase().includes(q) ||
-                a.nombre.toLowerCase().includes(q) ||
-                a.tipo.toLowerCase().includes(q)
-            ).slice(0, 8);
+      const filtrados = ACTIVOS.filter(a =>
+        a.codigo.toLowerCase().includes(q) ||
+        a.nombre.toLowerCase().includes(q) ||
+        a.tipo.toLowerCase().includes(q)
+      ).slice(0, 8);
 
-            if (!filtrados.length) {
-                listaAuto.style.display = 'none';
-                return;
-            }
+      if (!filtrados.length) {
+        listaAuto.style.display = 'none';
+        return;
+      }
 
-            filtrados.forEach(a => {
-                const div = document.createElement('div');
-                div.className = 'autocomplete-item';
-                div.innerHTML = `<strong>${a.codigo}</strong> – ${a.nombre}
+      filtrados.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item';
+        div.innerHTML = `<strong>${a.codigo}</strong> – ${a.nombre}
                          <small class="text-muted ms-1">(${a.tipo})</small>`;
-                div.addEventListener('click', () => seleccionarActivo(a));
-                listaAuto.appendChild(div);
-            });
-            listaAuto.style.display = 'block';
-        });
+        div.addEventListener('click', () => seleccionarActivo(a));
+        listaAuto.appendChild(div);
+      });
+      listaAuto.style.display = 'block';
+    });
 
-        // Cerrar lista al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.activo-autocomplete')) {
-                listaAuto.style.display = 'none';
-            }
-        });
-    }
+    // Cerrar lista al hacer clic fuera
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.activo-autocomplete')) {
+        listaAuto.style.display = 'none';
+      }
+    });
+  }
 
-    function seleccionarActivo(activo) {
-        document.getElementById('activoId').value = activo.id;
-        document.getElementById('activoCodigo').value = activo.codigo;
-        document.getElementById('activoNombre').value = activo.nombre;
-        document.getElementById('activoTipo').value = activo.tipo;
+  function seleccionarActivo(activo) {
+    document.getElementById('activoId').value = activo.id;
+    document.getElementById('activoCodigo').value = activo.codigo;
+    document.getElementById('activoNombre').value = activo.nombre;
+    document.getElementById('activoTipo').value = activo.tipo;
 
-        document.getElementById('activoBadgeText').innerHTML =
-            `<strong>${activo.codigo}</strong> – ${activo.nombre}
+    document.getElementById('activoBadgeText').innerHTML =
+      `<strong>${activo.codigo}</strong> – ${activo.nombre}
      <small class="text-muted">(${activo.tipo})</small>`;
 
-        document.getElementById('activoBadge').style.display = 'inline-flex';
-        document.getElementById('activoSearchWrap').style.display = 'none';
-        listaAuto.style.display = 'none';
-        if (inputBusqueda) inputBusqueda.value = '';
+    document.getElementById('activoBadge').style.display = 'inline-flex';
+    document.getElementById('activoSearchWrap').style.display = 'none';
+    listaAuto.style.display = 'none';
+    if (inputBusqueda) inputBusqueda.value = '';
 
-        // Si el sistema afectado está vacío, preseleccionar "Activo / Equipo"
-        const sysSelect = document.getElementById('sistema_afectado');
-        if (!sysSelect.value) sysSelect.value = 'Activo / Equipo';
+    // Si el sistema afectado está vacío, preseleccionar "Activo / Equipo"
+    const sysSelect = document.getElementById('sistema_afectado');
+    if (!sysSelect.value) sysSelect.value = 'Activo / Equipo';
+  }
+
+  function limpiarActivo() {
+    document.getElementById('activoId').value = '';
+    document.getElementById('activoCodigo').value = '';
+    document.getElementById('activoNombre').value = '';
+    document.getElementById('activoTipo').value = '';
+
+    document.getElementById('activoBadge').style.display = 'none';
+    document.getElementById('activoSearchWrap').style.display = 'block';
+    if (inputBusqueda) inputBusqueda.value = '';
+  }
+
+  // Adjuntos uno a uno
+  let adjuntosSeleccionados = [];
+  const MAX_ADJ = 5;
+  const MAX_SIZE = 5; // MB
+
+  function agregarAdjunto() {
+    const input = document.getElementById('singleFileInput');
+    if (!input.files.length) {
+      UI.toast.warning('Seleccione un archivo primero.');
+      return;
     }
 
-    function limpiarActivo() {
-        document.getElementById('activoId').value = '';
-        document.getElementById('activoCodigo').value = '';
-        document.getElementById('activoNombre').value = '';
-        document.getElementById('activoTipo').value = '';
-
-        document.getElementById('activoBadge').style.display = 'none';
-        document.getElementById('activoSearchWrap').style.display = 'block';
-        if (inputBusqueda) inputBusqueda.value = '';
+    const file = input.files[0];
+    if (adjuntosSeleccionados.length >= MAX_ADJ) {
+      UI.toast.warning(`Solo puedes agregar hasta ${MAX_ADJ} archivos.`);
+      return;
     }
-
-    // Adjuntos uno a uno
-    let adjuntosSeleccionados = [];
-    const MAX_ADJ = 5;
-    const MAX_SIZE = 5; // MB
-
-    function agregarAdjunto() {
-        const input = document.getElementById('singleFileInput');
-        if (!input.files.length) {
-            UI.toast.warning('Seleccione un archivo primero.');
-            return;
-        }
-
-        const file = input.files[0];
-        if (adjuntosSeleccionados.length >= MAX_ADJ) {
-            UI.toast.warning(`Solo puedes agregar hasta ${MAX_ADJ} archivos.`);
-            return;
-        }
-        if (file.size > MAX_SIZE * 1024 * 1024) {
-            UI.toast.warning(`"${file.name}" supera el límite de ${MAX_SIZE} MB.`);
-            return;
-        }
-        adjuntosSeleccionados.push(file);
-        renderAdjuntos();
-        input.value = '';
+    if (file.size > MAX_SIZE * 1024 * 1024) {
+      UI.toast.warning(`"${file.name}" supera el límite de ${MAX_SIZE} MB.`);
+      return;
     }
+    adjuntosSeleccionados.push(file);
+    renderAdjuntos();
+    input.value = '';
+  }
 
-    function quitarAdjunto(i) {
-        adjuntosSeleccionados.splice(i, 1);
-        renderAdjuntos();
-    }
+  function quitarAdjunto(i) {
+    adjuntosSeleccionados.splice(i, 1);
+    renderAdjuntos();
+  }
 
-    function renderAdjuntos() {
-        const lista = document.getElementById('adjuntosList');
-        const contador = document.getElementById('contadorAdjuntos');
-        contador.textContent = adjuntosSeleccionados.length;
+  function renderAdjuntos() {
+    const lista = document.getElementById('adjuntosList');
+    const contador = document.getElementById('contadorAdjuntos');
+    contador.textContent = adjuntosSeleccionados.length;
 
-        if (!adjuntosSeleccionados.length) {
-            lista.innerHTML = `
+    if (!adjuntosSeleccionados.length) {
+      lista.innerHTML = `
                 <li class="list-group-item text-center text-muted py-3" style="background:transparent;border:none;">
                     <i class="fa-solid fa-inbox fs-4 d-block mb-1"></i> No hay archivos agregados
                 </li>
             `;
-            return;
-        }
-        lista.innerHTML = adjuntosSeleccionados.map((f, i) =>
-            `<li class="d-flex justify-content-between align-items-center py-2 px-1" style="border-bottom: 1px solid var(--gray-100);">
+      return;
+    }
+    lista.innerHTML = adjuntosSeleccionados.map((f, i) =>
+      `<li class="d-flex justify-content-between align-items-center py-2 px-1" style="border-bottom: 1px solid var(--gray-100);">
                 <span><i class="fa-regular fa-file-lines me-2" style="color:var(--gray-400);"></i>${f.name}
                     <small class="ms-2" style="color:var(--gray-400);">(${(f.size/1024/1024).toFixed(2)} MB)</small>
                 </span>
@@ -386,93 +386,93 @@ while ($row = $result_activos->fetch_assoc()) {
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </li>`
-        ).join('');
+    ).join('');
+  }
+
+  // Envío del formulario
+  document.getElementById('supportForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Validar campos requeridos
+    const requeridos = ['nombres', 'correo_corporativo', 'departamento',
+      'asunto', 'sistema_afectado', 'urgencia', 'descripcion'
+    ];
+    let valido = true;
+    requeridos.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.classList.add('is-invalid');
+        valido = false;
+      } else {
+        el.classList.remove('is-invalid');
+      }
+    });
+
+    if (!valido) {
+      UI.toast.warning('Por favor, completa todos los campos obligatorios.');
+      return;
     }
 
-    // Envío del formulario
-    document.getElementById('supportForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    // Validar email
+    const email = document.getElementById('correo_corporativo').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('correo_corporativo').classList.add('is-invalid');
+      UI.toast.error('Ingresa un correo electrónico válido.');
+      return;
+    }
 
-        const submitBtn = document.getElementById('submitBtn');
+    // Construir FormData
+    const formData = new FormData(this);
 
-        // Validar campos requeridos
-        const requeridos = ['nombres', 'correo_corporativo', 'departamento',
-            'asunto', 'sistema_afectado', 'urgencia', 'descripcion'
-        ];
-        let valido = true;
-        requeridos.forEach(id => {
-            const el = document.getElementById(id);
-            if (!el.value.trim()) {
-                el.classList.add('is-invalid');
-                valido = false;
-            } else {
-                el.classList.remove('is-invalid');
-            }
-        });
+    // Inyectar archivos acumulados
+    formData.delete('adjuntos[]');
+    adjuntosSeleccionados.forEach(f => formData.append('adjuntos[]', f));
 
-        if (!valido) {
-            UI.toast.warning('Por favor, completa todos los campos obligatorios.');
-            return;
-        }
+    // Estado del botón
+    const textoOriginal = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Enviando...';
 
-        // Validar email
-        const email = document.getElementById('correo_corporativo').value.trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            document.getElementById('correo_corporativo').classList.add('is-invalid');
-            UI.toast.error('Ingresa un correo electrónico válido.');
-            return;
-        }
+    try {
+      const response = await fetch('enviar_soporte.php', {
+        method: 'POST',
+        body: formData
+      });
+      const text = await response.text();
 
-        // Construir FormData
-        const formData = new FormData(this);
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch {
+        throw new Error('Respuesta inválida del servidor');
+      }
 
-        // Inyectar archivos acumulados
-        formData.delete('adjuntos[]');
-        adjuntosSeleccionados.forEach(f => formData.append('adjuntos[]', f));
-
-        // Estado del botón
-        const textoOriginal = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Enviando...';
-
-        try {
-            const response = await fetch('enviar_soporte.php', {
-                method: 'POST',
-                body: formData
-            });
-            const text = await response.text();
-
-            let result;
-            try {
-                result = JSON.parse(text);
-            } catch {
-                throw new Error('Respuesta inválida del servidor');
-            }
-
-            if (result.success) {
-                UI.modal({
-                    title: '¡Solicitud Enviada!',
-                    icon: 'success',
-                    html: `<p><strong>${result.message}</strong></p>
+      if (result.success) {
+        UI.modal({
+          title: '¡Solicitud Enviada!',
+          icon: 'success',
+          html: `<p><strong>${result.message}</strong></p>
                            ${result.ticket ? `<p><strong>Ticket:</strong> ${result.ticket}</p>` : ''}
                            <p>Hemos enviado una confirmación a tu correo corporativo.</p>`,
-                });
-                setTimeout(() => window.location.href = 'index.php', 3500);
-            } else {
-                UI.toast.error(result.message);
-            }
-        } catch (err) {
-            UI.toast.error('No se pudo conectar con el servidor.');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = textoOriginal;
-        }
-    });
-
-    // Quitar clase is-invalid al escribir
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-        el.addEventListener('input', function() {
-            if (this.value.trim()) this.classList.remove('is-invalid');
         });
+        setTimeout(() => window.location.href = 'index.php', 3500);
+      } else {
+        UI.toast.error(result.message);
+      }
+    } catch (err) {
+      UI.toast.error('No se pudo conectar con el servidor.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = textoOriginal;
+    }
+  });
+
+  // Quitar clase is-invalid al escribir
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', function() {
+      if (this.value.trim()) this.classList.remove('is-invalid');
     });
+  });
 </script>

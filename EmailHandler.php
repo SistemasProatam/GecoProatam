@@ -1,4 +1,11 @@
 <?php
+$envFile = __DIR__ . '/../.env.smtp';
+if (file_exists($envFile)) {
+    foreach (parse_ini_file($envFile) as $key => $value) {
+        putenv("$key=$value");
+    }
+}
+
 require_once "config.php";
 
 require_once 'vendor/autoload.php';
@@ -14,7 +21,7 @@ class EmailHandler
     private $soporteNombre = 'Soporte Técnico Proatam';
     private $soporteEmail_activos = ['edgaror@proatam.com', 'negrete@proatam.com'];
     private $soporteNombre_activos = ['Edgar Ochoa', 'Jose Negrete'];
-    private $baseUrl = "https://proatamgoc.duckdns.org/";
+    private $baseUrl = "https://gecoproatam.com/";
 
 
     public function __construct()
@@ -30,8 +37,8 @@ class EmailHandler
             $this->mail->isSMTP();
             $this->mail->Host = 'smtp.gmail.com';
             $this->mail->SMTPAuth = true;
-            $this->mail->Username = 'sistemas@proatam.com';
-            $this->mail->Password = 'ebhonbpvhlrfjapx';
+            $this->mail->Username = "sistemas@proatam.com";
+            $this->mail->Password = "cfhr kncw rpyi pcoh";
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $this->mail->Port = 587;
             $this->mail->SMTPOptions = array(
@@ -63,6 +70,35 @@ class EmailHandler
     }
 
     /**
+     * Envuelve el contenido en el template general del sistema
+     */
+    private function getEmailWrapper($title, $contentHtml, $footerNote = null)
+    {
+        $time = date('d/m/Y H:i:s');
+        $footerText = $footerNote ?: "Este mensaje fue generado automáticamente desde el sistema <strong>GECO PROATAM</strong>.";
+
+        return '
+<div style="background-color: #f0f4f8; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; color: #0d2535;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <div style="background-color: #ffffff; padding: 20px 10px 20px; text-align: center; border-bottom: 4px solid #407656;">
+      <!-- Logo pendiente -->
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAV1BMVEVHcEx/r7l/r7l/r7l/r7l3q7h/r7l/r7l/r7l/r7l/r7l/r7l/r7l/r7l/r7mAsLl/r7mCsboAeasAeasAeasAeasAeasAeasAdqocf60Ad6uHtLsAeasNuOmfAAAAHXRSTlMATt7qfTn/sPYKccZiIIqmF5gTEHD/senaZVMiGMMn9xMAAAC3SURBVHgBldBFYkMxDATQMWg+M8P9z1mVG1CTvK0tGrzO+RBhECrrNaGAqf2YmY9ClZuPaVHCEFjBUjKBicxgqVnDkpEwNdYRrXNiXJ8VpHK4J6WP0TPcH1Z/BtsB6Adc+B7W6OM4TePFMh+5zMuyrssyqcvKAoBs+7btu76ufwsbsoU66IFznj+HlkmNIyFTpgLIxS0dP4QSkYoXyTJox+CgpEhDIhc5FyitOOEZPlcxEg2C170By88HYxTgQGQAAAAASUVORK5CYII=" alt="GECO PROATAM" width="280" style="display: block; margin: 0 auto 10px auto; border: 0; max-width: 10%;">
+      <p style="color: #113557; margin: 10px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">' . $title . '</p>
+    </div>
+    <div style="padding: 30px;">
+      ' . $contentHtml . '
+    </div>
+    <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; border-top: 1px solid #e2e8f0;">
+      <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.6;">
+        ' . $footerText . '<br>
+        Fecha de envío: ' . $time . '
+      </p>
+    </div>
+  </div>
+</div>';
+    }
+
+    /**
      * Enviar notificación de nueva orden de compra al Subdirector General
      */
     public function enviarNotificacionNuevaOrdenCompra($destinatario, $nombreDestinatario, $datosOrdenCompra)
@@ -74,97 +110,70 @@ class EmailHandler
             $this->mail->Subject = "Nueva Orden de Compra Pendiente de Aprobación - {$datosOrdenCompra['folio']}";
             $url = $this->baseUrl . "orders/see_oc.php?id=" . $datosOrdenCompra['id'];
 
-            $cuerpoHTML = "
-        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-            <div style='background-color: #ffc107; color: #000; padding: 20px; text-align: center;'>
-                <h2>Nueva Orden de Compra Requiere Aprobación</h2>
-            </div>
-            
-            <div style='padding: 20px; background-color: #f8f9fa;'>
-                <p>Hola <strong>{$nombreDestinatario}</strong>,</p>
-                
-                <p>Se ha generado una nueva orden de compra que requiere su revisión y aprobación:</p>
-                
-                <div style='background-color: white; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;'>
-                    <table style='width: 100%; border-collapse: collapse;'>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; width: 40%;'>Folio:</td>
-                            <td style='padding: 8px;'><strong style='color: #0d6efd;'>{$datosOrdenCompra['folio']}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Estado:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>
-                                <span style='background-color: #ffc107; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;'>
-                                    {$datosOrdenCompra['estado']}
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Solicitante:</td>
-                            <td style='padding: 8px;'>{$datosOrdenCompra['solicitante']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Entidad:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>{$datosOrdenCompra['entidad']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Proveedor:</td>
-                            <td style='padding: 8px;'>{$datosOrdenCompra['proveedor']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Proyecto:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>{$datosOrdenCompra['proyecto']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Obra:</td>
-                            <td style='padding: 8px;'>{$datosOrdenCompra['obra']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #fffbea;'>Monto Total:</td>
-                            <td style='padding: 8px; background-color: #fffbea;'>
-                                <strong style='color: #d63384; font-size: 1.1em;'>{$datosOrdenCompra['total']}</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Fecha de Solicitud:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>{$datosOrdenCompra['fecha_solicitud']}</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <div style='background-color: #d1ecf1; border-left: 4px solid #0dcaf0; padding: 15px; margin: 20px 0; border-radius: 4px;'>
-                    <strong>Acción requerida:</strong><br>
-                    Por favor, revise esta orden de compra y proceda con su aprobación o rechazo.
-                </div>
-                
-                <p style='text-align: center; margin-top: 30px;'>
-                    <a href='{$url}' 
-                        style='background-color: #198754; color: white; padding: 12px 30px; 
-                        text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
-                        Revisar y Aprobar Orden
-                    </a>
+            $innerHtml = "
+            <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+                Hola <strong>{$nombreDestinatario}</strong>, se ha generado una nueva orden de compra que requiere su revisión y aprobación.
+            </p>
 
-                </p>
-                
-                <p style='text-align: center; margin-top: 10px;'>
-                    <a href='https://proatamgoc.duckdns.org/orders/list_oc.php' 
-                       style='color: white; text-decoration: none; font-size: 0.9em;'>
-                        Ver todas las órdenes de compra
-                    </a>
-                </p>
-            </div>
+            <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Detalles de la Orden</h2>
             
-            <div style='background-color: #e9ecef; padding: 15px; text-align: center; font-size: 12px; color: #6c757d;'>
-                <p>Este es un correo automático del Sistema PROATAM. Por favor no responder.</p>
-                <p style='margin-top: 5px;'>
-                    <strong>Importante:</strong> Su aprobación es necesaria para continuar con el proceso de compra.
-                </p>
-            </div>
-        </div>
-        ";
+            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 15px; line-height: 1.6;'>
+                <tr>
+                    <td width='35%' style='padding: 8px 0; font-weight: 600; color: #113557;'>Folio:</td>
+                    <td width='65%' style='padding: 8px 0; color: #334155;'><strong>{$datosOrdenCompra['folio']}</strong></td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Estado:</td>
+                    <td style='padding: 8px 0;'>
+                        <span style='background-color: #ffc107; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; font-weight: bold;'>
+                            {$datosOrdenCompra['estado']}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Solicitante:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['solicitante']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Entidad:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['entidad']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Proveedor:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['proveedor']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Proyecto:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['proyecto']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Obra:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['obra']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Monto Total:</td>
+                    <td style='padding: 8px 0; color: #d63384; font-weight: bold; font-size: 1.1em;'>{$datosOrdenCompra['total']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Fecha Solicitud:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['fecha_solicitud']}</td>
+                </tr>
+            </table>
 
-            $this->mail->Body = $cuerpoHTML;
-            $this->mail->AltBody = strip_tags($cuerpoHTML);
+            <div style='margin-top: 30px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #113557; padding: 20px; border-radius: 4px;'>
+                <p style='margin: 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Acción requerida:</p>
+                <p style='margin: 5px 0 0 0; font-size: 15px; line-height: 1.6; color: #4a5568;'>Por favor, revise esta orden de compra y proceda con su aprobación o rechazo.</p>
+            </div>
+
+            <p style='text-align: center; margin-top: 35px;'>
+                <a href='{$url}' style='background-color: #113557; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
+                    Revisar Orden
+                </a>
+            </p>
+            ";
+
+            $this->mail->Body = $this->getEmailWrapper("Nueva Orden de Compra", $innerHtml);
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $innerHtml));
 
             return $this->mail->send();
         } catch (Exception $e) {
@@ -183,107 +192,102 @@ class EmailHandler
 
             // Determinar color y emoji según el estado
             $colorEstado = '#6c757d';
-            $emoji = '📋';
             $tituloAccion = 'Actualización de Orden de Compra';
 
             switch (strtolower($datosOrdenCompra['estado'])) {
+                case 'pendiente':
+                    $colorEstado = '#ffc107';
+                    $tituloAccion = 'Orden de Compra Pendiente';
+                    break;
+                case 'revisado':
+                    $colorEstado = '#0dcaf0';
+                    $tituloAccion = 'Orden de Compra Revisada';
+                    break;
                 case 'aprobado':
-                    $colorEstado = '#198754';
-                    $emoji = '✅';
+                    $colorEstado = '#407656';
                     $tituloAccion = 'Orden de Compra Aprobada';
                     break;
                 case 'rechazado':
                     $colorEstado = '#dc3545';
-                    $emoji = '❌';
                     $tituloAccion = 'Orden de Compra Rechazada';
+                    break;
+                case 'pagado':
+                case 'pagado y completado':
+                    $colorEstado = '#113557';
+                    $tituloAccion = 'Orden de Compra Pagada';
+                    break;
+                case 'devuelto':
+                case 'devuelto para editar':
+                    $colorEstado = '#fd7e14';
+                    $tituloAccion = 'Orden de Compra Devuelta para Editar';
                     break;
                 case 'comprobante subido':
                     $colorEstado = '#0dcaf0';
-                    $emoji = '📎';
                     $tituloAccion = 'Comprobante de Pago Adjuntado';
                     break;
-                case 'pagado y completado':
-                case 'pagado':
-                    $colorEstado = '#0d6efd';
-                    $emoji = '💰';
-                    $tituloAccion = 'Orden de Compra Pagada';
+                default:
+                    $colorEstado = '#6c757d';
+                    $tituloAccion = 'Actualización de Orden de Compra';
                     break;
             }
 
-            $this->mail->Subject = "{$emoji} {$tituloAccion} - {$datosOrdenCompra['folio']}";
+            $this->mail->Subject = "{$tituloAccion} - {$datosOrdenCompra['folio']}";
             $url = $this->baseUrl . "orders/see_oc.php?id=" . $datosOrdenCompra['id'];
 
-            $cuerpoHTML = "
-        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-            <div style='background-color: {$colorEstado}; color: white; padding: 20px; text-align: center;'>
-                <h2>{$emoji} {$tituloAccion}</h2>
-            </div>
+            $innerHtml = "
+            <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+                Hola <strong>{$nombreDestinatario}</strong>, te informamos sobre un cambio en el estado de una orden de compra.
+            </p>
+
+            <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Actualización de Orden</h2>
             
-            <div style='padding: 20px; background-color: #f8f9fa;'>
-                <p>Hola <strong>{$nombreDestinatario}</strong>,</p>
-                
-                <p>Te informamos sobre un cambio en el estado de una orden de compra:</p>
-                
-                <div style='background-color: white; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid {$colorEstado};'>
-                    <table style='width: 100%; border-collapse: collapse;'>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; width: 40%;'>Folio:</td>
-                            <td style='padding: 8px;'><strong style='color: #0d6efd;'>{$datosOrdenCompra['folio']}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Nuevo Estado:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>
-                                <span style='background-color: {$colorEstado}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;'>
-                                    <strong>{$datosOrdenCompra['estado']}</strong>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Solicitante:</td>
-                            <td style='padding: 8px;'>{$datosOrdenCompra['solicitante']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Proveedor:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>{$datosOrdenCompra['proveedor']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Proyecto:</td>
-                            <td style='padding: 8px;'>{$datosOrdenCompra['proyecto']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #fffbea;'>Total:</td>
-                            <td style='padding: 8px; background-color: #fffbea;'>
-                                <strong style='color: #d63384;'>{$datosOrdenCompra['total']}</strong>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                
-                " . (!empty($datosOrdenCompra['comentarios']) ? "
-                <div style='background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;'>
-                    <strong>💬 Comentarios:</strong><br>
-                    <p style='margin: 10px 0 0 0;'>{$datosOrdenCompra['comentarios']}</p>
-                </div>
-                " : "") . "
-                
-                <p style='text-align: center; margin-top: 30px;'>
-                <a href='{$url}' 
-                    style='background-color: {$colorEstado}; color: white; padding: 12px 30px; 
-                    text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
+            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 15px; line-height: 1.6;'>
+                <tr>
+                    <td width='35%' style='padding: 8px 0; font-weight: 600; color: #113557;'>Folio:</td>
+                    <td width='65%' style='padding: 8px 0; color: #334155;'><strong>{$datosOrdenCompra['folio']}</strong></td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Nuevo Estado:</td>
+                    <td style='padding: 8px 0;'>
+                        <span style='background-color: {$colorEstado}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; font-weight: bold;'>
+                            {$datosOrdenCompra['estado']}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Solicitante:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['solicitante']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Proveedor:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['proveedor']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Proyecto:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['proyecto']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Total:</td>
+                    <td style='padding: 8px 0; color: #d63384; font-weight: bold;'>{$datosOrdenCompra['total']}</td>
+                </tr>
+            </table>
+
+            " . (!empty($datosOrdenCompra['comentarios']) ? "
+            <div style='margin-top: 30px; background-color: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #ffc107; padding: 20px; border-radius: 4px;'>
+                <p style='margin: 0 0 10px 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Comentarios:</p>
+                <p style='margin: 0; font-size: 15px; line-height: 1.6; color: #4a5568;'>{$datosOrdenCompra['comentarios']}</p>
+            </div>
+            " : "") . "
+
+            <p style='text-align: center; margin-top: 35px;'>
+                <a href='{$url}' style='background-color: {$colorEstado}; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
                     Ver Orden de Compra
                 </a>
+            </p>
+            ";
 
-                </p>
-            </div>
-            
-            <div style='background-color: #e9ecef; padding: 15px; text-align: center; font-size: 12px; color: #6c757d;'>
-                <p>Este es un correo automático del Sistema PROATAM. Por favor no responder.</p>
-            </div>
-        </div>
-        ";
-
-            $this->mail->Body = $cuerpoHTML;
-            $this->mail->AltBody = strip_tags($cuerpoHTML);
+            $this->mail->Body = $this->getEmailWrapper($tituloAccion, $innerHtml);
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $innerHtml));
 
             return $this->mail->send();
         } catch (Exception $e) {
@@ -304,103 +308,121 @@ class EmailHandler
             // Determinar asunto según estado
             $asunto = "";
             $colorEstado = '#6c757d';
-            $emoji = '📋';
 
             switch (strtolower($datosOrdenCompra['estado'])) {
+                case 'pendiente':
+                    $asunto = "Tu Orden de Compra está Pendiente - {$datosOrdenCompra['folio']}";
+                    $colorEstado = '#ffc107';
+                    break;
+                case 'revisado':
+                    $asunto = "Tu Orden de Compra ha sido Revisada - {$datosOrdenCompra['folio']}";
+                    $colorEstado = '#0dcaf0';
+                    break;
                 case 'aprobado':
-                    $asunto = "✅ Tu Orden de Compra ha sido Aprobada - {$datosOrdenCompra['folio']}";
-                    $colorEstado = '#198754';
+                    $asunto = "Tu Orden de Compra ha sido Aprobada - {$datosOrdenCompra['folio']}";
+                    $colorEstado = '#407656';
                     break;
                 case 'rechazado':
-                    $asunto = "❌ Tu Orden de Compra ha sido Rechazada - {$datosOrdenCompra['folio']}";
+                    $asunto = "Tu Orden de Compra ha sido Rechazada - {$datosOrdenCompra['folio']}";
                     $colorEstado = '#dc3545';
                     break;
                 case 'pagado':
+                case 'pagado y completado':
                     $asunto = "Tu Orden de Compra ha sido Pagada - {$datosOrdenCompra['folio']}";
-                    $colorEstado = '#0d6efd';
+                    $colorEstado = '#113557';
+                    break;
+                case 'devuelto':
+                case 'devuelto para editar':
+                    $asunto = "Tu Orden de Compra ha sido Devuelta para Editar - {$datosOrdenCompra['folio']}";
+                    $colorEstado = '#fd7e14';
+                    break;
+                default:
+                    $asunto = "Actualización de tu Orden de Compra - {$datosOrdenCompra['folio']}";
+                    $colorEstado = '#6c757d';
                     break;
             }
 
             $this->mail->Subject = $asunto;
             $url = $this->baseUrl . "orders/see_oc.php?id=" . $datosOrdenCompra['id'];
 
-            $cuerpoHTML = "
-        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-            <div style='background-color: {$colorEstado}; color: white; padding: 20px; text-align: center;'>
-                <h2>{$emoji} {$datosOrdenCompra['estado']}</h2>
-                <h3>Orden de Compra {$datosOrdenCompra['folio']}</h3>
-            </div>
+            $innerHtml = "
+            <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+                Hola <strong>{$nombreDestinatario}</strong>, tu orden de compra ha sido actualizada.
+            </p>
+
+            <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Actualización de tu Orden</h2>
             
-            <div style='padding: 20px; background-color: #f8f9fa;'>
-                <p>Hola <strong>{$nombreDestinatario}</strong>,</p>
-                
-                <p>Tu orden de compra ha sido actualizada:</p>
-                
-                <div style='background-color: white; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid {$colorEstado};'>
-                    <table style='width: 100%; border-collapse: collapse;'>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; width: 40%;'>Folio:</td>
-                            <td style='padding: 8px;'><strong style='color: #0d6efd;'>{$datosOrdenCompra['folio']}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #f8f9fa;'>Estado:</td>
-                            <td style='padding: 8px; background-color: #f8f9fa;'>
-                                <span style='background-color: {$colorEstado}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;'>
-                                    <strong>{$datosOrdenCompra['estado']}</strong>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Proveedor:</td>
-                            <td style='padding: 8px;'>{$datosOrdenCompra['proveedor']}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; background-color: #fffbea;'>Total:</td>
-                            <td style='padding: 8px; background-color: #fffbea;'>
-                                <strong style='color: #d63384;'>{$datosOrdenCompra['total']}</strong>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                
-                " . (!empty($datosOrdenCompra['comentarios']) ? "
-                <div style='background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;'>
-                    <strong>💬 Comentarios:</strong><br>
-                    <p style='margin: 10px 0 0 0;'>{$datosOrdenCompra['comentarios']}</p>
-                </div>
-                " : "") . "
-                
-                <div style='background-color: #e7f3ff; border-left: 4px solid #0d6efd; padding: 15px; margin: 20px 0; border-radius: 4px;'>
-                <strong>Información:</strong><br>
-                " . (
-                $datosOrdenCompra['estado'] === 'aprobado' 
-                    ? "Tu orden de compra ha sido aprobada y ha sido enviada al Gerente de Recursos Humanos para proceder con el pago."
-                : ($datosOrdenCompra['estado'] === 'pagado' 
-                    ? "El pago de tu orden de compra ha sido completado exitosamente."
-                : ($datosOrdenCompra['estado'] === 'rechazado'
-                    ? "Tu orden de compra ha sido rechazada. Por favor, contacta al Subdirector General para más información."
-                : "La orden de compra ha sido actualizada."
-                    )
-                )) . "
-                </div>
-                
-                <p style='text-align: center; margin-top: 30px;'>
-                    <a href='{$url}' 
-                        style='background-color: {$colorEstado}; color: white; padding: 12px 30px; 
-                        text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
-                        Ver Orden de Compra
-                    </a>
+            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 15px; line-height: 1.6;'>
+                <tr>
+                    <td width='35%' style='padding: 8px 0; font-weight: 600; color: #113557;'>Folio:</td>
+                    <td width='65%' style='padding: 8px 0; color: #334155;'><strong>{$datosOrdenCompra['folio']}</strong></td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Estado:</td>
+                    <td style='padding: 8px 0;'>
+                        <span style='background-color: {$colorEstado}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; font-weight: bold;'>
+                            {$datosOrdenCompra['estado']}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Proveedor:</td>
+                    <td style='padding: 8px 0; color: #334155;'>{$datosOrdenCompra['proveedor']}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Total:</td>
+                    <td style='padding: 8px 0; color: #d63384; font-weight: bold;'>{$datosOrdenCompra['total']}</td>
+                </tr>
+            </table>";
+
+            if (!empty($datosOrdenCompra['comentarios'])) {
+                $innerHtml .= "
+                <div style='margin-top: 30px; background-color: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #ffc107; padding: 20px; border-radius: 4px;'>
+                    <p style='margin: 0 0 10px 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Comentarios:</p>
+                    <p style='margin: 0; font-size: 15px; line-height: 1.6; color: #4a5568;'>{$datosOrdenCompra['comentarios']}</p>
+                </div>";
+            }
+
+            $mensajeDescriptivo = "La orden de compra ha sido actualizada.";
+            switch (strtolower($datosOrdenCompra['estado'])) {
+                case 'pendiente':
+                    $mensajeDescriptivo = "Tu orden de compra se encuentra en estado pendiente de revisión.";
+                    break;
+                case 'revisado':
+                    $mensajeDescriptivo = "Tu orden de compra ha sido revisada por el área correspondiente.";
+                    break;
+                case 'aprobado':
+                    $mensajeDescriptivo = "Tu orden de compra ha sido aprobada y ha sido enviada al área administrativa para proceder con el pago.";
+                    break;
+                case 'rechazado':
+                    $mensajeDescriptivo = "Tu orden de compra ha sido rechazada. Por favor, revisa los comentarios o contacta al administrador para más información.";
+                    break;
+                case 'pagado':
+                case 'pagado y completado':
+                    $mensajeDescriptivo = "El pago de tu orden de compra ha sido completado exitosamente.";
+                    break;
+                case 'devuelto':
+                case 'devuelto para editar':
+                    $mensajeDescriptivo = "Tu orden de compra ha sido devuelta para que realices las correcciones necesarias.";
+                    break;
+            }
+
+            $innerHtml .= "
+            <div style='margin-top: 30px; background-color: #e3f2fd; border: 1px solid #bbdefb; border-left: 4px solid #113557; padding: 20px; border-radius: 4px;'>
+                <p style='margin: 0; font-size: 15px; line-height: 1.6; color: #0d2535;'>
+                    {$mensajeDescriptivo}
                 </p>
             </div>
-            
-            <div style='background-color: #e9ecef; padding: 15px; text-align: center; font-size: 12px; color: #6c757d;'>
-                <p>Este es un correo automático del Sistema PROATAM. Por favor no responder.</p>
-            </div>
-        </div>
-        ";
 
-            $this->mail->Body = $cuerpoHTML;
-            $this->mail->AltBody = strip_tags($cuerpoHTML);
+            <p style='text-align: center; margin-top: 35px;'>
+                <a href='{$url}' style='background-color: #113557; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
+                    Ver Orden de Compra
+                </a>
+            </p>
+            ";
+
+            $this->mail->Body = $this->getEmailWrapper($datosOrdenCompra['estado'], $innerHtml);
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $innerHtml));
 
             return $this->mail->send();
         } catch (Exception $e) {
@@ -416,11 +438,11 @@ class EmailHandler
     {
         try {
             $this->mail->clearAddresses();
-            
+
             // Determinar si notificar a soporte de activos o soporte general
             $tieneActivo = !empty($datos['activo_id']);
             $sistemaEsActivo = isset($datos['sistema_afectado']) && strtolower($datos['sistema_afectado']) === 'Activo / Equipo';
-            
+
             if ($tieneActivo || $sistemaEsActivo) {
                 // Notificar a soporte de activos
                 foreach ($this->soporteEmail_activos as $email) {
@@ -465,124 +487,85 @@ class EmailHandler
     private function crearTemplateSolicitud($datos)
     {
         $urgenciaClass = $this->getClaseUrgencia($datos['urgencia'] ?? 'normal');
+        $prioridadColor = $datos['urgencia'] === 'Urgente' ? '#dc3545' : ($datos['urgencia'] === 'Alta' ? '#fd7e14' : '#113557');
 
         // ── Bloque del activo relacionado (solo se renderiza si viene un activo) ──
         $bloqueActivo = '';
         if (!empty($datos['activo_id'])) {
             $bloqueActivo = "
+            <div style='margin-top: 20px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1a73e8; padding: 20px; border-radius: 4px;'>
+                <p style='margin: 0 0 10px 0; font-weight: 600; color: #1a73e8; font-size: 15px;'>Activo Relacionado:</p>
+                <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 14px; line-height: 1.6;'>
                     <tr>
-                        <td colspan='2' style='padding: 4px 0;'>
-                            <div style='background-color: #e8f0fe; border-left: 4px solid #1a73e8;
-                                        padding: 12px 16px; margin: 10px 0; border-radius: 4px;'>
-                                <div style='font-weight: bold; color: #1a73e8; margin-bottom: 8px;'>
-                                    Activo Relacionado
-                                </div>
-                                <table style='width: 100%; border-collapse: collapse; font-size: 0.9em;'>
-                                    <tr>
-                                        <td style='padding: 4px 8px; font-weight: bold; width: 30%; color: #555;'>Código:</td>
-                                        <td style='padding: 4px 8px;'>
-                                            <strong style='font-family: monospace; letter-spacing: 1px; color: #113456;'>
-                                                {$datos['activo_codigo']}
-                                            </strong>
-                                        </td>
-                                    </tr>
-                                    <tr style='background: rgba(0,0,0,.04);'>
-                                        <td style='padding: 4px 8px; font-weight: bold; color: #555;'>Nombre:</td>
-                                        <td style='padding: 4px 8px;'>{$datos['activo_nombre']}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style='padding: 4px 8px; font-weight: bold; color: #555;'>Tipo:</td>
-                                        <td style='padding: 4px 8px;'>{$datos['activo_tipo']}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>";
+                        <td width='35%' style='padding: 4px 0; font-weight: 600; color: #555;'>Código:</td>
+                        <td width='65%' style='padding: 4px 0; color: #334155;'><strong>{$datos['activo_codigo']}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 4px 0; font-weight: 600; color: #555;'>Nombre:</td>
+                        <td style='padding: 4px 0; color: #334155;'>{$datos['activo_nombre']}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 4px 0; font-weight: 600; color: #555;'>Tipo:</td>
+                        <td style='padding: 4px 0; color: #334155;'>{$datos['activo_tipo']}</td>
+                    </tr>
+                </table>
+            </div>";
         }
 
-        return "
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body   { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header  { background: #f8f9fa; padding: 15px; border-radius: 5px; }
-                .urgent  { background: #fff3cd; border-left: 4px solid #ffc107; }
-                .high    { background: #f8d7da; border-left: 4px solid #dc3545; }
-                .normal  { background: #d1ecf1; border-left: 4px solid #17a2b8; }
-                .content { background: white; padding: 20px; border-radius: 5px; margin-top: 15px; }
-                .field   { margin-bottom: 10px; }
-                .label   { font-weight: bold; color: #555; }
-                table.inf { width: 100%; border-collapse: collapse; }
-                table.inf td { padding: 8px; vertical-align: top; }
-                table.inf tr:nth-child(even) td { background: #f8f9fa; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header {$urgenciaClass}'>
-                    <h2>Nueva Solicitud de Mantenimiento</h2>
-                    <p><strong>Prioridad:</strong> " . ($datos['urgencia'] ?? 'Normal') . "</p>
-                </div>
+        $innerHtml = "
+        <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+            Se ha recibido una nueva solicitud de mantenimiento desde el sistema.
+        </p>
 
-                <div class='content'>
-                    <table class='inf'>
-                        <tr>
-                            <td style='font-weight: bold; width: 35%;'>Solicitante:</td>
-                            <td>
-                                {$datos['nombres']}
-                                <br><small style='color:#666;'>{$datos['correo_corporativo']}</small>
-                            </td>
-                        </tr>
-                        " . (!empty($datos['departamento']) ? "
-                        <tr>
-                            <td style='font-weight: bold;'>Departamento:</td>
-                            <td>{$datos['departamento']}</td>
-                        </tr>" : "") . "
-                        " . (!empty($datos['sistema_afectado']) ? "
-                        <tr>
-                            <td style='font-weight: bold;'>Sistema / Área:</td>
-                            <td>{$datos['sistema_afectado']}</td>
-                        </tr>" : "") . "
-                        <tr>
-                            <td style='font-weight: bold;'>Fecha:</td>
-                            <td>" . date('d/m/Y') . "</td>
-                        </tr>
-                        {$bloqueActivo}
-                    </table>
+        <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Información del Solicitante</h2>
+        
+        <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 15px; line-height: 1.6;'>
+            <tr>
+                <td width='35%' style='padding: 8px 0; font-weight: 600; color: #113557;'>Nombre:</td>
+                <td width='65%' style='padding: 8px 0; color: #334155;'>{$datos['nombres']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Email:</td>
+                <td style='padding: 8px 0; color: #334155;'>{$datos['correo_corporativo']}</td>
+            </tr>
+            " . (!empty($datos['departamento']) ? "
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Departamento:</td>
+                <td style='padding: 8px 0; color: #334155;'>{$datos['departamento']}</td>
+            </tr>" : "") . "
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Prioridad:</td>
+                <td style='padding: 8px 0;'>
+                    <span style='background-color: {$prioridadColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; font-weight: bold;'>
+                        " . ($datos['urgencia'] ?? 'Normal') . "
+                    </span>
+                </td>
+            </tr>
+        </table>
 
-                    <div class='field' style='margin-top: 16px;'>
-                        <span class='label'>Asunto:</span>
-                        <p style='margin: 4px 0;'>{$datos['asunto']}</p>
-                    </div>
+        {$bloqueActivo}
 
-                    <div class='field'>
-                        <span class='label'>Descripción del problema:</span>
-                        <p style='white-space: pre-line;'>" . nl2br(htmlspecialchars($datos['descripcion'])) . "</p>
-                    </div>
+        <div style='margin-top: 30px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #113557; padding: 20px; border-radius: 4px;'>
+            <p style='margin: 0 0 10px 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Asunto: {$datos['asunto']}</p>
+            <p style='margin: 0; font-size: 15px; line-height: 1.6; color: #4a5568; white-space: pre-wrap;'>" . htmlspecialchars($datos['descripcion']) . "</p>
+        </div>
 
-                    " . (!empty($datos['pasos_reproducir']) ? "
-                    <div class='field'>
-                        <span class='label'>Pasos para reproducir:</span>
-                        <p>{$datos['pasos_reproducir']}</p>
-                    </div>" : "") . "
-                </div>
+        " . (!empty($datos['pasos_reproducir']) ? "
+        <div style='margin-top: 20px; padding: 15px; border: 1px dashed #cbd5e1; border-radius: 4px;'>
+            <p style='margin: 0 0 5px 0; font-weight: 600; color: #64748b; font-size: 14px;'>Pasos para reproducir:</p>
+            <p style='margin: 0; font-size: 14px; color: #4a5568;'>{$datos['pasos_reproducir']}</p>
+        </div>" : "") . "
+        ";
 
-                <div style='text-align:center; margin-top:16px; font-size:12px; color:#999;'>
-                    Correo automático del Sistema PROATAM · No responder a este mensaje.
-                </div>
-            </div>
-        </body>
-        </html>";
+        return $this->getEmailWrapper("Nueva Solicitud de Mantenimiento", $innerHtml);
     }
 
     /**
      * Crea la versión en texto plano del email
      */
-     private function crearTextoPlano($datos)
+    private function crearTextoPlano($datos)
     {
-        $texto  = "NUEVA SOLICITUD DE MANTENIMIENTO - PROATAM\n";
+        $texto  = "NUEVA SOLICITUD DE MANTENIMIENTO - GECO PROATAM\n";
         $texto .= "==========================================\n\n";
         $texto .= "Asunto:      {$datos['asunto']}\n";
         $texto .= "Solicitante: {$datos['nombres']} ({$datos['correo_corporativo']})\n";
@@ -647,41 +630,32 @@ class EmailHandler
 
     private function crearTemplateConfirmacion($nombre, $ticketId)
     {
-        return "
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #d4edda; padding: 15px; border-radius: 5px; text-align: center; }
-                .content { background: white; padding: 20px; border-radius: 5px; margin-top: 15px; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h2>¡Solicitud Recibida!</h2>
-                </div>
-                
-                <div class='content'>
-                    <p>Hola <strong>{$nombre}</strong>,</p>
-                    
-                    <p>Hemos recibido tu solicitud de mantenimiento y hemos creado el ticket <strong>#{$ticketId}</strong>.</p>
-                    
-                    <p>El equipo revisará tu solicitud y se pondrá en contacto contigo a la brevedad.</p>
-                    
-                    <p>Si necesitas agregar información adicional, puedes hacerlo respondiendo directamente a este mensaje de confirmación, 
-                    de modo que la información quede registrada en el mismo hilo de seguimiento.</p>
-                    
-                    <p>Saludos cordiales,<br>
-                    <strong>Equipo de Soporte</strong><br>
-                    Proatam</p>
-                </div>
+        $innerHtml = "
+        <div style='text-align: center; margin-bottom: 30px;'>
+            <div style='background-color: #dcfce7; color: #15803d; width: 60px; height: 60px; line-height: 60px; border-radius: 50%; font-size: 30px; margin: 0 auto 20px;'>
             </div>
-        </body>
-        </html>
+            <p style='font-size: 18px; font-weight: 600; color: #0d2535; margin: 0;'>¡Solicitud Recibida Correctamente!</p>
+            <p style='font-size: 15px; color: #64748b; margin-top: 5px;'>Hemos registrado tu ticket <strong>#{$ticketId}</strong></p>
+        </div>
+
+        <p style='font-size: 15px; line-height: 1.6; color: #4a5568;'>
+            Hola <strong>{$nombre}</strong>, hemos recibido tu solicitud de mantenimiento. El equipo revisará los detalles y se pondrá en contacto contigo a la brevedad posible.
+        </p>
+
+        <div style='margin-top: 30px; background-color: #f0f9ff; border: 1px solid #e0f2fe; border-left: 4px solid #113557; padding: 20px; border-radius: 4px;'>
+            <p style='margin: 0; font-size: 14px; line-height: 1.6; color: #0369a1;'>
+                <strong>Información importante:</strong><br>
+                Si necesitas agregar más información o capturas adicionales, puedes responder directamente a este mensaje para mantener el seguimiento en el mismo hilo.
+            </p>
+        </div>
+
+        <p style='font-size: 14px; color: #64748b; margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px;'>
+            Saludos cordiales,<br>
+            <strong>Equipo de Soporte GECO PROATAM</strong>
+        </p>
         ";
+
+        return $this->getEmailWrapper("Confirmación de Ticket #{$ticketId}", $innerHtml);
     }
 
     /**
@@ -698,85 +672,68 @@ class EmailHandler
             $this->mail->Body = $this->crearTemplateNotificacionRequisicion($datosRequisicion);
             $this->mail->AltBody = $this->crearTextoPlanoNotificacionRequisicion($datosRequisicion);
 
-            $this->mail->send();
-            return true;
+            return $this->mail->send();
         } catch (Exception $e) {
             error_log("Error enviando notificación de requisición: " . $this->mail->ErrorInfo);
             return false;
         }
     }
 
-    /**
-     * Template HTML para notificación de requisición
-     */
     private function crearTemplateNotificacionRequisicion($datos)
     {
-        $url = $this->baseUrl . "orders/see_requis.php?id=" . $datos['id'];
+        $id = $datos['id'] ?? 0;
+        $url = $this->baseUrl . "orders/see_requis.php?id=" . $id;
 
-        return "
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; text-align: center; }
-                .content { background: white; padding: 20px; border-radius: 5px; margin-top: 15px; border: 1px solid #ddd; }
-                .info-box { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
-                .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
-                .badge { background: #007bff; color: white; padding: 5px 10px; border-radius: 3px; }
-                .btn-primary { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h1>PROATAM</h1>
-                    <h2>Nueva Requisición Pendiente</h2>
-                </div>
-                
-                <div class='content'>
-                    <p>Hola <strong>{$datos['nombre']}</strong>,</p>
-                    <p>Se ha creado una nueva requisición que requiere tu revisión:</p>
-                    
-                    <div class='info-box'>
-                        <h3>Información de la Requisición</h3>
-                        <p><strong>Folio:</strong> {$datos['folio']}</p>
-                        <p><strong>Solicitante:</strong> {$datos['solicitante']}</p>
-                        <p><strong>Fecha:</strong> {$datos['fecha']}</p>
-                        <p><strong>Entidad:</strong> {$datos['entidad']}</p>
-                        <p><strong>Categoría:</strong> {$datos['categoria']}</p>
-                        <p><strong>Estado:</strong> <span class='badge'>Pendiente</span></p>
-                    </div>
+        $innerHtml = "
+        <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+            Hola <strong>" . ($datos['nombre'] ?? 'Supervisor') . "</strong>, se ha generado una nueva requisición que requiere tu revisión.
+        </p>
 
-                    " . (!empty($datos['descripcion']) ? "
-                    <div class='info-box'>
-                        <h4>Descripción:</h4>
-                        <p>{$datos['descripcion']}</p>
-                    </div>" : "") . "
+        <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Detalles de la Requisición</h2>
+        
+        <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 15px; line-height: 1.6;'>
+            <tr>
+                <td width='35%' style='padding: 8px 0; font-weight: 600; color: #113557;'>Folio:</td>
+                <td width='65%' style='padding: 8px 0; color: #334155;'><strong>" . ($datos['folio'] ?? '-') . "</strong></td>
+            </tr>
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Solicitante:</td>
+                <td style='padding: 8px 0; color: #334155;'>" . ($datos['solicitante'] ?? '-') . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Fecha:</td>
+                <td style='padding: 8px 0; color: #334155;'>" . ($datos['fecha'] ?? '-') . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Entidad:</td>
+                <td style='padding: 8px 0; color: #334155;'>" . ($datos['entidad'] ?? '-') . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Categoría:</td>
+                <td style='padding: 8px 0; color: #334155;'>" . ($datos['categoria'] ?? '-') . "</td>
+            </tr>
+        </table>
 
-                    " . (!empty($datos['observaciones']) ? "
-                    <div class='info-box'>
-                        <h4>Observaciones:</h4>
-                        <p>{$datos['observaciones']}</p>
-                    </div>" : "") . "
+        " . (!empty($datos['descripcion']) ? "
+        <div style='margin-top: 25px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #113557; padding: 15px; border-radius: 4px;'>
+            <p style='margin: 0 0 5px 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Descripción:</p>
+            <p style='margin: 0; font-size: 14px; color: #4a5568;'>{$datos['descripcion']}</p>
+        </div>" : "") . "
 
-                    <p>Por favor, accede al sistema para revisar y aprobar esta requisición.</p>
-                    
-                    <a href='{$url}' class='btn-primary'>
-                        Revisar Requisición
-                    </a>
+        " . (!empty($datos['observaciones']) ? "
+        <div style='margin-top: 15px; background-color: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px;'>
+            <p style='margin: 0 0 5px 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Observaciones:</p>
+            <p style='margin: 0; font-size: 14px; color: #4a5568;'>{$datos['observaciones']}</p>
+        </div>" : "") . "
 
-                </div>
-                
-                <div class='footer'>
-                    <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
-                    <p>&copy; " . date('Y') . " PROATAM. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </body>
-        </html>
+        <p style='text-align: center; margin-top: 35px;'>
+            <a href='{$url}' style='background-color: #113557; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
+                Revisar Requisición
+            </a>
+        </p>
         ";
+
+        return $this->getEmailWrapper("Nueva Requisición Pendiente", $innerHtml);
     }
 
     /**
@@ -784,19 +741,27 @@ class EmailHandler
      */
     private function crearTextoPlanoNotificacionRequisicion($datos)
     {
-        return "NUEVA REQUISICIÓN PENDIENTE - PROATAM\n\n" .
-            "Hola {$datos['nombre']},\n\n" .
+        $nombre = $datos['nombre'] ?? 'Supervisor';
+        $folio = $datos['folio'] ?? '-';
+        $solicitante = $datos['solicitante'] ?? '-';
+        $fecha = $datos['fecha'] ?? '-';
+        $entidad = $datos['entidad'] ?? '-';
+        $categoria = $datos['categoria'] ?? '-';
+        $id = $datos['id'] ?? 0;
+
+        return "NUEVA REQUISICIÓN PENDIENTE - GECO PROATAM\n\n" .
+            "Hola {$nombre},\n\n" .
             "Se ha creado una nueva requisición que requiere tu revisión:\n\n" .
-            "Folio: {$datos['folio']}\n" .
-            "Solicitante: {$datos['solicitante']}\n" .
-            "Fecha: {$datos['fecha']}\n" .
-            "Entidad: {$datos['entidad']}\n" .
-            "Categoría: {$datos['categoria']}\n" .
+            "Folio: {$folio}\n" .
+            "Solicitante: {$solicitante}\n" .
+            "Fecha: {$fecha}\n" .
+            "Entidad: {$entidad}\n" .
+            "Categoría: {$categoria}\n" .
             "Estado: Pendiente\n\n" .
             (!empty($datos['descripcion']) ? "Descripción: {$datos['descripcion']}\n\n" : "") .
             (!empty($datos['observaciones']) ? "Observaciones: {$datos['observaciones']}\n\n" : "") .
             "Accede al sistema para revisar esta requisición.\n\n" .
-            "URL: " . $this->baseUrl . "orders/see_requis.php?id=" . $datos['id'] .
+            "URL: " . $this->baseUrl . "orders/see_requis.php?id=" . $id . "\n\n" .
             "Este es un correo automático.";
     }
 
@@ -822,62 +787,37 @@ class EmailHandler
         }
     }
 
-    /**
-     * Template HTML para cambio de estado
-     */
     private function crearTemplateCambioEstado($datos)
     {
         $estadoColor = $this->getColorEstado($datos['estado']);
         $url = $this->baseUrl . "orders/see_requis.php?id=" . $datos['id'];
 
-        return "
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; text-align: center; }
-                .content { background: white; padding: 20px; border-radius: 5px; margin-top: 15px; border: 1px solid #ddd; }
-                .status-box { background: {$estadoColor['background']}; color: {$estadoColor['color']}; padding: 15px; border-radius: 5px; margin: 10px 0; border-left: 4px solid {$estadoColor['border']}; }
-                .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
-                .btn-primary { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h1>PROATAM</h1>
-                    <h2>Actualización de Requisición</h2>
-                </div>
-                
-                <div class='content'>
-                    <p>Hola <strong>{$datos['solicitante']}</strong>,</p>
-                    <p>El estado de tu requisición ha sido actualizado:</p>
-                    
-                    <div class='status-box'>
-                        <h3>Estado Actual: {$datos['estado']}</h3>
-                        <p><strong>Folio:</strong> {$datos['folio']}</p>
-                        " . (!empty($datos['comentarios']) ? "
-                        <p><strong>Comentarios:</strong> {$datos['comentarios']}</p>" : "") . "
-                    </div>
+        $innerHtml = "
+        <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+            Hola <strong>{$datos['solicitante']}</strong>, el estado de tu requisición ha sido actualizado.
+        </p>
 
-                    <p>Puedes ver los detalles de tu requisición en el sistema.</p>
-                    
-                    <a href='{$url}' class='btn-primary'>
-                        Ver Requisición
-                    </a>
+        <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Actualización de Estado</h2>
+        
+        <div style='background-color: {$estadoColor['background']}; color: {$estadoColor['color']}; padding: 20px; border-radius: 6px; border-left: 4px solid {$estadoColor['border']};'>
+            <p style='margin: 0; font-size: 18px; font-weight: bold;'>Nuevo Estado: {$datos['estado']}</p>
+            <p style='margin: 5px 0 0 0; font-size: 15px;'>Folio: <strong>{$datos['folio']}</strong></p>
+        </div>
 
-                </div>
-                
-                <div class='footer'>
-                    <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
-                    <p>&copy; " . date('Y') . " PROATAM S.A. DE C.V. - Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </body>
-        </html>
+        " . (!empty($datos['comentarios']) ? "
+        <div style='margin-top: 25px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; padding: 15px; border-radius: 4px;'>
+            <p style='margin: 0 0 5px 0; font-weight: 600; color: #0d2535; font-size: 15px;'>Comentarios:</p>
+            <p style='margin: 0; font-size: 14px; color: #4a5568;'>{$datos['comentarios']}</p>
+        </div>" : "") . "
+
+        <p style='text-align: center; margin-top: 35px;'>
+            <a href='{$url}' style='background-color: #113557; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
+                Ver Requisición
+            </a>
+        </p>
         ";
+
+        return $this->getEmailWrapper("Actualización de Requisición", $innerHtml);
     }
 
     /**
@@ -885,7 +825,7 @@ class EmailHandler
      */
     private function crearTextoPlanoCambioEstado($datos)
     {
-        return "ACTUALIZACIÓN DE REQUISICIÓN - PROATAM\n\n" .
+        return "ACTUALIZACIÓN DE REQUISICIÓN - GECO PROATAM\n\n" .
             "Hola {$datos['solicitante']},\n\n" .
             "El estado de tu requisición ha sido actualizado:\n\n" .
             "Folio: {$datos['folio']}\n" .
@@ -911,92 +851,245 @@ class EmailHandler
     }
 
     /**
- * Enviar alerta a Subdirección cuando subcontratos superan el costo directo de la obra
- */
-public function enviarAlertaExcesoSubcontratos($destinatario, $nombreDestinatario, $datos)
-{
-    try {
-        $this->mail->clearAddresses();
-        $this->mail->addAddress($destinatario, $nombreDestinatario);
+     * Enviar alerta a Subdirección cuando subcontratos superan el costo directo de la obra
+     */
+    public function enviarAlertaExcesoSubcontratos($destinatario, $nombreDestinatario, $datos)
+    {
+        try {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($destinatario, $nombreDestinatario);
 
-        $this->mail->Subject = "Alerta: Subcontratos superan costo directo - {$datos['obra_nombre']}";
+            $this->mail->Subject = "Alerta: Subcontratos superan costo directo - {$datos['obra_nombre']}";
 
-        $cuerpoHTML = "
-        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-            <div style='background-color: #dc3545; color: white; padding: 20px; text-align: center;'>
-                <h2>Alerta de Subcontratos</h2>
-                <p style='margin:0; font-size: 0.95em;'>Los subcontratos superan el costo directo de la obra</p>
+            $innerHtml = "
+            <div style='text-align: center; margin-bottom: 25px;'>
+                <div style='background-color: #fee2e2; color: #dc2626; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; font-size: 24px; margin: 0 auto 15px;'>
+                </div>
+                <h2 style='margin:0; color: #dc2626; font-size: 20px;'>Alerta de Exceso de Presupuesto</h2>
+                <p style='margin: 5px 0 0 0; color: #64748b; font-size: 14px;'>Subcontratos superan el costo directo autorizado</p>
             </div>
 
-            <div style='padding: 20px; background-color: #f8f9fa;'>
-                <p>Hola <strong>{$nombreDestinatario}</strong>,</p>
-                <p>Se le notifica que el valor total de los subcontratos registrados para la siguiente obra
-                   ha superado su costo directo autorizado:</p>
+            <p style='font-size: 15px; line-height: 1.6; color: #4a5568;'>
+                Hola <strong>{$nombreDestinatario}</strong>, se ha detectado un exceso en los subcontratos registrados para la siguiente obra:
+            </p>
 
-                <div style='background-color: white; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;'>
-                    <table style='width: 100%; border-collapse: collapse;'>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold; width: 45%;'>Obra:</td>
-                            <td style='padding: 8px;'><strong>{$datos['obra_nombre']}</strong></td>
-                        </tr>
-                        <tr style='background-color: #f8f9fa;'>
-                            <td style='padding: 8px; font-weight: bold;'>Costo directo autorizado:</td>
-                            <td style='padding: 8px;'>
-                                <strong style='color: #198754;'>\${$datos['costo_directo']}</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Total subcontratos (incl. extraordinarios):</td>
-                            <td style='padding: 8px;'>
-                                <strong style='color: #dc3545;'>\${$datos['suma_subcontratos']}</strong>
-                            </td>
-                        </tr>
-                        <tr style='background-color: #fff3cd;'>
-                            <td style='padding: 8px; font-weight: bold;'>Exceso:</td>
-                            <td style='padding: 8px;'>
-                                <strong style='color: #856404; font-size: 1.05em;'>\${$datos['exceso']}</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 8px; font-weight: bold;'>Registrado por:</td>
-                            <td style='padding: 8px;'>{$datos['usuario']}</td>
-                        </tr>
-                        <tr style='background-color: #f8f9fa;'>
-                            <td style='padding: 8px; font-weight: bold;'>Fecha:</td>
-                            <td style='padding: 8px;'>" . date('d/m/Y H:i') . "</td>
-                        </tr>
-                    </table>
-                </div>
+            <div style='background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; margin: 20px 0;'>
+                <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 14px; line-height: 1.6;'>
+                    <tr>
+                        <td width='50%' style='padding: 10px 15px; font-weight: 600; color: #475569; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;'>Obra:</td>
+                        <td width='50%' style='padding: 10px 15px; color: #0d2535; border-bottom: 1px solid #e2e8f0;'><strong>{$datos['obra_nombre']}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 10px 15px; font-weight: 600; color: #475569; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;'>Costo Directo Autorizado:</td>
+                        <td style='padding: 10px 15px; color: #407656; border-bottom: 1px solid #e2e8f0;'><strong>\${$datos['costo_directo']}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 10px 15px; font-weight: 600; color: #475569; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;'>Total Subcontratos:</td>
+                        <td style='padding: 10px 15px; color: #dc2626; border-bottom: 1px solid #e2e8f0;'><strong>\${$datos['suma_subcontratos']}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 10px 15px; font-weight: 600; color: #475569; background-color: #f8fafc;'>Monto de Exceso:</td>
+                        <td style='padding: 10px 15px; color: #b91c1c; font-size: 16px;'><strong>\${$datos['exceso']}</strong></td>
+                    </tr>
+                </table>
+            </div>
 
-                <div style='background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;'>
-                    <strong>Importante:</strong><br>
-                    El monto de la obra <strong>NO ha sido modificado</strong>. 
-                    Se requiere su revisión para determinar si se autoriza un ajuste al costo directo.
-                </div>
-
-                <p style='text-align: center; margin-top: 30px;'>
-                    <a href='{$this->baseUrl}projects/details_obra.php?id={$datos['obra_id']}'
-                       style='background-color: #dc3545; color: white; padding: 12px 30px;
-                              text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
-                        Ver Detalles de la Obra
-                    </a>
+            <div style='background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 4px; margin-bottom: 25px;'>
+                <p style='margin: 0; font-size: 14px; color: #92400e;'>
+                    <strong>Nota:</strong> El monto de la obra no ha sido modificado. Se requiere su revisión para determinar si se autoriza un ajuste.
                 </p>
             </div>
 
-            <div style='background-color: #e9ecef; padding: 15px; text-align: center; font-size: 12px; color: #6c757d;'>
-                <p>Este es un correo automático del Sistema PROATAM. Por favor no responder.</p>
+            <p style='text-align: center;'>
+                <a href='{$this->baseUrl}projects/details_obra.php?id={$datos['obra_id']}' style='background-color: #dc2626; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
+                    Ver Detalles de la Obra
+                </a>
+            </p>
+            ";
+
+            $this->mail->Body = $this->getEmailWrapper("Alerta de Presupuesto", $innerHtml);
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $innerHtml));
+
+            return $this->mail->send();
+        } catch (Exception $e) {
+            error_log("Error enviando alerta de exceso de subcontratos: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Enviar formulario de satisfacción al cliente al término de un proyecto
+     */
+    public function enviarFormularioSatisfaccion($emailCliente, $nombreCliente, $datosProyecto)
+    {
+        try {
+            $this->mail->clearAddresses();
+            $this->mail->clearAttachments();
+            $this->mail->addAddress($emailCliente, $nombreCliente);
+
+            $this->mail->Subject = "Encuesta de Satisfacción - {$datosProyecto['nombre_proyecto']}";
+
+            $innerHtml = "
+            <div style='text-align: center; margin-bottom: 25px;'>
+                <div style='background-color: #ecfdf5; color: #059669; width: 60px; height: 60px; line-height: 60px; border-radius: 50%; font-size: 28px; margin: 0 auto 15px;'>
+                </div>
+                <h2 style='margin:0; color: #407656; font-size: 22px;'>Encuesta de Satisfacción</h2>
+                <p style='margin: 5px 0 0 0; color: #64748b; font-size: 15px;'>Tu opinión es vital para nosotros</p>
             </div>
-        </div>
-        ";
 
-        $this->mail->Body    = $cuerpoHTML;
-        $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $cuerpoHTML));
+            <p style='font-size: 16px; line-height: 1.6; color: #4a5568;'>
+                Estimado/a <strong>{$nombreCliente}</strong>, el proyecto <strong>{$datosProyecto['nombre_proyecto']}</strong> ha concluido satisfactoriamente.
+            </p>
 
-        return $this->mail->send();
-    } catch (Exception $e) {
-        error_log("Error enviando alerta de exceso de subcontratos: " . $e->getMessage());
-        return false;
+            <p style='font-size: 15px; line-height: 1.6; color: #4a5568;'>
+                Nos gustaría conocer tu experiencia trabajando con nosotros para seguir mejorando la calidad de nuestros servicios.
+            </p>
+
+            <div style='margin: 25px 0; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px;'>
+                <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 14px;'>
+                    <tr>
+                        <td width='40%' style='padding: 5px 0; font-weight: 600; color: #64748b;'>No. Contrato:</td>
+                        <td width='60%' style='padding: 5px 0; color: #0d2535;'>{$datosProyecto['numero_contrato']}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 5px 0; font-weight: 600; color: #64748b;'>Fecha término:</td>
+                        <td style='padding: 5px 0; color: #0d2535;'>{$datosProyecto['fecha_fin']}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style='background-color: #f0fdf4; border-left: 4px solid #407656; padding: 15px; border-radius: 4px; margin-bottom: 30px;'>
+                <p style='margin: 0; font-size: 14px; color: #065f46;'>
+                    <strong>¿Sabías que?</strong> Responder esta encuesta toma menos de 2 minutos y nos ayuda enormemente.
+                </p>
+            </div>
+
+            <p style='text-align: center;'>
+                <a href='{$datosProyecto['link_formulario']}' style='background-color: #407656; color: #ffffff; padding: 14px 35px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; font-size: 16px;'>
+                    Responder Encuesta
+                </a>
+            </p>
+
+            <p style='text-align: center; margin-top: 15px;'>
+                <small style='color: #94a3b8;'>Si el botón no funciona, copia este enlace:<br>{$datosProyecto['link_formulario']}</small>
+            </p>
+            ";
+
+            $this->mail->Body = $this->getEmailWrapper("Valoramos tu opinión", $innerHtml, "Este mensaje es una invitación para mejorar nuestro servicio en <strong>GECO PROATAM</strong>.");
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>'], "\n", $innerHtml));
+
+            return $this->mail->send();
+        } catch (Exception $e) {
+            error_log("Error enviando formulario de satisfacción: " . $e->getMessage());
+            return false;
+        }
+    }
+    /**
+     * Envía un correo de bienvenida a un nuevo usuario con su contraseña temporal
+     */
+    public function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseña_temporal)
+    {
+        try {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($destinatario, $nombres . ' ' . $apellidos);
+
+            $this->mail->Subject = 'Bienvenido a GECO PROATAM - Tu cuenta ha sido creada';
+
+            $innerHtml = "
+            <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+                Hola <strong>{$nombres} {$apellidos}</strong>, tu cuenta ha sido creada exitosamente en nuestro sistema.
+            </p>
+
+            <h2 style='font-size: 18px; color: #0d2535; border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;'>Credenciales de acceso</h2>
+            
+            <div style='background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #113557; padding: 20px; border-radius: 4px; margin-bottom: 25px;'>
+                <table width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size: 15px; line-height: 1.6;'>
+                    <tr>
+                        <td width='35%' style='padding: 8px 0; font-weight: 600; color: #113557;'>Correo:</td>
+                        <td width='65%' style='padding: 8px 0; color: #334155;'><strong>{$destinatario}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 8px 0; font-weight: 600; color: #113557;'>Contraseña temporal:</td>
+                        <td style='padding: 8px 0; color: #d63384; font-weight: bold; font-size: 1.2em; letter-spacing: 2px;'>{$contraseña_temporal}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style='background-color: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 25px;'>
+                <p style='margin: 0 0 5px 0; font-weight: 600; color: #856404; font-size: 14px;'>Importante:</p>
+                <ul style='margin: 0; padding-left: 20px; font-size: 14px; color: #856404; line-height: 1.6;'>
+                    <li>Esta contraseña es temporal y debe ser cambiada en tu primer acceso</li>
+                    <li>Guarda esta información de manera segura</li>
+                    <li>No compartas tus credenciales con nadie</li>
+                </ul>
+            </div>
+
+            <p style='text-align: center; margin-top: 35px;'>
+                <a href='{$this->baseUrl}login.php' style='background-color: #113557; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;'>
+                    Acceder al Sistema
+                </a>
+            </p>
+            <p style='margin-top: 25px; font-size: 14px; color: #64748b; text-align: center;'>
+                Si tienes algún problema para acceder, contacta al departamento de sistemas.
+            </p>
+            ";
+
+            $this->mail->Body = $this->getEmailWrapper("¡Bienvenido a GECO PROATAM!", $innerHtml);
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '</p>'], ["\n", "\n", "\n\n"], $innerHtml));
+
+            return $this->mail->send();
+        } catch (Exception $e) {
+            error_log("Error enviando correo de bienvenida: " . $this->mail->ErrorInfo);
+            return false;
+        }
+    }
+
+    /**
+     * Envía un correo con el código de recuperación de contraseña
+     */
+    public function enviarCorreoRecuperacion($email, $nombres, $apellidos, $token)
+    {
+        try {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($email, $nombres . ' ' . $apellidos);
+
+            $this->mail->Subject = 'Código de Recuperación - GECO PROATAM';
+
+            $innerHtml = "
+            <p style='font-size: 16px; line-height: 1.6; color: #4a5568; margin-top: 0;'>
+                Hola <strong>{$nombres} {$apellidos}</strong>, has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación:
+            </p>
+
+            <div style='text-align: center; margin: 30px 0;'>
+                <div style='background-color: #f8fafc; border: 2px dashed #113557; padding: 25px; border-radius: 8px; display: inline-block; min-width: 200px;'>
+                    <h3 style='color: #64748b; margin-top: 0; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;'>Código de Verificación</h3>
+                    <div style='font-size: 36px; font-weight: bold; color: #113557; letter-spacing: 8px; font-family: monospace;'>{$token}</div>
+                    <p style='margin: 15px 0 0 0; font-size: 13px; color: #dc3545; font-weight: 600;'>
+                        Este código expira en 15 minutos
+                    </p>
+                </div>
+            </div>
+
+            <div style='background-color: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 25px;'>
+                <p style='margin: 0 0 5px 0; font-weight: 600; color: #856404; font-size: 14px;'>Importante:</p>
+                <ul style='margin: 0; padding-left: 20px; font-size: 14px; color: #856404; line-height: 1.6;'>
+                    <li>No compartas este código con nadie</li>
+                    <li>Si no solicitaste este código, ignora este mensaje</li>
+                </ul>
+            </div>
+
+            <p style='margin-top: 25px; font-size: 14px; color: #64748b; text-align: center;'>
+                Si tienes problemas para verificar tu cuenta, contacta al departamento de sistemas.
+            </p>
+            ";
+
+            $this->mail->Body = $this->getEmailWrapper("Recuperación de Contraseña", $innerHtml);
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '</p>'], ["\n", "\n", "\n\n"], $innerHtml));
+
+            return $this->mail->send();
+        } catch (Exception $e) {
+            error_log("Error enviando correo de recuperación: " . $this->mail->ErrorInfo);
+            return false;
+        }
     }
 }
-}
-

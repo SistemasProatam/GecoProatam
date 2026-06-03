@@ -5,8 +5,7 @@ require_once __DIR__ . "/../conexion.php";
 // Incluir PHPMailer
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+require_once __DIR__ . "/../EmailHandler.php";
 
 // Función para subir archivos
 function subirArchivo($file, $campo, $idUsuario)
@@ -29,166 +28,6 @@ function subirArchivo($file, $campo, $idUsuario)
     }
 
     return null;
-}
-
-// Función para enviar correo de bienvenida con contraseña temporal
-function enviarCorreoBienvenida($destinatario, $nombres, $apellidos, $contraseña_temporal)
-{
-    try {
-        $mail = new PHPMailer(true);
-
-        // Configuración del servidor SMTP (misma que en EmailHandler)
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'sistemas@proatam.com';
-        $mail->Password = 'kyay idzr slvr plki';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
-
-        // Configuración general
-        $mail->setFrom('sistemas@proatam.com', 'Sistemas Proatam');
-        $mail->addAddress($destinatario, $nombres . ' ' . $apellidos);
-        $mail->isHTML(true);
-        $mail->CharSet = 'UTF-8';
-
-        // Asunto
-        $mail->Subject = 'Bienvenido a PROATAM - Tu cuenta ha sido creada';
-
-        // Cuerpo del mensaje HTML
-        $mail->Body = "
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { 
-                    font-family: Arial, sans-serif; 
-                    background-color: #f4f4f4; 
-                    margin: 0; 
-                    padding: 20px; 
-                }
-                .container { 
-                    background-color: white; 
-                    padding: 30px; 
-                    border-radius: 10px; 
-                    max-width: 600px; 
-                    margin: 0 auto; 
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                }
-                .header { 
-                    background-color: #2c3e50; 
-                    color: white; 
-                    padding: 20px; 
-                    text-align: center; 
-                    border-radius: 5px; 
-                    margin-bottom: 20px;
-                }
-                .content { 
-                    padding: 20px 0; 
-                }
-                .password-box { 
-                    background-color: #f8f9fa; 
-                    padding: 15px; 
-                    border-radius: 5px; 
-                    border-left: 4px solid #007bff; 
-                    margin: 20px 0; 
-                }
-                .footer { 
-                    text-align: center; 
-                    margin-top: 30px; 
-                    color: #666; 
-                    font-size: 12px; 
-                    border-top: 1px solid #ddd;
-                    padding-top: 15px;
-                }
-                .button { 
-                    display: inline-block; 
-                    background-color: #f8f9fa; 
-                    padding: 12px 25px; 
-                    text-decoration: none; 
-                    border-radius: 5px; 
-                    margin: 10px 0; 
-                }
-                .warning { 
-                    background-color: #fff3cd; 
-                    border: 1px solid #ffeaa7; 
-                    padding: 10px; 
-                    border-radius: 5px; 
-                    margin: 15px 0;
-                }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h1>PROATAM</h1>
-                    <h2>¡Bienvenido a nuestro sistema!</h2>
-                </div>
-                
-                <div class='content'>
-                    <p>Hola <strong>$nombres $apellidos</strong>,</p>
-                    <p>Tu cuenta ha sido creada exitosamente en nuestro sistema.</p>
-                    
-                    <div class='password-box'>
-                        <h3 style='color: #007bff; margin-top: 0;'>Credenciales de acceso:</h3>
-                        <p><strong>Correo:</strong> $destinatario</p>
-                        <p><strong>Contraseña temporal:</strong> 
-                           <span style='font-size: 20px; color: #e74c3c; font-weight: bold; letter-spacing: 2px;'>$contraseña_temporal</span>
-                        </p>
-                    </div>
-                    
-                    <div class='warning'>
-                        <p><strong>⚠ï¸ Importante:</strong></p>
-                        <ul style='margin-bottom: 0;'>
-                            <li>Esta contraseña es temporal y debe ser cambiada en tu primer acceso</li>
-                            <li>Guarda esta información de manera segura</li>
-                            <li>No compartas tus credenciales con nadie</li>
-                        </ul>
-                    </div>
-                    
-                    <p>Puedes acceder al sistema a través del siguiente enlace:</p>
-                    <a href='https://proatamgoc.duckdns.org' class='button'>Acceder al Sistema</a>
-                    
-                    <p style='margin-top: 20px;'>Si tienes algún problema para acceder, contacta al departamento de sistemas.</p>
-                </div>
-                
-                <div class='footer'>
-                    <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
-                    <p>&copy; " . date('Y') . " PROATAM. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        ";
-
-        // Versión texto plano
-        $mail->AltBody = "Bienvenido a PROATAM\n\n" .
-            "Hola $nombres $apellidos,\n\n" .
-            "Tu cuenta ha sido creada exitosamente.\n\n" .
-            "Credenciales de acceso:\n" .
-            "Correo: $destinatario\n" .
-            "Contraseña temporal: $contraseña_temporal\n\n" .
-            "IMPORTANTE:\n" .
-            "- Esta contraseña es temporal\n" .
-            "- Debes cambiarla en tu primer acceso\n" .
-            "- Guarda esta información de manera segura\n\n" .
-            "Accede al sistema en: https://proatamgoc.duckdns.org/login.php\n\n" .
-            "Este es un correo automático, no respondas.";
-
-        // Enviar correo
-        $mail->send();
-        return true;
-    } catch (Exception $e) {
-        error_log("Error enviando correo de bienvenida: " . $mail->ErrorInfo);
-        return false;
-    }
 }
 
 try {
@@ -216,7 +55,9 @@ try {
         exit;
     }
 
-    // Verificar si el correo ya existe
+
+
+    /* Verificar si el correo ya existe
     $check = $conn->prepare("SELECT id FROM usuarios WHERE correo_corporativo = ?");
     $check->bind_param("s", $correo_corporativo);
     $check->execute();
@@ -225,6 +66,7 @@ try {
         echo json_encode(['status' => 'error', 'message' => 'El correo corporativo ya está registrado.']);
         exit;
     }
+    */
 
     // Generar contraseña temporal
     $contraseña_temporal = bin2hex(random_bytes(4));
@@ -365,7 +207,8 @@ try {
         $conn->commit();
 
         // Enviar correo con la contraseña temporal
-        $correo_enviado = enviarCorreoBienvenida($correo_corporativo, $nombres, $apellidos, $contraseña_temporal);
+        $emailHandler = new EmailHandler();
+        $correo_enviado = $emailHandler->enviarCorreoBienvenida($correo_corporativo, $nombres, $apellidos, $contraseña_temporal);
 
         if ($correo_enviado) {
             echo json_encode([
@@ -394,6 +237,3 @@ try {
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => 'Excepción: ' . $e->getMessage()]);
 }
-
-
-

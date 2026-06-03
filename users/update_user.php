@@ -50,6 +50,7 @@ if (!preg_match('/@proatam\.com$/i', $correo_corporativo)) {
     exit;
 }
 
+/*
 // Verificar si el correo ya existe (excluyendo el usuario actual)
 $check = $conn->prepare("SELECT id FROM usuarios WHERE correo_corporativo = ? AND id != ?");
 $check->bind_param("si", $correo_corporativo, $id);
@@ -59,6 +60,7 @@ if ($check->num_rows > 0) {
     echo json_encode(["status" => "error", "message" => "El correo corporativo ya está registrado por otro usuario."]);
     exit;
 }
+*/
 
 $departamento_id = intval($departamento_id);
 
@@ -290,6 +292,3 @@ try {
 $stmt->close();
 $conn->close();
 exit;
-
-
-

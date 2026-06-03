@@ -107,15 +107,14 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                     <div class="col-md-6 col-lg-4">
                         <label class="oc-form-label" for="Folio">Folio de Requisición</label>
                         <input
-                          type="text"
-                          class="form-control"
-                          id="Folio"
-                          name="folio"
-                          placeholder="Identificador de requisiciones"
-                          required
-                          value="<?= htmlspecialchars($folio) ?>"
-                          readonly
-                        />
+                            type="text"
+                            class="form-control"
+                            id="Folio"
+                            name="folio"
+                            placeholder="Identificador de requisiciones"
+                            required
+                            value="<?= htmlspecialchars($folio) ?>"
+                            readonly />
                     </div>
 
                     <div class="col-md-6 col-lg-4">
@@ -126,15 +125,14 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                     <div class="col-md-6 col-lg-4">
                         <label class="oc-form-label" for="solicitante">Solicitante <span class="required">*</span></label>
                         <input
-                          type="text"
-                          class="form-control"
-                          id="solicitante"
-                          name="solicitante"
-                          placeholder="Nombre de quien realiza la requisición"
-                          required
-                          value="<?= htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
-                          readonly
-                        />
+                            type="text"
+                            class="form-control"
+                            id="solicitante"
+                            name="solicitante"
+                            placeholder="Nombre de quien realiza la requisición"
+                            required
+                            value="<?= htmlspecialchars($_SESSION['nombres'] . ' ' . $_SESSION['apellidos']); ?>"
+                            readonly />
                         <input type="hidden" name="solicitante_id" value="<?= $_SESSION['user_id'] ?>">
                     </div>
 
@@ -143,7 +141,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                         <select class="form-select" id="entidad" name="entidad_id" required>
                             <option value="">Seleccionar Entidad</option>
                             <?php
-                            if ($result_entidades && $result_entidades->num_rows > 0) { 
+                            if ($result_entidades && $result_entidades->num_rows > 0) {
                                 while ($row = $result_entidades->fetch_assoc()) {
                                     echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['nombre']) . '</option>';
                                 }
@@ -180,7 +178,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                         <select class="form-select" id="proyecto" name="proyecto_id" required>
                             <option value="">Seleccionar Proyecto</option>
                             <?php
-                            if ($result_proyectos && $result_proyectos->num_rows > 0) { 
+                            if ($result_proyectos && $result_proyectos->num_rows > 0) {
                                 while ($row = $result_proyectos->fetch_assoc()) {
                                     echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['nombre_proyecto']) . ' - ' . htmlspecialchars($row['numero_contrato']) . '</option>';
                                 }
@@ -247,36 +245,33 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                             <label class="oc-form-label" for="extra">¿No encuentra un producto o servicio?</label>
                             <p class="oc-form-hint--block">Proporcione: Nombre, tipo (producto/servicio) y detalles adicionales para que este pueda ser añadido a la lista.</p>
                             <textarea
-                              class="form-control"
-                              id="extra"
-                              name="extra"
-                              rows="3"
-                              placeholder="Ingrese producto o servicio no listado..."
-                            ></textarea>
+                                class="form-control"
+                                id="extra"
+                                name="extra"
+                                rows="3"
+                                placeholder="Ingrese producto o servicio no listado..."></textarea>
                         </div>
 
                         <div class="mb-4">
                             <label class="oc-form-label" for="descripcion">Descripción General</label>
                             <p class="oc-form-hint--block">Describa de forma general y clara el bien o servicio que se requiere, indicando su uso o finalidad y cantidad aproximada.</p>
                             <textarea
-                              class="form-control"
-                              id="descripcion"
-                              name="descripcion"
-                              rows="3"
-                              placeholder="Ingrese una descripción general..."
-                            ></textarea>
+                                class="form-control"
+                                id="descripcion"
+                                name="descripcion"
+                                rows="3"
+                                placeholder="Ingrese una descripción general..."></textarea>
                         </div>
 
                         <div>
                             <label class="oc-form-label" for="observaciones">Observaciones Adicionales</label>
                             <p class="oc-form-hint--block">Utilice este espacio para anotar detalles importantes: condiciones de entrega, contacto, especificaciones técnicas o cualquier observación relevante.</p>
                             <textarea
-                              class="form-control"
-                              id="observaciones"
-                              name="observaciones"
-                              rows="3"
-                              placeholder="Ingrese observaciones o comentarios adicionales..."
-                            ></textarea>
+                                class="form-control"
+                                id="observaciones"
+                                name="observaciones"
+                                rows="3"
+                                placeholder="Ingrese observaciones o comentarios adicionales..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -292,15 +287,15 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                             <i class="fa-solid fa-circle-info"></i>
                             <span>Cargue hasta 5 archivos de uno en uno. PDF, Word, Excel, imágenes. Máx. 10 MB por archivo.</span>
                         </div>
-                        
+
                         <div class="oc-files-input-group mb-3">
-                            <input 
-                              type="file" 
-                              class="form-control" 
-                              id="singleFileInput"
-                              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="singleFileInput"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
                             <button class="btn-geco-secondary" type="button" onclick="agregarArchivo()">
-                              <i class="fa-solid fa-upload"></i> Subir
+                                <i class="fa-solid fa-upload"></i> Subir
                             </button>
                         </div>
 
@@ -318,7 +313,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- ─── SUBMIT ACTIONS ──────────────────────────────────────── -->
                 <p class="oc-form-submit-note"><i class="fa-solid fa-circle-info"></i> Esta requisición será evaluada por el Supervisor de Proyectos.</p>
                 <div class="oc-form-submit-actions" style="align-items: center;">
@@ -333,63 +328,63 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
     <!-- Modal para catálogo de productos (Legacy/Soporte) -->
     <div class="modal fade" id="modalCatalogo" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <input type="text" class="form-control" id="buscarCatalogo" placeholder="Buscar producto o servicio...">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Catálogo de Productos y Servicios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="buscarCatalogo" placeholder="Buscar producto o servicio...">
+                    </div>
+                    <div class="orders-table-wrap">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyCatalogo">
+                                <?php
+                                if ($result_productos_servicios && $result_productos_servicios->num_rows > 0): ?>
+                                    <?php
+                                    // Reset pointer para usar nuevamente
+                                    $result_productos_servicios->data_seek(0);
+                                    while ($producto = $result_productos_servicios->fetch_assoc()): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($producto['nombre']) ?></td>
+                                            <td>
+                                                <span style="font-weight: 600; font-size: 0.85rem; color: <?= $producto['tipo'] == 'producto' ? 'var(--p-600)' : 'var(--s-600)' ?>;">
+                                                    <?= ucfirst($producto['tipo']) ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary"
+                                                    onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
+                                                    <i class="fa-solid fa-circle-plus"></i> Seleccionar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    endwhile; ?>
+                                <?php
+                                else: ?>
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            No hay productos o servicios registrados
+                                        </td>
+                                    </tr>
+                                <?php
+                                endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="orders-table-wrap">
-              <table class="orders-table">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="tbodyCatalogo">
-                  <?php
-                  if ($result_productos_servicios && $result_productos_servicios->num_rows > 0): ?>
-                    <?php
-                    // Reset pointer para usar nuevamente
-                    $result_productos_servicios->data_seek(0);
-                    while ($producto = $result_productos_servicios->fetch_assoc()): ?>
-                      <tr>
-                        <td><?= htmlspecialchars($producto['nombre']) ?></td>
-                        <td>
-                          <span style="font-weight: 600; font-size: 0.85rem; color: <?= $producto['tipo'] == 'producto' ? 'var(--p-600)' : 'var(--s-600)' ?>;">
-                            <?= ucfirst($producto['tipo']) ?>
-                          </span>
-                        </td>
-                        <td>
-                          <button type="button" class="btn btn-sm btn-primary" 
-                                   onclick="seleccionarProducto(<?= $producto['id'] ?>, '<?= htmlspecialchars(addslashes($producto['nombre'])) ?>')">
-                            <i class="fa-solid fa-circle-plus"></i> Seleccionar
-                          </button>
-                        </td>
-                      </tr>
-                    <?php
-                    endwhile; ?>
-                  <?php
-                  else: ?>
-                    <tr>
-                      <td colspan="3" class="text-center text-muted">
-                        No hay productos o servicios registrados
-                      </td>
-                    </tr>
-                  <?php
-                  endif; ?>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 </div> <!-- Termina .orders-page-container -->
 
@@ -402,34 +397,40 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 
 <!-- Datos para JavaScript -->
 <script>
-// Datos de productos y unidades para el catálogo
-const productosServiciosData = <?= json_encode($productos_array) ?>;
-const unidadesData = <?php
-$unidades_array = [];
-    if ($result_unidades && $result_unidades->num_rows > 0) {
-        while ($row = $result_unidades->fetch_assoc()) {
-            $unidades_array[] = [
-                'id' => $row['id'],
-                'unidad' => $row['nombre']
-            ];
-        }
-    }
-    echo json_encode($unidades_array);
-?>;
+    // Datos de productos y unidades para el catálogo
+    const productosServiciosData = <?= json_encode($productos_array) ?>;
+    const unidadesData = <?php
+                            $unidades_array = [];
+                            if ($result_unidades && $result_unidades->num_rows > 0) {
+                                while ($row = $result_unidades->fetch_assoc()) {
+                                    $unidades_array[] = [
+                                        'id' => $row['id'],
+                                        'unidad' => $row['nombre']
+                                    ];
+                                }
+                            }
+                            echo json_encode($unidades_array);
+                            ?>;
 </script>
 
 <script>
-// Mostrar overlay únicamente al enviar el formulario de nueva requisición
-document.getElementById('ordenCompraForm')?.addEventListener('submit', function(e) {
-  const overlay = document.getElementById('loadingOverlay');
-  if (overlay) overlay.style.display = 'flex';
-  // Deshabilitar botones submit para evitar envíos múltiples
-  this.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
-});
+    // Mostrar overlay únicamente al enviar el formulario de nueva requisición
+    document.getElementById('ordenCompraForm')?.addEventListener('submit', function(e) {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) overlay.style.display = 'flex';
+        // Deshabilitar botones submit para evitar envíos múltiples
+        this.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
+    });
+
+    // Inhabilitar Enter para guardar (solo clic en botón)
+    document.getElementById('ordenCompraForm')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
+    });
 </script>
 
 <!-- Script principal -->
 <script src="<?= BASE_URL ?>/assets/scripts/new_requis.js"></script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-
