@@ -1,5 +1,8 @@
 <?php
 $envFile = __DIR__ . '/../.env.smtp';
+if (!file_exists($envFile)) {
+    $envFile = __DIR__ . '/.env.smtp';
+}
 if (file_exists($envFile)) {
     foreach (parse_ini_file($envFile) as $key => $value) {
         putenv("$key=$value");
@@ -21,12 +24,22 @@ class EmailHandler
     private $soporteNombre = 'Soporte Técnico Proatam';
     private $soporteEmail_activos = ['edgaror@proatam.com', 'negrete@proatam.com'];
     private $soporteNombre_activos = ['Edgar Ochoa', 'Jose Negrete'];
-    private $baseUrl = "https://gecoproatam.com/";
+    private $baseUrl;
 
 
     public function __construct()
     {
         $this->mail = new PHPMailer(true);
+        
+        // Cargar Base URL desde constante o variable de entorno, con fallback
+        if (defined('EMAIL_BASE_URL')) {
+            $this->baseUrl = EMAIL_BASE_URL;
+        } elseif (getenv('APP_URL')) {
+            $this->baseUrl = getenv('APP_URL');
+        } else {
+            $this->baseUrl = "https://gecoproatam.com/";
+        }
+
         $this->configurarPHPMailer();
     }
 
@@ -35,12 +48,20 @@ class EmailHandler
         try {
             // Configuración del servidor SMTP
             $this->mail->isSMTP();
-            $this->mail->Host = 'smtp.gmail.com';
+            $this->mail->Host = getenv('SMTP_HOST') ?: 'smtp.gmail.com';
             $this->mail->SMTPAuth = true;
-            $this->mail->Username = "sistemas@proatam.com";
-            $this->mail->Password = "cfhr kncw rpyi pcoh";
-            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $this->mail->Port = 587;
+            $this->mail->Username = getenv('SMTP_USER') ?: "sistemas@proatam.com";
+            $this->mail->Password = getenv('SMTP_PASS') ?: "cfhr kncw rpyi pcoh";
+            
+            $smtpSecure = getenv('SMTP_SECURE') ?: 'tls';
+            if (strtolower($smtpSecure) === 'ssl') {
+                $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            
+            $this->mail->Port = getenv('SMTP_PORT') ?: 587;
+            
             $this->mail->SMTPOptions = array(
                 'ssl' => array(
                     'verify_peer' => false,
@@ -51,13 +72,6 @@ class EmailHandler
 
             // AGREGAR TIMEOUTS
             $this->mail->Timeout = 30; // 30 segundos máximo
-            $this->mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
 
             // Configuración general
             $this->mail->setFrom($this->soporteEmail, $this->soporteNombre);
