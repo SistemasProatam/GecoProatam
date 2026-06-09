@@ -148,7 +148,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                 <span class="separator">›</span>
                 <span>Registro de Requisiciones</span>
             </nav>
-            <h1 class="orders-page-title">Registro de Requisiciones</h1>
+            <h1 class="orders-page-title">Requisiciones</h1>
         </div>
         <button class="btn-geco-primary" type="button" onclick="window.location.href='new_requis.php'">
             <i class="fa-solid fa-circle-plus"></i> Agregar Requisición
@@ -168,7 +168,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
         <!-- Filter form (Single Row) -->
         <form id="filter-form" method="GET">
             <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
-            
+
             <?php
             $tab_labels = [
                 ''          => 'Todas',
@@ -189,8 +189,8 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                 <div class="orders-filter-tabs" id="estadoTabs">
                     <?php foreach ($tab_labels as $val => $label): ?>
                         <button type="button"
-                                class="tab-btn <?= $estado_filtro === $val ? 'active' : '' ?>"
-                                data-estado="<?= $val ?>"><?= $label ?></button>
+                            class="tab-btn <?= $estado_filtro === $val ? 'active' : '' ?>"
+                            data-estado="<?= $val ?>"><?= $label ?></button>
                     <?php endforeach; ?>
                 </div>
 
@@ -207,8 +207,8 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                     <div class="search-input-wrap">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" id="visibleSearchInput"
-                               placeholder="Buscar por folio o entidad..."
-                               value="<?= htmlspecialchars($busqueda) ?>">
+                            placeholder="Buscar por folio o entidad..."
+                            value="<?= htmlspecialchars($busqueda) ?>">
                     </div>
                 </div>
             </div>
@@ -301,43 +301,43 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                 <?php if ($totalPaginas > 1): ?>
                     <nav class="orders-pagination-nav" aria-label="Paginación">
                         <!-- Ir al primero -->
-                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=1"
-                           aria-label="Primera página">
-                           &laquo;
-                         </a>
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=1"
+                            aria-label="Primera página">
+                            &laquo;
+                        </a>
 
                         <!-- Anterior -->
-                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= max(1, $pagina - 1) ?>"
-                           aria-label="Página anterior">
-                           &lsaquo;
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= max(1, $pagina - 1) ?>"
+                            aria-label="Página anterior">
+                            &lsaquo;
                         </a>
 
                         <!-- Números de página -->
-                        <?php 
+                        <?php
                         $rango_inicio = max(1, $pagina - 2);
                         $rango_fin = min($totalPaginas, $pagina + 2);
-                        for ($i = $rango_inicio; $i <= $rango_fin; $i++): 
+                        for ($i = $rango_inicio; $i <= $rango_fin; $i++):
                         ?>
                             <a class="page-btn page-link <?= $i == $pagina ? 'active' : '' ?>"
-                               href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
-                                 <?= $i ?>
+                                href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $i ?>">
+                                <?= $i ?>
                             </a>
                         <?php endfor; ?>
 
                         <!-- Siguiente -->
-                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= min($totalPaginas, $pagina + 1) ?>"
-                           aria-label="Página siguiente">
-                           &rsaquo;
+                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= min($totalPaginas, $pagina + 1) ?>"
+                            aria-label="Página siguiente">
+                            &rsaquo;
                         </a>
 
                         <!-- Ir al último -->
-                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $totalPaginas ?>"
-                           aria-label="Última página">
-                           &raquo;
+                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&page=<?= $totalPaginas ?>"
+                            aria-label="Última página">
+                            &raquo;
                         </a>
                     </nav>
 
@@ -347,12 +347,12 @@ while ($ent = $entidadesRes->fetch_assoc()) {
                     <!-- Go to page -->
                     <div class="orders-pagination-goto">
                         <span>Ir a</span>
-                        <input type="number" 
-                               class="goto-page-input" 
-                               min="1" 
-                               max="<?= $totalPaginas ?>" 
-                               value="<?= $pagina ?>"
-                               aria-label="Ir a la página">
+                        <input type="number"
+                            class="goto-page-input"
+                            min="1"
+                            max="<?= $totalPaginas ?>"
+                            value="<?= $pagina ?>"
+                            aria-label="Ir a la página">
                     </div>
                 <?php endif; ?>
             </div>

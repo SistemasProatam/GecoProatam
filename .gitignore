@@ -1,6 +1,18 @@
+# Dependencias de Composer
+vendor/
+
+# Archivos de configuración
+config.php
+
 # Archivos del sistema
 .DS_Store
 Thumbs.db
 
 # Logs
 *.log
+*.env.smtp
+
+# Archivos cargados por usuarios (uploads)
+uploads/**/*
+!uploads/**/.gitkeep
+!uploads/.htaccess

@@ -4,18 +4,30 @@ if (file_exists(__DIR__ . "/config.php")) {
     require_once __DIR__ . "/config.php";
 }
 
-// Variables de respaldo si no vienen de config.php
-$db_host = isset($host) ? $host : "localhost";
-$db_user = isset($user) ? $user : "root";
-$db_pass = isset($pass) ? $pass : "";
-$db_name = isset($db) ? $db : "proatam";
+// Cargar variables de entorno para producción
+if (file_exists(__DIR__ . '/.env')) {
+    foreach (parse_ini_file(__DIR__ . '/.env') as $key => $value) {
+        putenv("$key=$value");
+    }
+}
+
+// Validar que las variables de configuración existan
+if (!isset($host) || !isset($user) || !isset($pass) || !isset($db)) {
+    die("Error: Archivo de configuración 'config.php' no configurado o incompleto. Crea uno a partir de 'config.php.example'.");
+}
 
 // Crear la conexión (Estilo Orientado a Objetos - recomendado)
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+$conn = new mysqli($host, $user, $pass, $db);
 
 // Verificar conexión
 if ($conn->connect_error) {
-    die("Error de conexión a la base de datos: " . $conn->connect_error);
+    // Si los errores están desactivados en producción, ocultar el detalle técnico
+    if (ini_get('display_errors') == 0) {
+        error_log("Error de conexión a la base de datos: " . $conn->connect_error);
+        die("Error de conexión a la base de datos. Por favor, contacte al administrador.");
+    } else {
+        die("Error de conexión a la base de datos: " . $conn->connect_error);
+    }
 }
 
 // Configurar charset
