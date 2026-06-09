@@ -125,7 +125,7 @@ function is_active($path)
 
                 <!-- Cotizaciones -->
                 <?php if ($ver_cotizaciones): ?>
-                    <a href="<?= BASE_URL ?>/cotizaciones/lista_cotizaciones.php" class="menu-item <?= is_active('lista_cotizaciones.php') ?>" data-tooltip="Cotizaciones">
+                    <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php" class="menu-item <?= is_active('lista_cotizaciones.php') ?>" data-tooltip="Cotizaciones">
                         <span class="material-symbols-rounded">request_quote</span>
                         <span class="menu-text">Cotizaciones</span>
                     </a>
