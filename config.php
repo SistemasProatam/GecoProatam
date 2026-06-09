@@ -1,11 +1,11 @@
 <?php
 $host = "localhost";
-$user = "proatam_user";
-$pass = "Proatam2025.";
+$user = "root";
+$pass = "";
 $db   = "proatam";
 
 // Desarrollo — muestra errores en desarrollo
 ini_set('display_errors', 0);
 error_reporting(0);
 
-define('BASE_URL', '');
+define('BASE_URL', '/LOCAL-GEOCProatam');
