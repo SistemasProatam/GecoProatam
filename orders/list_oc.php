@@ -152,7 +152,7 @@ if ($obrasRes) {
                 <span class="separator">›</span>
                 <span>Órdenes de Compra</span>
             </nav>
-            <h1 class="orders-page-title">Registro de Órdenes</h1>
+            <h1 class="orders-page-title">Órdenes de Compra</h1>
         </div>
         <a href="new_order.php" class="btn-geco-primary">
             <i class="fa-solid fa-plus"></i> Agregar Nueva
@@ -186,8 +186,8 @@ if ($obrasRes) {
                 <div class="orders-filter-tabs" id="estadoTabs">
                     <?php foreach ($tab_labels as $val => $label): ?>
                         <button type="button"
-                                class="tab-btn <?= $estado_filtro === $val ? 'active' : '' ?>"
-                                data-estado="<?= $val ?>"><?= $label ?></button>
+                            class="tab-btn <?= $estado_filtro === $val ? 'active' : '' ?>"
+                            data-estado="<?= $val ?>"><?= $label ?></button>
                     <?php endforeach; ?>
                 </div>
 
@@ -208,8 +208,8 @@ if ($obrasRes) {
                     <div class="search-input-wrap">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" id="visibleSearchInput"
-                               placeholder="Buscar folio, proveedor..."
-                               value="<?= htmlspecialchars($busqueda) ?>">
+                            placeholder="Buscar folio, proveedor..."
+                            value="<?= htmlspecialchars($busqueda) ?>">
                     </div>
                 </div>
             </div>
@@ -284,27 +284,27 @@ if ($obrasRes) {
                                     <div class="actions-group">
                                         <?php if ($oc['estado'] == 'devuelto'): ?>
                                             <button class="btn-action btn-action--download"
-                                                    onclick="descargarPDF(<?= $oc['id'] ?>)"
-                                                    title="Descargar PDF">
+                                                onclick="descargarPDF(<?= $oc['id'] ?>)"
+                                                title="Descargar PDF">
                                                 <i class="fa-solid fa-download"></i>
                                             </button>
                                         <?php endif; ?>
 
                                         <?php if ($oc['estado'] == 'pagado'): ?>
                                             <button class="btn-action btn-action--download"
-                                                    onclick="descargarPDF(<?= $oc['id'] ?>)"
-                                                    title="Descargar PDF">
+                                                onclick="descargarPDF(<?= $oc['id'] ?>)"
+                                                title="Descargar PDF">
                                                 <i class="fa-solid fa-download"></i>
                                             </button>
                                         <?php endif; ?>
 
                                         <button class="btn-action btn-action--edit"
-                                                onclick="window.location.href='edit_oc.php?id=<?= $oc['id'] ?>'">
+                                            onclick="window.location.href='edit_oc.php?id=<?= $oc['id'] ?>'">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
 
                                         <button class="btn-action btn-action--view"
-                                                onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'">
+                                            onclick="window.location.href='see_oc.php?id=<?= $oc['id'] ?>'">
                                             <i class="fa-regular fa-eye"></i>
                                         </button>
                                     </div>
@@ -359,41 +359,41 @@ if ($obrasRes) {
                             }
                         }
                         ?>
-                        
+
                         <!-- Ir al primero -->
-                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=1"
-                           aria-label="Primera página">
-                           &laquo;
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=1"
+                            aria-label="Primera página">
+                            &laquo;
                         </a>
 
                         <!-- Anterior -->
-                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= max(1, $pagina - 1) ?>"
-                           aria-label="Página anterior">
-                           &lsaquo;
+                        <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= max(1, $pagina - 1) ?>"
+                            aria-label="Página anterior">
+                            &lsaquo;
                         </a>
 
                         <!-- Números de página -->
                         <?php for ($i = $rango_inicio; $i <= $rango_fin; $i++): ?>
                             <a class="page-btn page-link <?= $i == $pagina ? 'active' : '' ?>"
-                               href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= $i ?>">
+                                href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= $i ?>">
                                 <?= $i ?>
                             </a>
                         <?php endfor; ?>
 
                         <!-- Siguiente -->
-                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= min($totalPaginas, $pagina + 1) ?>"
-                           aria-label="Página siguiente">
-                           &rsaquo;
+                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= min($totalPaginas, $pagina + 1) ?>"
+                            aria-label="Página siguiente">
+                            &rsaquo;
                         </a>
 
                         <!-- Ir al último -->
-                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>" 
-                           href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= $totalPaginas ?>"
-                           aria-label="Última página">
-                           &raquo;
+                        <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
+                            href="?q=<?= urlencode($busqueda) ?>&estado=<?= urlencode($estado_filtro) ?>&entidad=<?= urlencode($entidad_filtro) ?>&obra=<?= urlencode($obra_filtro) ?>&page=<?= $totalPaginas ?>"
+                            aria-label="Última página">
+                            &raquo;
                         </a>
                     </nav>
 
@@ -403,12 +403,12 @@ if ($obrasRes) {
                     <!-- Go to page -->
                     <div class="orders-pagination-goto">
                         <span>Ir a</span>
-                        <input type="number" 
-                               class="goto-page-input" 
-                               min="1" 
-                               max="<?= $totalPaginas ?>" 
-                               value="<?= $pagina ?>"
-                               aria-label="Ir a la página">
+                        <input type="number"
+                            class="goto-page-input"
+                            min="1"
+                            max="<?= $totalPaginas ?>"
+                            value="<?= $pagina ?>"
+                            aria-label="Ir a la página">
                     </div>
                 <?php endif; ?>
             </div>
@@ -421,7 +421,9 @@ if ($obrasRes) {
         function initTooltips() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, { container: 'body' });
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    container: 'body'
+                });
             });
         }
 
@@ -475,7 +477,9 @@ if ($obrasRes) {
                 container.style.pointerEvents = 'none';
 
                 fetch(url)
-                    .then(function(response) { return response.text(); })
+                    .then(function(response) {
+                        return response.text();
+                    })
                     .then(function(html) {
                         var parser = new DOMParser();
                         var doc = parser.parseFromString(html, 'text/html');
@@ -533,7 +537,10 @@ if ($obrasRes) {
                 if (pageLink) {
                     e.preventDefault();
                     updateList(pageLink.href);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
             });
 
@@ -568,7 +575,10 @@ if ($obrasRes) {
                     params.set('q', searchData.get('q') || "");
                     params.set('page', page);
                     updateList('?' + params.toString());
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
             }
 
@@ -604,4 +614,4 @@ if ($obrasRes) {
 
 </div>
 
-    <?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

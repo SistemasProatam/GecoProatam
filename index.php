@@ -10,7 +10,7 @@ preventCaching();
 date_default_timezone_set('America/Matamoros');
 
 // Incluir navbar (Esto abre el app-layout y app-content)
-include 'includes/navbar.php'; 
+include 'includes/navbar.php';
 
 $hora_actual = date('G');
 $saludo = "Hola";
@@ -28,7 +28,7 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/index.css?v=2.0">
 
 <div class="page-content-inner index-full-wrap">
-    
+
     <!-- Hero Section: Full Visual Background -->
     <div class="hero-overlay-card">
         <!-- Visual Layer -->
@@ -59,7 +59,7 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
             <div class="hero-greeting-box">
                 <h2 class="h-greeting"><?= $saludo ?>,</h2>
                 <h2 class="h-name"><?= htmlspecialchars($primerNombre) ?></h2>
-                <p class="h-welcome-text">Bienvenido a <strong>GECO Proatam</strong>, tu Sistema de Gestión Integral.</p>
+                <p class="h-welcome-text">Bienvenido a <strong>GECO Proatam</strong>, tu sistema de Gestión y Control Operativo.</p>
 
             </div>
 
@@ -71,10 +71,10 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
                         <i class="fa-solid fa-circle-info" style="color: var(--p-400, #5db076); font-size: 0.95rem;"></i>
                         <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500, #6b7280);">Novedades</span>
                     </div>
-                    <h4 class="quote-text" style="font-size: 0.85rem; font-weight: 800; margin: 0 0 0.2rem 0; color: var(--s-800, #0f172a);">GECO 2.0 • UI Update</h4>
+                    <h4 class="quote-text" style="font-size: 0.85rem; font-weight: 800; margin: 0 0 0.2rem 0; color: var(--s-800, #0f172a);">GECO 2.0 • Actualización de interfaz de usuario</h4>
                     <p class="quote-text" style="font-size: 0.72rem; font-weight: 500; opacity: 0.85; margin: 0; line-height: 1.3;">Nueva interfaz unificada y sistema visual optimizado para alto rendimiento.</p>
                 </div>
-     
+
                 <!-- Floating Status Card -->
                 <div class="floating-card status-card">
                     <div class="status-info">
@@ -108,36 +108,36 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 
         <div class="qa-grid">
             <?php if ($ver_dash): ?>
-            <a href="<?= BASE_URL ?>/dashboard.php" class="qa-card">
-                <div class="qa-icon-box blue"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="qa-content">
-                    <h4>Panel de Control</h4>
-                    <p>Métricas y KPIs del sistema</p>
-                </div>
-                <i class="fa-solid fa-arrow-right qa-arrow"></i>
-            </a>
+                <a href="<?= BASE_URL ?>/dashboard.php" class="qa-card">
+                    <div class="qa-icon-box blue"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="qa-content">
+                        <h4>Panel de Control</h4>
+                        <p>Métricas y KPIs del sistema</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right qa-arrow"></i>
+                </a>
             <?php endif; ?>
 
             <?php if ($ver_proyectos): ?>
-            <a href="<?= BASE_URL ?>/projects/list_project.php" class="qa-card">
-                <div class="qa-icon-box purple"><i class="fa-solid fa-briefcase"></i></div>
-                <div class="qa-content">
-                    <h4>Proyectos</h4>
-                    <p>Gestión de obras y contratos</p>
-                </div>
-                <i class="fa-solid fa-arrow-right qa-arrow"></i>
-            </a>
+                <a href="<?= BASE_URL ?>/projects/list_project.php" class="qa-card">
+                    <div class="qa-icon-box purple"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="qa-content">
+                        <h4>Proyectos</h4>
+                        <p>Gestión de obras y contratos</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right qa-arrow"></i>
+                </a>
             <?php endif; ?>
 
             <?php if ($ver_ordenes): ?>
-            <a href="<?= BASE_URL ?>/orders/list_oc.php" class="qa-card">
-                <div class="qa-icon-box green"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                <div class="qa-content">
-                    <h4>Compras</h4>
-                    <p>Órdenes y requisiciones</p>
-                </div>
-                <i class="fa-solid fa-arrow-right qa-arrow"></i>
-            </a>
+                <a href="<?= BASE_URL ?>/orders/list_oc.php" class="qa-card">
+                    <div class="qa-icon-box green"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <div class="qa-content">
+                        <h4>Compras</h4>
+                        <p>Órdenes y requisiciones</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right qa-arrow"></i>
+                </a>
             <?php endif; ?>
 
             <a href="<?= BASE_URL ?>/solicitud_soporte.php" class="qa-card">
@@ -155,55 +155,67 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 
 
 <script>
-function updateClock() {
-    const now = new Date();
-    const options = { 
-        day: '2-digit', 
-        month: 'short', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit',
-        hour12: true 
-    };
-    const dateStr = now.toLocaleDateString('en-US', options).replace(',', '');
-    document.getElementById('realTimeDisplay').textContent = dateStr.toUpperCase();
-}
-
-async function fetchWeather() {
-    try {
-        const response = await fetch('https://wttr.in/Reynosa?format=j1');
-        const data = await response.json();
-        const current = data.current_condition[0];
-        
-        document.querySelector('.st-temp').textContent = current.temp_C + '°C';
-        
-        // Mapeo simple de descripción a iconos
-        const desc = current.weatherDesc[0].value.toLowerCase();
-        let iconClass = 'fa-solid fa-sun';
-        let descSp = 'Despejado';
-
-        if (desc.includes('cloud')) { iconClass = 'fa-solid fa-cloud-sun'; descSp = 'Nublado'; }
-        if (desc.includes('rain')) { iconClass = 'fa-solid fa-cloud-showers-heavy'; descSp = 'Lluvia'; }
-        if (desc.includes('clear')) { iconClass = 'fa-solid fa-sun'; descSp = 'Despejado'; }
-        if (desc.includes('overcast')) { iconClass = 'fa-solid fa-cloud'; descSp = 'Cubierto'; }
-        
-        const statusIcon = document.querySelector('.status-icon');
-        if (statusIcon) {
-            statusIcon.className = `${iconClass} status-icon`;
-        }
-        document.querySelector('.st-desc').textContent = descSp;
-    } catch (e) {
-        console.error("Error fetching weather", e);
+    function updateClock() {
+        const now = new Date();
+        const options = {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        const dateStr = now.toLocaleDateString('en-US', options).replace(',', '');
+        document.getElementById('realTimeDisplay').textContent = dateStr.toUpperCase();
     }
-}
 
-setInterval(updateClock, 1000);
-updateClock();
-fetchWeather();
+    async function fetchWeather() {
+        try {
+            const response = await fetch('https://wttr.in/Reynosa?format=j1');
+            const data = await response.json();
+            const current = data.current_condition[0];
+
+            document.querySelector('.st-temp').textContent = current.temp_C + '°C';
+
+            // Mapeo simple de descripción a iconos
+            const desc = current.weatherDesc[0].value.toLowerCase();
+            let iconClass = 'fa-solid fa-sun';
+            let descSp = 'Despejado';
+
+            if (desc.includes('cloud')) {
+                iconClass = 'fa-solid fa-cloud-sun';
+                descSp = 'Nublado';
+            }
+            if (desc.includes('rain')) {
+                iconClass = 'fa-solid fa-cloud-showers-heavy';
+                descSp = 'Lluvia';
+            }
+            if (desc.includes('clear')) {
+                iconClass = 'fa-solid fa-sun';
+                descSp = 'Despejado';
+            }
+            if (desc.includes('overcast')) {
+                iconClass = 'fa-solid fa-cloud';
+                descSp = 'Cubierto';
+            }
+
+            const statusIcon = document.querySelector('.status-icon');
+            if (statusIcon) {
+                statusIcon.className = `${iconClass} status-icon`;
+            }
+            document.querySelector('.st-desc').textContent = descSp;
+        } catch (e) {
+            console.error("Error fetching weather", e);
+        }
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+    fetchWeather();
 </script>
 
 <?php
 // Cerrar el layout (Esto renderiza el footer y cierra div.app-main)
-include 'includes/footer.php'; 
+include 'includes/footer.php';
 ?>

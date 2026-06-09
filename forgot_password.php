@@ -19,7 +19,10 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
-    <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
+    <script>
+        window.BASE_URL = '<?= BASE_URL ?>';
+    </script>
 </head>
 
 <body>
@@ -30,7 +33,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="col-lg-5 col-xl-4 auth-panel">
                 <div class="auth-form-wrapper">
                     <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
-                    
+
                     <!-- Progress Steps -->
                     <div class="recovery-steps">
                         <div class="step-item active">
@@ -122,7 +125,7 @@ if (isset($_SESSION['user_id'])) {
         function showSlide(n) {
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
-            
+
             currentSlide = (n + slides.length) % slides.length;
             slides[currentSlide].classList.add('active');
             dots[currentSlide].classList.add('active');

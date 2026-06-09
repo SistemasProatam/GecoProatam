@@ -22,15 +22,15 @@ class EmailHandler
     private $mail;
     private $soporteEmail = 'sistemas@proatam.com';
     private $soporteNombre = 'Soporte Técnico Proatam';
-    private $soporteEmail_activos = ['edgaror@proatam.com', 'negrete@proatam.com'];
-    private $soporteNombre_activos = ['Edgar Ochoa', 'Jose Negrete'];
+    private $soporteEmail_activos = ['edgaror@proatam.com'];
+    private $soporteNombre_activos = ['Edgar Ochoa'];
     private $baseUrl;
 
 
     public function __construct()
     {
         $this->mail = new PHPMailer(true);
-        
+
         // Cargar Base URL desde constante o variable de entorno, con fallback
         if (defined('EMAIL_BASE_URL')) {
             $this->baseUrl = EMAIL_BASE_URL;
@@ -52,16 +52,16 @@ class EmailHandler
             $this->mail->SMTPAuth = true;
             $this->mail->Username = getenv('SMTP_USER') ?: "sistemas@proatam.com";
             $this->mail->Password = getenv('SMTP_PASS') ?: "cfhr kncw rpyi pcoh";
-            
+
             $smtpSecure = getenv('SMTP_SECURE') ?: 'tls';
             if (strtolower($smtpSecure) === 'ssl') {
                 $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             } else {
                 $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             }
-            
+
             $this->mail->Port = getenv('SMTP_PORT') ?: 587;
-            
+
             $this->mail->SMTPOptions = array(
                 'ssl' => array(
                     'verify_peer' => false,
@@ -83,11 +83,21 @@ class EmailHandler
         }
     }
 
+    private function adjuntarLogoEmbebido(): void
+    {
+        $logoPath = __DIR__ . '/assets/img/GECO_ISOLOGO.png';
+
+        if (file_exists($logoPath)) {
+            $this->mail->addEmbeddedImage($logoPath, 'logo_geco', 'GECO_ISOLOGO.png');
+        }
+    }
+
     /**
      * Envuelve el contenido en el template general del sistema
      */
     private function getEmailWrapper($title, $contentHtml, $footerNote = null)
     {
+        $this->adjuntarLogoEmbebido();
         $time = date('d/m/Y H:i:s');
         $footerText = $footerNote ?: "Este mensaje fue generado automáticamente desde el sistema <strong>GECO PROATAM</strong>.";
 
@@ -95,8 +105,7 @@ class EmailHandler
 <div style="background-color: #f0f4f8; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; color: #0d2535;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
     <div style="background-color: #ffffff; padding: 20px 10px 20px; text-align: center; border-bottom: 4px solid #407656;">
-      <!-- Logo pendiente -->
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAV1BMVEVHcEx/r7l/r7l/r7l/r7l3q7h/r7l/r7l/r7l/r7l/r7l/r7l/r7l/r7l/r7mAsLl/r7mCsboAeasAeasAeasAeasAeasAeasAdqocf60Ad6uHtLsAeasNuOmfAAAAHXRSTlMATt7qfTn/sPYKccZiIIqmF5gTEHD/senaZVMiGMMn9xMAAAC3SURBVHgBldBFYkMxDATQMWg+M8P9z1mVG1CTvK0tGrzO+RBhECrrNaGAqf2YmY9ClZuPaVHCEFjBUjKBicxgqVnDkpEwNdYRrXNiXJ8VpHK4J6WP0TPcH1Z/BtsB6Adc+B7W6OM4TePFMh+5zMuyrssyqcvKAoBs+7btu76ufwsbsoU66IFznj+HlkmNIyFTpgLIxS0dP4QSkYoXyTJox+CgpEhDIhc5FyitOOEZPlcxEg2C170By88HYxTgQGQAAAAASUVORK5CYII=" alt="GECO PROATAM" width="280" style="display: block; margin: 0 auto 10px auto; border: 0; max-width: 10%;">
+      <img src="cid:logo_geco" alt="GECO PROATAM" width="280" style="display:block; margin: 0 auto 10px auto; max-width: 100px;">
       <p style="color: #113557; margin: 10px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">' . $title . '</p>
     </div>
     <div style="padding: 30px;">

@@ -41,7 +41,7 @@ if (isset($_GET['error'])) {
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/tokens.css?v=1.2">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.2">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
     <script>
         window.BASE_URL = '<?= BASE_URL ?>';
     </script>
@@ -54,9 +54,9 @@ if (isset($_GET['error'])) {
             <!-- Panel de login -->
             <div class="col-lg-5 col-xl-4 auth-panel">
                 <div class="auth-form-wrapper">
-                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
+                    <img src="<?= BASE_URL ?>/assets/img/GECO.png" alt="Logo GECO" class="auth-logo" />
                     <h1 class="auth-title">Acceso al Sistema.</h1>
-                    <p class="auth-subtitle">Gestión empresarial PROATAM. Control total de tus operaciones.</p>
+                    <p class="auth-subtitle">Gestión y Control Operativo PROATAM.</p>
 
                     <div id="loginAlertContainer"></div>
 
@@ -205,7 +205,7 @@ if (isset($_GET['error'])) {
         function showSlide(n) {
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
-            
+
             currentSlide = (n + slides.length) % slides.length;
             slides[currentSlide].classList.add('active');
             dots[currentSlide].classList.add('active');

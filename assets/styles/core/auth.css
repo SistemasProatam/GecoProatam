@@ -1,9 +1,14 @@
 @import url("./tokens.css");
 
 /* ─── SHARED AUTH LAYOUT ────────────────────────────────────── */
-* { box-sizing: border-box; }
-body, html {
-    margin: 0; padding: 0;
+* {
+    box-sizing: border-box;
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
     height: 100%;
     overflow: hidden;
     font-family: var(--font-main);
@@ -41,15 +46,17 @@ body, html {
 }
 
 .auth-logo {
-    width: 120px;
-    margin-bottom: 2vh;
+    width: 250px;
+    margin-bottom: 4vh;
     display: block;
 }
 
-#loginAlertContainer, .auth-alert-container {
+#loginAlertContainer,
+.auth-alert-container {
     width: 100%;
     margin-bottom: 2vh;
 }
+
 .recovery-steps {
     display: flex;
     align-items: center;
@@ -105,20 +112,26 @@ body, html {
     letter-spacing: 0.05em;
 }
 
-.step-item.active .step-number { 
-    background-color: var(--s-700); 
-    border-color: var(--s-700); 
+.step-item.active .step-number {
+    background-color: var(--s-700);
+    border-color: var(--s-700);
     color: var(--white);
     box-shadow: 0 0 0 4px rgba(17, 53, 87, 0.1);
 }
-.step-item.active .step-label { color: var(--s-700); }
 
-.step-item.completed .step-number { 
-    background-color: var(--p-500); 
-    border-color: var(--p-500); 
-    color: var(--white); 
+.step-item.active .step-label {
+    color: var(--s-700);
 }
-.step-item.completed .step-label { color: var(--p-500); }
+
+.step-item.completed .step-number {
+    background-color: var(--p-500);
+    border-color: var(--p-500);
+    color: var(--white);
+}
+
+.step-item.completed .step-label {
+    color: var(--p-500);
+}
 
 .auth-title {
     font-family: var(--font-heading);
@@ -289,7 +302,7 @@ body, html {
 .carousel-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.8) 100%);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -333,7 +346,7 @@ body, html {
 .dot {
     width: 10px;
     height: 10px;
-    background-color: rgba(255,255,255,0.35);
+    background-color: rgba(255, 255, 255, 0.35);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -348,22 +361,55 @@ body, html {
 
 /* ─── ANIMATIONS ────────────────────────────────────────────── */
 @keyframes fadeInRight {
-    from { opacity: 0; transform: translateX(30px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* ─── RESPONSIVE ────────────────────────────────────────────── */
 @media (max-width: 991px) {
-    body, html { overflow-y: auto; }
-    .auth-wrapper, .auth-container { height: auto; min-height: 100vh; }
-    .auth-panel { height: auto; padding: 6vh 20px; }
-    .auth-image-panel { display: none !important; }
+
+    body,
+    html {
+        overflow-y: auto;
+    }
+
+    .auth-wrapper,
+    .auth-container {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .auth-panel {
+        height: auto;
+        padding: 6vh 20px;
+    }
+
+    .auth-image-panel {
+        display: none !important;
+    }
 }
 
 /* ─── PASSWORD REQUIREMENTS LIST ────────────────────────────── */
-.req-list li { transition: color 0.3s; }
-.req-list li.valid { color: var(--success-color, #198754) !important; font-weight: 500; }
-.req-list li.valid i::before { content: "\F26A"; }
+.req-list li {
+    transition: color 0.3s;
+}
+
+.req-list li.valid {
+    color: var(--success-color, #198754) !important;
+    font-weight: 500;
+}
+
+.req-list li.valid i::before {
+    content: "\F26A";
+}
+
 .button-57 i {
     display: block;
     margin-right: 0.50em;
@@ -421,4 +467,3 @@ body, html {
     margin-top: -10px;
     margin-bottom: 20px;
 }
-
