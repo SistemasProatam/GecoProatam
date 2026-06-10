@@ -174,22 +174,24 @@ $stmt_contratos->close();
             $existe = !empty($user[$campo]);
           ?>
             <div class="col-md-6 col-lg-4 mb-3">
-              <div class="doc-item-card p-3 h-100">
+              <div class="doc-item-card p-3 h-100" style="border: 1px solid <?= $existe ? 'rgba(34, 197, 94, 0.3)' : 'var(--gray-200, #e5e7eb)' ?>; border-radius: var(--radius-md, 8px); background: <?= $existe ? 'rgba(34, 197, 94, 0.01)' : 'none' ?>;">
                 <div class="d-flex flex-column justify-content-between h-100">
                   <div>
-                    <label class="form-label small fw-bold mb-1 d-block text-dark"><?= $info['label'] ?></label>
-                    <input type="file" name="<?= $campo ?>" class="form-control form-control-sm" accept="<?= $info['accept'] ?>">
-                  </div>
-                  <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <span class="text-muted" style="font-size: 0.7rem;"><i class="fa-solid fa-circle-info"></i> <?= $info['hint'] ?></span>
+                    <label class="form-label small fw-bold mb-2 d-block text-dark"><?= $info['label'] ?></label>
+                    <div class="file-drop-zone">
+                      <input type="file" name="<?= $campo ?>" id="file_<?= $campo ?>" accept="<?= $info['accept'] ?>">
+                      <div class="file-drop-label">
+                        <i class="material-symbols-rounded"><?= $existe ? 'cloud_done' : 'cloud_upload' ?></i>
+                        <span><?= $info['hint'] ?></span>
+                      </div>
+                    </div>
+                    <div class="file-chips" id="chips_<?= $campo ?>"></div>
                     <?php if ($existe): ?>
-                      <a href="../uploads/usuarios/<?= htmlspecialchars($user[$campo]) ?>" target="_blank" class="badge text-success border border-success bg-white py-1 px-2 text-decoration-none text-truncate" style="max-width: 140px; font-size: 0.72rem;">
-                        <i class="fa-solid fa-circle-check"></i> Existente
-                      </a>
-                    <?php else: ?>
-                      <span class="badge text-secondary border border-secondary bg-white py-1 px-2" style="font-size: 0.72rem;">
-                        <i class="fa-solid fa-circle-xmark"></i> Sin cargar
-                      </span>
+                      <div class="mt-2 text-end">
+                        <a href="../uploads/usuarios/<?= htmlspecialchars($user[$campo]) ?>" target="_blank" class="d-inline-flex align-items-center gap-1 text-success fw-semibold" style="font-size: 0.72rem; text-decoration: none;">
+                          <i class="material-symbols-rounded" style="font-size:0.9rem;">check_circle</i> Ver archivo actual
+                        </a>
+                      </div>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -214,11 +216,17 @@ $stmt_contratos->close();
                 <div class="row g-2 align-items-center">
                   <div class="col-md-5">
                     <label class="form-label small fw-bold text-muted mb-1">Reemplazar archivo (PDF)</label>
-                    <input type="file" name="contratos_existentes_<?= $c['id'] ?>" class="form-control form-control-sm" accept=".pdf">
+                    <div class="horizontal-file-zone">
+                      <input type="file" name="contratos_existentes_<?= $c['id'] ?>" class="horizontal-file-input" accept=".pdf">
+                      <div class="horizontal-file-label">
+                        <i class="material-symbols-rounded">upload_file</i>
+                        <span>Reemplazar archivo...</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="col-md-4">
                     <label class="form-label small fw-bold text-muted mb-1">Tipo de Contrato</label>
-                    <select name="tipos_contrato_existentes[]" class="form-select form-select-sm" required>
+                    <select name="tipos_contrato_existentes[]" class="form-select form-select-sm" style="height: 44px;" required>
                       <option value="Indeterminado" <?= $c['tipo_contrato'] === 'Indeterminado' ? 'selected' : '' ?>>Tiempo Indeterminado</option>
                       <option value="Determinado" <?= $c['tipo_contrato'] === 'Determinado' ? 'selected' : '' ?>>Tiempo Determinado</option>
                       <option value="Prueba" <?= $c['tipo_contrato'] === 'Prueba' ? 'selected' : '' ?>>Periodo de Prueba</option>
@@ -227,16 +235,16 @@ $stmt_contratos->close();
                     </select>
                   </div>
                   <div class="col-md-3 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
-                    <div class="form-check d-flex align-items-center gap-1 border rounded px-3 bg-white" style="font-size:0.8rem; height: 38px; cursor: pointer;">
+                    <div class="form-check d-flex align-items-center justify-content-center gap-1 border rounded px-3 bg-white" style="font-size:0.8rem; height: 44px; cursor: pointer; border-color: #fca5a5 !important;">
                       <input class="form-check-input mt-0 cursor-pointer" type="checkbox" name="eliminar_contrato[]" value="<?= $c['id'] ?>" id="del_<?= $c['id'] ?>">
                       <label class="form-check-label text-danger fw-semibold cursor-pointer mb-0" for="del_<?= $c['id'] ?>">
-                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                        <i class="material-symbols-rounded" style="font-size: 1.1rem; vertical-align: middle;">delete</i> Eliminar
                       </label>
                     </div>
                   </div>
                   <div class="col-12 mt-1">
-                    <a href="<?= htmlspecialchars($c['ruta_archivo']) ?>" target="_blank" class="d-inline-block text-truncate text-success fw-semibold" style="font-size: 0.72rem; max-width: 100%;">
-                      <i class="fa-solid fa-file-circle-check"></i> <?= htmlspecialchars($c['nombre_archivo']) ?>
+                    <a href="<?= htmlspecialchars($c['ruta_archivo']) ?>" target="_blank" class="d-inline-flex align-items-center gap-1 text-success fw-semibold" style="font-size: 0.72rem; max-width: 100%; text-decoration: none;">
+                      <i class="material-symbols-rounded" style="font-size:0.95rem;">check_circle</i> <?= htmlspecialchars($c['nombre_archivo']) ?>
                     </a>
                   </div>
                 </div>
@@ -269,6 +277,116 @@ $stmt_contratos->close();
 
 
 <script>
+const GecoFileUploader = {
+  LIMIT_MB: 10,
+  store: {}, // Holds selected files: { fieldName: File }
+
+  init() {
+    // 1. Initialize Card Uploaders (Type A)
+    document.querySelectorAll('.file-drop-zone input[type="file"]').forEach(input => {
+      this.bindUploader(input, 'card');
+    });
+
+    // 2. Initialize Horizontal Uploaders (Type B)
+    document.querySelectorAll('.horizontal-file-zone input[type="file"]').forEach(input => {
+      this.bindUploader(input, 'horizontal');
+    });
+  },
+
+  bindUploader(input, type) {
+    const fieldName = input.name || input.id;
+    if (!fieldName) return;
+
+    input.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      const file = files[0];
+      const sizeMB = file.size / 1024 / 1024;
+      const limit = parseFloat(input.getAttribute('data-max-size')) || this.LIMIT_MB;
+
+      if (sizeMB > limit) {
+        UI.toast.error(`"${file.name}" supera el límite de ${limit} MB (${sizeMB.toFixed(2)} MB).`);
+        input.value = ''; // Reset input
+        this.clearField(fieldName, type, input);
+        return;
+      }
+
+      // Store in memory
+      this.store[fieldName] = file;
+      UI.toast.success(`"${file.name}" listo para subir.`);
+      this.updateUI(fieldName, file, type, input);
+    });
+  },
+
+  updateUI(fieldName, file, type, input) {
+    const parentZone = input.closest(type === 'card' ? '.file-drop-zone' : '.horizontal-file-zone');
+    if (type === 'card') {
+      // Show in chips container
+      const chipsContainer = document.getElementById('chips_' + fieldName);
+      if (chipsContainer) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        chipsContainer.innerHTML = `
+          <div class="file-chip ok">
+            <i class="material-symbols-rounded" style="font-size:0.95rem;flex-shrink:0;">check_circle</i>
+            <span class="chip-name" title="${file.name}">${file.name}</span>
+            <span class="chip-size">${sizeMB} MB</span>
+            <button type="button" class="chip-remove" onclick="GecoFileUploader.removeFile('${fieldName}', 'card')" title="Quitar archivo">
+              <i class="material-symbols-rounded" style="font-size: 1rem; line-height: 1;">close</i>
+            </button>
+          </div>
+        `;
+      }
+    } else {
+      // Horizontal mode
+      if (parentZone) {
+        parentZone.classList.add('has-file');
+        const labelText = parentZone.querySelector('.horizontal-file-label span');
+        if (labelText) {
+          labelText.textContent = file.name;
+        }
+        const labelIcon = parentZone.querySelector('.horizontal-file-label i');
+        if (labelIcon) {
+          labelIcon.className = 'material-symbols-rounded';
+          labelIcon.textContent = 'check_circle';
+        }
+      }
+    }
+  },
+
+  removeFile(fieldName, type) {
+    delete this.store[fieldName];
+    const input = document.getElementById('file_' + fieldName) || document.querySelector(`input[name="${fieldName}"]`);
+    if (input) input.value = '';
+
+    this.clearField(fieldName, type, input);
+    UI.toast.info('Archivo removido.');
+  },
+
+  clearField(fieldName, type, input) {
+    if (type === 'card') {
+      const chipsContainer = document.getElementById('chips_' + fieldName);
+      if (chipsContainer) chipsContainer.innerHTML = '';
+    } else {
+      const parentZone = input ? input.closest('.horizontal-file-zone') : null;
+      if (parentZone) {
+        parentZone.classList.remove('has-file');
+        const labelText = parentZone.querySelector('.horizontal-file-label span');
+        const defaultText = (input && input.getAttribute('data-placeholder')) || 'Seleccionar archivo (PDF)...';
+        if (labelText) labelText.textContent = defaultText;
+
+        const labelIcon = parentZone.querySelector('.horizontal-file-label i');
+        if (labelIcon) {
+          labelIcon.className = 'material-symbols-rounded';
+          labelIcon.textContent = 'upload_file';
+        }
+      }
+    }
+  }
+};
+window.GecoFileUploader = GecoFileUploader;
+document.addEventListener('DOMContentLoaded', () => GecoFileUploader.init());
+
   document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formUser');
     const container = document.getElementById('contratos-container');
@@ -316,11 +434,17 @@ $stmt_contratos->close();
                 <div class="row g-2 align-items-center">
                     <div class="col-md-5">
                         <label class="form-label small fw-bold text-muted mb-1">Archivo de Contrato (PDF) <span class="text-danger">*</span></label>
-                        <input type="file" name="nuevos_contratos[]" class="form-control form-control-sm" accept=".pdf" required>
+                        <div class="horizontal-file-zone">
+                            <input type="file" name="nuevos_contratos[]" class="horizontal-file-input" accept=".pdf" required>
+                            <div class="horizontal-file-label">
+                                <i class="material-symbols-rounded">upload_file</i>
+                                <span>Seleccionar archivo (PDF)...</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label class="form-label small fw-bold text-muted mb-1">Tipo de Contrato <span class="text-danger">*</span></label>
-                        <select name="nuevos_tipos_contrato[]" class="form-select form-select-sm" required>
+                        <select name="nuevos_tipos_contrato[]" class="form-select form-select-sm" style="height: 44px;" required>
                             <option value="">-- Seleccionar Tipo --</option>
                             <option value="Indeterminado">Tiempo Indeterminado</option>
                             <option value="Determinado">Tiempo Determinado</option>
@@ -329,14 +453,20 @@ $stmt_contratos->close();
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
-                        <button type="button" class="btn btn-danger btn-sm btn-remove-contrato w-100" style="height: 38px;">
-                            <i class="fa-solid fa-trash-can"></i> Eliminar
+                    <div class="col-md-3 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
+                        <button type="button" class="btn btn-danger btn-remove-contrato w-100 w-md-auto" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px;">
+                            <i class="material-symbols-rounded" style="font-size: 1.2rem;">delete</i> Eliminar
                         </button>
                     </div>
                 </div>
             `;
         container.appendChild(newItem);
+
+        // Bind the file uploader for the new element
+        const newInput = newItem.querySelector('input[type="file"]');
+        if (newInput && window.GecoFileUploader) {
+            window.GecoFileUploader.bindUploader(newInput, 'horizontal');
+        }
       });
     }
 

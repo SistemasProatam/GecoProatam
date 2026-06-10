@@ -47,6 +47,7 @@ $stmt = $conn->prepare("
         u.password_temporal, 
         u.activo, 
         u.departamento_id,
+        u.foto_jpg,
         d.nombre AS departamento_nombre
     FROM usuarios u
     LEFT JOIN departamentos d ON u.departamento_id = d.id
@@ -84,6 +85,7 @@ if ($login_success) {
     $_SESSION['correo_corporativo'] = $user_data['correo_corporativo'];
     $_SESSION['departamento_id'] = $user_data['departamento_id'];
     $_SESSION['departamento'] = $user_data['departamento_nombre'] ?? '';
+    $_SESSION['foto_jpg'] = $user_data['foto_jpg'] ?? '';
 
     // Si la contraseña es temporal, setear la bandera change_pass
     if ($user_data['password_temporal']) {

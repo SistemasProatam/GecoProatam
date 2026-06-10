@@ -125,7 +125,7 @@ function is_active($path)
 
                 <!-- Cotizaciones -->
                 <?php if ($ver_cotizaciones): ?>
-                    <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php" class="menu-item <?= is_active('lista_cotizaciones.php') ?>" data-tooltip="Cotizaciones">
+                    <a href="<?= BASE_URL ?>/cotizaciones/list_cotizaciones.php" class="menu-item <?= is_active(['list_cotizaciones.php', 'cotizacion.php']) ?>" data-tooltip="Cotizaciones">
                         <span class="material-symbols-rounded">request_quote</span>
                         <span class="menu-text">Cotizaciones</span>
                     </a>
@@ -222,7 +222,13 @@ function is_active($path)
                             <span class="user-name"><?= htmlspecialchars($primerNombre) ?></span>
                             <span class="user-role"><?= htmlspecialchars($rol_usuario) ?></span>
                         </div>
-                        <div class="avatar"><?= $inicial ?></div>
+                        <div class="avatar">
+                            <?php if (!empty($_SESSION['foto_jpg'])): ?>
+                                <img src="<?= BASE_URL ?>/uploads/usuarios/<?= htmlspecialchars($_SESSION['foto_jpg']) ?>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            <?php else: ?>
+                                <?= $inicial ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
 

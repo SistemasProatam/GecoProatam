@@ -173,7 +173,7 @@ $tipo_colores = [
             <div class="grid-stats">
                 <a href="<?= BASE_URL ?>/projects/list_project.php" class="kpi-card-link">
                     <div class="kpi-card kpi-card--green">
-                        <i class="fa-solid fa-folder-open kpi-icon"></i>
+                        <i class="material-symbols-rounded kpi-icon">business_center</i>
                         <div class="kpi-card__label">Proyectos</div>
                         <div class="kpi-card__value"><?= $proyectos_vigentes ?></div>
                         <div class="kpi-card__sub">
@@ -185,7 +185,7 @@ $tipo_colores = [
 
                 <a href="<?= BASE_URL ?>/projects/list_obras.php" class="kpi-card-link">
                     <div class="kpi-card kpi-card--amber">
-                        <i class="fa-solid fa-building kpi-icon"></i>
+                        <i class="material-symbols-rounded kpi-icon">apartment</i>
                         <div class="kpi-card__label">Obras Registradas</div>
                         <div class="kpi-card__value"><?= $obras_total ?></div>
                         <div class="kpi-card__sub">Frentes de trabajo activos</div>
@@ -194,7 +194,7 @@ $tipo_colores = [
 
                 <a href="<?= BASE_URL ?>/orders/list_oc.php" class="kpi-card-link">
                     <div class="kpi-card kpi-card--blue">
-                        <i class="fa-solid fa-cart-shopping kpi-icon"></i>
+                        <i class="material-symbols-rounded kpi-icon">receipt_long</i>
                         <div class="kpi-card__label">Órdenes de Compra</div>
                         <div class="kpi-card__value"><?= $oc_total ?></div>
                         <div class="kpi-card__sub">Monto: <?= fmt($oc_monto) ?></div>
@@ -203,7 +203,7 @@ $tipo_colores = [
 
                 <a href="<?= BASE_URL ?>/orders/list_requis.php" class="kpi-card-link">
                     <div class="kpi-card kpi-card--purple">
-                        <i class="fa-solid fa-clipboard-check kpi-icon"></i>
+                        <i class="material-symbols-rounded kpi-icon">assignment</i>
                         <div class="kpi-card__label">Requisiciones</div>
                         <div class="kpi-card__value"><?= $req_total ?></div>
                         <div class="kpi-card__sub"><?= $req_pendientes ?> pendientes de revisión</div>
@@ -211,7 +211,7 @@ $tipo_colores = [
                 </a>
 
                 <div class="kpi-card kpi-card--red">
-                    <i class="fa-solid fa-id-badge kpi-icon"></i>
+                    <i class="material-symbols-rounded kpi-icon">handshake</i>
                     <div class="kpi-card__label">Subcontratos</div>
                     <div class="kpi-card__value"><?= $subcontratos_total ?></div>
                     <div class="kpi-card__sub">Contratos externos vigentes</div>
@@ -219,7 +219,7 @@ $tipo_colores = [
 
                 <a href="<?= BASE_URL ?>/activos/list_activos.php" class="kpi-card-link">
                     <div class="kpi-card kpi-card--amber">
-                        <i class="fa-solid fa-boxes-stacked kpi-icon"></i>
+                        <i class="material-symbols-rounded kpi-icon">fact_check</i>
                         <div class="kpi-card__label">Activos</div>
                         <div class="kpi-card__value"><?= $activos_activos ?></div>
                         <div class="kpi-card__sub">Valor: <?= fmt($activos_valor_total) ?></div>
@@ -228,7 +228,7 @@ $tipo_colores = [
 
                 <a href="<?= BASE_URL ?>/users/list_users.php" class="kpi-card-link">
                     <div class="kpi-card kpi-card--purple">
-                        <i class="fa-solid fa-users kpi-icon"></i>
+                        <i class="material-symbols-rounded kpi-icon">person</i>
                         <div class="kpi-card__label">Usuarios</div>
                         <div class="kpi-card__value"><?= $usuarios_activos ?></div>
                         <div class="kpi-card__sub">Personal en el sistema</div>

@@ -313,6 +313,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_obra.css">
+
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
 </head>
 
 <body>

@@ -315,8 +315,8 @@ while ($archivo = $archivos->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
     <title>Editar Orden de Compra | GECO PROATAM</title>
-
-
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
+</head>
 
 <body>
     <?php include __DIR__ . "/../includes/navbar.php"; ?>

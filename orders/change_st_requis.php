@@ -170,6 +170,8 @@ $requisicion = $result->fetch_assoc();
         color: white;
     }
 </style>
+
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
 </head>
 <body>
 <div class="container mt-4">
@@ -305,5 +307,6 @@ endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
 

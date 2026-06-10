@@ -32,7 +32,7 @@ if (isset($_SESSION['user_id'])) {
             <!-- Panel de formulario -->
             <div class="col-lg-5 col-xl-4 auth-panel">
                 <div class="auth-form-wrapper">
-                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
+                    <img src="<?= BASE_URL ?>/assets/img/GECO.png" alt="Logo PROATAM" class="auth-logo" />
 
                     <!-- Progress Steps -->
                     <div class="recovery-steps">
@@ -189,8 +189,7 @@ if (isset($_SESSION['user_id'])) {
 
                 if (result.status === 'success') {
                     UI.toast.success(result.message, 10000);
-                    // MODO PRUEBA: Mostramos alert para poder copiar el código
-                    alert("Copia tu código antes de continuar: " + result.message);
+
                     setTimeout(() => {
                         window.location.href = `verify_token.php?email=${encodeURIComponent(email)}`;
                     }, 3000);

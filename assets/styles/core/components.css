@@ -359,10 +359,8 @@ a i, a:hover i, a:focus i {
 }
 
 .orders-page-container .form-control[readonly],
-.orders-page-container .form-control:read-only,
 .orders-page-container input[readonly].form-control,
-.form-control[readonly],
-.form-control:read-only {
+.form-control[readonly] {
   background: var(--gray-50, #f9fafb);
   color: var(--gray-600, #4b5563);
   cursor: default;
@@ -372,8 +370,6 @@ a i, a:hover i, a:focus i {
 
 .orders-page-container .form-control[readonly]:hover,
 .orders-page-container .form-control[readonly]:focus,
-.orders-page-container .form-control:read-only:hover,
-.orders-page-container .form-control:read-only:focus,
 .form-control[readonly]:hover,
 .form-control[readonly]:focus {
   border-color: var(--border-color, #e5e7eb);
@@ -1432,3 +1428,71 @@ a i, a:hover i, a:focus i {
 
 
 .kpi-card-link { text-decoration: none !important; color: inherit !important; display: block; }
+
+/* ─── CUSTOM HORIZONTAL FILE UPLOADER (Type B) ─── */
+.horizontal-file-zone {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3, 0.75rem);
+  padding: 0.5rem var(--sp-4, 1rem);
+  background: var(--gray-50, #f9fafb);
+  border: 1px dashed var(--gray-300, #d1d5db);
+  border-radius: var(--radius-md, 8px);
+  position: relative;
+  transition: all var(--trans-fast, 0.2s);
+  min-height: 44px;
+}
+
+.horizontal-file-zone:hover {
+  border-color: var(--p-500, #407656);
+  background: rgba(64, 118, 86, 0.03);
+}
+
+.horizontal-file-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.horizontal-file-label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2, 0.5rem);
+  color: var(--gray-500, #6b7280);
+  font-size: var(--fs-sm, 0.8rem);
+  pointer-events: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.horizontal-file-label i {
+  font-size: 1.15rem;
+  color: var(--p-500, #407656);
+}
+
+.horizontal-file-label span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Selected active state */
+.horizontal-file-zone.has-file {
+  border-style: solid;
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.03);
+}
+
+.horizontal-file-zone.has-file .horizontal-file-label {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.horizontal-file-zone.has-file .horizontal-file-label i {
+  color: #16a34a;
+}
+
