@@ -143,9 +143,9 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
         <span class="separator">›</span>
         <a href="<?= BASE_URL ?>/orders/list_oc.php">Órdenes de Compra</a>
         <span class="separator">›</span>
-        <span>Nueva Orden</span>
+        <span>Nueva Orden de Compra</span>
       </nav>
-      <h1 class="orders-page-title">Crear Nueva Orden de Compra</h1>
+      <h1 class="orders-page-title">Nueva Orden de Compra</h1>
     </div>
     <button type="button" class="btn-geco-outline" onclick="history.back()">
       <i class="fa-solid fa-arrow-left"></i> Volver

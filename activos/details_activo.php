@@ -54,7 +54,8 @@ if (!$activo) {
 $tipo_norm = iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($activo['tipo_nombre'] ?? ''));
 
 // ─── Detalles específicos ────────────────────────────────────────────────────
-function fetchRow($conn, $sql, $id) {
+function fetchRow($conn, $sql, $id)
+{
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -100,15 +101,16 @@ $stmt_imgs->execute();
 $imagenes = $stmt_imgs->get_result()->fetch_all(MYSQLI_ASSOC);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-function labelTipoDoc($tipo) {
+function labelTipoDoc($tipo)
+{
     $map = [
         'factura'             => 'Factura / Comprobante',
         'pedimento'           => 'Pedimento',
         'poliza_seguro_mx'    => 'Póliza de Seguro (MX)',
         'poliza_seguro_usa'   => 'Póliza de Seguro (USA)',
         'manual_usuario'      => 'Manual de Usuario',
-        'manual_mantenimiento'=> 'Manual de Mantenimiento',
-        'catalogo_refacciones'=> 'Catálogo de Refacciones',
+        'manual_mantenimiento' => 'Manual de Mantenimiento',
+        'catalogo_refacciones' => 'Catálogo de Refacciones',
         'contrato'            => 'Contrato / Escritura',
         'expediente_predial'   => 'Expediente / Predial',
         'extra'               => 'Documento Extra',
@@ -116,12 +118,22 @@ function labelTipoDoc($tipo) {
     return $map[$tipo] ?? ucfirst($tipo);
 }
 
-function iconoDoc($nombre) {
+function iconoDoc($nombre)
+{
     $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
-    $map = ['pdf'=>'fa-regular fa-file-pdf','doc'=>'fa-regular fa-file-word','docx'=>'fa-regular fa-file-word',
-            'xls'=>'fa-regular fa-file-excel','xlsx'=>'fa-regular fa-file-excel','txt'=>'fa-regular fa-file-lines',
-            'jpg'=>'fa-regular fa-file-image','jpeg'=>'fa-regular fa-file-image','png'=>'fa-regular fa-file-image',
-            'gif'=>'fa-regular fa-file-image','webp'=>'fa-regular fa-file-image'];
+    $map = [
+        'pdf' => 'fa-regular fa-file-pdf',
+        'doc' => 'fa-regular fa-file-word',
+        'docx' => 'fa-regular fa-file-word',
+        'xls' => 'fa-regular fa-file-excel',
+        'xlsx' => 'fa-regular fa-file-excel',
+        'txt' => 'fa-regular fa-file-lines',
+        'jpg' => 'fa-regular fa-file-image',
+        'jpeg' => 'fa-regular fa-file-image',
+        'png' => 'fa-regular fa-file-image',
+        'gif' => 'fa-regular fa-file-image',
+        'webp' => 'fa-regular fa-file-image'
+    ];
     return $map[$ext] ?? 'fa-regular fa-file';
 }
 ?>
@@ -132,15 +144,17 @@ function iconoDoc($nombre) {
 include __DIR__ . "/../includes/navbar.php";
 
 // Redefine visual-friendly field helper with GECO standards
-function renderGecoCampo($label, $valor, $cols = 4) {
+function renderGecoCampo($label, $valor, $cols = 4)
+{
     $v = $valor ?? '—';
     echo '<div class="col-md-' . $cols . ' mb-3">'
-       . '<span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400, #9ca3af); letter-spacing: 0.05em; margin-bottom: 4px;">' . htmlspecialchars($label) . '</span>'
-       . '<span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800, #0f172a);">' . htmlspecialchars($v) . '</span>'
-       . '</div>';
+        . '<span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400, #9ca3af); letter-spacing: 0.05em; margin-bottom: 4px;">' . htmlspecialchars($label) . '</span>'
+        . '<span style="display: block; font-size: 0.88rem; font-weight: 500; color: var(--s-800, #0f172a);">' . htmlspecialchars($v) . '</span>'
+        . '</div>';
 }
 
-function renderCondicionBadge($condicion) {
+function renderCondicionBadge($condicion)
+{
     $cond = strtolower($condicion ?? '');
     if ($cond === 'bueno') {
         return '<span class="status-badge status-badge--bueno">Bueno</span>';
@@ -152,7 +166,8 @@ function renderCondicionBadge($condicion) {
     return '<span class="status-badge">' . htmlspecialchars($condicion ?? '—') . '</span>';
 }
 
-function renderEstatusBadge($estatus) {
+function renderEstatusBadge($estatus)
+{
     $est = strtolower($estatus ?? '');
     if ($est === 'activo') {
         return '<span class="status-badge status-badge--aprobado">Activo</span>';
@@ -171,7 +186,7 @@ function renderEstatusBadge($estatus) {
             <nav class="orders-breadcrumb">
                 <a href="<?= BASE_URL ?>/index.php">Inicio</a>
                 <span class="separator">›</span>
-                <a href="list_activos.php">Registro de Activos</a>
+                <a href="list_activos.php">Activos</a>
                 <span class="separator">›</span>
                 <span>Detalles del Activo</span>
             </nav>
@@ -188,8 +203,8 @@ function renderEstatusBadge($estatus) {
             <a href="list_activos.php" class="btn-geco-outline">
                 <i class="fa-solid fa-arrow-left"></i> Volver al Listado
             </a>
-            <a href="edit_activo.php?id=<?= $id ?>" class="btn-geco-primary">
-                <i class="fa-solid fa-pen-to-square"></i> Editar Activo
+            <a href="edit_activo.php?id=<?= $id ?>" class="btn-geco-secondary">
+                <i class="fa-solid fa-pen-to-square"></i> Editar
             </a>
         </div>
     </div>
@@ -205,7 +220,7 @@ function renderEstatusBadge($estatus) {
     <div class="row">
         <!-- ===== Columna Izquierda: Foto y QR (4 cols) ===== -->
         <div class="col-lg-4">
-            
+
             <!-- Foto Principal Card -->
             <div class="oc-card mb-4">
                 <div class="oc-card-header">
@@ -215,9 +230,9 @@ function renderEstatusBadge($estatus) {
                     <div class="hero-img-wrap">
                         <?php if (!empty($activo['img_foto_principal'])): ?>
                             <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
-                                 alt="Foto principal"
-                                 data-bs-toggle="modal" data-bs-target="#modalImgPrincipal"
-                                 title="Clic para ampliar" />
+                                alt="Foto principal"
+                                data-bs-toggle="modal" data-bs-target="#modalImgPrincipal"
+                                title="Clic para ampliar" />
                         <?php else: ?>
                             <div class="text-center py-5 text-muted" style="width: 100%;">
                                 <i class="fa-regular fa-image" style="font-size: 3rem; opacity: 0.4; display: block; margin-bottom: 8px;"></i>
@@ -252,9 +267,9 @@ function renderEstatusBadge($estatus) {
                     <div class="oc-card-body">
                         <div class="d-flex align-items-center gap-3">
                             <img src="<?= htmlspecialchars($qrUrl) ?>"
-                                 alt="QR <?= htmlspecialchars($activo['codigo']) ?>"
-                                 style="width: 90px; height: 90px; border-radius: 8px; border: 1px solid var(--gray-200);"
-                                 title="Código QR del activo">
+                                alt="QR <?= htmlspecialchars($activo['codigo']) ?>"
+                                style="width: 90px; height: 90px; border-radius: 8px; border: 1px solid var(--gray-200);"
+                                title="Código QR del activo">
                             <div>
                                 <div style="font-size: 0.88rem; font-weight: 700; color: var(--s-800); margin-bottom: 4px;">
                                     <i class="fa-solid fa-qrcode"></i> Código QR del Activo
@@ -274,7 +289,7 @@ function renderEstatusBadge($estatus) {
 
         <!-- ===== Columna Derecha: Información y Detalles (8 cols) ===== -->
         <div class="col-lg-8">
-            
+
             <!-- Información General Card -->
             <div class="oc-card mb-4">
                 <div class="oc-card-header">
@@ -322,13 +337,13 @@ function renderEstatusBadge($estatus) {
                             renderGecoCampo('Placa',             $detalle_vehiculo['placa']);
                             renderGecoCampo('VIN / N° Serie',    $detalle_vehiculo['vin']);
                             renderGecoCampo('N° Motor',          $detalle_vehiculo['numero_motor']);
-                            renderGecoCampo('Entidad Federativa',$detalle_vehiculo['entidad_federativa']);
+                            renderGecoCampo('Entidad Federativa', $detalle_vehiculo['entidad_federativa']);
                             renderGecoCampo('N° Pedimento',      $detalle_vehiculo['numero_pedimento']);
                             renderGecoCampo('Origen',            ucfirst($detalle_vehiculo['origen'] ?? ''));
                             renderGecoCampo('Gravamen',          ucfirst($detalle_vehiculo['gravamen'] ?? ''));
                             renderGecoCampo('Propietario',       $detalle_vehiculo['nombre_propietario'], 8);
                             ?>
-                            
+
                             <!-- Subsección Seguro MX -->
                             <div class="col-12 mt-4 mb-2">
                                 <div class="oc-form-subsection">
@@ -380,7 +395,7 @@ function renderEstatusBadge($estatus) {
                             <div class="mt-4 pt-3 border-top">
                                 <span style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: 8px;">Foto Motor</span>
                                 <img src="<?= htmlspecialchars($detalle_maquinaria['foto_motor']) ?>"
-                                     alt="Foto motor" class="img-thumbnail" style="max-height: 220px; border-radius: 8px; border: 1px solid var(--gray-200);" />
+                                    alt="Foto motor" class="img-thumbnail" style="max-height: 220px; border-radius: 8px; border: 1px solid var(--gray-200);" />
                             </div>
                         <?php endif; ?>
                     </div>
@@ -481,7 +496,7 @@ function renderEstatusBadge($estatus) {
                             renderGecoCampo('Marca',            $detalle_tic['marca']);
                             renderGecoCampo('Modelo',           $detalle_tic['modelo']);
                             renderGecoCampo('N° Serie',         $detalle_tic['numero_serie']);
-                            renderGecoCampo('Sistema Operativo',$detalle_tic['sistema_operativo']);
+                            renderGecoCampo('Sistema Operativo', $detalle_tic['sistema_operativo']);
                             renderGecoCampo('Procesador',       $detalle_tic['procesador']);
                             renderGecoCampo('RAM',              $detalle_tic['ram']);
                             renderGecoCampo('Almacenamiento',   $detalle_tic['almacenamiento']);
@@ -514,7 +529,7 @@ function renderEstatusBadge($estatus) {
                 <div class="oc-card-body">
                     <?php if (!empty($documentos)): ?>
                         <div class="documents-grid">
-                            <?php foreach ($documentos as $doc): 
+                            <?php foreach ($documentos as $doc):
                                 $ruta = htmlspecialchars($doc['ruta_archivo']);
                                 $nombre = htmlspecialchars($doc['nombre_original'] ?? basename($doc['ruta_archivo']));
                                 $tipoLabel = htmlspecialchars(labelTipoDoc($doc['tipo_documento']));
@@ -560,29 +575,29 @@ function renderEstatusBadge($estatus) {
                             <?php foreach ($fotos_gen as $img): ?>
                                 <div class="gallery-card">
                                     <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                                         alt="Foto general"
-                                         data-bs-toggle="modal" data-bs-target="#modalGaleria"
-                                         onclick="abrirImagen(this)" />
+                                        alt="Foto general"
+                                        data-bs-toggle="modal" data-bs-target="#modalGaleria"
+                                        onclick="abrirImagen(this)" />
                                     <small>Foto General</small>
                                 </div>
                             <?php endforeach; ?>
-                            
+
                             <?php foreach ($foto_placa as $img): ?>
                                 <div class="gallery-card">
                                     <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                                         alt="Foto placa"
-                                         data-bs-toggle="modal" data-bs-target="#modalGaleria"
-                                         onclick="abrirImagen(this)" />
+                                        alt="Foto placa"
+                                        data-bs-toggle="modal" data-bs-target="#modalGaleria"
+                                        onclick="abrirImagen(this)" />
                                     <small>Placa</small>
                                 </div>
                             <?php endforeach; ?>
-                            
+
                             <?php foreach ($foto_serie as $img): ?>
                                 <div class="gallery-card">
                                     <img src="<?= htmlspecialchars($img['ruta_archivo']) ?>"
-                                         alt="N° Serie"
-                                         data-bs-toggle="modal" data-bs-target="#modalGaleria"
-                                         onclick="abrirImagen(this)" />
+                                        alt="N° Serie"
+                                        data-bs-toggle="modal" data-bs-target="#modalGaleria"
+                                        onclick="abrirImagen(this)" />
                                     <small>N° Serie</small>
                                 </div>
                             <?php endforeach; ?>
@@ -597,19 +612,19 @@ function renderEstatusBadge($estatus) {
 
 <!-- Modal Imagen Principal -->
 <?php if (!empty($activo['img_foto_principal'])): ?>
-<div class="modal fade" id="modalImgPrincipal" tabindex="-1">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content bg-dark border-0">
-            <div class="modal-header border-0">
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center p-0">
-                <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
-                     alt="Foto principal" class="img-fluid" style="max-height:85vh; border-radius: 8px;" />
+    <div class="modal fade" id="modalImgPrincipal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-0">
+                    <img src="<?= htmlspecialchars($activo['img_foto_principal']) ?>"
+                        alt="Foto principal" class="img-fluid" style="max-height:85vh; border-radius: 8px;" />
+                </div>
             </div>
         </div>
     </div>
-</div>
 <?php endif; ?>
 
 <!-- Modal Galería -->
@@ -627,10 +642,9 @@ function renderEstatusBadge($estatus) {
 </div>
 
 <script>
-function abrirImagen(el) {
-    document.getElementById('modalGaleriaImg').src = el.src;
-}
+    function abrirImagen(el) {
+        document.getElementById('modalGaleriaImg').src = el.src;
+    }
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-

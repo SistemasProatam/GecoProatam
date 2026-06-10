@@ -36,14 +36,13 @@ $result_departamentos = $result;
       <nav class="orders-breadcrumb">
         <a href="<?= BASE_URL ?>/index.php">Inicio</a>
         <span class="separator">›</span>
-        <a href="<?= BASE_URL ?>/activos/list_activos.php">Registro de Activos</a>
+        <a href="<?= BASE_URL ?>/activos/list_activos.php">Activos</a>
         <span class="separator">›</span>
         <span>Nuevo Activo</span>
       </nav>
-      <h1 class="orders-page-title">Registro de Nuevo Activo</h1>
+      <h1 class="orders-page-title">Nuevo Activo</h1>
     </div>
-    <a href="list_activos.php" class="btn-geco-outline">
-      ← Volver al Listado
+    <a href="list_activos.php" class="btn-geco-outline"><i class="fa-solid fa-arrow-left"></i>Volver al Listado
     </a>
   </div>
 
@@ -80,7 +79,7 @@ $result_departamentos = $result;
               ?>
             </select>
           </div>
-          
+
           <div class="col-md-6 col-lg-3">
             <label class="oc-form-label">Código de Activo</label>
             <div class="codigo-preview" id="codigoPreview">
@@ -735,118 +734,118 @@ $result_departamentos = $result;
   </form>
 </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+  crossorigin="anonymous"></script>
 
-  <script>
-    // ═══════════════════════════════════════════════════════════════
-    // LÍMITES POR TIPO
-    // ═══════════════════════════════════════════════════════════════
-    const LIMITES_MB = {
-      normal: 10,
-      imagen: 10,
-      catalogo: 1024,
-      adjunto: 10
-    };
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  // LÍMITES POR TIPO
+  // ═══════════════════════════════════════════════════════════════
+  const LIMITES_MB = {
+    normal: 10,
+    imagen: 10,
+    catalogo: 1024,
+    adjunto: 10
+  };
 
-    // ═══════════════════════════════════════════════════════════════
-    // STORE DE ARCHIVOS  { campo: [{ file, ok }] }
-    // ═══════════════════════════════════════════════════════════════
-    const fileStore = {};
+  // ═══════════════════════════════════════════════════════════════
+  // STORE DE ARCHIVOS  { campo: [{ file, ok }] }
+  // ═══════════════════════════════════════════════════════════════
+  const fileStore = {};
 
-    // ═══════════════════════════════════════════════════════════════
-    // TOASTS
-    // ═══════════════════════════════════════════════════════════════
-    const TCFG = {
-      danger: {
-        title: 'Error',
-        icon: 'fa-solid fa-circle-xmark'
-      },
-      success: {
-        title: 'Listo',
-        icon: 'fa-solid fa-circle-check'
-      },
-      warning: {
-        title: 'Aviso',
-        icon: 'fa-solid fa-triangle-exclamation'
-      },
-      info: {
-        title: 'Información',
-        icon: 'fa-solid fa-circle-info'
-      },
-    };
+  // ═══════════════════════════════════════════════════════════════
+  // TOASTS
+  // ═══════════════════════════════════════════════════════════════
+  const TCFG = {
+    danger: {
+      title: 'Error',
+      icon: 'fa-solid fa-circle-xmark'
+    },
+    success: {
+      title: 'Listo',
+      icon: 'fa-solid fa-circle-check'
+    },
+    warning: {
+      title: 'Aviso',
+      icon: 'fa-solid fa-triangle-exclamation'
+    },
+    info: {
+      title: 'Información',
+      icon: 'fa-solid fa-circle-info'
+    },
+  };
 
-    function mostrarAlerta(msg, tipo = 'danger') {
-      if (tipo === 'success') UI.toast.success(msg);
-      else if (tipo === 'warning') UI.toast.warning(msg);
-      else if (tipo === 'info') UI.toast.info(msg);
-      else UI.toast.error(msg);
+  function mostrarAlerta(msg, tipo = 'danger') {
+    if (tipo === 'success') UI.toast.success(msg);
+    else if (tipo === 'warning') UI.toast.warning(msg);
+    else if (tipo === 'info') UI.toast.info(msg);
+    else UI.toast.error(msg);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MODAL DE CONFIRMACIÓN  (reemplaza confirm() nativo)
+  // ═══════════════════════════════════════════════════════════════
+  function mostrarConfirmacion({
+    archivos,
+    totalMB
+  }) {
+    return UI.confirm({
+      title: '¿Confirmar subida?',
+      message: `Se guardarán los datos y se subirán <b>${archivos}</b> archivo${archivos !== 1 ? 's' : ''} (${totalMB} MB total).`,
+      confirmText: 'Guardar Activo',
+      icon: 'question'
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MANEJO DE ARCHIVOS CON CHIPS
+  // ═══════════════════════════════════════════════════════════════
+  function handleFile(input, campo, tipo, multiple) {
+    if (!fileStore[campo]) fileStore[campo] = [];
+
+    const limiteMB = LIMITES_MB[tipo] || 10;
+    const files = Array.from(input.files);
+
+    if (!multiple) {
+      // Reemplazar archivo existente
+      fileStore[campo] = [];
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // MODAL DE CONFIRMACIÓN  (reemplaza confirm() nativo)
-    // ═══════════════════════════════════════════════════════════════
-    function mostrarConfirmacion({
-      archivos,
-      totalMB
-    }) {
-      return UI.confirm({
-        title: '¿Confirmar subida?',
-        message: `Se guardarán los datos y se subirán <b>${archivos}</b> archivo${archivos !== 1 ? 's' : ''} (${totalMB} MB total).`,
-        confirmText: 'Guardar Activo',
-        icon: 'question'
+    files.forEach(file => {
+      const sizeMB = file.size / 1024 / 1024;
+      const ok = sizeMB <= limiteMB;
+      fileStore[campo].push({
+        file,
+        ok,
+        tipo
       });
+      if (ok) {
+        mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) listo para subir.`, 'success');
+      } else {
+        mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera el límite de ${limiteMB} MB. Retíralo antes de guardar.`, 'danger');
+      }
+    });
+
+    renderChips(campo);
+    // Reset input para poder re-seleccionar si se borra
+    input.value = '';
+  }
+
+  function renderChips(campo) {
+    const container = document.getElementById('chips_' + campo);
+    if (!container) return;
+    const entries = fileStore[campo] || [];
+    if (!entries.length) {
+      container.innerHTML = '';
+      return;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // MANEJO DE ARCHIVOS CON CHIPS
-    // ═══════════════════════════════════════════════════════════════
-    function handleFile(input, campo, tipo, multiple) {
-      if (!fileStore[campo]) fileStore[campo] = [];
-
-      const limiteMB = LIMITES_MB[tipo] || 10;
-      const files = Array.from(input.files);
-
-      if (!multiple) {
-        // Reemplazar archivo existente
-        fileStore[campo] = [];
-      }
-
-      files.forEach(file => {
-        const sizeMB = file.size / 1024 / 1024;
-        const ok = sizeMB <= limiteMB;
-        fileStore[campo].push({
-          file,
-          ok,
-          tipo
-        });
-        if (ok) {
-          mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) listo para subir.`, 'success');
-        } else {
-          mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera el límite de ${limiteMB} MB. Retíralo antes de guardar.`, 'danger');
-        }
-      });
-
-      renderChips(campo);
-      // Reset input para poder re-seleccionar si se borra
-      input.value = '';
-    }
-
-    function renderChips(campo) {
-      const container = document.getElementById('chips_' + campo);
-      if (!container) return;
-      const entries = fileStore[campo] || [];
-      if (!entries.length) {
-        container.innerHTML = '';
-        return;
-      }
-
-      container.innerHTML = entries.map((e, i) => {
-        const sizeMB = (e.file.size / 1024 / 1024).toFixed(2);
-        const cls = e.ok ? 'ok' : 'error';
-        const icon = e.ok ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
-        return `
+    container.innerHTML = entries.map((e, i) => {
+      const sizeMB = (e.file.size / 1024 / 1024).toFixed(2);
+      const cls = e.ok ? 'ok' : 'error';
+      const icon = e.ok ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
+      return `
           <div class="file-chip ${cls}">
             <i class="${icon}" style="font-size:.85rem;flex-shrink:0;"></i>
             <span class="chip-name" title="${e.file.name}">${e.file.name}</span>
@@ -855,106 +854,106 @@ $result_departamentos = $result;
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>`;
-      }).join('');
+    }).join('');
+  }
+
+  function removeChip(campo, index) {
+    if (!fileStore[campo]) return;
+    const removed = fileStore[campo].splice(index, 1)[0];
+    mostrarAlerta(`"${removed.file.name}" eliminado de la lista.`, 'info');
+    renderChips(campo);
+  }
+
+  // Verificar si hay archivos con error en el store
+  function hayArchivosInvalidos() {
+    for (const campo in fileStore) {
+      if (fileStore[campo].some(e => !e.ok)) return true;
     }
-
-    function removeChip(campo, index) {
-      if (!fileStore[campo]) return;
-      const removed = fileStore[campo].splice(index, 1)[0];
-      mostrarAlerta(`"${removed.file.name}" eliminado de la lista.`, 'info');
-      renderChips(campo);
+    // Revisar pools de adjuntos
+    for (const tipo of ['fiscal', 'extra']) {
+      if (pools[tipo] && pools[tipo].some(e => !e.ok)) return true;
     }
+    return false;
+  }
 
-    // Verificar si hay archivos con error en el store
-    function hayArchivosInvalidos() {
-      for (const campo in fileStore) {
-        if (fileStore[campo].some(e => !e.ok)) return true;
-      }
-      // Revisar pools de adjuntos
-      for (const tipo of ['fiscal', 'extra']) {
-        if (pools[tipo] && pools[tipo].some(e => !e.ok)) return true;
-      }
-      return false;
-    }
-
-    function contarArchivosValidos() {
-      let count = 0,
-        totalBytes = 0;
-      for (const campo in fileStore) {
-        fileStore[campo].forEach(e => {
-          if (e.ok) {
-            count++;
-            totalBytes += e.file.size;
-          }
-        });
-      }
-      for (const tipo of ['fiscal', 'extra']) {
-        if (pools[tipo]) pools[tipo].forEach(e => {
-          if (e.ok) {
-            count++;
-            totalBytes += e.file.size;
-          }
-        });
-      }
-      return {
-        count,
-        totalMB: (totalBytes / 1024 / 1024).toFixed(2)
-      };
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // ADJUNTOS DINÁMICOS (fiscal / extra)
-    // ═══════════════════════════════════════════════════════════════
-    const pools = {
-      fiscal: [],
-      extra: []
-    };
-
-    function agregarAdjunto(tipo) {
-      const inputId = tipo === 'fiscal' ? 'singleFileInputFiscal' : 'singleFileInputExtra';
-      const input = document.getElementById(inputId);
-      if (!input.files.length) {
-        mostrarAlerta('Seleccione un archivo primero.', 'warning');
-        return;
-      }
-      const file = input.files[0];
-
-      if (pools[tipo].length >= 10) {
-        mostrarAlerta('Máximo 10 archivos por sección.', 'warning');
-        return;
-      }
-
-      const sizeMB = file.size / 1024 / 1024;
-      const ok = sizeMB <= LIMITES_MB.adjunto;
-      pools[tipo].push({
-        file,
-        ok
+  function contarArchivosValidos() {
+    let count = 0,
+      totalBytes = 0;
+    for (const campo in fileStore) {
+      fileStore[campo].forEach(e => {
+        if (e.ok) {
+          count++;
+          totalBytes += e.file.size;
+        }
       });
+    }
+    for (const tipo of ['fiscal', 'extra']) {
+      if (pools[tipo]) pools[tipo].forEach(e => {
+        if (e.ok) {
+          count++;
+          totalBytes += e.file.size;
+        }
+      });
+    }
+    return {
+      count,
+      totalMB: (totalBytes / 1024 / 1024).toFixed(2)
+    };
+  }
 
-      if (ok) {
-        mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) agregado.`, 'success');
-      } else {
-        mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera 10 MB. Retíralo antes de guardar.`, 'danger');
-      }
+  // ═══════════════════════════════════════════════════════════════
+  // ADJUNTOS DINÁMICOS (fiscal / extra)
+  // ═══════════════════════════════════════════════════════════════
+  const pools = {
+    fiscal: [],
+    extra: []
+  };
 
-      renderListaAdj(tipo);
-      input.value = '';
+  function agregarAdjunto(tipo) {
+    const inputId = tipo === 'fiscal' ? 'singleFileInputFiscal' : 'singleFileInputExtra';
+    const input = document.getElementById(inputId);
+    if (!input.files.length) {
+      mostrarAlerta('Seleccione un archivo primero.', 'warning');
+      return;
+    }
+    const file = input.files[0];
+
+    if (pools[tipo].length >= 10) {
+      mostrarAlerta('Máximo 10 archivos por sección.', 'warning');
+      return;
     }
 
-    function eliminarAdjunto(tipo, index) {
-      const removed = pools[tipo].splice(index, 1)[0];
-      mostrarAlerta(`"${removed.file.name}" eliminado.`, 'info');
-      renderListaAdj(tipo);
+    const sizeMB = file.size / 1024 / 1024;
+    const ok = sizeMB <= LIMITES_MB.adjunto;
+    pools[tipo].push({
+      file,
+      ok
+    });
+
+    if (ok) {
+      mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) agregado.`, 'success');
+    } else {
+      mostrarAlerta(`"${file.name}" pesa ${sizeMB.toFixed(2)} MB y supera 10 MB. Retíralo antes de guardar.`, 'danger');
     }
 
-    function renderListaAdj(tipo) {
-      const listId = tipo === 'fiscal' ? 'adjuntosListFiscal' : 'adjuntosListExtra';
-      const countId = tipo === 'fiscal' ? 'contadorFiscal' : 'contadorExtra';
-      const lista = document.getElementById(listId);
-      document.getElementById(countId).textContent = pools[tipo].length;
+    renderListaAdj(tipo);
+    input.value = '';
+  }
 
-      if (!pools[tipo].length) {
-        lista.innerHTML = `
+  function eliminarAdjunto(tipo, index) {
+    const removed = pools[tipo].splice(index, 1)[0];
+    mostrarAlerta(`"${removed.file.name}" eliminado.`, 'info');
+    renderListaAdj(tipo);
+  }
+
+  function renderListaAdj(tipo) {
+    const listId = tipo === 'fiscal' ? 'adjuntosListFiscal' : 'adjuntosListExtra';
+    const countId = tipo === 'fiscal' ? 'contadorFiscal' : 'contadorExtra';
+    const lista = document.getElementById(listId);
+    document.getElementById(countId).textContent = pools[tipo].length;
+
+    if (!pools[tipo].length) {
+      lista.innerHTML = `
           <li class="list-group-item py-3 border-0 bg-transparent">
             <div class="orders-empty-state">
               <i class="fa-solid fa-circle-info"></i>
@@ -962,15 +961,15 @@ $result_departamentos = $result;
             </div>
           </li>
         `;
-        return;
-      }
+      return;
+    }
 
-      lista.innerHTML = pools[tipo].map((e, i) => {
-        const sizeMB = (e.file.size / 1024 / 1024).toFixed(2);
-        const cls = e.ok ? 'ok' : 'error';
-        const icon = e.ok ? 'fa-regular fa-file' : 'fa-solid fa-circle-xmark';
-        const meta = e.ok ? `${sizeMB} MB` : `${sizeMB} MB — excede 10 MB`;
-        return `
+    lista.innerHTML = pools[tipo].map((e, i) => {
+      const sizeMB = (e.file.size / 1024 / 1024).toFixed(2);
+      const cls = e.ok ? 'ok' : 'error';
+      const icon = e.ok ? 'fa-regular fa-file' : 'fa-solid fa-circle-xmark';
+      const meta = e.ok ? `${sizeMB} MB` : `${sizeMB} MB — excede 10 MB`;
+      return `
           <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 ${cls}" style="${!e.ok ? 'background: rgba(232, 68, 90, 0.05); border-color: var(--error);' : ''}">
             <span>
               <i class="${icon} me-2 ${!e.ok ? 'text-danger' : 'text-secondary'}"></i>
@@ -981,143 +980,143 @@ $result_departamentos = $result;
               <i class="fa-solid fa-trash-can"></i>
             </button>
           </li>`;
-      }).join('');
-    }
+    }).join('');
+  }
 
-    // ═══════════════════════════════════════════════════════════════
-    // SECCIONES DINÁMICAS POR TIPO
-    // ═══════════════════════════════════════════════════════════════
-    const secciones = {
-      'vehiculos': 'seccion-vehiculos',
-      'vehículos': 'seccion-vehiculos',
-      'maquinaria': 'seccion-maquinaria',
-      'mobiliario': 'seccion-mobiliario',
-      'inmuebles': 'seccion-inmuebles',
-      'herramientas': 'seccion-herramientas',
-      'tics': 'seccion-tics',
-      'tic': 'seccion-tics',
-    };
+  // ═══════════════════════════════════════════════════════════════
+  // SECCIONES DINÁMICAS POR TIPO
+  // ═══════════════════════════════════════════════════════════════
+  const secciones = {
+    'vehiculos': 'seccion-vehiculos',
+    'vehículos': 'seccion-vehiculos',
+    'maquinaria': 'seccion-maquinaria',
+    'mobiliario': 'seccion-mobiliario',
+    'inmuebles': 'seccion-inmuebles',
+    'herramientas': 'seccion-herramientas',
+    'tics': 'seccion-tics',
+    'tic': 'seccion-tics',
+  };
 
-    function normalizarTexto(str) {
-      return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-    }
+  function normalizarTexto(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
 
-    function mostrarSeccionDetalle() {
-      document.querySelectorAll('.section-detalle').forEach(el => el.classList.remove('visible'));
-      const select = document.getElementById('tipo_id');
-      const option = select.options[select.selectedIndex];
-      if (!option || !option.value) return;
-      const nombreTipo = normalizarTexto(option.text);
-      const prefijo = option.getAttribute('data-prefijo') || '';
-      document.getElementById('codigoPreview').innerHTML =
-        '<i class="fa-solid fa-barcode"></i> ' + prefijo + '-XXXX (se asignará al guardar)';
-      for (const [clave, idSec] of Object.entries(secciones)) {
-        if (nombreTipo.includes(normalizarTexto(clave))) {
-          const sec = document.getElementById(idSec);
-          if (sec) sec.classList.add('visible');
-          break;
-        }
+  function mostrarSeccionDetalle() {
+    document.querySelectorAll('.section-detalle').forEach(el => el.classList.remove('visible'));
+    const select = document.getElementById('tipo_id');
+    const option = select.options[select.selectedIndex];
+    if (!option || !option.value) return;
+    const nombreTipo = normalizarTexto(option.text);
+    const prefijo = option.getAttribute('data-prefijo') || '';
+    document.getElementById('codigoPreview').innerHTML =
+      '<i class="fa-solid fa-barcode"></i> ' + prefijo + '-XXXX (se asignará al guardar)';
+    for (const [clave, idSec] of Object.entries(secciones)) {
+      if (nombreTipo.includes(normalizarTexto(clave))) {
+        const sec = document.getElementById(idSec);
+        if (sec) sec.classList.add('visible');
+        break;
       }
     }
+  }
 
-    // ═══════════════════════════════════════════════════════════════
-    // ENVÍO DEL FORMULARIO
-    // ═══════════════════════════════════════════════════════════════
-    document.getElementById('activoForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+  // ═══════════════════════════════════════════════════════════════
+  // ENVÍO DEL FORMULARIO
+  // ═══════════════════════════════════════════════════════════════
+  document.getElementById('activoForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-      // 1. Bloquear si hay archivos inválidos
-      if (hayArchivosInvalidos()) {
-        mostrarAlerta(
-          'No se puede guardar. Hay archivos que superan el límite permitido. ' +
-          'Retira los archivos marcados en rojo e inténtalo de nuevo.',
-          'danger'
-        );
-        // Hacer scroll al primer chip en error
-        const primerError = document.querySelector('.file-chip.error, .adj-item.error');
-        if (primerError) primerError.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-        return;
-      }
+    // 1. Bloquear si hay archivos inválidos
+    if (hayArchivosInvalidos()) {
+      mostrarAlerta(
+        'No se puede guardar. Hay archivos que superan el límite permitido. ' +
+        'Retira los archivos marcados en rojo e inténtalo de nuevo.',
+        'danger'
+      );
+      // Hacer scroll al primer chip en error
+      const primerError = document.querySelector('.file-chip.error, .adj-item.error');
+      if (primerError) primerError.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      return;
+    }
 
-      // 2. Confirmación si hay archivos válidos
-      const {
-        count,
+    // 2. Confirmación si hay archivos válidos
+    const {
+      count,
+      totalMB
+    } = contarArchivosValidos();
+    if (count > 0) {
+      const confirmar = await mostrarConfirmacion({
+        archivos: count,
         totalMB
-      } = contarArchivosValidos();
-      if (count > 0) {
-        const confirmar = await mostrarConfirmacion({
-          archivos: count,
-          totalMB
-        });
-        if (!confirmar) return;
-      }
+      });
+      if (!confirmar) return;
+    }
 
-      // 3. Bloqueo de UI
-      UI.loading('Guardando activo...');
+    // 3. Bloqueo de UI
+    UI.loading('Guardando activo...');
 
-      // 4. Construir FormData
-      const fd = new FormData(this);
+    // 4. Construir FormData
+    const fd = new FormData(this);
 
-      // Agregar archivos del store
-      for (const [campo, entries] of Object.entries(fileStore)) {
-        entries.forEach(e => {
-          if (!e.ok) return;
-          if (campo === 'img_foto_general') {
-            fd.append('img_foto_general[]', e.file, e.file.name);
+    // Agregar archivos del store
+    for (const [campo, entries] of Object.entries(fileStore)) {
+      entries.forEach(e => {
+        if (!e.ok) return;
+        if (campo === 'img_foto_general') {
+          fd.append('img_foto_general[]', e.file, e.file.name);
+        } else {
+          fd.append(campo, e.file, e.file.name);
+        }
+      });
+    }
+
+    // Agregar adjuntos
+    pools.fiscal.forEach(e => {
+      if (!e.ok) return;
+      fd.append('documentos[]', e.file, e.file.name);
+      fd.append('documentos_tipo[]', 'expediente_predial');
+    });
+    pools.extra.forEach(e => {
+      if (!e.ok) return;
+      fd.append('documentos[]', e.file, e.file.name);
+      fd.append('documentos_tipo[]', 'extra');
+    });
+
+    // 5. Enviar
+    fetch(this.action, {
+        method: 'POST',
+        body: fd
+      })
+      .then(res => {
+        if (res.redirected) {
+          window.location.href = res.url;
+          return;
+        }
+        return res.text().then(() => {
+          if (res.status >= 400) {
+            UI.loading.hide();
+            mostrarAlerta('Ocurrió un error al guardar. Revisa el log del servidor.', 'danger');
           } else {
-            fd.append(campo, e.file, e.file.name);
+            window.location.href = res.url || 'list_activos.php';
           }
         });
-      }
-
-      // Agregar adjuntos
-      pools.fiscal.forEach(e => {
-        if (!e.ok) return;
-        fd.append('documentos[]', e.file, e.file.name);
-        fd.append('documentos_tipo[]', 'expediente_predial');
+      })
+      .catch(err => {
+        UI.loading.hide();
+        mostrarAlerta('Error de red: ' + err.message, 'danger');
       });
-      pools.extra.forEach(e => {
-        if (!e.ok) return;
-        fd.append('documentos[]', e.file, e.file.name);
-        fd.append('documentos_tipo[]', 'extra');
-      });
+  });
 
-      // 5. Enviar
-      fetch(this.action, {
-          method: 'POST',
-          body: fd
-        })
-        .then(res => {
-          if (res.redirected) {
-            window.location.href = res.url;
-            return;
-          }
-          return res.text().then(() => {
-            if (res.status >= 400) {
-              UI.loading.hide();
-              mostrarAlerta('Ocurrió un error al guardar. Revisa el log del servidor.', 'danger');
-            } else {
-              window.location.href = res.url || 'list_activos.php';
-            }
-          });
-        })
-        .catch(err => {
-          UI.loading.hide();
-          mostrarAlerta('Error de red: ' + err.message, 'danger');
-        });
-    });
-
-    // ═══════════════════════════════════════════════════════════════
-    // SINCRONIZAR DEPARTAMENTO AL SELECCIONAR RESPONSABLE
-    // ═══════════════════════════════════════════════════════════════
-    document.getElementById('responsable').addEventListener('change', function() {
-      const deptId = this.options[this.selectedIndex].getAttribute('data-departamento');
-      const sel = document.getElementById('departamento');
-      if (sel) sel.value = deptId || '';
-    });
-  </script>
+  // ═══════════════════════════════════════════════════════════════
+  // SINCRONIZAR DEPARTAMENTO AL SELECCIONAR RESPONSABLE
+  // ═══════════════════════════════════════════════════════════════
+  document.getElementById('responsable').addEventListener('change', function() {
+    const deptId = this.options[this.selectedIndex].getAttribute('data-departamento');
+    const sel = document.getElementById('departamento');
+    if (sel) sel.value = deptId || '';
+  });
+</script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>

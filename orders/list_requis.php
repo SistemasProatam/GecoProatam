@@ -146,12 +146,12 @@ while ($ent = $entidadesRes->fetch_assoc()) {
             <nav class="orders-breadcrumb">
                 <a href="<?= BASE_URL ?>/index.php">Inicio</a>
                 <span class="separator">›</span>
-                <span>Registro de Requisiciones</span>
+                <span>Requisiciones</span>
             </nav>
             <h1 class="orders-page-title">Requisiciones</h1>
         </div>
         <button class="btn-geco-primary" type="button" onclick="window.location.href='new_requis.php'">
-            <i class="fa-solid fa-circle-plus"></i> Agregar Requisición
+            <i class="fa-solid fa-plus"></i> Agregar
         </button>
     </div>
 

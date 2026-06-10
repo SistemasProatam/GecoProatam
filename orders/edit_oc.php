@@ -332,10 +332,10 @@ while ($archivo = $archivos->fetch_assoc()) {
                     <span class="separator">›</span>
                     <a href="<?= BASE_URL ?>/orders/list_oc.php">Órdenes de Compra</a>
                     <span class="separator">›</span>
-                    <span>Editar Orden</span>
+                    <span>Editar Orden de Compra</span>
                 </nav>
                 <div style="display:flex; align-items:center;">
-                    <h1 class="orders-page-title">Editar Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></h1>
+                    <h1 class="orders-page-title">Editar <?= htmlspecialchars($orden_compra['folio']) ?></h1>
                 </div>
             </div>
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start;">
@@ -347,378 +347,378 @@ while ($archivo = $archivos->fetch_assoc()) {
 
         <div class="orders-page-content">
 
-                <?php if (isset($mensaje_error)): ?>
-                    <div class="orders-alert orders-alert--danger alert-dismissible fade show mb-4" role="alert">
-                        <i class="fa-solid fa-triangle-exclamation"></i> <?= $mensaje_error ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <?php if (isset($mensaje_error)): ?>
+                <div class="orders-alert orders-alert--danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <?= $mensaje_error ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" id="formEditarOC" enctype="multipart/form-data">
+
+                <!-- ── Información General ── -->
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General</span>
                     </div>
-                <?php endif; ?>
+                    <div class="oc-card-body">
 
-                <form method="POST" id="formEditarOC" enctype="multipart/form-data">
-
-                    <!-- ── Información General ── -->
-                    <div class="oc-card mb-4">
-                        <div class="oc-card-header">
-                            <span class="oc-card-header__title"><i class="fa-solid fa-circle-info"></i> Información General</span>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Folio OC <span class="text-muted">(No editable)</span></label>
+                                <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['folio']) ?>" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Fecha de Solicitud <span class="text-muted">(No editable)</span></label>
+                                <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($orden_compra['fecha_solicitud'])) ?>" readonly>
+                            </div>
                         </div>
-                        <div class="oc-card-body">
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Folio OC <span class="text-muted">(No editable)</span></label>
-                            <input type="text" class="form-control" value="<?= htmlspecialchars($orden_compra['folio']) ?>" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Fecha de Solicitud <span class="text-muted">(No editable)</span></label>
-                            <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($orden_compra['fecha_solicitud'])) ?>" readonly>
-                        </div>
-                    </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Entidad <span class="text-danger">*</span></label>
+                                <select class="form-select" name="entidad_id" required>
+                                    <option value="">Seleccionar entidad</option>
+                                    <?php while ($entidad = $entidades->fetch_assoc()): ?>
+                                        <option value="<?= $entidad['id'] ?>" <?= $entidad['id'] == $orden_compra['entidad_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($entidad['nombre']) ?>
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
 
-                    <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Solicitante <span class="text-muted">(No editable)</span></label>
+                                <input type="text" class="form-control"
+                                    value="<?= htmlspecialchars($orden_compra['nombres'] . ' ' . $orden_compra['apellidos']) ?>" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Categoría <span class="text-danger">*</span></label>
+                                <select class="form-select" name="categoria_id" id="categoria_id" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <?php
+                                    $categorias->data_seek(0);
+                                    while ($categoria = $categorias->fetch_assoc()): ?>
+                                        <option value="<?= $categoria['id'] ?>"
+                                            <?= $categoria['id'] == $orden_compra['categoria_id'] ? 'selected' : '' ?>
+                                            data-es-subcontrato="<?= in_array($categoria['id'], [2, 5]) ? '1' : '0' ?>">
+                                            <?= htmlspecialchars($categoria['nombre']) ?>
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Proveedor <span class="text-danger">*</span></label>
+                                <select class="form-select" name="proveedor_id" required>
+                                    <option value="">Seleccionar proveedor</option>
+                                    <?php while ($proveedor = $proveedores->fetch_assoc()): ?>
+                                        <option value="<?= $proveedor['id'] ?>"
+                                            <?= $proveedor['id'] == $orden_compra['proveedor_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($proveedor['nombre'] ?: $proveedor['razon_social']) ?>
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Proyecto</label>
+                                <select class="form-select" name="proyecto_id" id="proyecto_id">
+                                    <option value="">Sin proyecto</option>
+                                    <?php while ($proyecto = $proyectos->fetch_assoc()): ?>
+                                        <option value="<?= $proyecto['id'] ?>"
+                                            <?= $proyecto['id'] == $orden_compra['proyecto_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($proyecto['nombre_proyecto']) ?>
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="oc-form-label">Obra</label>
+                                <select class="form-select" name="obra_id" id="obra_id">
+                                    <option value="">Sin obra</option>
+                                    <?php while ($obra = $obras->fetch_assoc()): ?>
+                                        <option value="<?= $obra['id'] ?>"
+                                            data-proyecto="<?= $obra['proyecto_id'] ?>"
+                                            <?= $obra['id'] == $orden_compra['obra_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($obra['nombre_obra']) ?> (<?= htmlspecialchars($obra['nombre_proyecto']) ?>)
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="col-md-6">
-                            <label class="oc-form-label">Entidad <span class="text-danger">*</span></label>
-                            <select class="form-select" name="entidad_id" required>
-                                <option value="">Seleccionar entidad</option>
-                                <?php while ($entidad = $entidades->fetch_assoc()): ?>
-                                    <option value="<?= $entidad['id'] ?>" <?= $entidad['id'] == $orden_compra['entidad_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($entidad['nombre']) ?>
-                                    </option>
-                                <?php endwhile; ?>
+                            <label class="oc-form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
+                            <select class="form-select" name="subcontrato_id" id="subcontrato_id_edit" <?= !$subcontrato_id ? 'disabled' : '' ?>>
+                                <option value="">-- Seleccionar subcontrato --</option>
+                                <?php if ($subcontrato_id): ?>
+                                    <option value="<?= $subcontrato_id ?>" selected><?= htmlspecialchars($subcontrato_nombre) ?></option>
+                                <?php endif; ?>
                             </select>
                         </div>
-
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Solicitante <span class="text-muted">(No editable)</span></label>
-                            <input type="text" class="form-control"
-                                value="<?= htmlspecialchars($orden_compra['nombres'] . ' ' . $orden_compra['apellidos']) ?>" readonly>
-                        </div>
                     </div>
+                </div>
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Categoría <span class="text-danger">*</span></label>
-                            <select class="form-select" name="categoria_id" id="categoria_id" required>
-                                <option value="">Seleccionar categoría</option>
-                                <?php
-                                $categorias->data_seek(0);
-                                while ($categoria = $categorias->fetch_assoc()): ?>
-                                    <option value="<?= $categoria['id'] ?>"
-                                        <?= $categoria['id'] == $orden_compra['categoria_id'] ? 'selected' : '' ?>
-                                        data-es-subcontrato="<?= in_array($categoria['id'], [2, 5]) ? '1' : '0' ?>">
-                                        <?= htmlspecialchars($categoria['nombre']) ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Proveedor <span class="text-danger">*</span></label>
-                            <select class="form-select" name="proveedor_id" required>
-                                <option value="">Seleccionar proveedor</option>
-                                <?php while ($proveedor = $proveedores->fetch_assoc()): ?>
-                                    <option value="<?= $proveedor['id'] ?>"
-                                        <?= $proveedor['id'] == $orden_compra['proveedor_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($proveedor['nombre'] ?: $proveedor['razon_social']) ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
+                <!-- ── Items ── -->
+                <div class="oc-card mb-4">
+                    <div class="oc-card-header">
+                        <span class="oc-card-header__title"><i class="fa-solid fa-list"></i> Items de la Orden de Compra</span>
                     </div>
+                    <div class="oc-card-body oc-card-body--items">
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Proyecto</label>
-                            <select class="form-select" name="proyecto_id" id="proyecto_id">
-                                <option value="">Sin proyecto</option>
-                                <?php while ($proyecto = $proyectos->fetch_assoc()): ?>
-                                    <option value="<?= $proyecto['id'] ?>"
-                                        <?= $proyecto['id'] == $orden_compra['proyecto_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($proyecto['nombre_proyecto']) ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="oc-form-label">Obra</label>
-                            <select class="form-select" name="obra_id" id="obra_id">
-                                <option value="">Sin obra</option>
-                                <?php while ($obra = $obras->fetch_assoc()): ?>
-                                    <option value="<?= $obra['id'] ?>"
-                                        data-proyecto="<?= $obra['proyecto_id'] ?>"
-                                        <?= $obra['id'] == $orden_compra['obra_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($obra['nombre_obra']) ?> (<?= htmlspecialchars($obra['nombre_proyecto']) ?>)
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="oc-form-label">Subcontrato <span class="text-muted" id="subcontrato_requerido_edit"></span></label>
-                        <select class="form-select" name="subcontrato_id" id="subcontrato_id_edit" <?= !$subcontrato_id ? 'disabled' : '' ?>>
-                            <option value="">-- Seleccionar subcontrato --</option>
-                            <?php if ($subcontrato_id): ?>
-                                <option value="<?= $subcontrato_id ?>" selected><?= htmlspecialchars($subcontrato_nombre) ?></option>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-                        </div>
-                    </div>
-
-                    <!-- ── Items ── -->
-                    <div class="oc-card mb-4">
-                        <div class="oc-card-header">
-                            <span class="oc-card-header__title"><i class="fa-solid fa-list"></i> Items de la Orden de Compra</span>
-                        </div>
-                        <div class="oc-card-body oc-card-body--items">
-
-                    <div class="orders-table-wrap orders-table-wrap--items mt-2">
-                        <table class="orders-table orders-table--items" id="itemsTable">
-                            <thead>
-                                <tr>
-                                    <th style="width: 5%">#</th>
-                                    <th style="width: 30%">Descripción</th>
-                                    <th style="width: 10%">Cantidad</th>
-                                    <th style="width: 12%">Unidad</th>
-                                    <th style="width: 15%">Concepto</th>
-                                    <th style="width: 14%">Precio Unit.</th>
-                                    <th style="width: 15%">Subtotal</th>
-                                    <th style="width: 10%" class="text-center">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="itemsTableBody">
-                                <?php
-                                $item_index = 0;
-                                $items->data_seek(0);
-                                while ($item = $items->fetch_assoc()):
-                                ?>
-                                    <tr class="item-row" data-index="<?= $item_index ?>">
-                                        <td><?= $item_index + 1 ?></td>
-                                        <td>
-                                            <input type="hidden"
-                                                name="items[<?= $item_index ?>][producto_id]"
-                                                value="<?= htmlspecialchars($item['producto_id'] ?? '') ?>">
-                                            <input type="hidden"
-                                                name="items[<?= $item_index ?>][tipo]"
-                                                value="<?= htmlspecialchars($item['tipo'] ?? 'producto') ?>">
-                                            <input type="text"
-                                                class="form-control item-descripcion"
-                                                name="items[<?= $item_index ?>][descripcion]"
-                                                value="<?= htmlspecialchars($item['descripcion']) ?>"
-                                                placeholder="Descripción del artículo"
-                                                required>
-                                        </td>
-                                        <td>
-                                            <input type="number"
-                                                class="form-control item-cantidad"
-                                                name="items[<?= $item_index ?>][cantidad]"
-                                                value="<?= htmlspecialchars($item['cantidad']) ?>"
-                                                step="0.001" min="0.001"
-                                                required>
-                                        </td>
-                                        <td>
-                                            <select class="form-select item-unidad"
-                                                name="items[<?= $item_index ?>][unidad_id]">
-                                                <option value="">— Unidad —</option>
-                                                <?php
-                                                $unidades->data_seek(0);
-                                                while ($unidad = $unidades->fetch_assoc()):
-                                                ?>
-                                                    <option value="<?= $unidad['id'] ?>"
-                                                        <?= $unidad['id'] == $item['unidad_id'] ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($unidad['nombre']) ?>
-                                                    </option>
-                                                <?php
-                                                endwhile; ?>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-select item-concepto"
-                                                name="items[<?= $item_index ?>][concepto_id]">
-                                                <option value="">— Concepto —</option>
-                                                <?php
-                                                $conceptos->data_seek(0);
-                                                while ($concepto = $conceptos->fetch_assoc()):
-                                                ?>
-                                                    <option value="<?= $concepto['id'] ?>"
-                                                        <?= (isset($item['concepto_id']) && $item['concepto_id'] == $concepto['id']) ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($concepto['nombre_concepto']) ?>
-                                                    </option>
-                                                <?php
-                                                endwhile; ?>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number"
-                                                class="form-control item-precio"
-                                                name="items[<?= $item_index ?>][precio_unitario]"
-                                                value="<?= htmlspecialchars($item['precio_unitario']) ?>"
-                                                step="0.01" min="0"
-                                                required>
-                                        </td>
-                                        <td>
-                                            <input type="text"
-                                                class="form-control item-subtotal"
-                                                value="$<?= number_format($item['subtotal'], 2) ?>"
-                                                readonly>
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn-action btn-action--delete remove-item-btn btn-remove-item" title="Eliminar ítem">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
+                        <div class="orders-table-wrap orders-table-wrap--items mt-2">
+                            <table class="orders-table orders-table--items" id="itemsTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%">#</th>
+                                        <th style="width: 30%">Descripción</th>
+                                        <th style="width: 10%">Cantidad</th>
+                                        <th style="width: 12%">Unidad</th>
+                                        <th style="width: 15%">Concepto</th>
+                                        <th style="width: 14%">Precio Unit.</th>
+                                        <th style="width: 15%">Subtotal</th>
+                                        <th style="width: 10%" class="text-center">Acción</th>
                                     </tr>
-                                <?php
-                                    $item_index++;
-                                endwhile;
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="row mt-3 mb-4">
-                        <div class="col-md-12 d-flex gap-2 flex-wrap">
-                            <button type="button" class="btn-geco-primary btn-add-item" id="btnAgregarItem">
-                                <i class="fa-solid fa-circle-plus"></i> Agregar Item Vacío
-                            </button>
-                            <button type="button" class="btn-geco-secondary" id="btnCatalogo">
-                                <i class="fa-solid fa-table-cells"></i> Agregar desde Catálogo
-                            </button>
+                                </thead>
+                                <tbody id="itemsTableBody">
+                                    <?php
+                                    $item_index = 0;
+                                    $items->data_seek(0);
+                                    while ($item = $items->fetch_assoc()):
+                                    ?>
+                                        <tr class="item-row" data-index="<?= $item_index ?>">
+                                            <td><?= $item_index + 1 ?></td>
+                                            <td>
+                                                <input type="hidden"
+                                                    name="items[<?= $item_index ?>][producto_id]"
+                                                    value="<?= htmlspecialchars($item['producto_id'] ?? '') ?>">
+                                                <input type="hidden"
+                                                    name="items[<?= $item_index ?>][tipo]"
+                                                    value="<?= htmlspecialchars($item['tipo'] ?? 'producto') ?>">
+                                                <input type="text"
+                                                    class="form-control item-descripcion"
+                                                    name="items[<?= $item_index ?>][descripcion]"
+                                                    value="<?= htmlspecialchars($item['descripcion']) ?>"
+                                                    placeholder="Descripción del artículo"
+                                                    required>
+                                            </td>
+                                            <td>
+                                                <input type="number"
+                                                    class="form-control item-cantidad"
+                                                    name="items[<?= $item_index ?>][cantidad]"
+                                                    value="<?= htmlspecialchars($item['cantidad']) ?>"
+                                                    step="0.001" min="0.001"
+                                                    required>
+                                            </td>
+                                            <td>
+                                                <select class="form-select item-unidad"
+                                                    name="items[<?= $item_index ?>][unidad_id]">
+                                                    <option value="">— Unidad —</option>
+                                                    <?php
+                                                    $unidades->data_seek(0);
+                                                    while ($unidad = $unidades->fetch_assoc()):
+                                                    ?>
+                                                        <option value="<?= $unidad['id'] ?>"
+                                                            <?= $unidad['id'] == $item['unidad_id'] ? 'selected' : '' ?>>
+                                                            <?= htmlspecialchars($unidad['nombre']) ?>
+                                                        </option>
+                                                    <?php
+                                                    endwhile; ?>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-select item-concepto"
+                                                    name="items[<?= $item_index ?>][concepto_id]">
+                                                    <option value="">— Concepto —</option>
+                                                    <?php
+                                                    $conceptos->data_seek(0);
+                                                    while ($concepto = $conceptos->fetch_assoc()):
+                                                    ?>
+                                                        <option value="<?= $concepto['id'] ?>"
+                                                            <?= (isset($item['concepto_id']) && $item['concepto_id'] == $concepto['id']) ? 'selected' : '' ?>>
+                                                            <?= htmlspecialchars($concepto['nombre_concepto']) ?>
+                                                        </option>
+                                                    <?php
+                                                    endwhile; ?>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number"
+                                                    class="form-control item-precio"
+                                                    name="items[<?= $item_index ?>][precio_unitario]"
+                                                    value="<?= htmlspecialchars($item['precio_unitario']) ?>"
+                                                    step="0.01" min="0"
+                                                    required>
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                    class="form-control item-subtotal"
+                                                    value="$<?= number_format($item['subtotal'], 2) ?>"
+                                                    readonly>
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn-action btn-action--delete remove-item-btn btn-remove-item" title="Eliminar ítem">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                        $item_index++;
+                                    endwhile;
+                                    ?>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                        </div>
-                    </div>
 
-
-
-
-
-                    <div class="oc-form-layout">
-                        <div class="oc-form-layout-main">
-                            <!-- ── Descripción y Observaciones ── -->
-                            <div class="oc-card mb-4">
-                                <div class="oc-card-header">
-                                    <span class="oc-card-header__title"><i class="fa-regular fa-file-lines"></i> Descripción y Observaciones</span>
-                                </div>
-                                <div class="oc-card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-12">
-                                            <label class="oc-form-label">Descripción</label>
-                                            <textarea class="form-control" name="descripcion" rows="4" placeholder="Descripción general de la orden de compra..."><?= htmlspecialchars($orden_compra['descripcion'] ?? '') ?></textarea>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="oc-form-label">Observaciones</label>
-                                            <textarea class="form-control" name="observaciones" rows="4" placeholder="Observaciones adicionales..."><?= htmlspecialchars($orden_compra['observaciones'] ?? '') ?></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="oc-form-layout-side">
-                            <!-- ── Archivos Adjuntos ── -->
-                            <div class="oc-card mb-4">
-                                <div class="oc-card-header">
-                                    <span class="oc-card-header__title"><i class="fa-solid fa-paperclip"></i> Archivos Adjuntos</span>
-                                </div>
-                                <div class="oc-card-body">
-                                    <div class="orders-alert orders-alert--info mb-3">
-                                        <i class="fa-solid fa-circle-info"></i>
-                                        <span>Puede gestionar los archivos existentes o subir nuevos documentos (Máx. 10MB).</span>
-                                    </div>
-
-                                    <h6 class="oc-form-label mb-2"><i class="fa-regular fa-folder-open"></i> Archivos Actuales</h6>
-                                    <div class="list-group list-group-flush mb-4" id="lista-archivos" style="border: 1px solid var(--gray-100,#e5e7eb); border-radius: 10px; overflow: hidden;">
-                                        <?php if (count($archivos_array) > 0): ?>
-                                            <?php foreach ($archivos_array as $archivo): ?>
-                                                <div class="list-group-item d-flex justify-content-between align-items-center archivo-item p-2" data-id="<?= $archivo['id'] ?>">
-                                                    <div class="text-truncate me-2" style="font-size: 0.85rem;">
-                                                        <i class="fa-regular fa-file-lines text-primary me-2"></i>
-                                                        <span title="<?= htmlspecialchars($archivo['nombre_archivo']) ?>"><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
-                                                    </div>
-                                                    <div class="d-flex gap-1">
-                                                        <a href="<?= BASE_URL ?>/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc" class="btn btn-sm btn-outline-info p-1" style="line-height:1" target="_blank" title="Descargar">
-                                                            <i class="fa-solid fa-download"></i>
-                                                        </a>
-                                                        <button type="button" class="btn-action btn-action--delete btn-eliminar-archivo p-1" style="height:28px; width:28px; line-height:1" data-archivo-id="<?= $archivo['id'] ?>" title="Eliminar">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <div class="text-center text-muted p-4">
-                                                <i class="fa-solid fa-inbox fs-4 d-block mb-1 opacity-50"></i>
-                                                <span class="small">Sin archivos adjuntos</span>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <div class="oc-files-dropzone">
-                                        <h6 class="oc-files-dropzone__title"><i class="fa-solid fa-cloud-arrow-up"></i> Subir Nuevos Documentos</h6>
-                                        <div class="oc-files-input-group mb-2">
-                                            <input type="file" class="form-control form-control-sm" id="nuevosArchivos" name="nuevos_archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
-                                        </div>
-                                        <div class="oc-form-hint" style="font-size: 11px;">
-                                            <i class="fa-solid fa-circle-info"></i> PDF, Excel, Word o Imagen (Máx. 10MB c/u).
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-3" id="preview-nuevos-archivos" style="display:none;">
-                                        <h6 class="oc-form-label small">Por subir:</h6>
-                                        <div class="list-group list-group-flush" id="lista-nuevos-archivos"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="oc-finance">
-                                <div class="oc-finance-title"><i class="fa-solid fa-calculator"></i> Resumen Financiero</div>
-                                <div class="oc-finance-row">
-                                    <span>Subtotal:</span>
-                                    <span id="display-subtotal">$<?= number_format($orden_compra['subtotal'], 3) ?></span>
-                                </div>
-                                <div class="oc-finance-row text-white">
-                                    <span class="d-flex align-items-center gap-2">
-                                        IVA:
-                                        <select class="form-select form-select-sm oc-finance-iva-select text-white"
-                                            name="iva_porcentaje"
-                                            id="iva_porcentaje">
-                                            <option value="0" <?= $iva_porcentaje == 0  ? 'selected' : '' ?>>0 %</option>
-                                            <option value="8" <?= $iva_porcentaje == 8  ? 'selected' : '' ?>>8 %</option>
-                                            <option value="16" <?= $iva_porcentaje == 16 ? 'selected' : '' ?>>16 %</option>
-                                        </select>
-                                    </span>
-                                    <span id="display-iva">$<?= number_format($orden_compra['iva'], 3) ?></span>
-                                </div>
-                                <div class="oc-finance-total">
-                                    <span class="lbl">TOTAL:</span>
-                                    <span class="amt" id="display-total">$<?= number_format($orden_compra['total'], 2) ?></span>
-                                </div>
-                            </div>
-
-                            <p class="oc-form-submit-note">
-                                <i class="fa-solid fa-circle-info"></i>
-                                Al guardar, esta orden será enviada nuevamente para su revisión.
-                            </p>
-
-                            <div class="oc-form-submit-actions">
-                                <button type="button" id="btnGuardar" class="btn-geco-primary">
-                                    <i class="fa-solid fa-circle-check"></i> Guardar y Reenviar
+                        <div class="row mt-3 mb-4">
+                            <div class="col-md-12 d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn-geco-primary btn-add-item" id="btnAgregarItem">
+                                    <i class="fa-solid fa-circle-plus"></i> Agregar Item Vacío
+                                </button>
+                                <button type="button" class="btn-geco-secondary" id="btnCatalogo">
+                                    <i class="fa-solid fa-table-cells"></i> Agregar desde Catálogo
                                 </button>
                             </div>
-
-                        </div> <!-- /side -->
-                    </div> <!-- /oc-form-layout -->
-
-                    <!-- Campo oculto archivos eliminados -->
-                    <input type="hidden" name="archivos_eliminados" id="archivos_eliminados" value="[]">
+                        </div>
+                    </div>
+                </div>
 
 
 
-                </form>
 
-    </div><!-- /orders-page-content -->
-</div><!-- /orders-page-container -->
+
+                <div class="oc-form-layout">
+                    <div class="oc-form-layout-main">
+                        <!-- ── Descripción y Observaciones ── -->
+                        <div class="oc-card mb-4">
+                            <div class="oc-card-header">
+                                <span class="oc-card-header__title"><i class="fa-regular fa-file-lines"></i> Descripción y Observaciones</span>
+                            </div>
+                            <div class="oc-card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label class="oc-form-label">Descripción</label>
+                                        <textarea class="form-control" name="descripcion" rows="4" placeholder="Descripción general de la orden de compra..."><?= htmlspecialchars($orden_compra['descripcion'] ?? '') ?></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="oc-form-label">Observaciones</label>
+                                        <textarea class="form-control" name="observaciones" rows="4" placeholder="Observaciones adicionales..."><?= htmlspecialchars($orden_compra['observaciones'] ?? '') ?></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="oc-form-layout-side">
+                        <!-- ── Archivos Adjuntos ── -->
+                        <div class="oc-card mb-4">
+                            <div class="oc-card-header">
+                                <span class="oc-card-header__title"><i class="fa-solid fa-paperclip"></i> Archivos Adjuntos</span>
+                            </div>
+                            <div class="oc-card-body">
+                                <div class="orders-alert orders-alert--info mb-3">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span>Puede gestionar los archivos existentes o subir nuevos documentos (Máx. 10MB).</span>
+                                </div>
+
+                                <h6 class="oc-form-label mb-2"><i class="fa-regular fa-folder-open"></i> Archivos Actuales</h6>
+                                <div class="list-group list-group-flush mb-4" id="lista-archivos" style="border: 1px solid var(--gray-100,#e5e7eb); border-radius: 10px; overflow: hidden;">
+                                    <?php if (count($archivos_array) > 0): ?>
+                                        <?php foreach ($archivos_array as $archivo): ?>
+                                            <div class="list-group-item d-flex justify-content-between align-items-center archivo-item p-2" data-id="<?= $archivo['id'] ?>">
+                                                <div class="text-truncate me-2" style="font-size: 0.85rem;">
+                                                    <i class="fa-regular fa-file-lines text-primary me-2"></i>
+                                                    <span title="<?= htmlspecialchars($archivo['nombre_archivo']) ?>"><?= htmlspecialchars($archivo['nombre_archivo']) ?></span>
+                                                </div>
+                                                <div class="d-flex gap-1">
+                                                    <a href="<?= BASE_URL ?>/orders/download_archivo.php?id=<?= $archivo['id'] ?>&tipo=oc" class="btn btn-sm btn-outline-info p-1" style="line-height:1" target="_blank" title="Descargar">
+                                                        <i class="fa-solid fa-download"></i>
+                                                    </a>
+                                                    <button type="button" class="btn-action btn-action--delete btn-eliminar-archivo p-1" style="height:28px; width:28px; line-height:1" data-archivo-id="<?= $archivo['id'] ?>" title="Eliminar">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <div class="text-center text-muted p-4">
+                                            <i class="fa-solid fa-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                            <span class="small">Sin archivos adjuntos</span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="oc-files-dropzone">
+                                    <h6 class="oc-files-dropzone__title"><i class="fa-solid fa-cloud-arrow-up"></i> Subir Nuevos Documentos</h6>
+                                    <div class="oc-files-input-group mb-2">
+                                        <input type="file" class="form-control form-control-sm" id="nuevosArchivos" name="nuevos_archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+                                    </div>
+                                    <div class="oc-form-hint" style="font-size: 11px;">
+                                        <i class="fa-solid fa-circle-info"></i> PDF, Excel, Word o Imagen (Máx. 10MB c/u).
+                                    </div>
+                                </div>
+
+                                <div class="mt-3" id="preview-nuevos-archivos" style="display:none;">
+                                    <h6 class="oc-form-label small">Por subir:</h6>
+                                    <div class="list-group list-group-flush" id="lista-nuevos-archivos"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oc-finance">
+                            <div class="oc-finance-title"><i class="fa-solid fa-calculator"></i> Resumen Financiero</div>
+                            <div class="oc-finance-row">
+                                <span>Subtotal:</span>
+                                <span id="display-subtotal">$<?= number_format($orden_compra['subtotal'], 3) ?></span>
+                            </div>
+                            <div class="oc-finance-row text-white">
+                                <span class="d-flex align-items-center gap-2">
+                                    IVA:
+                                    <select class="form-select form-select-sm oc-finance-iva-select text-white"
+                                        name="iva_porcentaje"
+                                        id="iva_porcentaje">
+                                        <option value="0" <?= $iva_porcentaje == 0  ? 'selected' : '' ?>>0 %</option>
+                                        <option value="8" <?= $iva_porcentaje == 8  ? 'selected' : '' ?>>8 %</option>
+                                        <option value="16" <?= $iva_porcentaje == 16 ? 'selected' : '' ?>>16 %</option>
+                                    </select>
+                                </span>
+                                <span id="display-iva">$<?= number_format($orden_compra['iva'], 3) ?></span>
+                            </div>
+                            <div class="oc-finance-total">
+                                <span class="lbl">TOTAL:</span>
+                                <span class="amt" id="display-total">$<?= number_format($orden_compra['total'], 2) ?></span>
+                            </div>
+                        </div>
+
+                        <p class="oc-form-submit-note">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Al guardar, esta orden será enviada nuevamente para su revisión.
+                        </p>
+
+                        <div class="oc-form-submit-actions">
+                            <button type="button" id="btnGuardar" class="btn-geco-primary">
+                                <i class="fa-solid fa-circle-check"></i> Guardar y Reenviar
+                            </button>
+                        </div>
+
+                    </div> <!-- /side -->
+                </div> <!-- /oc-form-layout -->
+
+                <!-- Campo oculto archivos eliminados -->
+                <input type="hidden" name="archivos_eliminados" id="archivos_eliminados" value="[]">
+
+
+
+            </form>
+
+        </div><!-- /orders-page-content -->
+    </div><!-- /orders-page-container -->
 
     <!-- ══════════════════════════════════════════════════════════
      MODAL CATÁLOGO — fuera de todo contenedor para evitar
@@ -1041,7 +1041,7 @@ while ($archivo = $archivos->fetch_assoc()) {
 
             const rows = document.querySelectorAll('#itemsTableBody .item-row');
             if (rows.length <= 1) {
-            showAlert('Debe haber al menos un item en la orden de compra.', 'warning');
+                showAlert('Debe haber al menos un item en la orden de compra.', 'warning');
                 return;
             }
 
@@ -1303,4 +1303,3 @@ while ($archivo = $archivos->fetch_assoc()) {
 </body>
 
 </html>
-

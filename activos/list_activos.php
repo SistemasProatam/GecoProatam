@@ -87,7 +87,8 @@ $result = $stmt->get_result();
 $tipos = $conn->query("SELECT id, nombre FROM activo_tipos WHERE activo = 1 ORDER BY nombre ASC");
 
 // ===== Helper: URL conservando filtros =====
-function urlFiltros(array $extras = []): string {
+function urlFiltros(array $extras = []): string
+{
     $base = ['q' => $_GET['q'] ?? '', 'tipo' => $_GET['tipo'] ?? '', 'estatus' => $_GET['estatus'] ?? ''];
     $merged = array_merge($base, $extras);
     $merged = array_filter($merged, fn($v) => $v !== '');
@@ -109,12 +110,12 @@ function urlFiltros(array $extras = []): string {
             <nav class="orders-breadcrumb">
                 <a href="<?= BASE_URL ?>/index.php">Inicio</a>
                 <span class="separator">›</span>
-                <span>Registro de Activos</span>
+                <span>Activos</span>
             </nav>
-            <h1 class="orders-page-title">Registro de Activos</h1>
+            <h1 class="orders-page-title">Activos</h1>
         </div>
         <a href="new_activo.php" class="btn-geco-primary">
-            <i class="fa-solid fa-circle-plus"></i> Agregar Activo
+            <i class="fa-solid fa-plus"></i> Agregar
         </a>
     </div>
 
@@ -138,7 +139,7 @@ function urlFiltros(array $extras = []): string {
         <div class="orders-filter-bar">
             <!-- Buscador (Izquierda) -->
             <form id="search-form" method="GET" class="orders-filter-search" style="margin: 0; padding: 0;">
-                <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo_id) ?>">
+                <input type="hidden" name="tipo" value="<?= htmlspecialchars($tipo_id) ?>">
                 <input type="hidden" name="estatus" value="<?= htmlspecialchars($estatus) ?>">
                 <div class="search-input-wrap">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -152,7 +153,7 @@ function urlFiltros(array $extras = []): string {
 
                 <select name="tipo" class="form-select" style="width: auto; min-width: 150px;">
                     <option value="">-- Tipo --</option>
-                    <?php 
+                    <?php
                     $tipos->data_seek(0);
                     while ($t = $tipos->fetch_assoc()): ?>
                         <option value="<?= $t['id'] ?>" <?= $tipo_id == $t['id'] ? 'selected' : '' ?>>
@@ -163,7 +164,7 @@ function urlFiltros(array $extras = []): string {
 
                 <select name="estatus" class="form-select" style="width: auto; min-width: 140px;">
                     <option value="">-- Estatus --</option>
-                    <option value="activo"   <?= $estatus == 'activo'   ? 'selected' : '' ?>>Activo</option>
+                    <option value="activo" <?= $estatus == 'activo'   ? 'selected' : '' ?>>Activo</option>
                     <option value="inactivo" <?= $estatus == 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
                 </select>
 
@@ -228,11 +229,11 @@ function urlFiltros(array $extras = []): string {
                                     <td class="text-end">
                                         <div class="d-flex gap-1 justify-content-end">
                                             <a href="details_activo.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver detalle"
-                                               data-bs-toggle="tooltip" data-bs-placement="top">
-                                                <i class="fa-solid fa-circle-info"></i>
+                                                data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="fa-regular fa-eye"></i>
                                             </a>
                                             <a href="edit_activo.php?id=<?= $row['id'] ?>" class="btn-action btn-action--edit" title="Editar activo"
-                                               data-bs-toggle="tooltip" data-bs-placement="top">
+                                                data-bs-toggle="tooltip" data-bs-placement="top">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
                                         </div>
@@ -315,85 +316,87 @@ function urlFiltros(array $extras = []): string {
 <?php include __DIR__ . "/../includes/footer.php"; ?>
 
 <script>
-// Función para actualizar la lista vía AJAX
-function initAJAX() {
-    const searchForm = document.getElementById('search-form');
-    const filterForm = document.getElementById('filter-form');
-    const container = document.getElementById('table-container-wrapper');
+    // Función para actualizar la lista vía AJAX
+    function initAJAX() {
+        const searchForm = document.getElementById('search-form');
+        const filterForm = document.getElementById('filter-form');
+        const container = document.getElementById('table-container-wrapper');
 
-    if (!searchForm || !filterForm || !container) return;
+        if (!searchForm || !filterForm || !container) return;
 
-    function updateList(url, pushState = true) {
-        container.style.opacity = '0.5';
-        container.style.pointerEvents = 'none';
+        function updateList(url, pushState = true) {
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
 
-        fetch(url)
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newContent = doc.getElementById('table-container-wrapper');
-                
-                if (newContent) {
-                    container.innerHTML = newContent.innerHTML;
-                }
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.getElementById('table-container-wrapper');
 
-                const newSearch = doc.getElementById('search-form');
-                const newFilter = doc.getElementById('filter-form');
-                if (newSearch) syncForm(searchForm, newSearch);
-                if (newFilter) syncForm(filterForm, newFilter);
+                    if (newContent) {
+                        container.innerHTML = newContent.innerHTML;
+                    }
 
-                container.style.opacity = '1';
-                container.style.pointerEvents = 'auto';
+                    const newSearch = doc.getElementById('search-form');
+                    const newFilter = doc.getElementById('filter-form');
+                    if (newSearch) syncForm(searchForm, newSearch);
+                    if (newFilter) syncForm(filterForm, newFilter);
 
-                if (pushState) window.history.pushState({}, '', url);
-                
-                // Reinicializar tooltips
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+
+                    if (pushState) window.history.pushState({}, '', url);
+
+                    // Reinicializar tooltips
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function(tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
                 });
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                container.style.opacity = '1';
-                container.style.pointerEvents = 'auto';
-            });
-    }
-
-    function syncForm(current, source) {
-        source.querySelectorAll('input, select').forEach(input => {
-            const target = current.querySelector(`[name="${input.name}"]`);
-            if (target) target.value = input.value;
-        });
-    }
-
-    document.addEventListener('click', function(e) {
-        const pageLink = e.target.closest('.page-link');
-        if (pageLink) {
-            e.preventDefault();
-            updateList(pageLink.href);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    });
 
-    [searchForm, filterForm].forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const params = new URLSearchParams(new FormData(filterForm));
-            const searchData = new FormData(searchForm);
-            params.set('q', searchData.get('q') || "");
-            
-            params.set('page', '1');
-            updateList('?' + params.toString());
+        function syncForm(current, source) {
+            source.querySelectorAll('input, select').forEach(input => {
+                const target = current.querySelector(`[name="${input.name}"]`);
+                if (target) target.value = input.value;
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const pageLink = e.target.closest('.page-link');
+            if (pageLink) {
+                e.preventDefault();
+                updateList(pageLink.href);
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
         });
-    });
 
-    filterForm.querySelectorAll('select').forEach(select => {
-        select.addEventListener('change', () => filterForm.requestSubmit());
-    });
-}
+        [searchForm, filterForm].forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const params = new URLSearchParams(new FormData(filterForm));
+                const searchData = new FormData(searchForm);
+                params.set('q', searchData.get('q') || "");
 
-document.addEventListener('DOMContentLoaded', initAJAX);
+                params.set('page', '1');
+                updateList('?' + params.toString());
+            });
+        });
+
+        filterForm.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', () => filterForm.requestSubmit());
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initAJAX);
 </script>
-

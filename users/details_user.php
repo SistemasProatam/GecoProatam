@@ -21,8 +21,8 @@ $res = $stmt->get_result();
 $user = $res->fetch_assoc();
 
 if (!$user) {
-    header("Location: list_users.php?error=Usuario no encontrado");
-    exit;
+  header("Location: list_users.php?error=Usuario no encontrado");
+  exit;
 }
 ?>
 
@@ -48,8 +48,8 @@ if (!$user) {
       <a href="list_users.php" class="btn-geco-outline">
         <i class="fa-solid fa-arrow-left"></i> Volver al Listado
       </a>
-      <a href="edit_user.php?id=<?= $user['id'] ?>" class="btn-geco-primary">
-        <i class="fa-solid fa-pen-to-square"></i> Editar Usuario
+      <a href="edit_user.php?id=<?= $user['id'] ?>" class="btn-geco-secondary">
+        <i class="fa-solid fa-pen-to-square"></i> Editar
       </a>
     </div>
   </div>
@@ -60,8 +60,8 @@ if (!$user) {
       <div class="user-avatar">
         <?php if ($user['foto_jpg']): ?>
           <img src="../uploads/usuarios/<?= htmlspecialchars($user['foto_jpg']) ?>"
-               alt="Foto de <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?>"
-               class="rounded-circle profile-avatar">
+            alt="Foto de <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?>"
+            class="rounded-circle profile-avatar">
         <?php else: ?>
           <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold profile-avatar-placeholder">
             <?= getInitials($user['nombres'], $user['apellidos']) ?>
@@ -161,21 +161,21 @@ if (!$user) {
       <div class="documents-grid">
         <?php
         $documentos = [
-            'curriculum_pdf' => ['icon' => 'fa-regular fa-file-pdf', 'title' => 'Curriculum Vitae'],
-            'identificacion_pdf' => ['icon' => 'fa-regular fa-id-card', 'title' => 'Identificación Oficial'],
-            'acta_nacimiento_pdf' => ['icon' => 'fa-regular fa-file-lines', 'title' => 'Acta de Nacimiento'],
-            'curp_pdf' => ['icon' => 'fa-regular fa-file', 'title' => 'CURP'],
-            'situacion_fiscal_pdf' => ['icon' => 'fa-solid fa-file-invoice-dollar', 'title' => 'Constancia Fiscal'],
-            'nss_pdf' => ['icon' => 'fa-solid fa-shield-halved', 'title' => 'Seguro Social (NSS)'],
-            'comprobante_domicilio_pdf' => ['icon' => 'fa-solid fa-house', 'title' => 'Comprobante Domicilio'],
-            'foto_jpg' => ['icon' => 'fa-regular fa-image', 'title' => 'Foto Infantil JPG'],
-            'comprobante_estudios_pdf' => ['icon' => 'fa-solid fa-graduation-cap', 'title' => 'Comprobante Estudios'],
-            'credencial_pdf' => ['icon' => 'fa-solid fa-id-badge', 'title' => 'Credencial Corp.'],
-            'acuerdo_confidencialidad_pdf' => ['icon' => 'fa-solid fa-lock', 'title' => 'Acuerdo Confidencialidad']
+          'curriculum_pdf' => ['icon' => 'fa-regular fa-file-pdf', 'title' => 'Curriculum Vitae'],
+          'identificacion_pdf' => ['icon' => 'fa-regular fa-id-card', 'title' => 'Identificación Oficial'],
+          'acta_nacimiento_pdf' => ['icon' => 'fa-regular fa-file-lines', 'title' => 'Acta de Nacimiento'],
+          'curp_pdf' => ['icon' => 'fa-regular fa-file', 'title' => 'CURP'],
+          'situacion_fiscal_pdf' => ['icon' => 'fa-solid fa-file-invoice-dollar', 'title' => 'Constancia Fiscal'],
+          'nss_pdf' => ['icon' => 'fa-solid fa-shield-halved', 'title' => 'Seguro Social (NSS)'],
+          'comprobante_domicilio_pdf' => ['icon' => 'fa-solid fa-house', 'title' => 'Comprobante Domicilio'],
+          'foto_jpg' => ['icon' => 'fa-regular fa-image', 'title' => 'Foto Infantil JPG'],
+          'comprobante_estudios_pdf' => ['icon' => 'fa-solid fa-graduation-cap', 'title' => 'Comprobante Estudios'],
+          'credencial_pdf' => ['icon' => 'fa-solid fa-id-badge', 'title' => 'Credencial Corp.'],
+          'acuerdo_confidencialidad_pdf' => ['icon' => 'fa-solid fa-lock', 'title' => 'Acuerdo Confidencialidad']
         ];
 
         foreach ($documentos as $campo => $info):
-            $archivo = $user[$campo] ?? null;
+          $archivo = $user[$campo] ?? null;
         ?>
           <div class="document-card">
             <div>
@@ -218,26 +218,26 @@ if (!$user) {
         $contratos = $stmt_contratos->get_result();
 
         if ($contratos->num_rows > 0):
-            while ($contrato = $contratos->fetch_assoc()):
+          while ($contrato = $contratos->fetch_assoc()):
         ?>
-              <div class="list-group-item d-flex justify-content-between align-items-center px-3 py-3 border rounded mb-2 bg-light">
-                <div class="d-flex align-items-center">
-                  <i class="fa-regular fa-file-pdf text-danger fs-4 me-3"></i>
-                  <div>
-                    <h6 class="mb-0 fw-bold contrato-title">Contrato - <?= htmlspecialchars($contrato['tipo_contrato'] ?? 'Sin tipo') ?></h6>
-                    <small class="text-muted">Documento Legal</small>
-                  </div>
-                </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center px-3 py-3 border rounded mb-2 bg-light">
+              <div class="d-flex align-items-center">
+                <i class="fa-regular fa-file-pdf text-danger fs-4 me-3"></i>
                 <div>
-                  <a href="<?= htmlspecialchars($contrato['ruta_archivo']) ?>" target="_blank" class="btn btn-sm btn-download">
-                    <i class="fa-solid fa-download me-1"></i> Descargar
-                  </a>
+                  <h6 class="mb-0 fw-bold contrato-title">Contrato - <?= htmlspecialchars($contrato['tipo_contrato'] ?? 'Sin tipo') ?></h6>
+                  <small class="text-muted">Documento Legal</small>
                 </div>
               </div>
-            <?php
-            endwhile;
+              <div>
+                <a href="<?= htmlspecialchars($contrato['ruta_archivo']) ?>" target="_blank" class="btn btn-sm btn-download">
+                  <i class="fa-solid fa-download me-1"></i> Descargar
+                </a>
+              </div>
+            </div>
+          <?php
+          endwhile;
         else:
-        ?>
+          ?>
           <div class="orders-empty-state">
             <i class="fa-regular fa-folder-open"></i>
             <p>No hay contratos registrados para este usuario.</p>
@@ -251,4 +251,3 @@ if (!$user) {
 </div>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-

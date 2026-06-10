@@ -155,7 +155,7 @@ if ($obrasRes) {
             <h1 class="orders-page-title">Órdenes de Compra</h1>
         </div>
         <a href="new_order.php" class="btn-geco-primary">
-            <i class="fa-solid fa-plus"></i> Agregar Nueva
+            <i class="fa-solid fa-plus"></i> Agregar
         </a>
     </div>
 

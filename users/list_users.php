@@ -89,7 +89,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <h1 class="orders-page-title">Usuarios</h1>
     </div>
     <a href="add_user.php" class="btn-geco-primary">
-      <i class="fa-solid fa-user-plus"></i> Agregar Usuario
+      <i class="fa-solid fa-plus"></i> Agregar
     </a>
   </div>
 
