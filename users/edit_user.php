@@ -37,6 +37,7 @@ $stmt_contratos->close();
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<title>Editar Usuario | GECO Proatam</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -57,7 +58,7 @@ $stmt_contratos->close();
       <h1 class="orders-page-title">Editar <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
     </div>
     <a href="details_user.php?id=<?= $user['id'] ?>" class="btn-geco-outline">
-      <i class="fa-solid fa-arrow-left"></i> Volver al Perfil
+      <i class="fa-solid fa-arrow-left"></i> Volver
     </a>
   </div>
 

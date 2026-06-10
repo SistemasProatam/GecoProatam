@@ -139,6 +139,7 @@ if ($obrasRes) {
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<title>Órdenes de Compra | GECO Proatam</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

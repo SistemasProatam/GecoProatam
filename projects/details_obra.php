@@ -306,11 +306,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <head>
   <meta charset="UTF-8">
-  <title>Detalles de Obra - <?= htmlspecialchars($obra['nombre_obra']) ?></title>
+  <title>Detalles de Obra | GECO Proatam</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/details_obra.css">
@@ -359,13 +358,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="kpi-card__value">$<?= number_format($obra['costo_directo'], 2) ?></p>
         <p class="kpi-card__sub">Presupuesto asignado a la obra</p>
       </div>
-      
+
       <div class="kpi-card kpi-card--amber">
         <p class="kpi-card__label">Monto Utilizado</p>
         <p class="kpi-card__value">$<?= number_format($obra['costo_directo_utilizado'], 2) ?></p>
         <p class="kpi-card__sub">Asignado a subcontratos / OC</p>
       </div>
-      
+
       <div class="kpi-card <?= $costo_disponible < 0 ? 'kpi-card--red' : 'kpi-card--green' ?>">
         <p class="kpi-card__label">Monto Disponible</p>
         <p class="kpi-card__value">$<?= number_format($costo_disponible, 2) ?></p>
@@ -409,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
         </div>
       </div>
-      
+
       <!-- Información Financiera -->
       <div class="col-md-6">
         <div class="orders-card p-4 h-100">
@@ -425,13 +424,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <span class="geco-field__label">Costo Directo</span>
               <span class="geco-field__value fw-bold" style="color: var(--p-600);">$<?= number_format($obra['costo_directo'], 2) ?></span>
             </div>
-            
+
             <div class="border-top pt-3">
               <span class="geco-field__label d-block mb-2">Progreso de Presupuesto Directo</span>
               <div class="d-flex align-items-center gap-3">
                 <div class="progress flex-grow-1" style="height: 8px; border-radius: 4px;">
-                  <div class="progress-bar <?= $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success') ?>" 
-                       role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
+                  <div class="progress-bar <?= $porcentaje_utilizado > 90 ? 'bg-danger' : ($porcentaje_utilizado > 70 ? 'bg-warning' : 'bg-success') ?>"
+                    role="progressbar" style="width: <?= min($porcentaje_utilizado, 100) ?>%"></div>
                 </div>
                 <span class="fw-bold small text-dark"><?= number_format($porcentaje_utilizado, 1) ?>%</span>
               </div>
@@ -1271,23 +1270,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function scEjecutarGuardar(id, proveedor_id, total, pct, desc) {
-      var payload = id ?
-        {
-          action: 'actualizar_subcontrato',
-          id: id,
-          proveedor_id: proveedor_id,
-          total_estimado: total,
-          anticipo_pct: pct,
-          descripcion: desc
-        } :
-        {
-          action: 'crear_subcontrato',
-          obra_id: SC_OBRA_ID,
-          proveedor_id: proveedor_id,
-          total_estimado: total,
-          anticipo_pct: pct,
-          descripcion: desc
-        };
+      var payload = id ? {
+        action: 'actualizar_subcontrato',
+        id: id,
+        proveedor_id: proveedor_id,
+        total_estimado: total,
+        anticipo_pct: pct,
+        descripcion: desc
+      } : {
+        action: 'crear_subcontrato',
+        obra_id: SC_OBRA_ID,
+        proveedor_id: proveedor_id,
+        total_estimado: total,
+        anticipo_pct: pct,
+        descripcion: desc
+      };
       scAjax(payload, function(e, r) {
         if (!r.success) {
           scToast(r.error || 'Error al guardar', 'error');
@@ -1617,13 +1614,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="<?= BASE_URL ?>/assets/scripts/catalogo-obras.js"></script>
 
   <?php
-include __DIR__ . "/../includes/footer.php"; ?>
+  include __DIR__ . "/../includes/footer.php"; ?>
 
 </body>
 
 </html>
-
-
-
-
-

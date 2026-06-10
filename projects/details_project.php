@@ -50,6 +50,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
+<title>Detalles del Proyecto | GECO Proatam</title>
 
 <div class="orders-page-container">
 
@@ -68,7 +69,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
         Periodo: <?= date('d/m/Y', strtotime($proyecto['fecha_inicio'])) ?> - <?= date('d/m/Y', strtotime($proyecto['fecha_fin'])) ?>
       </div>
     </div>
-    
+
     <!-- Action Buttons -->
     <div class="actions-group">
       <a href="list_project.php" class="btn-geco-outline">
@@ -88,7 +89,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
       </button>
     </div>
   </div>
- 
+
   <!-- KPI Budget Dashboard -->
   <div class="kpi-grid kpi-grid--3 mb-4">
     <div class="kpi-card kpi-card--green">
@@ -96,20 +97,20 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
       <p class="kpi-card__value">$<?= number_format($proyecto['costo_directo'], 2) ?></p>
       <p class="kpi-card__sub">Presupuesto inicial contratado</p>
     </div>
-    
+
     <div class="kpi-card kpi-card--amber">
       <p class="kpi-card__label">Monto Utilizado</p>
       <p class="kpi-card__value">$<?= number_format($proyecto['costo_directo_utilizado'], 2) ?></p>
       <p class="kpi-card__sub">Asignado a obras</p>
     </div>
-    
+
     <div class="kpi-card <?= $costo_disponible_proyecto < 0 ? 'kpi-card--red' : 'kpi-card--green' ?>">
       <p class="kpi-card__label">Monto Disponible</p>
       <p class="kpi-card__value">$<?= number_format($costo_disponible_proyecto, 2) ?></p>
       <p class="kpi-card__sub">Presupuesto libre</p>
     </div>
   </div>
- 
+
   <!-- Info Panels (General & Financial) -->
   <div class="row g-4 mb-4">
     <!-- Información General -->
@@ -138,7 +139,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
         </div>
       </div>
     </div>
-    
+
     <!-- Información Financiera -->
     <div class="col-md-6">
       <div class="orders-card p-4 h-100">
@@ -176,8 +177,8 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
             <span class="geco-field__label d-block mb-2">Progreso de Presupuesto Directo</span>
             <div class="d-flex align-items-center gap-3">
               <div class="progress flex-grow-1" style="height: 8px; border-radius: 4px;">
-                <div class="progress-bar <?= $porcentaje_utilizado_proyecto > 90 ? 'bg-danger' : ($porcentaje_utilizado_proyecto > 70 ? 'bg-warning' : 'bg-success') ?>" 
-                     role="progressbar" style="width: <?= min($porcentaje_utilizado_proyecto, 100) ?>%"></div>
+                <div class="progress-bar <?= $porcentaje_utilizado_proyecto > 90 ? 'bg-danger' : ($porcentaje_utilizado_proyecto > 70 ? 'bg-warning' : 'bg-success') ?>"
+                  role="progressbar" style="width: <?= min($porcentaje_utilizado_proyecto, 100) ?>%"></div>
               </div>
               <span class="fw-bold small text-dark"><?= number_format($porcentaje_utilizado_proyecto, 1) ?>%</span>
             </div>
@@ -359,7 +360,10 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
             document.getElementById("formEditarProyecto").addEventListener("submit", function(e) {
               e.preventDefault();
               UI.loading("Actualizando...");
-              fetch("update_project.php", { method: "POST", body: new FormData(this) })
+              fetch("update_project.php", {
+                  method: "POST",
+                  body: new FormData(this)
+                })
                 .then(res => res.json())
                 .then(resp => {
                   UI.loading.hide();
@@ -451,7 +455,10 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
     const formData = new FormData(form);
 
     UI.loading("Subiendo...");
-    fetch('upload_archivo.php', { method: 'POST', body: formData })
+    fetch('upload_archivo.php', {
+        method: 'POST',
+        body: formData
+      })
       .then(res => res.json())
       .then(data => {
         UI.loading.hide();
@@ -715,9 +722,38 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 
       const ws = XLSX.utils.aoa_to_sheet(rows);
 
-      ws['!cols'] = [
-        { wch: 8 }, { wch: 15 }, { wch: 50 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 15 }, { wch: 3 },
-        { wch: 12 }, { wch: 25 }, { wch: 40 }, { wch: 10 }, { wch: 12 }, { wch: 15 }, { wch: 12 }
+      ws['!cols'] = [{
+          wch: 8
+        }, {
+          wch: 15
+        }, {
+          wch: 50
+        }, {
+          wch: 10
+        }, {
+          wch: 10
+        }, {
+          wch: 12
+        }, {
+          wch: 15
+        }, {
+          wch: 3
+        },
+        {
+          wch: 12
+        }, {
+          wch: 25
+        }, {
+          wch: 40
+        }, {
+          wch: 10
+        }, {
+          wch: 12
+        }, {
+          wch: 15
+        }, {
+          wch: 12
+        }
       ];
       let safeSheetName = sheetName.replace(/[\[\]\*\?\/\\]/g, '').replace(/:/g, '-');
       safeSheetName = safeSheetName.substring(0, 31);
@@ -731,4 +767,3 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-

@@ -135,6 +135,7 @@ while ($ent = $entidadesRes->fetch_assoc()) {
 }
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<title>Requisiciones | GECO Proatam</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

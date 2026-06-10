@@ -74,6 +74,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<title>Usuarios | GECO Proatam</title>
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div class="orders-page-container">

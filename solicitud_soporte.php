@@ -64,6 +64,7 @@ while ($row = $result_activos->fetch_assoc()) {
 
 
 <?php include __DIR__ . "/includes/navbar.php"; ?>
+<title>Solicitud de Mantenimiento | GECO Proatam</title>
 
 <div class="orders-page-container">
 

@@ -312,15 +312,15 @@ while ($archivo = $archivos->fetch_assoc()) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Editar Orden de Compra <?= htmlspecialchars($orden_compra['folio']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-    <link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+    <title>Editar Orden de Compra | GECO Proatam</title>
 
 
 
 <body>
     <?php include __DIR__ . "/../includes/navbar.php"; ?>
+
 
     <div class="orders-page-container">
 

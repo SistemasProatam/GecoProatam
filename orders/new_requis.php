@@ -61,7 +61,7 @@ $folio = "REQ-" . str_pad($num, 4, "0", STR_PAD_LEFT);
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-
+<title>Nueva Requisición | GECO Proatam</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

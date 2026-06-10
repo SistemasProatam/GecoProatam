@@ -6,13 +6,19 @@ preventCaching();
 require_once __DIR__ . "/../conexion.php";
 
 $id = (int)($_GET['id'] ?? 0);
-if (!$id) { header("Location: list_activos.php"); exit; }
+if (!$id) {
+  header("Location: list_activos.php");
+  exit;
+}
 
 $stmt = $conn->prepare("SELECT * FROM activos WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $activo = $stmt->get_result()->fetch_assoc();
-if (!$activo) { header("Location: list_activos.php?error=no_encontrado"); exit; }
+if (!$activo) {
+  header("Location: list_activos.php?error=no_encontrado");
+  exit;
+}
 
 $stmt_tipo = $conn->prepare("SELECT nombre, prefijo FROM activo_tipos WHERE id = ?");
 $stmt_tipo->bind_param("i", $activo['tipo_id']);
@@ -21,19 +27,20 @@ $tipo_row  = $stmt_tipo->get_result()->fetch_assoc();
 $tipo_norm = iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($tipo_row['nombre'] ?? ''));
 
 if (!function_exists('fetchRow')) {
-    function fetchRow($conn, $sql, $id) {
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc() ?? [];
-    }
+  function fetchRow($conn, $sql, $id)
+  {
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc() ?? [];
+  }
 }
 
 $dv  = str_contains($tipo_norm, 'vehiculo')   ? fetchRow($conn, "SELECT * FROM vehiculos_detalle    WHERE activo_id=?", $id) : [];
 $dm  = str_contains($tipo_norm, 'maquinaria') ? fetchRow($conn, "SELECT * FROM maquinaria_detalle   WHERE activo_id=?", $id) : [];
 $dmb = str_contains($tipo_norm, 'mobiliario') ? fetchRow($conn, "SELECT * FROM mobiliario_detalle   WHERE activo_id=?", $id) : [];
 $di  = str_contains($tipo_norm, 'inmueble')   ? fetchRow($conn, "SELECT * FROM inmuebles_detalle    WHERE activo_id=?", $id) : [];
-$dh  = str_contains($tipo_norm, 'herramienta')? fetchRow($conn, "SELECT * FROM herramientas_detalle WHERE activo_id=?", $id) : [];
+$dh  = str_contains($tipo_norm, 'herramienta') ? fetchRow($conn, "SELECT * FROM herramientas_detalle WHERE activo_id=?", $id) : [];
 $dt  = str_contains($tipo_norm, 'tic')        ? fetchRow($conn, "SELECT * FROM tics_detalle          WHERE activo_id=?", $id) : [];
 
 $result_tipos         = $conn->query("SELECT id, nombre, prefijo FROM activo_tipos WHERE activo=1 ORDER BY nombre ASC");
@@ -51,36 +58,43 @@ $stmt_imgs->execute();
 $imagenes = $stmt_imgs->get_result()->fetch_all(MYSQLI_ASSOC);
 
 if (!function_exists('v')) {
-    function v($arr, $key, $default = '') { return htmlspecialchars($arr[$key] ?? $default); }
+  function v($arr, $key, $default = '')
+  {
+    return htmlspecialchars($arr[$key] ?? $default);
+  }
 }
 if (!function_exists('sel')) {
-    function sel($arr, $key, $value) { return (isset($arr[$key]) && $arr[$key] == $value) ? 'selected' : ''; }
+  function sel($arr, $key, $value)
+  {
+    return (isset($arr[$key]) && $arr[$key] == $value) ? 'selected' : '';
+  }
 }
 
 // Helpers to identify specific documents or images
 if (!function_exists('findDoc')) {
-    function findDoc($documentos, $tipo) {
-        foreach ($documentos as $d) {
-            if ($d['tipo_documento'] === $tipo) return $d;
-        }
-        return null;
+  function findDoc($documentos, $tipo)
+  {
+    foreach ($documentos as $d) {
+      if ($d['tipo_documento'] === $tipo) return $d;
     }
+    return null;
+  }
 }
 if (!function_exists('findImg')) {
-    function findImg($imagenes, $tipo) {
-        foreach ($imagenes as $img) {
-            if ($img['tipo_imagen'] === $tipo) return $img;
-        }
-        return null;
+  function findImg($imagenes, $tipo)
+  {
+    foreach ($imagenes as $img) {
+      if ($img['tipo_imagen'] === $tipo) return $img;
     }
+    return null;
+  }
 }
 ?>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-
-
+<title>Editar | GECO Proatam</title>
 
 <div class="orders-page-container">
 
@@ -94,10 +108,9 @@ if (!function_exists('findImg')) {
         <span class="separator">›</span>
         <span>Editar Activo</span>
       </nav>
-      <h1 class="orders-page-title">Editar Activo: <?= htmlspecialchars($activo['codigo']) ?></h1>
+      <h1 class="orders-page-title">Editar <?= htmlspecialchars($activo['codigo']) ?></h1>
     </div>
-    <a href="details_activo.php?id=<?= $id ?>" class="btn-geco-outline">
-      ← Volver al Detalle
+    <a href="details_activo.php?id=<?= $id ?>" class="btn-geco-outline"><i class="fa-solid fa-arrow-left"></i> Volver al Detalle
     </a>
   </div>
 
@@ -117,13 +130,13 @@ if (!function_exists('findImg')) {
 
   <?php if (isset($_GET['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-      <i class="bi bi-exclamation-octagon-fill"></i> 
-      <?php 
-        $err = $_GET['error'];
-        if ($err === 'campos_requeridos') echo 'Por favor, complete todos los campos obligatorios.';
-        elseif ($err === 'db') echo 'Error al guardar los cambios en la base de datos.';
-        elseif ($err === 'no_encontrado') echo 'El activo especificado no existe.';
-        else echo 'Ocurrió un error inesperado al procesar la solicitud.';
+      <i class="bi bi-exclamation-octagon-fill"></i>
+      <?php
+      $err = $_GET['error'];
+      if ($err === 'campos_requeridos') echo 'Por favor, complete todos los campos obligatorios.';
+      elseif ($err === 'db') echo 'Error al guardar los cambios en la base de datos.';
+      elseif ($err === 'no_encontrado') echo 'El activo especificado no existe.';
+      else echo 'Ocurrió un error inesperado al procesar la solicitud.';
       ?>
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -157,7 +170,7 @@ if (!function_exists('findImg')) {
             </select>
             <input type="hidden" name="tipo_id" value="<?= $activo['tipo_id'] ?>" />
           </div>
-          
+
           <div class="col-md-6 col-lg-3">
             <label class="oc-form-label">Código de Activo</label>
             <div class="codigo-preview">
@@ -631,9 +644,9 @@ if (!function_exists('findImg')) {
               <!-- Fotos Generales -->
               <div class="col-md-4">
                 <label class="oc-form-label">Fotos Generales</label>
-                <?php 
+                <?php
                 $f_gen = array_filter($imagenes, fn($im) => $im['tipo_imagen'] === 'foto_general');
-                if (!empty($f_gen)): 
+                if (!empty($f_gen)):
                 ?>
                   <div class="row g-2 mb-2">
                     <?php foreach ($f_gen as $img): ?>
@@ -661,7 +674,8 @@ if (!function_exists('findImg')) {
               <!-- Foto Placa -->
               <div class="col-md-4">
                 <label class="oc-form-label">Foto de Placa</label>
-                <?php $f_placa = findImg($imagenes, 'foto_placa'); if ($f_placa): ?>
+                <?php $f_placa = findImg($imagenes, 'foto_placa');
+                if ($f_placa): ?>
                   <div class="mb-2 p-2 rounded border bg-light text-center">
                     <img src="<?= htmlspecialchars($f_placa['ruta_archivo']) ?>" class="rounded mb-1" style="max-height: 50px; object-fit: cover;">
                     <div class="form-check d-flex justify-content-center mb-0">
@@ -682,7 +696,8 @@ if (!function_exists('findImg')) {
               <!-- Foto Serie -->
               <div class="col-md-4">
                 <label class="oc-form-label">Foto de Número de Serie</label>
-                <?php $f_serie = findImg($imagenes, 'foto_numero_serie'); if ($f_serie): ?>
+                <?php $f_serie = findImg($imagenes, 'foto_numero_serie');
+                if ($f_serie): ?>
                   <div class="mb-2 p-2 rounded border bg-light text-center">
                     <img src="<?= htmlspecialchars($f_serie['ruta_archivo']) ?>" class="rounded mb-1" style="max-height: 50px; object-fit: cover;">
                     <div class="form-check d-flex justify-content-center mb-0">
@@ -718,7 +733,8 @@ if (!function_exists('findImg')) {
               <!-- Factura -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Factura / Comprobante de Compra</label>
-                <?php $f = findDoc($documentos, 'factura'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'factura');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -741,7 +757,8 @@ if (!function_exists('findImg')) {
               <!-- Pedimento -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Pedimento de Importación</label>
-                <?php $f = findDoc($documentos, 'pedimento'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'pedimento');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -764,7 +781,8 @@ if (!function_exists('findImg')) {
               <!-- Seguro MX -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Póliza de Seguro <span class="comentario">(México)</span></label>
-                <?php $f = findDoc($documentos, 'poliza_seguro_mx'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'poliza_seguro_mx');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -787,7 +805,8 @@ if (!function_exists('findImg')) {
               <!-- Seguro USA -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Póliza de Seguro <span class="comentario">(USA)</span></label>
-                <?php $f = findDoc($documentos, 'poliza_seguro_usa'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'poliza_seguro_usa');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -810,7 +829,8 @@ if (!function_exists('findImg')) {
               <!-- Manual Usuario -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Manual de Usuario / Operación</label>
-                <?php $f = findDoc($documentos, 'manual_usuario'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'manual_usuario');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -833,7 +853,8 @@ if (!function_exists('findImg')) {
               <!-- Manual Mantenimiento -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Manual de Mantenimiento</label>
-                <?php $f = findDoc($documentos, 'manual_mantenimiento'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'manual_mantenimiento');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -856,7 +877,8 @@ if (!function_exists('findImg')) {
               <!-- Catálogo Refacciones -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Catálogo de Refacciones <span class="comentario">(máx. 1 GB)</span></label>
-                <?php $f = findDoc($documentos, 'catalogo_refacciones'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'catalogo_refacciones');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -879,7 +901,8 @@ if (!function_exists('findImg')) {
               <!-- Contrato/Escritura -->
               <div class="col-md-6 col-lg-3">
                 <label class="oc-form-label">Contrato / Escritura</label>
-                <?php $f = findDoc($documentos, 'contrato'); if ($f): ?>
+                <?php $f = findDoc($documentos, 'contrato');
+                if ($f): ?>
                   <div class="mb-2 d-flex align-items-center gap-2 p-2 rounded border bg-light">
                     <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                     <a href="<?= htmlspecialchars($f['ruta_archivo']) ?>" target="_blank" class="text-decoration-none small text-dark fw-semibold text-truncate" style="max-width: 250px;">
@@ -911,9 +934,9 @@ if (!function_exists('findImg')) {
             <!-- Fiscal -->
             <div class="mb-4">
               <label class="oc-form-label"><i class="bi bi-hash"></i> Control Fiscal / Tenencias / Predial</label>
-              <?php 
+              <?php
               $docs_fiscal = array_filter($documentos, fn($d) => $d['tipo_documento'] === 'expediente_predial');
-              if (!empty($docs_fiscal)): 
+              if (!empty($docs_fiscal)):
               ?>
                 <div class="mb-2 border rounded p-2 bg-light">
                   <div class="row g-2">
@@ -957,9 +980,9 @@ if (!function_exists('findImg')) {
             <!-- Extra -->
             <div>
               <label class="oc-form-label"><i class="fa-regular fa-square-plus"></i> Documentación Extra / Adicional</label>
-              <?php 
+              <?php
               $docs_extra = array_filter($documentos, fn($d) => $d['tipo_documento'] === 'extra');
-              if (!empty($docs_extra)): 
+              if (!empty($docs_extra)):
               ?>
                 <div class="mb-2 border rounded p-2 bg-light">
                   <div class="row g-2">
@@ -1140,7 +1163,11 @@ if (!function_exists('findImg')) {
     files.forEach(file => {
       const sizeMB = file.size / 1024 / 1024;
       const ok = sizeMB <= limiteMB;
-      fileStore[campo].push({ file, ok, tipo });
+      fileStore[campo].push({
+        file,
+        ok,
+        tipo
+      });
       if (ok) {
         mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) listo para subir.`, 'success');
       } else {
@@ -1195,22 +1222,35 @@ if (!function_exists('findImg')) {
   }
 
   function contarArchivosValidos() {
-    let count = 0, totalBytes = 0;
+    let count = 0,
+      totalBytes = 0;
     for (const campo in fileStore) {
       fileStore[campo].forEach(e => {
-        if (e.ok) { count++; totalBytes += e.file.size; }
+        if (e.ok) {
+          count++;
+          totalBytes += e.file.size;
+        }
       });
     }
     for (const tipo of ['fiscal', 'extra']) {
       if (pools[tipo]) pools[tipo].forEach(e => {
-        if (e.ok) { count++; totalBytes += e.file.size; }
+        if (e.ok) {
+          count++;
+          totalBytes += e.file.size;
+        }
       });
     }
-    return { count, totalMB: (totalBytes / 1024 / 1024).toFixed(2) };
+    return {
+      count,
+      totalMB: (totalBytes / 1024 / 1024).toFixed(2)
+    };
   }
 
   // Dynamic attachments
-  const pools = { fiscal: [], extra: [] };
+  const pools = {
+    fiscal: [],
+    extra: []
+  };
 
   function agregarAdjunto(tipo) {
     const inputId = tipo === 'fiscal' ? 'singleFileInputFiscal' : 'singleFileInputExtra';
@@ -1228,7 +1268,10 @@ if (!function_exists('findImg')) {
 
     const sizeMB = file.size / 1024 / 1024;
     const ok = sizeMB <= LIMITES_MB.adjunto;
-    pools[tipo].push({ file, ok });
+    pools[tipo].push({
+      file,
+      ok
+    });
 
     if (ok) {
       mostrarAlerta(`"${file.name}" (${sizeMB.toFixed(2)} MB) agregado.`, 'success');
@@ -1292,11 +1335,17 @@ if (!function_exists('findImg')) {
         'danger'
       );
       const primerError = document.querySelector('.file-chip.error, .adj-item.error');
-      if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (primerError) primerError.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
       return;
     }
 
-    const { count, totalMB } = contarArchivosValidos();
+    const {
+      count,
+      totalMB
+    } = contarArchivosValidos();
     if (count > 0) {
       const confirmar = await UI.confirm({
         title: '¿Confirmar cambios?',
@@ -1344,29 +1393,29 @@ if (!function_exists('findImg')) {
     });
 
     fetch(this.action, {
-      method: 'POST',
-      body: fd
-    })
-    .then(res => {
-      if (res.redirected) {
-        window.location.href = res.url;
-        return;
-      }
-      UI.loading.hide();
-      if (res.status >= 400) {
-        UI.toast.error("Ocurrió un error al guardar los cambios");
-      } else {
-        UI.toast.success("Activo actualizado con éxito");
-        setTimeout(() => {
-          window.location.href = 'details_activo.php?id=<?= $id ?>&success=updated';
-        }, 1200);
-      }
-    })
-    .catch(err => {
-      UI.loading.hide();
-      console.error(err);
-      UI.toast.error("Error de conexión al servidor");
-    });
+        method: 'POST',
+        body: fd
+      })
+      .then(res => {
+        if (res.redirected) {
+          window.location.href = res.url;
+          return;
+        }
+        UI.loading.hide();
+        if (res.status >= 400) {
+          UI.toast.error("Ocurrió un error al guardar los cambios");
+        } else {
+          UI.toast.success("Activo actualizado con éxito");
+          setTimeout(() => {
+            window.location.href = 'details_activo.php?id=<?= $id ?>&success=updated';
+          }, 1200);
+        }
+      })
+      .catch(err => {
+        UI.loading.hide();
+        console.error(err);
+        UI.toast.error("Error de conexión al servidor");
+      });
   });
 
   // ═══════════════════════════════════════════════════════════════
@@ -1404,4 +1453,3 @@ if (!function_exists('findImg')) {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-
