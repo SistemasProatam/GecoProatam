@@ -15,9 +15,9 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
-if (!$user) { 
-    header("Location: list_users.php?error=Usuario no encontrado"); 
-    exit; 
+if (!$user) {
+  header("Location: list_users.php?error=Usuario no encontrado");
+  exit;
 }
 
 // Obtener departamentos para el select
@@ -31,7 +31,7 @@ $stmt_contratos->bind_param("i", $id);
 $stmt_contratos->execute();
 $res_contratos = $stmt_contratos->get_result();
 while ($c = $res_contratos->fetch_assoc()) {
-    $contratos[] = $c;
+  $contratos[] = $c;
 }
 $stmt_contratos->close();
 ?>
@@ -48,13 +48,13 @@ $stmt_contratos->close();
       <nav class="orders-breadcrumb">
         <a href="<?= BASE_URL ?>/index.php">Inicio</a>
         <span class="separator">›</span>
-        <a href="list_users.php">Registro de Usuarios</a>
+        <a href="list_users.php">Usuarios</a>
         <span class="separator">›</span>
-        <a href="details_user.php?id=<?= $user['id'] ?>">Detalles del Usuario</a>
+        <a href="details_user.php?id=<?= $user['id'] ?>">Información del Usuario</a>
         <span class="separator">›</span>
         <span>Editar Usuario</span>
       </nav>
-      <h1 class="orders-page-title">Editar Perfil — <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
+      <h1 class="orders-page-title">Editar Usuario — <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
     </div>
     <a href="details_user.php?id=<?= $user['id'] ?>" class="btn-geco-outline">
       <i class="fa-solid fa-arrow-left"></i> Volver al Perfil
@@ -155,7 +155,7 @@ $stmt_contratos->close();
       </div>
       <div class="oc-card-body">
         <div class="row g-3">
-          <?php 
+          <?php
           $docs = [
             'curriculum_pdf' => ['label' => 'Curriculum Vitae', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'identificacion_pdf' => ['label' => 'Identificación Oficial', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
@@ -164,13 +164,13 @@ $stmt_contratos->close();
             'situacion_fiscal_pdf' => ['label' => 'Constancia de Situación Fiscal', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'nss_pdf' => ['label' => 'Número de Seguro Social', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'comprobante_domicilio_pdf' => ['label' => 'Comprobante de Domicilio', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
-            'foto_jpg' => ['label' => 'Foto Infantil', 'accept' => '.jpg,.jpeg', 'hint' => 'Formato JPG con fondo blanco'],
+            'foto_jpg' => ['label' => 'Foto de Usuario', 'accept' => '.jpg,.jpeg', 'hint' => 'Formato JPG'],
             'comprobante_estudios_pdf' => ['label' => 'Último Comprobante de Estudios', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'credencial_pdf' => ['label' => 'Credencial Corporativa', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'acuerdo_confidencialidad_pdf' => ['label' => 'Acuerdo de Confidencialidad', 'accept' => '.pdf', 'hint' => 'Formato PDF']
           ];
           foreach ($docs as $campo => $info):
-              $existe = !empty($user[$campo]);
+            $existe = !empty($user[$campo]);
           ?>
             <div class="col-md-6 col-lg-4 mb-3">
               <div class="doc-item-card p-3 h-100">
@@ -268,50 +268,50 @@ $stmt_contratos->close();
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formUser');
     const container = document.getElementById('contratos-container');
     const btnAgregar = document.getElementById('agregar-contrato');
 
     // Submit handler con AJAX
     if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            UI.loading("Guardando cambios del usuario...");
-            
-            fetch('update_user.php', {
-                method: 'POST',
-                body: new FormData(form)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Error en la respuesta del servidor: " + res.status);
-                return res.json();
-            })
-            .then(data => {
-                UI.loading.hide();
-                if (data.status === 'success') {
-                    UI.toast.success("Usuario actualizado correctamente");
-                    setTimeout(() => {
-                        location.href = 'details_user.php?id=<?= $user['id'] ?>';
-                    }, 1300);
-                } else {
-                    UI.toast.error(data.message || "Error al actualizar usuario");
-                }
-            })
-            .catch(err => {
-                UI.loading.hide();
-                console.error("Error:", err);
-                UI.toast.error("Error de conexión con el servidor");
-            });
-        });
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        UI.loading("Guardando cambios del usuario...");
+
+        fetch('update_user.php', {
+            method: 'POST',
+            body: new FormData(form)
+          })
+          .then(res => {
+            if (!res.ok) throw new Error("Error en la respuesta del servidor: " + res.status);
+            return res.json();
+          })
+          .then(data => {
+            UI.loading.hide();
+            if (data.status === 'success') {
+              UI.toast.success("Usuario actualizado correctamente");
+              setTimeout(() => {
+                location.href = 'details_user.php?id=<?= $user['id'] ?>';
+              }, 1300);
+            } else {
+              UI.toast.error(data.message || "Error al actualizar usuario");
+            }
+          })
+          .catch(err => {
+            UI.loading.hide();
+            console.error("Error:", err);
+            UI.toast.error("Error de conexión con el servidor");
+          });
+      });
     }
 
     // Agregar nuevo contrato
     if (btnAgregar && container) {
-        btnAgregar.addEventListener('click', function() {
-            const newItem = document.createElement('div');
-            newItem.className = 'contrato-item p-3 border rounded bg-light mb-3';
-            newItem.innerHTML = `
+      btnAgregar.addEventListener('click', function() {
+        const newItem = document.createElement('div');
+        newItem.className = 'contrato-item p-3 border rounded bg-light mb-3';
+        newItem.innerHTML = `
                 <div class="row g-2 align-items-center">
                     <div class="col-md-5">
                         <label class="form-label small fw-bold text-muted mb-1">Archivo de Contrato (PDF) <span class="text-danger">*</span></label>
@@ -335,21 +335,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            container.appendChild(newItem);
-        });
+        container.appendChild(newItem);
+      });
     }
 
     // Delegar evento para eliminar nuevos contratos
     document.addEventListener('click', function(e) {
-        if (e.target.closest('.btn-remove-contrato')) {
-            const item = e.target.closest('.contrato-item');
-            if (item) {
-                item.remove();
-            }
+      if (e.target.closest('.btn-remove-contrato')) {
+        const item = e.target.closest('.contrato-item');
+        if (item) {
+          item.remove();
         }
+      }
     });
-});
+  });
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-

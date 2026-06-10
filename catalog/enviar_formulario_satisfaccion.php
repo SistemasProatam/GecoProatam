@@ -4,7 +4,7 @@ require_once __DIR__ . "/../includes/check_session.php";
 checkSession();
 
 require_once __DIR__ . "/../conexion.php";
-require_once __DIR__ . "/../email_handler.php";
+require_once __DIR__ . "/../Emailhandler.php";
 
 header('Content-Type: application/json');
 
