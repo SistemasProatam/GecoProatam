@@ -334,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <span class="oc-card-header__title"><i class="fa-solid fa-award"></i> Resultado Final</span>
             </div>
             <div class="oc-card-body p-0">
-              <table class="orders-table m-0" style="border-radius: 0;">
+              <table class="orders-table m-0" style="border-radius: 0; min-width: auto;">
                 <thead>
                   <tr>
                     <th>PUNTAJE</th>

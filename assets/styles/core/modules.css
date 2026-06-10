@@ -37,15 +37,15 @@
 }
 
 .oc-stat-box__value.text-success { color: var(--p-500, #407656); }
-.oc-stat-box__value.text-primary { color: #1d4ed8; }
-.oc-stat-box__value.text-warning { color: #b45309; }
+.oc-stat-box__value.text-primary { color: var(--p-500); }
+.oc-stat-box__value.text-warning { color: var(--warning); }
 .oc-stat-box__value.text-info { color: var(--info, #3b82f6); }
 
 /* ─── TWO-COLUMN FORM LAYOUT ───────────────────────────── */
 .oc-form-layout {
   display: grid;
   grid-template-columns: 1fr 340px;
-  gap: 1.25rem;
+  gap: var(--sp-5);
   align-items: start;
 }
 
@@ -71,9 +71,9 @@
 .oc-finance {
   background: var(--s-700, #113557);
   border-radius: var(--radius-md, 14px);
-  padding: 1.1rem 1.25rem;
+  padding: 1.1rem var(--sp-5);
   color: var(--white, #fff);
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--sp-5);
 }
 
 .oc-finance-title {
@@ -106,8 +106,8 @@
   padding: 0.35rem 2rem 0.35rem 0.6rem;
   font-size: 0.78rem;
   font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid rgba(255, 255, 255, 0.35);
   background-color: rgba(255, 255, 255, 0.14);
   color: var(--white, #fff);
   cursor: pointer;
@@ -314,7 +314,7 @@
   padding: 1rem 0.5rem;
   background: transparent;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: background 0.15s ease;
   text-align: center;
@@ -339,8 +339,8 @@
 /* --- SUPPLIER EVALUATION -------------------------------------- */
 .result-card {
   background: var(--gray-50, #f9fafb);
-  border-radius: 10px;
-  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  padding: var(--sp-6);
   text-align: center;
 }
 .rating-options {
@@ -352,7 +352,7 @@
   flex: 1;
   padding: 0.5rem 0.25rem;
   border: 1.5px solid var(--gray-200, #e5e7eb);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   text-align: center;
   font-size: 0.75rem;
   transition: all 0.2s;
@@ -361,10 +361,10 @@
   border-color: var(--p-500, #407656);
   background: rgba(64, 118, 86, 0.06);
 }
-.eval-excellent { background-color: #d4edda; color: #155724; }
-.eval-good      { background-color: #d1ecf1; color: #0c5460; }
-.eval-conditional { background-color: #fff3cd; color: #856404; }
-.eval-not-approved { background-color: #f8d7da; color: #721c24; }
+.eval-excellent { background-color: #d4edda !important; color: #155724 !important; }
+.eval-good      { background-color: #d1ecf1 !important; color: #0c5460 !important; }
+.eval-conditional { background-color: #fff3cd !important; color: #856404 !important; }
+.eval-not-approved { background-color: #f8d7da !important; color: #721c24 !important; }
 
 /* ─── CSAT METRIC BLOCK ───────────────────────────────────────── */
 .csat-metric   { display: flex; align-items: flex-end; gap: 0.5rem; margin-bottom: 0.5rem; }
@@ -387,8 +387,8 @@
 .loading-box {
   background: var(--white, #ffffff);
   padding: 25px 40px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   font-size: 17px;
   font-weight: bold;
@@ -430,9 +430,9 @@
 }
 
 .oc-side-card {
-  background: #fff;
-  border: 1px solid var(--gray-200, #e5e7eb);
-  border-radius: 14px;
+  background: var(--white);
+  border: var(--border-width) solid var(--gray-200, #e5e7eb);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: 1rem;
 }
@@ -471,7 +471,7 @@
 .type-badge {
   display: inline-flex;
   padding: 0.18rem 0.55rem;
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   font-size: 0.67rem;
   font-weight: 700;
 }
@@ -485,15 +485,15 @@
 
 .oc-comment {
   background: var(--gray-50, #f9fafb);
-  border: 1px solid var(--gray-200, #e5e7eb);
+  border: var(--border-width) solid var(--gray-200, #e5e7eb);
   border-left: 3px solid var(--s-700, #113557);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: .75rem 1rem;
   font-size: .82rem;
   color: var(--gray-700, #374151);
 }
 
-.oc-comment.danger { border-left-color: #e8445a; background: rgba(232,68,90,.04); }
+.oc-comment.danger { border-left-color: var(--error); background: rgba(232,68,90,.04); }
 
 @media(max-width: 960px) {
   .oc-detail-grid { grid-template-columns: 1fr; }
@@ -508,7 +508,7 @@
   background-color: var(--status-badge-bg--rechazado, #fee2e2);
   border-left: 4px solid var(--status-badge-color--rechazado, #ef4444);
   padding: 15px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin-top: 10px;
 }
 

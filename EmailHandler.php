@@ -656,7 +656,7 @@ class EmailHandler
         $innerHtml = "
         <div style='text-align: center; margin-bottom: 30px;'>
             <div style='background-color: #dcfce7; color: #15803d; width: 60px; height: 60px; line-height: 60px; border-radius: 50%; font-size: 30px; margin: 0 auto 20px;'>
-            </div>
+            ✔</div>
             <p style='font-size: 18px; font-weight: 600; color: #0d2535; margin: 0;'>¡Solicitud Recibida Correctamente!</p>
             <p style='font-size: 15px; color: #64748b; margin-top: 5px;'>Hemos registrado tu ticket <strong>#{$ticketId}</strong></p>
         </div>
@@ -887,7 +887,7 @@ class EmailHandler
             $innerHtml = "
             <div style='text-align: center; margin-bottom: 25px;'>
                 <div style='background-color: #fee2e2; color: #dc2626; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; font-size: 24px; margin: 0 auto 15px;'>
-                </div>
+                ⚠</div>
                 <h2 style='margin:0; color: #dc2626; font-size: 20px;'>Alerta de Exceso de Presupuesto</h2>
                 <p style='margin: 5px 0 0 0; color: #64748b; font-size: 14px;'>Subcontratos superan el costo directo autorizado</p>
             </div>
@@ -955,7 +955,7 @@ class EmailHandler
             $innerHtml = "
             <div style='text-align: center; margin-bottom: 25px;'>
                 <div style='background-color: #ecfdf5; color: #059669; width: 60px; height: 60px; line-height: 60px; border-radius: 50%; font-size: 28px; margin: 0 auto 15px;'>
-                </div>
+                ✔</div>
                 <h2 style='margin:0; color: #407656; font-size: 22px;'>Encuesta de Satisfacción</h2>
                 <p style='margin: 5px 0 0 0; color: #64748b; font-size: 15px;'>Tu opinión es vital para nosotros</p>
             </div>

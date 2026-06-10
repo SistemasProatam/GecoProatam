@@ -10,7 +10,7 @@ require_once __DIR__ . "/../conexion.php";
 $departamentos = $conn->query("SELECT id, nombre FROM departamentos ORDER BY nombre ASC");
 $departamentosOptions = "";
 while ($dep = $departamentos->fetch_assoc()) {
-    $departamentosOptions .= "<option value='{$dep['id']}'>{$dep['nombre']}</option>";
+  $departamentosOptions .= "<option value='{$dep['id']}'>{$dep['nombre']}</option>";
 }
 
 $conn->close();
@@ -28,11 +28,11 @@ $conn->close();
       <nav class="orders-breadcrumb">
         <a href="<?= BASE_URL ?>/index.php">Inicio</a>
         <span class="separator">›</span>
-        <a href="list_users.php">Registro de Usuarios</a>
+        <a href="list_users.php">Usuarios</a>
         <span class="separator">›</span>
         <span>Agregar Usuario</span>
       </nav>
-      <h1 class="orders-page-title">Agregar Nuevo Usuario</h1>
+      <h1 class="orders-page-title">Agregar Usuario</h1>
     </div>
     <a href="list_users.php" class="btn-geco-outline">
       <i class="fa-solid fa-arrow-left"></i> Volver al Listado
@@ -41,7 +41,7 @@ $conn->close();
 
   <!-- Form Card -->
   <form id="formAgregarUsuario" method="POST" action="insert_user.php" enctype="multipart/form-data" class="w-100">
-    
+
     <!-- Sección: Información Básica -->
     <div class="oc-card">
       <div class="oc-card-header">
@@ -128,7 +128,7 @@ $conn->close();
       </div>
       <div class="oc-card-body">
         <div class="row g-3">
-          <?php 
+          <?php
           $docs = [
             'curriculum_pdf' => ['label' => 'Curriculum Vitae', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'identificacion_pdf' => ['label' => 'Identificación Oficial', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
@@ -137,7 +137,7 @@ $conn->close();
             'situacion_fiscal_pdf' => ['label' => 'Constancia de Situación Fiscal', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'nss_pdf' => ['label' => 'Número de Seguro Social', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'comprobante_domicilio_pdf' => ['label' => 'Comprobante de Domicilio', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
-            'foto_jpg' => ['label' => 'Foto Infantil', 'accept' => '.jpg,.jpeg', 'hint' => 'Formato JPG con fondo blanco'],
+            'foto_jpg' => ['label' => 'Foto de Usuario', 'accept' => '.jpg,.jpeg', 'hint' => 'Formato JPG'],
             'comprobante_estudios_pdf' => ['label' => 'Último Comprobante de Estudios', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'credencial_pdf' => ['label' => 'Credencial Corporativa', 'accept' => '.pdf', 'hint' => 'Formato PDF'],
             'acuerdo_confidencialidad_pdf' => ['label' => 'Acuerdo de Confidencialidad', 'accept' => '.pdf', 'hint' => 'Formato PDF']
@@ -211,50 +211,50 @@ $conn->close();
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formAgregarUsuario');
     const container = document.getElementById('contratos-container');
     const btnAgregar = document.getElementById('agregar-contrato');
 
     // Submit handler con AJAX
     if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            UI.loading("Creando nuevo usuario...");
-            
-            fetch('insert_user.php', {
-                method: 'POST',
-                body: new FormData(form)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Error en la respuesta del servidor: " + res.status);
-                return res.json();
-            })
-            .then(data => {
-                UI.loading.hide();
-                if (data.status === 'success') {
-                    UI.toast.success(data.message || "Usuario creado correctamente");
-                    setTimeout(() => {
-                        location.href = 'list_users.php';
-                    }, 1500);
-                } else {
-                    UI.toast.error(data.message || "Error al crear usuario");
-                }
-            })
-            .catch(err => {
-                UI.loading.hide();
-                console.error("Error:", err);
-                UI.toast.error("Error de conexión con el servidor");
-            });
-        });
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        UI.loading("Creando nuevo usuario...");
+
+        fetch('insert_user.php', {
+            method: 'POST',
+            body: new FormData(form)
+          })
+          .then(res => {
+            if (!res.ok) throw new Error("Error en la respuesta del servidor: " + res.status);
+            return res.json();
+          })
+          .then(data => {
+            UI.loading.hide();
+            if (data.status === 'success') {
+              UI.toast.success(data.message || "Usuario creado correctamente");
+              setTimeout(() => {
+                location.href = 'list_users.php';
+              }, 1500);
+            } else {
+              UI.toast.error(data.message || "Error al crear usuario");
+            }
+          })
+          .catch(err => {
+            UI.loading.hide();
+            console.error("Error:", err);
+            UI.toast.error("Error de conexión con el servidor");
+          });
+      });
     }
 
     // Agregar nuevo contrato
     if (btnAgregar && container) {
-        btnAgregar.addEventListener('click', function() {
-            const newItem = document.createElement('div');
-            newItem.className = 'contrato-item mb-2';
-            newItem.innerHTML = `
+      btnAgregar.addEventListener('click', function() {
+        const newItem = document.createElement('div');
+        newItem.className = 'contrato-item mb-2';
+        newItem.innerHTML = `
                 <div class="input-group">
                     <input type="file" name="contratos[]" class="form-control" accept=".pdf">
                     <select name="tipos_contrato[]" class="form-select" style="max-width: 250px;">
@@ -270,36 +270,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </div>
             `;
-            container.appendChild(newItem);
+        container.appendChild(newItem);
 
-            // Habilitar botón de eliminar en todos menos el primero
-            actualizarBotonesEliminar();
-        });
+        // Habilitar botón de eliminar en todos menos el primero
+        actualizarBotonesEliminar();
+      });
     }
 
     // Delegar evento para eliminar contratos
     document.addEventListener('click', function(e) {
-        if (e.target.closest('.btn-remove-contrato')) {
-            const item = e.target.closest('.contrato-item');
-            if (item) {
-                item.remove();
-                actualizarBotonesEliminar();
-            }
+      if (e.target.closest('.btn-remove-contrato')) {
+        const item = e.target.closest('.contrato-item');
+        if (item) {
+          item.remove();
+          actualizarBotonesEliminar();
         }
+      }
     });
 
     function actualizarBotonesEliminar() {
-        const removeBtns = document.querySelectorAll('.btn-remove-contrato');
-        if (removeBtns.length === 1) {
-            removeBtns[0].disabled = true;
-        } else {
-            removeBtns.forEach(btn => btn.disabled = false);
-        }
+      const removeBtns = document.querySelectorAll('.btn-remove-contrato');
+      if (removeBtns.length === 1) {
+        removeBtns[0].disabled = true;
+      } else {
+        removeBtns.forEach(btn => btn.disabled = false);
+      }
     }
-});
+  });
 </script>
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-
-
-
-

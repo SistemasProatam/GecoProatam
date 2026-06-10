@@ -299,28 +299,61 @@ $preguntas = [
           </h5>
         </div>
 
-        <form id="filter-form" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-4">
-          <input type="hidden" name="page" value="1">
+  <!-- Table Card -->
+  <div class="orders-card">
 
-          <div style="flex: 0 0 auto; min-width: 150px;">
-            <select name="cliente_id" class="form-select js-auto-filter">
-              <option value="0">Todos los clientes</option>
-              <?php while ($cliente_option = $clientes_result->fetch_assoc()): ?>
-                <option value="<?= $cliente_option['id'] ?>" <?= $cliente_id === intval($cliente_option['id']) ? 'selected' : '' ?>>
-                  <?= htmlspecialchars($cliente_option['nombre']) ?>
-                </option>
-              <?php endwhile; ?>
-            </select>
-          </div>
-
-          <div style="flex: 0 0 auto; min-width: 150px;">
-            <select name="proyecto_id" class="form-select js-auto-filter">
-              <option value="0">Todos los proyectos</option>
-              <?php while ($proyecto_option = $proyectos_result->fetch_assoc()): ?>
-                <option value="<?= $proyecto_option['id'] ?>" <?= $proyecto_id === intval($proyecto_option['id']) ? 'selected' : '' ?>>
-                  <?= htmlspecialchars($proyecto_option['nombre_proyecto']) ?>
-                  <?php if (!empty($proyecto_option['numero_contrato'])): ?>
-                    - <?= htmlspecialchars($proyecto_option['numero_contrato']) ?>
+    <!-- Table -->
+    <div class="orders-table-wrap">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Proyecto</th>
+            <th>No. Contrato</th>
+            <th>Fecha término</th>
+            <th>Estado</th>
+            <th>Resultado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if ($historial->num_rows > 0): ?>
+            <?php while ($row = $historial->fetch_assoc()): ?>
+              <tr>
+                <td><?= htmlspecialchars($row['nombre_cliente']) ?></td>
+                <td><?= htmlspecialchars($row['nombre_proyecto']) ?></td>
+                <td><?= htmlspecialchars($row['numero_contrato']) ?></td>
+                <td><?= $row['fecha_fin'] ?></td>
+                <td>
+                  <?php
+                    $estadoClass = match($row['estado']) {
+                      'pendiente'    => 'status-badge--pendiente',
+                      'enviado'      => 'status-badge--revisado',
+                      'contestado'   => 'status-badge--aprobado',
+                      'sin_respuesta'=> 'status-badge--cancelado',
+                      default        => 'status-badge--pendiente',
+                    };
+                  ?>
+                  <span class="status-badge <?= $estadoClass ?>">
+                    <?= ucfirst(str_replace('_', ' ', $row['estado'])) ?>
+                  </span>
+                </td>
+                <td>
+                  <?php if ($row['estado'] === 'contestado'): ?>
+                    <?php
+                      $badgeClass = match($row['resultado_final']) {
+                        'excelente'   => 'status-badge--aprobado',
+                        'bueno'       => 'status-badge--revisado',
+                        'regular'     => 'status-badge--pendiente',
+                        'no_aprobado' => 'status-badge--rechazado',
+                        default       => 'status-badge--pendiente',
+                      };
+                    ?>
+                    <span class="status-badge <?= $badgeClass ?>">
+                      <?= number_format($row['promedio_puntuacion'], 1) ?> • <?= ucfirst(str_replace('_', ' ', $row['resultado_final'])) ?>
+                    </span>
+                  <?php else: ?>
+                    <span class="text-muted">—</span>
                   <?php endif; ?>
                 </option>
               <?php endwhile; ?>

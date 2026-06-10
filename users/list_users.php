@@ -84,7 +84,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <nav class="orders-breadcrumb">
         <a href="<?= BASE_URL ?>/index.php">Inicio</a>
         <span class="separator">›</span>
-        <span>Registro de Usuarios</span>
+        <span>Usuarios</span>
       </nav>
       <h1 class="orders-page-title">Usuarios</h1>
     </div>
