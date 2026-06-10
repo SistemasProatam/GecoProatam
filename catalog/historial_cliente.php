@@ -249,16 +249,16 @@ $preguntas = [
                 <td>
                   <?php if ($row['estado'] === 'contestado'): ?>
                     <?php
-                      $badges = [
-                        'excelente'   => 'eval-excellent',
-                        'bueno'       => 'eval-good',
-                        'regular'     => 'eval-conditional',
-                        'no_aprobado' => 'eval-not-approved',
-                      ];
+                      $badgeClass = match($row['resultado_final']) {
+                        'excelente'   => 'status-badge--aprobado',
+                        'bueno'       => 'status-badge--revisado',
+                        'regular'     => 'status-badge--pendiente',
+                        'no_aprobado' => 'status-badge--rechazado',
+                        default       => 'status-badge--pendiente',
+                      };
                     ?>
-                    <span class="<?= $badges[$row['resultado_final']] ?? 'bg-secondary' ?> px-2 py-1 rounded" style="font-size:0.75rem; font-weight:600; border:1px solid currentColor;">
-                      <?= number_format($row['promedio_puntuacion'], 1) ?> —
-                      <?= ucfirst(str_replace('_', ' ', $row['resultado_final'])) ?>
+                    <span class="status-badge <?= $badgeClass ?>">
+                      <?= number_format($row['promedio_puntuacion'], 1) ?> • <?= ucfirst(str_replace('_', ' ', $row['resultado_final'])) ?>
                     </span>
                   <?php else: ?>
                     <span class="text-muted">—</span>
