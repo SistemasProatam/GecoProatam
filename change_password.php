@@ -27,6 +27,8 @@ if (!isset($_SESSION['change_pass']) || $_SESSION['change_pass'] !== true) {
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
     <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
+
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
 </head>
 
 <body>
@@ -357,3 +359,4 @@ if (!isset($_SESSION['change_pass']) || $_SESSION['change_pass'] !== true) {
 </body>
 
 </html>
+

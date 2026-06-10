@@ -110,6 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+<title>Evaluación de Proveedor | GECO PROATAM</title>
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
 <div class="orders-page-container">

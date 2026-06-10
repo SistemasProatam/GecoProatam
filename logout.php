@@ -55,6 +55,8 @@ if (isset($_GET['silent'])) {
 <title>Cerrando sesión...</title>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css">
 <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
+
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
 </head>
 <body>
 <script src="<?= BASE_URL ?>/assets/scripts/ui.js"></script>
@@ -77,4 +79,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 

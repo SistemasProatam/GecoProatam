@@ -233,6 +233,7 @@ function renderConcepto(array $c, int $indent_px): void {
 
 
 
+<title>Conceptos de Obra | GECO PROATAM</title>
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div class="orders-page-container">

@@ -26,6 +26,7 @@ $result_entidades = $conn->query($sql_entidades);
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
+<title>Nueva Cotización | GECO PROATAM</title>
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <div class="orders-page-container">

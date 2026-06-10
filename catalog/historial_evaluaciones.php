@@ -62,6 +62,7 @@ if (isset($_SESSION['mensaje_error'])) {
 ?>
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 
+<title>Historial de Evaluaciones | GECO PROATAM</title>
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
 <div class="orders-page-container">
