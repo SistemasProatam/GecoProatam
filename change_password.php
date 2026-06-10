@@ -38,7 +38,7 @@ if (!isset($_SESSION['change_pass']) || $_SESSION['change_pass'] !== true) {
             <!-- Panel de formulario -->
             <div class="col-lg-5 col-xl-4 auth-panel">
                 <div class="auth-form-wrapper">
-                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
+                    <img src="<?= BASE_URL ?>/assets/img/GECO.png" alt="Logo PROATAM" class="auth-logo" />
                     
                     <h1 class="auth-title">Activa tu Cuenta</h1>
                     <p class="auth-subtitle">Has iniciado sesión con una contraseña temporal. Por seguridad, debes crear una nueva contraseña personal.</p>
