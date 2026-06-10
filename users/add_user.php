@@ -146,14 +146,18 @@ $conn->close();
           foreach ($docs as $campo => $info):
           ?>
             <div class="col-md-6 col-lg-4 mb-3">
-              <div class="doc-item-card p-3 h-100">
+              <div class="doc-item-card p-3 h-100" style="border: 1px solid var(--gray-200, #e5e7eb); border-radius: var(--radius-md, 8px);">
                 <div class="d-flex flex-column justify-content-between h-100">
                   <div>
-                    <label class="form-label small fw-bold mb-1 d-block text-dark"><?= $info['label'] ?></label>
-                    <input type="file" name="<?= $campo ?>" class="form-control form-control-sm" accept="<?= $info['accept'] ?>">
-                  </div>
-                  <div class="text-muted mt-2" style="font-size: 0.72rem;">
-                    <i class="fa-solid fa-file-arrow-up"></i> <?= $info['hint'] ?>
+                    <label class="form-label small fw-bold mb-2 d-block text-dark"><?= $info['label'] ?></label>
+                    <div class="file-drop-zone">
+                      <input type="file" name="<?= $campo ?>" id="file_<?= $campo ?>" accept="<?= $info['accept'] ?>">
+                      <div class="file-drop-label">
+                        <i class="material-symbols-rounded">cloud_upload</i>
+                        <span><?= $info['hint'] ?></span>
+                      </div>
+                    </div>
+                    <div class="file-chips" id="chips_<?= $campo ?>"></div>
                   </div>
                 </div>
               </div>
@@ -170,20 +174,34 @@ $conn->close();
       </div>
       <div class="oc-card-body">
         <div id="contratos-container">
-          <div class="contrato-item mb-2">
-            <div class="input-group">
-              <input type="file" name="contratos[]" class="form-control" accept=".pdf">
-              <select name="tipos_contrato[]" class="form-select" style="max-width: 250px;">
-                <option value="">-- Seleccionar Tipo --</option>
-                <option value="Indeterminado">Tiempo Indeterminado</option>
-                <option value="Determinado">Tiempo Determinado</option>
-                <option value="Prueba">Periodo de Prueba</option>
-                <option value="Obra">Obra Determinada</option>
-                <option value="Otro">Otro</option>
-              </select>
-              <button type="button" class="btn btn-danger btn-remove-contrato" disabled>
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
+          <div class="contrato-item mb-3 p-3 border rounded bg-light">
+            <div class="row g-2 align-items-center">
+              <div class="col-md-5">
+                <label class="form-label small fw-bold text-muted mb-1">Archivo de Contrato (PDF) <span class="text-danger">*</span></label>
+                <div class="horizontal-file-zone">
+                  <input type="file" name="contratos[]" class="horizontal-file-input" accept=".pdf" required>
+                  <div class="horizontal-file-label">
+                    <i class="material-symbols-rounded">upload_file</i>
+                    <span>Seleccionar archivo (PDF)...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Tipo de Contrato <span class="text-danger">*</span></label>
+                <select name="tipos_contrato[]" class="form-select form-select-sm" style="height: 44px;" required>
+                  <option value="">-- Seleccionar Tipo --</option>
+                  <option value="Indeterminado">Tiempo Indeterminado</option>
+                  <option value="Determinado">Tiempo Determinado</option>
+                  <option value="Prueba">Periodo de Prueba</option>
+                  <option value="Obra">Obra Determinada</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div class="col-md-3 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
+                <button type="button" class="btn btn-danger btn-remove-contrato w-100 w-md-auto" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px;" disabled>
+                  <i class="material-symbols-rounded" style="font-size: 1.2rem;">delete</i> Eliminar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -212,6 +230,116 @@ $conn->close();
 
 
 <script>
+const GecoFileUploader = {
+  LIMIT_MB: 10,
+  store: {}, // Holds selected files: { fieldName: File }
+
+  init() {
+    // 1. Initialize Card Uploaders (Type A)
+    document.querySelectorAll('.file-drop-zone input[type="file"]').forEach(input => {
+      this.bindUploader(input, 'card');
+    });
+
+    // 2. Initialize Horizontal Uploaders (Type B)
+    document.querySelectorAll('.horizontal-file-zone input[type="file"]').forEach(input => {
+      this.bindUploader(input, 'horizontal');
+    });
+  },
+
+  bindUploader(input, type) {
+    const fieldName = input.name || input.id;
+    if (!fieldName) return;
+
+    input.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      const file = files[0];
+      const sizeMB = file.size / 1024 / 1024;
+      const limit = parseFloat(input.getAttribute('data-max-size')) || this.LIMIT_MB;
+
+      if (sizeMB > limit) {
+        UI.toast.error(`"${file.name}" supera el límite de ${limit} MB (${sizeMB.toFixed(2)} MB).`);
+        input.value = ''; // Reset input
+        this.clearField(fieldName, type, input);
+        return;
+      }
+
+      // Store in memory
+      this.store[fieldName] = file;
+      UI.toast.success(`"${file.name}" listo para subir.`);
+      this.updateUI(fieldName, file, type, input);
+    });
+  },
+
+  updateUI(fieldName, file, type, input) {
+    const parentZone = input.closest(type === 'card' ? '.file-drop-zone' : '.horizontal-file-zone');
+    if (type === 'card') {
+      // Show in chips container
+      const chipsContainer = document.getElementById('chips_' + fieldName);
+      if (chipsContainer) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        chipsContainer.innerHTML = `
+          <div class="file-chip ok">
+            <i class="material-symbols-rounded" style="font-size:0.95rem;flex-shrink:0;">check_circle</i>
+            <span class="chip-name" title="${file.name}">${file.name}</span>
+            <span class="chip-size">${sizeMB} MB</span>
+            <button type="button" class="chip-remove" onclick="GecoFileUploader.removeFile('${fieldName}', 'card')" title="Quitar archivo">
+              <i class="material-symbols-rounded" style="font-size: 1rem; line-height: 1;">close</i>
+            </button>
+          </div>
+        `;
+      }
+    } else {
+      // Horizontal mode
+      if (parentZone) {
+        parentZone.classList.add('has-file');
+        const labelText = parentZone.querySelector('.horizontal-file-label span');
+        if (labelText) {
+          labelText.textContent = file.name;
+        }
+        const labelIcon = parentZone.querySelector('.horizontal-file-label i');
+        if (labelIcon) {
+          labelIcon.className = 'material-symbols-rounded';
+          labelIcon.textContent = 'check_circle';
+        }
+      }
+    }
+  },
+
+  removeFile(fieldName, type) {
+    delete this.store[fieldName];
+    const input = document.getElementById('file_' + fieldName) || document.querySelector(`input[name="${fieldName}"]`);
+    if (input) input.value = '';
+
+    this.clearField(fieldName, type, input);
+    UI.toast.info('Archivo removido.');
+  },
+
+  clearField(fieldName, type, input) {
+    if (type === 'card') {
+      const chipsContainer = document.getElementById('chips_' + fieldName);
+      if (chipsContainer) chipsContainer.innerHTML = '';
+    } else {
+      const parentZone = input ? input.closest('.horizontal-file-zone') : null;
+      if (parentZone) {
+        parentZone.classList.remove('has-file');
+        const labelText = parentZone.querySelector('.horizontal-file-label span');
+        const defaultText = (input && input.getAttribute('data-placeholder')) || 'Seleccionar archivo (PDF)...';
+        if (labelText) labelText.textContent = defaultText;
+
+        const labelIcon = parentZone.querySelector('.horizontal-file-label i');
+        if (labelIcon) {
+          labelIcon.className = 'material-symbols-rounded';
+          labelIcon.textContent = 'upload_file';
+        }
+      }
+    }
+  }
+};
+window.GecoFileUploader = GecoFileUploader;
+document.addEventListener('DOMContentLoaded', () => GecoFileUploader.init());
+
   document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formAgregarUsuario');
     const container = document.getElementById('contratos-container');
@@ -254,24 +382,44 @@ $conn->close();
     if (btnAgregar && container) {
       btnAgregar.addEventListener('click', function() {
         const newItem = document.createElement('div');
-        newItem.className = 'contrato-item mb-2';
+        newItem.className = 'contrato-item mb-3 p-3 border rounded bg-light';
         newItem.innerHTML = `
-                <div class="input-group">
-                    <input type="file" name="contratos[]" class="form-control" accept=".pdf">
-                    <select name="tipos_contrato[]" class="form-select" style="max-width: 250px;">
-                        <option value="">-- Seleccionar Tipo --</option>
-                        <option value="Indeterminado">Tiempo Indeterminado</option>
-                        <option value="Determinado">Tiempo Determinado</option>
-                        <option value="Prueba">Periodo de Prueba</option>
-                        <option value="Obra">Obra Determinada</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                    <button type="button" class="btn btn-danger btn-remove-contrato">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold text-muted mb-1">Archivo de Contrato (PDF) <span class="text-danger">*</span></label>
+                        <div class="horizontal-file-zone">
+                            <input type="file" name="contratos[]" class="horizontal-file-input" accept=".pdf" required>
+                            <div class="horizontal-file-label">
+                                <i class="material-symbols-rounded">upload_file</i>
+                                <span>Seleccionar archivo (PDF)...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted mb-1">Tipo de Contrato <span class="text-danger">*</span></label>
+                        <select name="tipos_contrato[]" class="form-select form-select-sm" style="height: 44px;" required>
+                            <option value="">-- Seleccionar Tipo --</option>
+                            <option value="Indeterminado">Tiempo Indeterminado</option>
+                            <option value="Determinado">Tiempo Determinado</option>
+                            <option value="Prueba">Periodo de Prueba</option>
+                            <option value="Obra">Obra Determinada</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end justify-content-md-end h-100" style="padding-top: 24px;">
+                        <button type="button" class="btn btn-danger btn-remove-contrato w-100 w-md-auto" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px;">
+                            <i class="material-symbols-rounded" style="font-size: 1.2rem;">delete</i> Eliminar
+                        </button>
+                    </div>
                 </div>
             `;
         container.appendChild(newItem);
+
+        // Bind the file uploader for the new element
+        const newInput = newItem.querySelector('input[type="file"]');
+        if (newInput && window.GecoFileUploader) {
+            window.GecoFileUploader.bindUploader(newInput, 'horizontal');
+        }
 
         // Habilitar botón de eliminar en todos menos el primero
         actualizarBotonesEliminar();

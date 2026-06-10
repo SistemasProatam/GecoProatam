@@ -1000,9 +1000,7 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
                 <tr>
                   <td class="cell-muted"><?= $i++ ?></td>
                   <td>
-                    <span class="type-badge <?= ($item['tipo'] === 'producto') ? 'producto' : 'servicio' ?>">
-                      <?= ucfirst(htmlspecialchars($item['tipo'] ?? 'producto')) ?>
-                    </span>
+                    <?= ucfirst(htmlspecialchars($item['tipo'] ?? 'producto')) ?>
                   </td>
                   <td><?= !empty($item['producto']) ? htmlspecialchars($item['producto']) : htmlspecialchars($item['descripcion']) ?></td>
                   <td><?= htmlspecialchars($item['cantidad']) ?></td>
@@ -1150,15 +1148,15 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 
       <!-- Comprobante de Pago -->
       <?php if (!empty($orden_compra['comprobante_pago'])): ?>
-        <div class="oc-side-card" style="border-left:3px solid #6d28d9;">
-          <div class="oc-side-header" style="color:#6d28d9;"><i class="fa-solid fa-receipt"></i> Comprobante de Pago</div>
+        <div class="oc-side-card">
+          <div class="oc-side-header" style="color:var(--purple-700, #5b21b6);"><i class="material-symbols-rounded" style="font-size: 1.15rem; vertical-align: middle; margin-right: 4px;">receipt_long</i> Comprobante de Pago</div>
           <div class="oc-side-body">
             <div style="display:flex;gap:.5rem;">
               <button type="button" class="btn-geco-primary" style="font-size:.78rem;padding:.4rem .8rem;" onclick="verComprobante(<?= $id ?>)">
-                <i class="fa-regular fa-eye"></i> Ver
+                <i class="material-symbols-rounded" style="font-size: 1rem; vertical-align: middle; margin-right: 2px;">visibility</i> Ver
               </button>
               <a href="<?= BASE_URL ?>/orders/download_comprobante.php?id=<?= $id ?>&download=1" class="btn-geco-outline" style="font-size:.78rem;padding:.4rem .8rem;">
-                <i class="fa-solid fa-download"></i> Descargar
+                <i class="material-symbols-rounded" style="font-size: 1rem; vertical-align: middle; margin-right: 2px;">download</i> Descargar
               </a>
             </div>
           </div>
