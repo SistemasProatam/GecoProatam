@@ -50,11 +50,11 @@ $stmt_contratos->close();
         <span class="separator">›</span>
         <a href="list_users.php">Usuarios</a>
         <span class="separator">›</span>
-        <a href="details_user.php?id=<?= $user['id'] ?>">Información del Usuario</a>
+        <a href="details_user.php?id=<?= $user['id'] ?>">Detalles del Usuario</a>
         <span class="separator">›</span>
         <span>Editar Usuario</span>
       </nav>
-      <h1 class="orders-page-title">Editar Usuario — <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
+      <h1 class="orders-page-title">Editar <?= htmlspecialchars($user['nombres'] . ' ' . $user['apellidos']) ?></h1>
     </div>
     <a href="details_user.php?id=<?= $user['id'] ?>" class="btn-geco-outline">
       <i class="fa-solid fa-arrow-left"></i> Volver al Perfil

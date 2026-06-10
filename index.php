@@ -72,7 +72,9 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
                         <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500, #6b7280);">Novedades</span>
                     </div>
                     <h4 class="quote-text" style="font-size: 0.85rem; font-weight: 800; margin: 0 0 0.2rem 0; color: var(--s-800, #0f172a);">GECO 2.0 • Actualización de interfaz de usuario</h4>
-                    <p class="quote-text" style="font-size: 0.72rem; font-weight: 500; opacity: 0.85; margin: 0; line-height: 1.3;">Nueva interfaz unificada y sistema visual optimizado para alto rendimiento.</p>
+                    <p class="quote-text" style="font-size: 0.72rem; font-weight: 500; opacity: 0.85; margin: 0; line-height: 1.3;">Nueva interfaz unificada y sistema visual optimizado para alto rendimiento.
+                    </p>
+                    <small style="font-size: 0.62rem; font-weight: 500;  margin: 0; line-height: 1.3;">06/06/2026</small>
                 </div>
 
                 <!-- Floating Status Card -->

@@ -213,7 +213,7 @@ function is_active($path)
                         alt="GECO Isologo"
                         class="isologo-spin"
                         onclick="this.classList.toggle('rotating')"
-                        style="height: 35px; opacity: 0.6; cursor: pointer; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+                        style="height: 35px; cursor: pointer; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
                 </div>
 
                 <div class="header-actions">

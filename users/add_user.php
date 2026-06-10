@@ -30,9 +30,9 @@ $conn->close();
         <span class="separator">›</span>
         <a href="list_users.php">Usuarios</a>
         <span class="separator">›</span>
-        <span>Agregar Usuario</span>
+        <span>Nuevo Usuario</span>
       </nav>
-      <h1 class="orders-page-title">Agregar Usuario</h1>
+      <h1 class="orders-page-title">Nuevo Usuario</h1>
     </div>
     <a href="list_users.php" class="btn-geco-outline">
       <i class="fa-solid fa-arrow-left"></i> Volver al Listado

@@ -7,8 +7,8 @@ preventCaching();
 $dep_id_sesion  = $_SESSION['departamento_id'] ?? null;
 $es_super_admin = ($_SESSION['departamento']   ?? '') === 'SUPER_ADMIN';
 if (!$es_super_admin && !in_array($dep_id_sesion, [1, 2, 10, 16])) {
-  header("Location: " . BASE_URL . "/index.php?acceso=denegado");
-  exit;
+    header("Location: " . BASE_URL . "/index.php?acceso=denegado");
+    exit;
 }
 
 require_once __DIR__ . "/../conexion.php";
@@ -40,10 +40,7 @@ $result_entidades = $conn->query($sql_entidades);
                 <span class="separator">›</span>
                 <span>Nueva Cotización</span>
             </nav>
-            <h1 class="orders-page-title">Generar Cotización</h1>
-            <p class="mt-1 mb-0 text-muted" style="font-size: 0.9rem;">
-                Folio actual: <strong style="color: var(--s-700);" id="folioDisplay">...</strong>
-            </p>
+            <h1 class="orders-page-title">Nueva Cotización</h1>
         </div>
         <button type="button" class="btn-geco-outline" onclick="location.href='list_cotizaciones.php'">
             <i class="fa-solid fa-arrow-left"></i> Volver
@@ -67,14 +64,18 @@ $result_entidades = $conn->query($sql_entidades);
             </div>
             <div class="oc-card-body">
                 <p class="oc-card-intro" style="margin-top: -8px; margin-bottom: 20px;">Complete los datos generales del receptor y emisor de esta cotización. Los campos con <span class="required">*</span> son requeridos.</p>
-                
+
                 <div class="row g-3">
+                    <div class="col-md-6 col-lg-4">
+                        <label class="oc-form-label">Folio <span class="required">*</span></label>
+                        <span name="folio" class="form-control" required readonly id="folioDisplay"></span>
+                    </div>
                     <div class="col-md-6 col-lg-4">
                         <label class="oc-form-label">Empresa Emisora <span class="required">*</span></label>
                         <select name="entidad" id="entidadSelect" class="form-select" onchange="actualizarFolio()">
-                          <?php while ($row = $result_entidades->fetch_assoc()): ?>
-                            <option value="<?= htmlspecialchars($row['nombre']) ?>" <?= $row['nombre'] === $entidadSel ? 'selected' : '' ?>><?= htmlspecialchars($row['nombre']) ?></option>
-                          <?php endwhile; ?>
+                            <?php while ($row = $result_entidades->fetch_assoc()): ?>
+                                <option value="<?= htmlspecialchars($row['nombre']) ?>" <?= $row['nombre'] === $entidadSel ? 'selected' : '' ?>><?= htmlspecialchars($row['nombre']) ?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="col-md-6 col-lg-4">
@@ -104,7 +105,7 @@ $result_entidades = $conn->query($sql_entidades);
             </div>
             <div class="oc-card-body">
                 <p class="oc-card-intro" style="margin-top: -8px; margin-bottom: 20px;">Desglose las partidas o servicios a cotizar en la siguiente tabla. Todos los importes se recalcularán automáticamente.</p>
-                
+
                 <div class="orders-table-wrap mb-3">
                     <table class="orders-table align-middle" id="tablaConceptos">
                         <thead>
@@ -123,7 +124,7 @@ $result_entidades = $conn->query($sql_entidades);
                 </div>
 
                 <button type="button" class="btn-geco-secondary btn-sm" onclick="agregarFila()">
-                    <i class="fa-solid fa-circle-plus"></i> Agregar Concepto
+                    <i class="fa-solid fa-plus"></i> Agregar Concepto
                 </button>
 
 
@@ -140,7 +141,7 @@ $result_entidades = $conn->query($sql_entidades);
                     <div class="oc-card-body">
                         <p class="oc-card-hint--block">Seleccione los alcances generales cubiertos por esta cotización.</p>
                         <div class="row g-3">
-                            <?php 
+                            <?php
                             $alcancesOpc = [
                                 'ejecucion'   => 'Ejecución de obra',
                                 'materiales'  => 'Suministro de materiales',
@@ -151,7 +152,7 @@ $result_entidades = $conn->query($sql_entidades);
                                 'seguridad'   => 'Seguridad industrial',
                                 'entrega'     => 'Memoria fotográfica'
                             ];
-                            foreach ($alcancesOpc as $k => $v): 
+                            foreach ($alcancesOpc as $k => $v):
                             ?>
                                 <div class="col-md-6 col-lg-4">
                                     <div class="form-check">
@@ -163,7 +164,7 @@ $result_entidades = $conn->query($sql_entidades);
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        
+
                         <div class="mt-4">
                             <label class="oc-form-label small" style="font-size: 0.8rem; color: var(--gray-500);">Alcances Adicionales o Exclusiones</label>
                             <textarea name="alcances_extra" class="form-control" rows="3" placeholder="Describa otros alcances, aclaraciones o exclusiones de forma detallada..."></textarea>
@@ -232,14 +233,17 @@ $result_entidades = $conn->query($sql_entidades);
 
     <!-- ─── SCRIPTS ──────────────────────────────────────────────── -->
     <script>
-      let filaCount = 0;
-      const fmt = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n || 0);
+        let filaCount = 0;
+        const fmt = n => new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+        }).format(n || 0);
 
-      function agregarFila() {
-        filaCount++;
-        const tr = document.createElement('tr');
-        tr.dataset.idx = filaCount;
-        tr.innerHTML = `
+        function agregarFila() {
+            filaCount++;
+            const tr = document.createElement('tr');
+            tr.dataset.idx = filaCount;
+            tr.innerHTML = `
           <td class="text-center small fw-bold text-muted" style="vertical-align: middle;">${filaCount}</td>
           <td><textarea name="desc[]" class="form-control form-control-sm" rows="2" placeholder="Descripción..."></textarea></td>
           <td><input type="text" name="unidad[]" class="form-control form-control-sm" placeholder="pza, m, etc"></td>
@@ -251,59 +255,65 @@ $result_entidades = $conn->query($sql_entidades);
                   <i class="fa-solid fa-trash-can"></i>
               </button>
           </td>`;
-        document.getElementById('tbodyConceptos').appendChild(tr);
-        recalcular();
-      }
+            document.getElementById('tbodyConceptos').appendChild(tr);
+            recalcular();
+        }
 
-      function recalcular() {
-        let subtotal = 0;
-        document.querySelectorAll('#tbodyConceptos tr').forEach(tr => {
-          const q = parseFloat(tr.querySelector('input[name="cantidad[]"]').value) || 0;
-          const p = parseFloat(tr.querySelector('input[name="precio[]"]').value) || 0;
-          const imp = q * p; subtotal += imp;
-          document.getElementById('imp-' + tr.dataset.idx).textContent = fmt(imp);
+        function recalcular() {
+            let subtotal = 0;
+            document.querySelectorAll('#tbodyConceptos tr').forEach(tr => {
+                const q = parseFloat(tr.querySelector('input[name="cantidad[]"]').value) || 0;
+                const p = parseFloat(tr.querySelector('input[name="precio[]"]').value) || 0;
+                const imp = q * p;
+                subtotal += imp;
+                document.getElementById('imp-' + tr.dataset.idx).textContent = fmt(imp);
+            });
+            const ivaPct = parseFloat(document.getElementById('selectIva').value) || 0;
+            const iva = subtotal * (ivaPct / 100);
+            const total = subtotal + iva;
+            document.getElementById('dispSubtotal').textContent = fmt(subtotal);
+            document.getElementById('dispIva').textContent = fmt(iva);
+            document.getElementById('dispTotal').textContent = fmt(total);
+            document.getElementById('hSubtotal').value = subtotal.toFixed(2);
+            document.getElementById('hIva').value = iva.toFixed(2);
+            document.getElementById('hTotal').value = total.toFixed(2);
+            document.getElementById('hTasaIva').value = ivaPct;
+        }
+
+        function actualizarFolio() {
+            const ent = document.getElementById('entidadSelect').value;
+            fetch('generar_folio.php?entidad=' + encodeURIComponent(ent)).then(r => r.json()).then(d => {
+                document.getElementById('folioDisplay').textContent = d.folio;
+                document.getElementById('folioInput').value = d.folio;
+            });
+        }
+
+        function guardarYDescargar() {
+            const f = document.getElementById('formCotizacion');
+            if (!f.atencion.value.trim()) {
+                UI.toast.error("Atención a es obligatorio");
+                return;
+            }
+
+            UI.loading("Generando cotización...");
+            fetch('save_cotizacion.php', {
+                method: 'POST',
+                body: new FormData(f)
+            }).then(r => r.json()).then(r => {
+                UI.loading.hide();
+                if (r.status === 'success') {
+                    UI.toast.success("Cotización generada");
+                    window.location.href = 'descargar_cotizacion.php?id=' + r.id;
+                    setTimeout(() => location.href = 'list_cotizaciones.php', 2000);
+                } else UI.toast.error(r.message);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            agregarFila();
+            actualizarFolio();
         });
-        const ivaPct = parseFloat(document.getElementById('selectIva').value) || 0;
-        const iva = subtotal * (ivaPct / 100);
-        const total = subtotal + iva;
-        document.getElementById('dispSubtotal').textContent = fmt(subtotal);
-        document.getElementById('dispIva').textContent = fmt(iva);
-        document.getElementById('dispTotal').textContent = fmt(total);
-        document.getElementById('hSubtotal').value = subtotal.toFixed(2);
-        document.getElementById('hIva').value = iva.toFixed(2);
-        document.getElementById('hTotal').value = total.toFixed(2);
-        document.getElementById('hTasaIva').value = ivaPct;
-      }
-
-      function actualizarFolio() {
-        const ent = document.getElementById('entidadSelect').value;
-        fetch('generar_folio.php?entidad=' + encodeURIComponent(ent)).then(r => r.json()).then(d => {
-          document.getElementById('folioDisplay').textContent = d.folio;
-          document.getElementById('folioInput').value = d.folio;
-        });
-      }
-
-      function guardarYDescargar() {
-        const f = document.getElementById('formCotizacion');
-        if (!f.atencion.value.trim()) { UI.toast.error("Atención a es obligatorio"); return; }
-        
-        UI.loading("Generando cotización...");
-        fetch('save_cotizacion.php', { method: 'POST', body: new FormData(f) }).then(r => r.json()).then(r => {
-          UI.loading.hide();
-          if (r.status === 'success') {
-            UI.toast.success("Cotización generada");
-            window.location.href = 'descargar_cotizacion.php?id=' + r.id;
-            setTimeout(() => location.href = 'list_cotizaciones.php', 2000);
-          } else UI.toast.error(r.message);
-        });
-      }
-
-      document.addEventListener('DOMContentLoaded', function() {
-        agregarFila();
-        actualizarFolio();
-      });
     </script>
 </div>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-

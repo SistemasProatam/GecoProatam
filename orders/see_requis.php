@@ -13,7 +13,7 @@ require_once __DIR__ . "/../conexion.php";
 require_once __DIR__ . '/../EmailHandler.php';
 
 if (!isset($_GET['id'])) {
-  die("ID no proporcionado");
+    die("ID no proporcionado");
 }
 
 $id = intval($_GET['id']);
@@ -21,27 +21,27 @@ $id = intval($_GET['id']);
 // Función para traducir estados
 function traducirEstado($estado)
 {
-  $estados = [
-    'pendiente' => 'Pendiente',
-    'aprobado' => 'Aprobado',
-    'rechazado' => 'Rechazado'
-  ];
-  return $estados[$estado] ?? ucfirst($estado);
+    $estados = [
+        'pendiente' => 'Pendiente',
+        'aprobado' => 'Aprobado',
+        'rechazado' => 'Rechazado'
+    ];
+    return $estados[$estado] ?? ucfirst($estado);
 }
 
 // Procesar cambio de estado si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
-  $nuevo_estado = $_POST['nuevo_estado'];
-  $comentario = $_POST['comentario'] ?? '';
+    $nuevo_estado = $_POST['nuevo_estado'];
+    $comentario = $_POST['comentario'] ?? '';
 
-  // Validar estado
-  $estados_permitidos = ['aprobado', 'rechazado'];
-  if (in_array($nuevo_estado, $estados_permitidos)) {
+    // Validar estado
+    $estados_permitidos = ['aprobado', 'rechazado'];
+    if (in_array($nuevo_estado, $estados_permitidos)) {
 
-    // ========================================
-    // OBTENER DATOS COMPLETOS ANTES DE ACTUALIZAR
-    // ========================================
-    $sql_datos = "SELECT r.*, 
+        // ========================================
+        // OBTENER DATOS COMPLETOS ANTES DE ACTUALIZAR
+        // ========================================
+        $sql_datos = "SELECT r.*, 
                       u.correo_corporativo, 
                       CONCAT(u.nombres, ' ', u.apellidos) as nombre_solicitante,
                       e.nombre as entidad_nombre, 
@@ -55,107 +55,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
                       LEFT JOIN obras o ON r.obra_id = o.id
                       LEFT JOIN catalogos cat ON r.catalogo_id = cat.id
                       WHERE r.id = ?";
-    $stmt_datos = $conn->prepare($sql_datos);
-    $stmt_datos->bind_param("i", $id);
-    $stmt_datos->execute();
-    $requisicion_data = $stmt_datos->get_result()->fetch_assoc();
+        $stmt_datos = $conn->prepare($sql_datos);
+        $stmt_datos->bind_param("i", $id);
+        $stmt_datos->execute();
+        $requisicion_data = $stmt_datos->get_result()->fetch_assoc();
 
-    if (!$requisicion_data) {
-      die("Error: No se pudieron obtener los datos de la requisición");
-    }
-
-    // DEBUG
-    error_log("=== CAMBIO DE ESTADO DESDE see_requis.php ===");
-    error_log("Requisición ID: " . $id);
-    error_log("Folio: " . $requisicion_data['folio']);
-    error_log("Nuevo estado: " . $nuevo_estado);
-    error_log("Solicitante: " . $requisicion_data['nombre_solicitante']);
-    error_log("Correo: " . $requisicion_data['correo_corporativo']);
-
-    // ========================================
-    // ACTUALIZAR ESTADO
-    // ========================================
-    $sql_update = "UPDATE requisiciones SET estado = ? WHERE id = ?";
-    $stmt_update = $conn->prepare($sql_update);
-    $stmt_update->bind_param("si", $nuevo_estado, $id);
-
-    if ($stmt_update->execute()) {
-      error_log("Estado actualizado en BD");
-
-      // ========================================
-      // REGISTRAR EN HISTORIAL
-      // ========================================
-      try {
-        $sql_historial = "INSERT INTO requisicion_historial (requisicion_id, usuario_id, accion, comentario) VALUES (?, ?, ?, ?)";
-        $stmt_historial = $conn->prepare($sql_historial);
-        $accion = $nuevo_estado === 'aprobado' ? 'Aprobó requisición' : 'Rechazó requisición';
-        $stmt_historial->bind_param("iiss", $id, $_SESSION['user_id'], $accion, $comentario);
-        $stmt_historial->execute();
-        error_log("Historial registrado");
-      } catch (Exception $e) {
-        error_log(" Error al insertar en historial: " . $e->getMessage());
-      }
-
-      // ========================================
-      // ENVIAR NOTIFICACIÓN POR CORREO
-      // ========================================
-
-      // Validar que existe correo del solicitante
-      if (empty($requisicion_data['correo_corporativo'])) {
-        error_log("ADVERTENCIA: El solicitante no tiene correo corporativo registrado");
-        header("Location: see_requis.php?id=$id&success=1&email=no_correo");
-        exit;
-      }
-
-      error_log("Iniciando envío de notificación...");
-
-      try {
-        $emailHandler = new EmailHandler();
-        error_log("EmailHandler instanciado");
-
-        // Preparar datos para la notificación
-        $datosRequisicion = [
-          'id' => $id,
-          'folio' => $requisicion_data['folio'],
-          'estado' => traducirEstado($nuevo_estado),
-          'comentarios' => $comentario,
-          'solicitante' => $requisicion_data['nombre_solicitante'],
-          'entidad' => $requisicion_data['entidad_nombre'] ?? 'Sin especificar',
-          'categoria' => $requisicion_data['categoria_nombre'] ?? 'Sin especificar',
-          'fecha_solicitud' => date('d/m/Y H:i', strtotime($requisicion_data['fecha_solicitud'])),
-          'ubicacion' => generarTextoUbicacion($requisicion_data)
-        ];
-
-        error_log("Enviando correo a: " . $requisicion_data['correo_corporativo']);
-
-        // Enviar la notificación
-        $resultado = $emailHandler->enviarNotificacionCambioEstado(
-          $requisicion_data['correo_corporativo'],
-          $requisicion_data['nombre_solicitante'],
-          $datosRequisicion
-        );
-
-        if ($resultado) {
-          error_log("✅ CORREO ENVIADO EXITOSAMENTE");
-          header("Location: see_requis.php?id=$id&success=1&email=enviado");
-        } else {
-          error_log("FALLÓ EL ENVÍO DEL CORREO");
-          header("Location: see_requis.php?id=$id&success=1&email=error");
+        if (!$requisicion_data) {
+            die("Error: No se pudieron obtener los datos de la requisición");
         }
-        exit;
-      } catch (Exception $e) {
-        error_log("ERROR EN EXCEPCIÓN AL ENVIAR CORREO: " . $e->getMessage());
-        error_log("Archivo: " . $e->getFile() . " Línea: " . $e->getLine());
-        header("Location: see_requis.php?id=$id&success=1&email=excepcion");
-        exit;
-      }
+
+        // DEBUG
+        error_log("=== CAMBIO DE ESTADO DESDE see_requis.php ===");
+        error_log("Requisición ID: " . $id);
+        error_log("Folio: " . $requisicion_data['folio']);
+        error_log("Nuevo estado: " . $nuevo_estado);
+        error_log("Solicitante: " . $requisicion_data['nombre_solicitante']);
+        error_log("Correo: " . $requisicion_data['correo_corporativo']);
+
+        // ========================================
+        // ACTUALIZAR ESTADO
+        // ========================================
+        $sql_update = "UPDATE requisiciones SET estado = ? WHERE id = ?";
+        $stmt_update = $conn->prepare($sql_update);
+        $stmt_update->bind_param("si", $nuevo_estado, $id);
+
+        if ($stmt_update->execute()) {
+            error_log("Estado actualizado en BD");
+
+            // ========================================
+            // REGISTRAR EN HISTORIAL
+            // ========================================
+            try {
+                $sql_historial = "INSERT INTO requisicion_historial (requisicion_id, usuario_id, accion, comentario) VALUES (?, ?, ?, ?)";
+                $stmt_historial = $conn->prepare($sql_historial);
+                $accion = $nuevo_estado === 'aprobado' ? 'Aprobó requisición' : 'Rechazó requisición';
+                $stmt_historial->bind_param("iiss", $id, $_SESSION['user_id'], $accion, $comentario);
+                $stmt_historial->execute();
+                error_log("Historial registrado");
+            } catch (Exception $e) {
+                error_log(" Error al insertar en historial: " . $e->getMessage());
+            }
+
+            // ========================================
+            // ENVIAR NOTIFICACIÓN POR CORREO
+            // ========================================
+
+            // Validar que existe correo del solicitante
+            if (empty($requisicion_data['correo_corporativo'])) {
+                error_log("ADVERTENCIA: El solicitante no tiene correo corporativo registrado");
+                header("Location: see_requis.php?id=$id&success=1&email=no_correo");
+                exit;
+            }
+
+            error_log("Iniciando envío de notificación...");
+
+            try {
+                $emailHandler = new EmailHandler();
+                error_log("EmailHandler instanciado");
+
+                // Preparar datos para la notificación
+                $datosRequisicion = [
+                    'id' => $id,
+                    'folio' => $requisicion_data['folio'],
+                    'estado' => traducirEstado($nuevo_estado),
+                    'comentarios' => $comentario,
+                    'solicitante' => $requisicion_data['nombre_solicitante'],
+                    'entidad' => $requisicion_data['entidad_nombre'] ?? 'Sin especificar',
+                    'categoria' => $requisicion_data['categoria_nombre'] ?? 'Sin especificar',
+                    'fecha_solicitud' => date('d/m/Y H:i', strtotime($requisicion_data['fecha_solicitud'])),
+                    'ubicacion' => generarTextoUbicacion($requisicion_data)
+                ];
+
+                error_log("Enviando correo a: " . $requisicion_data['correo_corporativo']);
+
+                // Enviar la notificación
+                $resultado = $emailHandler->enviarNotificacionCambioEstado(
+                    $requisicion_data['correo_corporativo'],
+                    $requisicion_data['nombre_solicitante'],
+                    $datosRequisicion
+                );
+
+                if ($resultado) {
+                    error_log("✅ CORREO ENVIADO EXITOSAMENTE");
+                    header("Location: see_requis.php?id=$id&success=1&email=enviado");
+                } else {
+                    error_log("FALLÓ EL ENVÍO DEL CORREO");
+                    header("Location: see_requis.php?id=$id&success=1&email=error");
+                }
+                exit;
+            } catch (Exception $e) {
+                error_log("ERROR EN EXCEPCIÓN AL ENVIAR CORREO: " . $e->getMessage());
+                error_log("Archivo: " . $e->getFile() . " Línea: " . $e->getLine());
+                header("Location: see_requis.php?id=$id&success=1&email=excepcion");
+                exit;
+            }
+        } else {
+            $mensaje_error = "Error al actualizar el estado: " . $stmt_update->error;
+            error_log("Error al actualizar estado: " . $stmt_update->error);
+        }
     } else {
-      $mensaje_error = "Error al actualizar el estado: " . $stmt_update->error;
-      error_log("Error al actualizar estado: " . $stmt_update->error);
+        $mensaje_error = "Estado no válido";
     }
-  } else {
-    $mensaje_error = "Estado no válido";
-  }
 }
 
 // Obtener requisición CON LOS NUEVOS CAMPOS DE UBICACIÓN
@@ -175,7 +175,7 @@ $stmt->execute();
 $requisicion = $stmt->get_result()->fetch_assoc();
 
 if (!$requisicion) {
-  die("Requisición no encontrada");
+    die("Requisición no encontrada");
 }
 
 // Obtener items CON CONCEPTOS
@@ -199,21 +199,21 @@ $items = $stmt_items->get_result();
 // Obtener el comentario de rechazo si está rechazada
 $comentario_rechazo = '';
 if ($requisicion['estado'] === 'rechazado') {
-  try {
-    $sql_comentario = "SELECT comentario FROM requisicion_historial 
+    try {
+        $sql_comentario = "SELECT comentario FROM requisicion_historial 
                           WHERE requisicion_id = ? AND accion = 'Rechazó requisición' 
                           ORDER BY fecha_cambio DESC LIMIT 1";
-    $stmt_comentario = $conn->prepare($sql_comentario);
-    $stmt_comentario->bind_param("i", $id);
-    $stmt_comentario->execute();
-    $result_comentario = $stmt_comentario->get_result();
+        $stmt_comentario = $conn->prepare($sql_comentario);
+        $stmt_comentario->bind_param("i", $id);
+        $stmt_comentario->execute();
+        $result_comentario = $stmt_comentario->get_result();
 
-    if ($result_comentario && $result_comentario->num_rows > 0) {
-      $comentario_rechazo = $result_comentario->fetch_assoc()['comentario'];
+        if ($result_comentario && $result_comentario->num_rows > 0) {
+            $comentario_rechazo = $result_comentario->fetch_assoc()['comentario'];
+        }
+    } catch (Exception $e) {
+        error_log("Error al obtener comentario de rechazo: " . $e->getMessage());
     }
-  } catch (Exception $e) {
-    error_log("Error al obtener comentario de rechazo: " . $e->getMessage());
-  }
 }
 
 // Obtener archivos adjuntos
@@ -229,12 +229,12 @@ $archivos = $stmt_archivos->get_result();
 // Función para formatear bytes
 function formatBytes($bytes, $precision = 2)
 {
-  $units = array('B', 'KB', 'MB', 'GB', 'TB');
-  $bytes = max($bytes, 0);
-  $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-  $pow = min($pow, count($units) - 1);
-  $bytes /= (1 << (10 * $pow));
-  return round($bytes, $precision) . ' ' . $units[$pow];
+    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+    $bytes /= (1 << (10 * $pow));
+    return round($bytes, $precision) . ' ' . $units[$pow];
 }
 
 /**
@@ -242,21 +242,21 @@ function formatBytes($bytes, $precision = 2)
  */
 function generarTextoUbicacion($requisicion_data)
 {
-  $ubicacion = [];
+    $ubicacion = [];
 
-  if (!empty($requisicion_data['nombre_proyecto'])) {
-    $ubicacion[] = "Proyecto: " . $requisicion_data['nombre_proyecto'];
-  }
+    if (!empty($requisicion_data['nombre_proyecto'])) {
+        $ubicacion[] = "Proyecto: " . $requisicion_data['nombre_proyecto'];
+    }
 
-  if (!empty($requisicion_data['nombre_obra'])) {
-    $ubicacion[] = "Obra: " . $requisicion_data['nombre_obra'];
-  }
+    if (!empty($requisicion_data['nombre_obra'])) {
+        $ubicacion[] = "Obra: " . $requisicion_data['nombre_obra'];
+    }
 
-  if (!empty($requisicion_data['nombre_catalogo'])) {
-    $ubicacion[] = "Catálogo: " . $requisicion_data['nombre_catalogo'];
-  }
+    if (!empty($requisicion_data['nombre_catalogo'])) {
+        $ubicacion[] = "Catálogo: " . $requisicion_data['nombre_catalogo'];
+    }
 
-  return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicación específica";
+    return !empty($ubicacion) ? implode(" | ", $ubicacion) : "Sin ubicación específica";
 }
 ?>
 
@@ -277,7 +277,7 @@ function generarTextoUbicacion($requisicion_data)
                 <span class="separator">›</span>
                 <span>Detalles de Requisición</span>
             </nav>
-            <h1 class="orders-page-title">Requisición - <?= htmlspecialchars($requisicion['folio']) ?></h1>
+            <h1 class="orders-page-title"><?= htmlspecialchars($requisicion['folio']) ?></h1>
         </div>
         <a href="list_requis.php" class="btn-geco-outline">
             <i class="fa-solid fa-arrow-left"></i> Volver al Listado
@@ -289,46 +289,46 @@ function generarTextoUbicacion($requisicion_data)
 
         <!-- Mostrar mensajes -->
         <?php if (isset($_GET['success'])): ?>
-          <?php
-          $email_status = $_GET['email'] ?? '';
-          $mensaje_clase = 'success';
-          $icono = 'fa-solid fa-circle-check';
-          $mensaje = 'Estado actualizado correctamente';
+            <?php
+            $email_status = $_GET['email'] ?? '';
+            $mensaje_clase = 'success';
+            $icono = 'fa-solid fa-circle-check';
+            $mensaje = 'Estado actualizado correctamente';
 
-          switch ($email_status) {
-            case 'enviado':
-              $mensaje .= ' y notificación enviada por correo al solicitante.';
-              break;
-            case 'error':
-              $mensaje_clase = 'warning';
-              $icono = 'fa-solid fa-triangle-exclamation';
-              $mensaje .= ', pero hubo un problema al enviar la notificación por correo.';
-              break;
-            case 'excepcion':
-              $mensaje_clase = 'warning';
-              $icono = 'fa-solid fa-triangle-exclamation';
-              $mensaje .= ', pero ocurrió un error al intentar enviar el correo.';
-              break;
-            case 'no_correo':
-              $mensaje_clase = 'warning';
-              $icono = 'fa-solid fa-triangle-exclamation';
-              $mensaje .= ', pero el solicitante no tiene correo registrado.';
-              break;
-            default:
-              $mensaje .= '.';
-          }
-          ?>
-          <div class="alert alert-<?= $mensaje_clase ?> alert-dismissible fade show" role="alert">
-            <i class="<?= $icono ?>"></i> <?= $mensaje ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
+            switch ($email_status) {
+                case 'enviado':
+                    $mensaje .= ' y notificación enviada por correo al solicitante.';
+                    break;
+                case 'error':
+                    $mensaje_clase = 'warning';
+                    $icono = 'fa-solid fa-triangle-exclamation';
+                    $mensaje .= ', pero hubo un problema al enviar la notificación por correo.';
+                    break;
+                case 'excepcion':
+                    $mensaje_clase = 'warning';
+                    $icono = 'fa-solid fa-triangle-exclamation';
+                    $mensaje .= ', pero ocurrió un error al intentar enviar el correo.';
+                    break;
+                case 'no_correo':
+                    $mensaje_clase = 'warning';
+                    $icono = 'fa-solid fa-triangle-exclamation';
+                    $mensaje .= ', pero el solicitante no tiene correo registrado.';
+                    break;
+                default:
+                    $mensaje .= '.';
+            }
+            ?>
+            <div class="alert alert-<?= $mensaje_clase ?> alert-dismissible fade show" role="alert">
+                <i class="<?= $icono ?>"></i> <?= $mensaje ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
         <?php if (isset($mensaje_error)): ?>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-triangle-exclamation"></i> <?= $mensaje_error ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i> <?= $mensaje_error ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
         <!-- Card 1: Información General -->
@@ -593,8 +593,8 @@ function generarTextoUbicacion($requisicion_data)
                                         <td>
                                             <div class="actions-group" style="justify-content: center;">
                                                 <button type="button"
-                                                        class="btn-action btn-action--view"
-                                                        onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')">
+                                                    class="btn-action btn-action--view"
+                                                    onclick="verArchivo(<?= $archivo['id'] ?>, '<?= htmlspecialchars($archivo['tipo_mime']) ?>')">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </button>
                                             </div>
@@ -627,8 +627,8 @@ function generarTextoUbicacion($requisicion_data)
                         <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
                             <i class="fa-solid fa-envelope text-info fs-5"></i>
                             <div>
-                                <strong>Notificación automática:</strong> Al cambiar el estado, se enviará un correo a 
-                                <strong><?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?></strong> 
+                                <strong>Notificación automática:</strong> Al cambiar el estado, se enviará un correo a
+                                <strong><?= htmlspecialchars($requisicion['nombres'] . ' ' . $requisicion['apellidos']) ?></strong>
                                 (<?= htmlspecialchars($requisicion['correo_corporativo']) ?>).
                             </div>
                         </div>
@@ -731,4 +731,4 @@ function generarTextoUbicacion($requisicion_data)
 </script>
 
 <script src="<?= BASE_URL ?>/assets/scripts/session_timeout.js"></script>
-<?php include __DIR__ . "/../includes/footer.php"; ?>
+<?php include __DIR__ . "/../includes/footer.php"; ?>

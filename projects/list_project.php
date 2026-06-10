@@ -73,7 +73,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
       <h1 class="orders-page-title">Proyectos</h1>
     </div>
     <button class="btn-geco-primary" type="button" onclick="agregarProyecto()">
-      <i class="fa-solid fa-circle-plus"></i> Nuevo Proyecto
+      <i class="fa-solid fa-plus"></i> Agregar
     </button>
   </div>
 
@@ -162,7 +162,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                         <i class="fa-solid fa-helmet-safety"></i>
                       </a>
                       <a href="details_project.php?id=<?= $row['id'] ?>" class="btn-action btn-action--view" title="Ver Detalles del Proyecto">
-                        <i class="fa-solid fa-circle-info"></i>
+                        <i class="fa-regular fa-eye"></i>
                       </a>
                       <button class="btn-action btn-action--delete" onclick="eliminarProyecto(<?= $row['id'] ?>)" title="Eliminar Proyecto">
                         <i class="fa-solid fa-trash-can"></i>
@@ -237,16 +237,16 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                   </div>
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <label class="form-label fw-semibold">Nº Licitación *</label>
+                      <label class="form-label fw-semibold">Nº Licitación <span class="text-danger">*</span></label>
                       <input name="numero_licitacion" class="form-control" required placeholder="Ej: LIC-2026-001">
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label class="form-label fw-semibold">Nº Contrato *</label>
+                      <label class="form-label fw-semibold">Nº Contrato <span class="text-danger">*</span></label>
                       <input name="numero_contrato" class="form-control" required placeholder="Ej: CONT-2026-092">
                     </div>
                   </div>
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Nombre del Proyecto *</label>
+                    <label class="form-label fw-semibold">Nombre del Proyecto <span class="text-danger">*</span></label>
                     <input name="nombre_proyecto" class="form-control" required placeholder="Nombre descriptivo del proyecto">
                   </div>
                   <div class="mb-3">
@@ -255,31 +255,31 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
                   </div>
                   <div class="row">
                     <div class="col-6 mb-3">
-                      <label class="form-label fw-semibold">Fecha Inicio *</label>
+                      <label class="form-label fw-semibold">Fecha Inicio <span class="text-danger">*</span></label>
                       <input type="date" name="fecha_inicio" class="form-control" required>
                     </div>
                     <div class="col-6 mb-3">
-                      <label class="form-label fw-semibold">Fecha Fin *</label>
+                      <label class="form-label fw-semibold">Fecha Fin <span class="text-danger">*</span></label>
                       <input type="date" name="fecha_fin" class="form-control" required>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <label class="form-label fw-semibold">Monto Designado *</label>
+                      <label class="form-label fw-semibold">Monto Designado <span class="text-danger">*</span></label>
                       <input type="number" step="0.01" name="monto_designado" class="form-control" required placeholder="0.00">
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label class="form-label fw-semibold">Monto Anticipo *</label>
+                      <label class="form-label fw-semibold">Monto Anticipo <span class="text-danger">*</span></label>
                       <input type="number" step="0.01" name="monto_anticipo" class="form-control" required placeholder="0.00">
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <label class="form-label fw-semibold">Monto con IVA *</label>
+                      <label class="form-label fw-semibold">Monto con IVA <span class="text-danger">*</span></label>
                       <input type="number" step="0.01" name="monto_con_iva" class="form-control" required placeholder="0.00">
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label class="form-label fw-semibold">Costo Directo *</label>
+                      <label class="form-label fw-semibold">Costo Directo <span class="text-danger">*</span></label>
                       <input type="number" step="0.01" name="costo_directo" class="form-control" required placeholder="0.00">
                       <small class="text-muted d-block mt-1">Presupuesto disponible para OCs</small>
                     </div>

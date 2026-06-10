@@ -75,7 +75,7 @@ $entidadColores = [
       <h1 class="orders-page-title">Cotizaciones</h1>
     </div>
     <a href="cotizacion.php" class="btn-geco-primary">
-      <i class="fa-solid fa-circle-plus"></i> Nueva Cotización
+      <i class="fa-solid fa-plus"></i> Agregar
     </a>
   </div>
 
