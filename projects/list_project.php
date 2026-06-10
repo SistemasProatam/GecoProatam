@@ -57,7 +57,7 @@ $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<title>Proyectos | GECO Proatam</title>
+<title>Proyectos | GECO PROATAM</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

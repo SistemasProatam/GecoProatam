@@ -148,7 +148,7 @@ $iconColors = [
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<title>Catálogo del Sistema | GECO Proatam</title>
+<title>Catálogo del Sistema | GECO PROATAM</title>
 
 
 

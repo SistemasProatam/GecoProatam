@@ -261,7 +261,7 @@ function generarTextoUbicacion($requisicion_data)
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<title>Detalles de Requisición | GECO Proatam</title>
+<title>Detalles de Requisición | GECO PROATAM</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

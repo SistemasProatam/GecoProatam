@@ -314,7 +314,7 @@ while ($archivo = $archivos->fetch_assoc()) {
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-    <title>Editar Orden de Compra | GECO Proatam</title>
+    <title>Editar Orden de Compra | GECO PROATAM</title>
 
 
 

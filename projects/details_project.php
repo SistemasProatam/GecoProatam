@@ -50,7 +50,7 @@ $porcentaje_utilizado_proyecto = $proyecto['costo_directo'] > 0 ?
 
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
-<title>Detalles del Proyecto | GECO Proatam</title>
+<title>Detalles del Proyecto | GECO PROATAM</title>
 
 <div class="orders-page-container">
 

@@ -94,7 +94,7 @@ if (!function_exists('findImg')) {
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<title>Editar | GECO Proatam</title>
+<title>Editar | GECO PROATAM</title>
 
 <div class="orders-page-container">
 

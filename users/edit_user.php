@@ -37,7 +37,7 @@ $stmt_contratos->close();
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<title>Editar Usuario | GECO Proatam</title>
+<title>Editar Usuario | GECO PROATAM</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

@@ -145,7 +145,7 @@ $tipo_colores = [
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/dashboard.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<title>Panel de Control | GECO Proatam</title>
+<title>Panel de Control | GECO PROATAM</title>
 
 <?php include __DIR__ . "/includes/navbar.php"; ?>
 

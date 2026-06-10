@@ -84,7 +84,7 @@ while ($proyecto = $proyectosResult->fetch_assoc()) {
 $totalPaginas = ceil($totalRegistros / $por_pagina);
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<title>Obras | GECO Proatam</title>
+<title>Obras | GECO PROATAM</title>
 
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>

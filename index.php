@@ -26,7 +26,7 @@ $primerNombre = explode(' ', trim($_SESSION['nombres']))[0] ?? 'Usuario';
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/index.css?v=2.0">
-<title>Inicio | GECO Proatam</title>
+<title>Inicio | GECO PROATAM</title>
 
 <div class="page-content-inner index-full-wrap">
 

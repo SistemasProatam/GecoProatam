@@ -27,7 +27,7 @@ if (!$user) {
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<title>Detalles del Usuario | GECO Proatam</title>
+<title>Detalles del Usuario | GECO PROATAM</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
