@@ -130,6 +130,7 @@ if ($result_unidades && $result_unidades->num_rows > 0) {
 
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<title>Nueva Orden de Compra | GECO PROATAM</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

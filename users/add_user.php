@@ -17,6 +17,7 @@ $conn->close();
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+<title>Nuevo Usuario | GECO PROATAM</title>
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 

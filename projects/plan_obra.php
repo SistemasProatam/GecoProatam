@@ -133,6 +133,7 @@ if ($obra_id > 0) {
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/plan_obra.css?v=1.1">
+<title>Plan de Obra | GECO PROATAM</title>
 
 
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
@@ -175,7 +176,7 @@ if ($obra_id > 0) {
           </button>
         </div>
       </div>
-      
+
       <div class="w-100 border-top mt-3 pt-3">
         <div class="d-flex gap-4">
           <div class="form-check d-flex align-items-center gap-2">
@@ -242,11 +243,11 @@ if ($obra_id > 0) {
 <div class="mo" id="modal">
   <div class="mb border-0">
     <button class="mc" onclick="closeM()"><i class="fa-solid fa-xmark" style="font-size: 1.1rem; color: var(--gray-400);"></i></button>
-    
+
     <h4 id="m-name" class="fw-bold mb-4 text-dark" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; line-height: 1.4; padding-right: 2rem;"></h4>
-    
+
     <input type="hidden" id="m-id">
-    
+
     <div class="row g-3">
       <div class="col-md-6">
         <label class="lbl" style="font-size: 0.72rem; font-weight: 700; color: var(--gray-400); text-transform: uppercase; margin-bottom: 0.35rem; display: block;">P. Unitario</label>
@@ -268,7 +269,7 @@ if ($obra_id > 0) {
         <label class="lbl" style="font-size: 0.72rem; font-weight: 700; color: var(--gray-400); text-transform: uppercase; margin-bottom: 0.35rem; display: block;">Notas</label>
         <textarea id="m-not" class="form-control" rows="2" style="border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.85rem; padding: 0.55rem 0.75rem;"></textarea>
       </div>
-      
+
       <div class="col-12 mt-4 p-3 rounded" style="background: rgba(248, 250, 252, 0.8); border: 1.5px solid var(--gray-100); border-radius: 10px;">
         <div class="form-check d-flex align-items-center gap-2 m-0">
           <input class="form-check-input cursor-pointer" type="checkbox" id="m-done" onchange="toggleFT()" style="width: 1.1rem; height: 1.1rem;">
@@ -280,7 +281,7 @@ if ($obra_id > 0) {
         </div>
       </div>
     </div>
-    
+
     <div class="d-flex justify-content-end gap-2 mt-4 pt-2">
       <button class="btn btn-light" style="border-radius: 10px; font-size: 0.85rem; font-weight: 600; padding: 0.6rem 1.25rem; color: var(--gray-600); border: 1px solid var(--gray-200);" onclick="closeM()">Cerrar</button>
       <button class="btn-geco-primary" style="padding: 0.6rem 1.5rem;" onclick="save()">Guardar Cambios</button>
@@ -363,7 +364,7 @@ if ($obra_id > 0) {
     let h = '';
     for (let p in tree) {
       let catCount = Object.keys(tree[p]).length;
-      
+
       h += `<div class="oc-card">
               <div class="oc-card-header cursor-pointer" onclick="this.nextElementSibling.classList.toggle('d-none')">
                 <div class="oc-card-header__title">
@@ -376,14 +377,14 @@ if ($obra_id > 0) {
                 </div>
               </div>
               <div class="oc-card-body">`;
-              
+
       for (let ct in tree[p]) {
         h += `<div class="oc-form-subsection mt-2 mb-3">
                 <h5 class="oc-form-subsection__title" style="margin-bottom: 0.5rem; font-size: 0.9rem;">
                   <i class="fa-solid fa-folder-open me-2"></i> ${ct}
                 </h5>
               </div>`;
-              
+
         for (let sub in tree[p][ct]) {
           h += `<div class="d-flex align-items-center gap-2 mb-2 ms-3">
                   <i class="fa-solid fa-arrow-right-long text-muted opacity-50"></i>
@@ -404,7 +405,7 @@ if ($obra_id > 0) {
                       </tr>
                     </thead>
                     <tbody>`;
-                    
+
           tree[p][ct][sub].forEach(c => {
             const rowClass = (+c.terminado ? 'is-done' : '') + (+c.es_referencia ? ' is-ref' : '');
             h += `<tr class="${rowClass}">
@@ -430,13 +431,13 @@ if ($obra_id > 0) {
                     </td>
                   </tr>`;
           });
-          
+
           h += `      </tbody>
                   </table>
                 </div>`;
         }
       }
-      
+
       h += `  </div>
             </div>`;
     }
@@ -562,7 +563,3 @@ if ($obra_id > 0) {
 </script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
-
-
-
-

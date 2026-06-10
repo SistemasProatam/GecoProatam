@@ -788,6 +788,8 @@ $puede_marcar_pagado = ($departamento === 'Gerente de Recursos Humanos');       
 <div class="orders-page-container">
 
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
+  <title>Detalles de Orden de Compra | GECO PROATAM</title>
+
 
 
 

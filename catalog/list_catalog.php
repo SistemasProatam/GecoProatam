@@ -148,7 +148,7 @@ $iconColors = [
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-<link rel="icon" href="<?= BASE_URL ?>/assets/img/LogoCuadro.ico" type="image/x-icon">
+<title>Catálogo del Sistema | GECO PROATAM</title>
 
 
 
@@ -177,8 +177,8 @@ $iconColors = [
       <div class="entity-grid" style="margin-bottom: 0;">
         <?php foreach ($entidades as $key => $entidad): ?>
           <div class="entity-card <?= $entidad_seleccionada === $key ? 'active' : '' ?>"
-               onclick="seleccionarEntidad('<?= $key ?>')"
-               data-entidad="<?= $key ?>">
+            onclick="seleccionarEntidad('<?= $key ?>')"
+            data-entidad="<?= $key ?>">
             <div class="entity-card-icon" style="color:<?= $iconColors[$key] ?? '#6b7280' ?>">
               <i class="<?= $entidad['icono'] ?>"></i>
             </div>
@@ -193,14 +193,14 @@ $iconColors = [
       <!-- Hidden search form -->
       <form id="search-form" method="GET" style="display:none;">
         <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
-        <input type="hidden" name="tipo"    value="<?= htmlspecialchars($tipo) ?>">
-        <input type="search" name="q"       value="<?= htmlspecialchars($busqueda) ?>">
+        <input type="hidden" name="tipo" value="<?= htmlspecialchars($tipo) ?>">
+        <input type="search" name="q" value="<?= htmlspecialchars($busqueda) ?>">
       </form>
 
       <!-- Filter form -->
       <form id="filter-form" method="GET">
         <input type="hidden" name="entidad" value="<?= $entidad_seleccionada ?>">
-        <input type="hidden" name="q"       value="<?= htmlspecialchars($busqueda) ?>">
+        <input type="hidden" name="q" value="<?= htmlspecialchars($busqueda) ?>">
 
         <div class="orders-filter-bar">
 
@@ -230,8 +230,8 @@ $iconColors = [
             <div class="search-input-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input type="text" id="visibleSearchInput"
-                     placeholder="Buscar <?= strtolower($entidad_config['nombre']) ?>..."
-                     value="<?= htmlspecialchars($busqueda) ?>">
+                placeholder="Buscar <?= strtolower($entidad_config['nombre']) ?>..."
+                value="<?= htmlspecialchars($busqueda) ?>">
             </div>
             <button id="btnAgregarItem" class="btn-geco-primary" type="button" onclick="agregarItem()">
               <i class="fa-solid fa-plus"></i> Agregar
@@ -247,118 +247,118 @@ $iconColors = [
       <!-- ─── TABLE ──────────────────────────────────────────────── -->
       <div id="table-container-wrapper">
 
-      <?php if ($result && $result->num_rows > 0): ?>
-        <div class="orders-table-wrap">
-          <table class="orders-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
-                  <th>Tipo</th>
-                <?php endif; ?>
-                <?php if ($entidad_seleccionada === 'clientes'): ?>
-                  <th>Abreviado</th>
-                <?php endif; ?>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php while ($row = $result->fetch_assoc()): ?>
+        <?php if ($result && $result->num_rows > 0): ?>
+          <div class="orders-table-wrap">
+            <table class="orders-table">
+              <thead>
                 <tr>
-                  <td>
-                    <span class="cell-folio">
-                      <?php
+                  <th>Nombre</th>
+                  <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
+                    <th>Tipo</th>
+                  <?php endif; ?>
+                  <?php if ($entidad_seleccionada === 'clientes'): ?>
+                    <th>Abreviado</th>
+                  <?php endif; ?>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                  <tr>
+                    <td>
+                      <span class="cell-folio">
+                        <?php
                         if ($entidad_seleccionada === 'clientes' && !empty($row['nombre_abreviado'])):
                           echo htmlspecialchars($row['nombre_abreviado']);
                         else:
                           echo htmlspecialchars($row['nombre']);
                         endif;
-                      ?>
-                    </span>
-                  </td>
-                  <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
-                    <td>
-                      <span style="font-weight: 600; font-size: 0.85rem; color: <?= $row['tipo'] == 'producto' ? 'var(--p-600)' : 'var(--s-600)' ?>;">
-                        <?= ucfirst(htmlspecialchars($row['tipo'])) ?>
+                        ?>
                       </span>
                     </td>
-                  <?php endif; ?>
-                  <?php if ($entidad_seleccionada === 'clientes'): ?>
-                    <td class="cell-muted"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
-                  <?php endif; ?>
-                  <td>
-                    <div class="actions-group">
-                      <button class="btn-action btn-action--view" onclick="mostrarItem(<?= $row['id'] ?>)">
-                        <i class="fa-regular fa-eye"></i>
-                      </button>
-                      <?php if ($entidad_seleccionada === 'proveedores'): ?>
-                        <button class="btn-action btn-action--edit" onclick="evaluarProveedor(<?= $row['id'] ?>)"
-                                style="color:#f59e0b; border-color:rgba(245,158,11,0.3);">
-                          <i class="fa-solid fa-star"></i>
+                    <?php if ($entidad_seleccionada === 'productos_servicios'): ?>
+                      <td>
+                        <span style="font-weight: 600; font-size: 0.85rem; color: <?= $row['tipo'] == 'producto' ? 'var(--p-600)' : 'var(--s-600)' ?>;">
+                          <?= ucfirst(htmlspecialchars($row['tipo'])) ?>
+                        </span>
+                      </td>
+                    <?php endif; ?>
+                    <?php if ($entidad_seleccionada === 'clientes'): ?>
+                      <td class="cell-muted"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                    <?php endif; ?>
+                    <td>
+                      <div class="actions-group">
+                        <button class="btn-action btn-action--view" onclick="mostrarItem(<?= $row['id'] ?>)">
+                          <i class="fa-regular fa-eye"></i>
                         </button>
-                      <?php endif; ?>
-                      <button class="btn-action btn-action--edit" onclick="editarItem(<?= $row['id'] ?>)">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </button>
-                      <button class="btn-action btn-action--delete" onclick="eliminarItem(<?= $row['id'] ?>)">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              <?php endwhile; ?>
-            </tbody>
-          </table>
-        </div>
+                        <?php if ($entidad_seleccionada === 'proveedores'): ?>
+                          <button class="btn-action btn-action--edit" onclick="evaluarProveedor(<?= $row['id'] ?>)"
+                            style="color:#f59e0b; border-color:rgba(245,158,11,0.3);">
+                            <i class="fa-solid fa-star"></i>
+                          </button>
+                        <?php endif; ?>
+                        <button class="btn-action btn-action--edit" onclick="editarItem(<?= $row['id'] ?>)">
+                          <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-action btn-action--delete" onclick="eliminarItem(<?= $row['id'] ?>)">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endwhile; ?>
+              </tbody>
+            </table>
+          </div>
 
-        <!-- Pagination -->
-        <div class="orders-pagination-bar">
-          <div class="orders-pagination-left">
-            <span class="orders-pagination-info">
-              <?php
+          <!-- Pagination -->
+          <div class="orders-pagination-bar">
+            <div class="orders-pagination-left">
+              <span class="orders-pagination-info">
+                <?php
                 $ini = $totalRegistros > 0 ? $offset + 1 : 0;
                 $fin = min($offset + $por_pagina, $totalRegistros);
-              ?>
-              Mostrando <strong><?= $ini ?>–<?= $fin ?></strong> de <strong><?= $totalRegistros ?></strong>
-            </span>
-          </div>
-          <?php if ($totalPaginas > 1): ?>
-            <div class="orders-pagination-controls">
-              <nav class="orders-pagination-nav">
-                <?php
+                ?>
+                Mostrando <strong><?= $ini ?>–<?= $fin ?></strong> de <strong><?= $totalRegistros ?></strong>
+              </span>
+            </div>
+            <?php if ($totalPaginas > 1): ?>
+              <div class="orders-pagination-controls">
+                <nav class="orders-pagination-nav">
+                  <?php
                   $maxVisible = 10;
                   $bloqueActual = ceil($pagina / $maxVisible);
                   $inicio = (($bloqueActual - 1) * $maxVisible) + 1;
                   $finPag = min($inicio + $maxVisible - 1, $totalPaginas);
-                ?>
-                <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
-                   href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=1">«</a>
-                <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
-                   href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $pagina - 1 ?>">‹</a>
-                <?php for ($i = $inicio; $i <= $finPag; $i++): ?>
-                  <a class="page-btn page-link <?= $i == $pagina ? 'active' : '' ?>"
-                     href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $i ?>"><?= $i ?></a>
-                <?php endfor; ?>
-                <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
-                   href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $pagina + 1 ?>">›</a>
-                <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
-                   href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $totalPaginas ?>">»</a>
-              </nav>
-              <div class="orders-pagination-divider"></div>
-              <div class="orders-pagination-goto">
-                <span>Ir a</span>
-                <input type="number" class="goto-page-input" min="1" max="<?= $totalPaginas ?>" value="<?= $pagina ?>">
+                  ?>
+                  <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
+                    href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=1">«</a>
+                  <a class="page-btn page-link <?= $pagina <= 1 ? 'disabled' : '' ?>"
+                    href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $pagina - 1 ?>">‹</a>
+                  <?php for ($i = $inicio; $i <= $finPag; $i++): ?>
+                    <a class="page-btn page-link <?= $i == $pagina ? 'active' : '' ?>"
+                      href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $i ?>"><?= $i ?></a>
+                  <?php endfor; ?>
+                  <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
+                    href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $pagina + 1 ?>">›</a>
+                  <a class="page-btn page-link <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>"
+                    href="?entidad=<?= $entidad_seleccionada ?>&q=<?= urlencode($busqueda) ?>&tipo=<?= urlencode($tipo) ?>&page=<?= $totalPaginas ?>">»</a>
+                </nav>
+                <div class="orders-pagination-divider"></div>
+                <div class="orders-pagination-goto">
+                  <span>Ir a</span>
+                  <input type="number" class="goto-page-input" min="1" max="<?= $totalPaginas ?>" value="<?= $pagina ?>">
+                </div>
               </div>
-            </div>
-          <?php endif; ?>
-        </div>
+            <?php endif; ?>
+          </div>
 
-      <?php else: ?>
-        <div class="orders-empty-state">
-          <i class="fa-solid fa-inbox"></i>
-          <p>No hay <?= strtolower($entidad_config['nombre']) ?> registrados</p>
-        </div>
-      <?php endif; ?>
+        <?php else: ?>
+          <div class="orders-empty-state">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No hay <?= strtolower($entidad_config['nombre']) ?> registrados</p>
+          </div>
+        <?php endif; ?>
 
       </div><!-- /table-container-wrapper -->
     </div><!-- /orders-card -->
@@ -372,8 +372,8 @@ $iconColors = [
 
     document.addEventListener('DOMContentLoaded', function() {
       const visibleSearch = document.getElementById('visibleSearchInput');
-      const filterForm   = document.getElementById('filter-form');
-      const searchForm   = document.getElementById('search-form');
+      const filterForm = document.getElementById('filter-form');
+      const searchForm = document.getElementById('search-form');
 
       // Sync visible search
       if (visibleSearch) {
@@ -382,7 +382,10 @@ $iconColors = [
           searchForm.querySelector('input[name="q"]').value = this.value;
         });
         visibleSearch.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter') { e.preventDefault(); filterForm.requestSubmit(); }
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            filterForm.requestSubmit();
+          }
         });
       }
 
@@ -398,7 +401,9 @@ $iconColors = [
 
       // Filter selects auto submit
       filterForm.querySelectorAll('select').forEach(function(sel) {
-        sel.addEventListener('change', function() { filterForm.requestSubmit(); });
+        sel.addEventListener('change', function() {
+          filterForm.requestSubmit();
+        });
       });
 
       // AJAX for pagination & search (updates only #table-container-wrapper)
@@ -451,7 +456,14 @@ $iconColors = [
 
       document.addEventListener('click', function(e) {
         const pl = e.target.closest('.page-link');
-        if (pl) { e.preventDefault(); updateList(pl.href); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        if (pl) {
+          e.preventDefault();
+          updateList(pl.href);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
       });
 
       document.addEventListener('change', function(e) {
@@ -459,7 +471,8 @@ $iconColors = [
       });
       document.addEventListener('keydown', function(e) {
         if (e.target.classList.contains('goto-page-input') && e.key === 'Enter') {
-          e.preventDefault(); handleGoToPage(e.target);
+          e.preventDefault();
+          handleGoToPage(e.target);
         }
       });
 
@@ -472,7 +485,10 @@ $iconColors = [
         params.set('q', searchForm.querySelector('input[name="q"]').value || '');
         params.set('page', page);
         updateList('?' + params.toString());
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
       }
 
       initFilterEvents();
@@ -480,8 +496,8 @@ $iconColors = [
 
     function initFilterEvents() {
       const visibleSearch = document.getElementById('visibleSearchInput');
-      const filterForm   = document.getElementById('filter-form');
-      const searchForm   = document.getElementById('search-form');
+      const filterForm = document.getElementById('filter-form');
+      const searchForm = document.getElementById('search-form');
       if (!filterForm || !searchForm) return;
 
       // Sync visible search
@@ -491,7 +507,10 @@ $iconColors = [
           searchForm.querySelector('input[name="q"]').value = this.value;
         };
         visibleSearch.onkeydown = function(e) {
-          if (e.key === 'Enter') { e.preventDefault(); filterForm.requestSubmit(); }
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            filterForm.requestSubmit();
+          }
         };
       }
 
@@ -508,7 +527,9 @@ $iconColors = [
 
       // Filter selects auto submit
       filterForm.querySelectorAll('select').forEach(function(sel) {
-        sel.onchange = function() { filterForm.requestSubmit(); };
+        sel.onchange = function() {
+          filterForm.requestSubmit();
+        };
       });
 
       // Form submit => AJAX
@@ -631,10 +652,16 @@ $iconColors = [
 
       document.getElementById('btn-save-item').onclick = () => {
         const form = document.getElementById('formAgregarItem');
-        if (!form.checkValidity()) { form.reportValidity(); return; }
-        
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
         UI.loading('Guardando...');
-        fetch(`insert_${entidadActual}.php`, { method: 'POST', body: new FormData(form) })
+        fetch(`insert_${entidadActual}.php`, {
+            method: 'POST',
+            body: new FormData(form)
+          })
           .then(r => r.json())
           .then(data => {
             UI.loading.hide();
@@ -642,8 +669,8 @@ $iconColors = [
               UI.modal.close();
               UI.toast.success(data.message);
               setTimeout(() => location.reload(), 1000);
-            } else { 
-              UI.toast.error(data.message || 'Error al guardar'); 
+            } else {
+              UI.toast.error(data.message || 'Error al guardar');
             }
           })
           .catch(() => {
@@ -659,7 +686,10 @@ $iconColors = [
         .then(r => r.json())
         .then(resp => {
           UI.loading.hide();
-          if (resp.status !== 'success') { UI.toast.error(resp.message || 'No se pudo cargar el registro'); return; }
+          if (resp.status !== 'success') {
+            UI.toast.error(resp.message || 'No se pudo cargar el registro');
+            return;
+          }
           const data = resp.data;
           let formHtml = '';
           switch (entidadActual) {
@@ -758,10 +788,16 @@ $iconColors = [
 
           document.getElementById('btn-update-item').onclick = () => {
             const form = document.getElementById('formEditarItem');
-            if (!form.checkValidity()) { form.reportValidity(); return; }
-            
+            if (!form.checkValidity()) {
+              form.reportValidity();
+              return;
+            }
+
             UI.loading('Actualizando...');
-            fetch(`update_${entidadActual}.php`, { method: 'POST', body: new FormData(form) })
+            fetch(`update_${entidadActual}.php`, {
+                method: 'POST',
+                body: new FormData(form)
+              })
               .then(r => r.json())
               .then(resp => {
                 UI.loading.hide();
@@ -769,8 +805,8 @@ $iconColors = [
                   UI.modal.close();
                   UI.toast.success(resp.message);
                   setTimeout(() => location.reload(), 1000);
-                } else { 
-                  UI.toast.error(resp.message || 'Error al actualizar'); 
+                } else {
+                  UI.toast.error(resp.message || 'Error al actualizar');
                 }
               })
               .catch(err => {
@@ -803,8 +839,8 @@ $iconColors = [
             if (data.status === 'success') {
               UI.toast.success(data.message);
               setTimeout(() => location.reload(), 1000);
-            } else { 
-              UI.toast.error(data.message); 
+            } else {
+              UI.toast.error(data.message);
             }
           })
           .catch(() => {

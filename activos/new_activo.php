@@ -25,8 +25,7 @@ $result_departamentos = $result;
 <?php include __DIR__ . "/../includes/navbar.php"; ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/modules.css?v=2.0">
-
-
+<title>Nuevo Activo | GECO PROATAM</title>
 
 <div class="orders-page-container">
 
