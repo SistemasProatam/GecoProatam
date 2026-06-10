@@ -1,6 +1,8 @@
 <?php
 require_once "config.php";
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -13,6 +15,7 @@ session_start();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
 </head>
 
 <body>
@@ -21,8 +24,8 @@ session_start();
             <!-- Panel de Mensaje -->
             <div class="col-lg-5 col-xl-4 auth-panel">
                 <div class="auth-form-wrapper" style="text-align: center;">
-                    <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" style="margin: 0 auto 30px auto;" />
-                    
+                    <img src="<?= BASE_URL ?>/assets/img/GECO.png" alt="Logo GECO" class="auth-logo" style="margin: 0 auto 30px auto;" />
+
                     <div style="background-color: rgba(220, 53, 69, 0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
                         <i class="bi bi-shield-lock" style="font-size: 2.5rem; color: #dc3545;"></i>
                     </div>
@@ -68,4 +71,5 @@ session_start();
         </div>
     </div>
 </body>
+
 </html>

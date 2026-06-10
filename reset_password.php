@@ -35,7 +35,10 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/core/auth.css?v=1.1">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/styles/ui.css?v=1.1">
-    <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/GECO_ISOLOGO.png" type="image/x-icon">
+    <script>
+        window.BASE_URL = '<?= BASE_URL ?>';
+    </script>
 </head>
 
 <body>
@@ -46,7 +49,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
             <div class="col-lg-5 col-xl-4 auth-panel">
                 <div class="auth-form-wrapper">
                     <img src="<?= BASE_URL ?>/assets/img/proatam.png" alt="Logo PROATAM" class="auth-logo" />
-                    
+
                     <!-- Progress Steps -->
                     <div class="recovery-steps">
                         <div class="step-item completed">
@@ -70,7 +73,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
 
                     <form id="resetPasswordForm" class="auth-form">
                         <input type="hidden" name="reset_token" value="<?= htmlspecialchars($token) ?>">
-                        
+
                         <div class="auth-form-group">
                             <label for="new_password" class="auth-label">NUEVA CONTRASEÑA</label>
                             <div class="position-relative">
@@ -80,7 +83,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                                     <i class="bi bi-eye-slash"></i>
                                 </button>
                             </div>
-                            
+
                             <div class="password-strength-container mt-2">
                                 <div class="progress" style="height: 4px; border-radius: 2px;">
                                     <div class="progress-bar bg-danger" id="passwordStrengthBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
@@ -101,7 +104,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                                     </ul>
                                 </div>
                             </div>
-                            
+
                             <div id="passwordLengthFeedback" class="text-danger mt-1" style="display: none; font-size: 0.7rem;">
                                 La contraseña no debe exceder los 12 caracteres.
                             </div>
@@ -184,11 +187,11 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
 
             function showSlide(n) {
                 slides.forEach(slide => slide.classList.remove('active'));
-                if(dots) dots.forEach(dot => dot.classList.remove('active'));
-                
+                if (dots) dots.forEach(dot => dot.classList.remove('active'));
+
                 currentSlide = (n + slides.length) % slides.length;
                 slides[currentSlide].classList.add('active');
-                if(dots[currentSlide]) dots[currentSlide].classList.add('active');
+                if (dots[currentSlide]) dots[currentSlide].classList.add('active');
             }
 
             function nextSlide() {
@@ -204,7 +207,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                 if (slideInterval) clearInterval(slideInterval);
             }
 
-            if(dots) {
+            if (dots) {
                 dots.forEach(dot => {
                     dot.addEventListener('click', () => {
                         const index = parseInt(dot.getAttribute('data-slide'));
@@ -297,7 +300,9 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
 
                 if (result.status === 'success') {
                     UI.toast.success(result.message, 3000);
-                    setTimeout(() => { window.location.href = 'login.php'; }, 2000);
+                    setTimeout(() => {
+                        window.location.href = 'login.php';
+                    }, 2000);
                 } else {
                     UI.inline.show('.auth-alert-container', result.message, 'error');
                 }
@@ -371,7 +376,7 @@ if (!isset($_SESSION['reset_token_expiry']) || time() > $_SESSION['reset_token_e
                 feedback.style.display = 'none';
                 this.classList.remove('is-invalid');
             }
-            
+
             // Check match if confirm is already typed
             const confirmPwd = document.getElementById('confirm_password').value;
             if (confirmPwd) {
